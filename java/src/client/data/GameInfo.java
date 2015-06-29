@@ -11,7 +11,7 @@ import java.util.*;
  * <li>Title: Game title (non-empty string)</li>
  * <li>Players: List of players who have joined the game (can be empty)</li>
  * </ul>
- * kokkk
+ * kok
  */
 public class GameInfo
 {
