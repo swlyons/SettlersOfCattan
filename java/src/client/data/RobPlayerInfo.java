@@ -11,7 +11,7 @@ package client.data;
  * <li>Color: Player's color (cannot be null)</li>
  * <li>NumCards: Number of development cards the player has (>= 0)</li>
  * </ul>
- * 
+ *  
  */
 public class RobPlayerInfo extends PlayerInfo
 {
