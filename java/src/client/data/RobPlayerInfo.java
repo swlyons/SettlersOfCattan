@@ -13,7 +13,6 @@ package client.data;
  * </ul>
  *  
  */
-// test moving to my branch
 public class RobPlayerInfo extends PlayerInfo
 {
 	
