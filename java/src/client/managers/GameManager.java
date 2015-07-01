@@ -165,6 +165,13 @@ public class GameManager {
 
     public void diceIsSevenMoveRober(HexLocation newLocationForRobber) {
         mapManager.moveRobber(newLocationForRobber);
+        for (int i = 0; i < 4; i++) {
+            int numberOfResourceCards = 0;
+            if(resourceManager.getGameBanks().get(i).getResourcesCards().size()>=7)
+            {
+                resourceManager.playerDiscardsHalfCards(i);
+            }
+        }
     }
 
     /**

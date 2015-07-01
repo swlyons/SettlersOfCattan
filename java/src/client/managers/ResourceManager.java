@@ -48,11 +48,12 @@ public class ResourceManager {
      * cardType is an actual type of card
      *
      * @post a card specified by the cardType will have been transfered from the
-     * player with the startIndex to the player with the destinationIndex returns success of transaction
+     * player with the startIndex to the player with the destinationIndex
+     * returns success of transaction
      */
     public boolean transferCard(int startIndex, int destinationIndex, Card cardType) {
         // if the card from the player is not available. return false.
-        
+
         return false;
     }
 
@@ -192,6 +193,11 @@ public class ResourceManager {
      * @post will have made the cards usable for current player
      */
     public void makeCardsUsable() {
+
+    }
+
+    //player has seven or more card. The robber was moved. The player must now discard half of their cards
+    public void playerDiscardsHalfCards(int playerId) {
 
     }
 
