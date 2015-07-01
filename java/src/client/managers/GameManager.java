@@ -7,11 +7,6 @@ import shared.locations.VertexLocation;
 
 import java.util.ArrayList;
 
-/**
- * @author Curt
- * @pre 
- * @post 
- */
 public class GameManager {
 	
 	public GameManager () { }

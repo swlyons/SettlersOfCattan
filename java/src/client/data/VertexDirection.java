@@ -1,4 +1,4 @@
-package shared.locations;
+package client.data;
 
 public enum VertexDirection
 {
