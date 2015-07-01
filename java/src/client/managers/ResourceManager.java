@@ -8,7 +8,7 @@ import client.data.Player;
 
 public class ResourceManager {
     private ArrayList<Bank> gameBanks;
-    private Map<Award, Player> awardMap;
+    private Map<Award, Player> awardMap = new HashMap<Award, Player>();
 
     public ResourceManager(ArrayList<Bank> gameBanks, Map<Award, Player> awardMap) {
         this.gameBanks = gameBanks;
