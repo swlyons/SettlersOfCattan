@@ -86,12 +86,11 @@ public class GameManager {
 	/**
 	 * @author Curt
 	 * @param gameID = unique ID of a game in the server's games list
-	 * @param hex = hex used to find the normalized vertex location where settlement should be placed
 	 * @param vertex = vertex where the settlement should be placed
 	 * @pre gameID matches existing game. Hex and VertexLocations are valid location in this game's map.
 	 * @post 
 	 */
-	public void placeSettlement(int gameID, HexLocation h, VertexLocation v) {
+	public void placeSettlement(int gameID, VertexLocation v) {
 		
 	}
 	
