@@ -38,5 +38,9 @@ public class HexLocation {
         }
         return false;
     }
+    
+    public HexLocation getNeighborLoc(EdgeDirection dir) {
+    	return null;
+    }
 
 }
