@@ -24,9 +24,9 @@ public class LocationManager {
      * @param locationToSettle = the location the current player wants to build
      * @pre the current player had enough resources to build and a settlement to
      * build with
-     * @post returns true if the VertexLocation was found in a Location of unsettledLocations and
-     * the boolean canBeSettled of that Location is true, returns false
-     * otherwise
+     * @post returns true if the VertexLocation was found in a Location of
+     * unsettledLocations and the boolean canBeSettled of that Location is true,
+     * returns false otherwise
      */
     public boolean settleLocation(VertexLocation locationToSettle) {
         return false;
@@ -34,10 +34,12 @@ public class LocationManager {
 
     /**
      *
-     * @param edgeLocationToSettle = the edge the current player wants to build a road on
+     * @param edgeLocationToSettle = the edge the current player wants to build
+     * a road on
      * @pre the current player had enough resources to build and a road
-     * @post returns true if the EdgeLocation was found in an Edge in unsettledEdges and
-     * the player's id is found in the whoCanBuild array. Otherwise returns false
+     * @post returns true if the EdgeLocation was found in an Edge in
+     * unsettledEdges and the player's id is found in the whoCanBuild array.
+     * Otherwise returns false
      */
     public boolean settleEdge(EdgeLocation edgeLocationToSettle) {
         return false;
@@ -49,18 +51,53 @@ public class LocationManager {
      * upgrade the settlement
      * @pre the current player had enough resources to upgrade to a city and a
      * city to build with
-     * @post returns true if the VertexLocation is in a Location of settledLocations, if the
-     * Location ownerID matches the player, and if the Location's city boolean
-     * is false. Otherwise returns false.
+     * @post returns true if the VertexLocation is in a Location of
+     * settledLocations, if the Location ownerID matches the player, and if the
+     * Location's city boolean is false. Otherwise returns false.
      */
     public boolean upgradeToCity(VertexLocation locationToUpgrade) {
         return false;
     }
-    
+
     /**
-     * 
+     * @param triggeredHex = the hex to reward the possible settlements and/or
+     * cities
+     * @pre The triggeredHex's rollValue had just been rolled
+     * @post Cycles through all neighboring vertexLocations, seeing if any are
+     * settled, and award the ownerID of those that are with the appropriate
+     * resources
+     */
+    public ArrayList<Integer> awardTerrainResource(HexLocation triggeredHex) {
+        ArrayList<Integer> playerReceivesOneResource = new ArrayList<Integer>();
+        for (Location location : settledLocations) {
+            HexLocation hex1 = location.getNormalizedLocation().getHexLoc();
+            HexLocation hex2 = new HexLocation(hex1.getX(), hex1.getY() - 1);;
+            HexLocation hex3;
+
+            if (VertexDirection.NorthEast == location.getNormalizedLocation().getDir()) {
+                hex3 = new HexLocation(hex1.getX() + 1, hex1.getY() - 1);
+            } else {
+                //case of it's NorthWest
+                hex3 = new HexLocation(hex1.getX() - 1, hex1.getY());
+            }
+
+            if (hex1.equivalent(triggeredHex) || hex2.equivalent(triggeredHex) || hex3.equivalent(triggeredHex)) {
+                playerReceivesOneResource.add(location.getOwnerID());
+                if (location.getIsCity()) {
+                    playerReceivesOneResource.add(location.getOwnerID());
+                }
+            }
+
+        }
+
+        return playerReceivesOneResource;
+    }
+
+    /**
+     *
      * @pre the player is going to maritime trade
-     * @post returns the list of Ports that the player has a settlement or city on
+     * @post returns the list of Ports that the player has a settlement or city
+     * on
      */
     public ArrayList<Port> getPortsPlayerHas() {
         return null;
@@ -105,6 +142,5 @@ public class LocationManager {
     public void setUnsettledEdges(ArrayList<Edge> unsettledEdgesNew) {
         unsettledEdges = unsettledEdgesNew;
     }
-
 
 }

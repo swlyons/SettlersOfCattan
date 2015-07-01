@@ -1,16 +1,17 @@
 package client.data;
 
 import java.util.ArrayList;
+import shared.definitions.ResourceType;
 
 public class Hex {
     
     private HexLocation hexLocation;
     private ArrayList<EdgeLocation> edgeLocations;
     private int rollValue;
-    private String resourceType;
+    private ResourceType resourceType;
     private boolean hasRobber;
     
-    public Hex(HexLocation hexStart, int rollValueStart, String resourceTypeStart){
+    public Hex(HexLocation hexStart, int rollValueStart, ResourceType resourceTypeStart){
         hexLocation=hexStart;
         rollValue=rollValueStart;
         resourceType=resourceTypeStart;
@@ -41,11 +42,11 @@ public class Hex {
         this.rollValue = rollValue;
     }
 
-    public String getResourceType() {
+    public ResourceType getResourceType() {
         return resourceType;
     }
 
-    public void setResourceType(String resourceType) {
+    public void setResourceType(ResourceType resourceType) {
         this.resourceType = resourceType;
     }
 

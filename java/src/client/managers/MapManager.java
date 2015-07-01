@@ -7,43 +7,53 @@ public class MapManager {
 
     private ArrayList<Hex> hexList;
 
-    public MapManager(){
+    public MapManager() {
         hexList = new ArrayList<Hex>();
     }
-    
+
     /**
-     * @pre The current player clicked the button at the beginning of their turn
-     * @post Has the gameManager roll the dice, then either calls the moveRobber method on a 7 or calls awardTerrainResource on each Hex that has that roll value
+     * @param rollValue = The value rolled
+     * @pre The triggeredHex's rollValue had just been rolled
+     * @post Cycles through all neighboring vertexLocations, seeing if any are
+     * settled, and award the ownerID of those that are with the appropriate
+     * resources
      */
-    public void findRollValues(){
-        
+    public ArrayList<Hex> getTerrainResourceHexes(int rollValue) {
+        ArrayList<Hex> hexesProducingResources = new ArrayList<Hex>();
+
+        for (int i = 0; i < hexList.size(); i++) {
+            if (hexList.get(i).getRollValue() == i && !hexList.get(i).getHasRobber()) {
+                hexesProducingResources.add(hexList.get(i));
+            }
+        }
+
+        return hexesProducingResources;
     }
-    
-    /**
-     * @param triggeredHex = the hex to reward the possible settlements and/or cities 
-     * @pre The triggeredHex's rollValue had just been rolled 
-     * @post Cycles through all neighboring vertexLocations, seeing if any are settled, and award the ownerID of those that are with the appropriate resources
-     */
-    public void awardTerrainResource(Hex triggeredHex){
-    
-    }
-    
+
     /**
      * @pre A 7 was rolled
-     * @post The each player discarded half of their cards if they had 7 or more, the current player robbed 1 player that settled on the hex (if any)
-     * 
+     * @post The each player discarded half of their cards if they had 7 or
+     * more, the current player robbed 1 player that settled on the hex (if any)
+     * returns the success of moving the Robber. If true the robber was moved successfully.
      */
-    public void moveRobber(){
+    public boolean moveRobber(HexLocation newLocationForRobber) {
         
+        for(Hex hex : hexList){
+            if(hex.getHasRobber() && hex.getHexLocation().equivalent(newLocationForRobber)){
+                return false;
+            }
+        }
+        
+        return true;
     }
-        
-    public ArrayList<Hex> getHexList(){
+
+    public ArrayList<Hex> getHexList() {
         return hexList;
     }
-    public void setHexList(ArrayList<Hex> hexListNew){
+
+    public void setHexList(ArrayList<Hex> hexListNew) {
         hexList = hexListNew;
     }
 
     //generateMap(int mapRadius, ArrayList<Hex> Hexes, ArrayList<Port>, ArrayList<Road> Roads, ArrayList<VertexObject> Buildings)
-
 }
