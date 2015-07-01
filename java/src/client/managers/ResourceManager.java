@@ -1,5 +1,185 @@
 package client.managers;
 
-public class ResourceManager {
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import client.data.Bank;
+import client.data.Player;
 
+public class ResourceManager {
+    private ArrayList<Bank> gameBanks;
+    private Map<Award, Player> awardMap;
+
+    public ResourceManager(ArrayList<Bank> gameBanks, Map<Award, Player> awardMap) {
+        this.gameBanks = gameBanks;
+        this.awardMap = awardMap;
+    }
+
+    public ArrayList<Bank> getGameBanks() {
+        return gameBanks;
+    }
+
+    public void setGameBanks(ArrayList<Bank> gameBanks) {
+        this.gameBanks = gameBanks;
+    }
+
+    public Map<Award, Player> getAwardMap() {
+        return awardMap;
+    }
+
+    public void setAwardMap(Map<Award, Player> awardMap) {
+        this.awardMap = awardMap;
+    }
+    /**
+     * 
+     * @param startIndex
+     * @param destinationIndex
+     * @param cardType 
+     * 
+     * @pre startIndex and destinationIndex are actual indexes of players and
+     * cardType is an actual type of card
+     * 
+     * @post a card specified by the cardType will have been transfered from the
+     * player with the startIndex to the player with the destinationIndex
+     */
+    public void transferCard(int startIndex, int destinationIndex, int cardType) {
+        
+    }
+    /**
+     * 
+     * @param bankIndex
+     * @param cardType
+     * @pre bankIndex must be an index of either an existing player or the bank
+     * and cardType must be an actual cardType
+     * 
+     * @post returns if the player (or bank) has the specified cardType
+     */
+    public boolean hasCardAvailable(int bankIndex, int cardType){
+        boolean isAvailable = false;
+        
+        return isAvailable;
+    }
+    /**
+     * 
+     * @pre largest army award must be in the game
+     * @post returns if the largest army award has been given
+     */
+    public boolean awardLargestArmy(){
+        boolean awarded = false;
+        
+        return awarded;
+    }
+    /**
+     * 
+     * @pre longest road award must be in the game
+     * @post returns if the longest road award has been given
+     */
+    public boolean awardLongestRoad(){
+        boolean awarded = false;
+        
+        return awarded;
+    }
+    /**
+     * @pre there must be development cards in the game
+     * 
+     * @post will have shuffled to development cards in the deck
+     */
+    public void shuffleDevelopmentCards(){
+        
+    }
+    
+    /**
+     * 
+     * @param bankIndex
+     * 
+     * @pre bankIndex must be the index of either and existing player or game
+     * bank
+     * 
+     * @post the soldier card for the the specified bankIndex(player or bank)
+     * will be used
+     */
+    public void useSoldier(int bankIndex){
+        
+    }
+    /**
+     * 
+     * @param bankIndex
+     * 
+     * @pre bankIndex must be the index of either and existing player or game
+     * bank
+     * 
+     * @post the monument card for the the specified bankIndex(player or bank)
+     * will be used
+     */
+    public void useMonument(int bankIndex){
+        
+    }
+    /**
+     * 
+     * @param bankIndex
+     * 
+     * @pre bankIndex must be the index of either and existing player or game
+     * bank
+     * 
+     * @post the monopoly card for the the specified bankIndex(player or bank)
+     * will be used
+     */
+    public void useMonopoly(int bankIndex){
+        
+    }
+    /**
+     * 
+     * @param bankIndex
+     * 
+     * @pre bankIndex must be the index of either and existing player or game
+     * bank
+     * 
+     * @post the year of plenty card for the the specified bankIndex(player or bank)
+     * will be used
+     */
+    public void useYearOfPlenty(int bankIndex){
+        
+    }
+    /**
+     * 
+     * @param bankIndex
+     * 
+     * @pre bankIndex must be the index of either and existing player or game
+     * bank
+     * 
+     * @post the roadBuilding card for the the specified bankIndex(player or bank)
+     * will be used
+     */
+    public void useRoadBuilding(int bankIndex){
+        
+    }
+    
+    /**
+     * 
+     * @param bankIndex 
+     * 
+     * @pre bankIndex must be the index of either and existing player or game
+     * bank
+     * 
+     * @post the player/bank specified by the bankIndex will have bought another
+     * development card
+     */
+    public void buyDevelopmentCard(int bankIndex){
+        
+    }
+    /**
+     * @pre assumes that the player exists and has cards to be made usable
+     * 
+     * @post will have made the cards usable for current player
+     */
+    public void makeCardsUsable(){
+        
+    }
+
+    @Override
+    public String toString() {
+        return "ResourceManager{" + "gameBanks=" + gameBanks + ", awardMap=" + awardMap + '}';
+    }
+    
+    
 }
