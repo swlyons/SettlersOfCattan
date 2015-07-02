@@ -1,18 +1,22 @@
 package client.data;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 public class Location {
 
     private int ownerID;
-    private ArrayList<Integer> whoCanBuild;
+    private Set<Integer> whoCanBuild;
     private boolean canBeSettled;
     private boolean isCity;
     private VertexLocation normalizedLocation;
 
     public Location(VertexLocation vertexLocationStart) {
-        whoCanBuild = new ArrayList<Integer>();        
+        whoCanBuild = new HashSet<Integer>();        
         normalizedLocation = vertexLocationStart.getNormalizedLocation();
+        canBeSettled = true;
+        isCity = false;
     }
 
     public int getOwnerID() {
@@ -23,15 +27,15 @@ public class Location {
         this.ownerID = ownerID;
     }
     
-    public ArrayList<Integer> getWhoCanBuild() {
+    public Set<Integer> getWhoCanBuild() {
         return whoCanBuild;
     }
 
-    public void setWhoCanBuild(ArrayList<Integer> whoCanBuild) {
+    public void setWhoCanBuild(Set<Integer> whoCanBuild) {
         this.whoCanBuild = whoCanBuild;
     }
 
-    public boolean isCanBeSettled() {
+    public boolean getCanBeSettled() {
         return canBeSettled;
     }
 

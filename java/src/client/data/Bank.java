@@ -3,7 +3,11 @@ package client.data;
 import java.util.ArrayList;
 
 public class Bank {
+
     private int ownerID;
+    private int settlements;
+    private int cities;
+    private int roads;
     private boolean hasLongestRoad;
     private boolean hasLargestArmy;
     private ArrayList<Card> resourcesCards;
@@ -19,6 +23,33 @@ public class Bank {
         this.developmentCards = developmentCards;
         this.soldiers = soldiers;
         this.monuments = monuments;
+        settlements = 5;
+        cities = 4;
+        roads = 15;
+    }
+
+    public int getSettlements() {
+        return settlements;
+    }
+
+    public void setSettlements(int settlements) {
+        this.settlements = settlements;
+    }
+
+    public int getCities() {
+        return cities;
+    }
+
+    public void setCities(int cities) {
+        this.cities = cities;
+    }
+
+    public int getRoads() {
+        return roads;
+    }
+
+    public void setRoads(int roads) {
+        this.roads = roads;
     }
 
     public int getOwnerID() {
@@ -103,6 +134,5 @@ public class Bank {
     public String toString() {
         return "Bank{" + "ownerID=" + ownerID + ", hasLongestRoad=" + hasLongestRoad + ", hasLargestArmy=" + hasLargestArmy + ", resourcesCards=" + resourcesCards + ", developmentCards=" + developmentCards + ", soldiers=" + soldiers + ", monuments=" + monuments + '}';
     }
-    
-    
+
 }
