@@ -1,15 +1,17 @@
 package client.data;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 public class Edge {
  
     private int ownerId;
-    private ArrayList<Integer> whoCanBuild;
+    private Set<Integer> whoCanBuild;
     private EdgeLocation edgeLocation;
             
     public Edge(EdgeLocation edgeLocationStart){
        ownerId=4;
-       whoCanBuild = new ArrayList<Integer>();
+       whoCanBuild = new HashSet<Integer>();
        edgeLocation = edgeLocationStart;
     }
     
@@ -21,11 +23,11 @@ public class Edge {
         this.ownerId = ownerId;
     }
 
-    public ArrayList<Integer> getWhoCanBuild() {
+    public Set<Integer> getWhoCanBuild() {
         return whoCanBuild;
     }
 
-    public void setWhoCanBuild(ArrayList<Integer> whoCanBuild) {
+    public void setWhoCanBuild(Set<Integer> whoCanBuild) {
         this.whoCanBuild = whoCanBuild;
     }
 

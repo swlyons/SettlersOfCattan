@@ -200,6 +200,27 @@ public class ResourceManager {
     public void playerDiscardsHalfCards(int playerId) {
 
     }
+    
+    //called after checking to see if the place is valid for a settlement or city.
+    // Subtract from the person's bank a settlement and return true.
+    // if none are left return false
+    public boolean placedSettlement(int playerId){
+        return false;
+    }
+
+     //called after checking to see if the place is valid for a settlement or city.
+     //Subtract from the person's bank a city and add to the person's bank a settlement return true
+    // if none are left return false (or if somehow this method was called and the person has 5 settlements already)
+    public boolean placedCity(int playerId){
+        return false;
+    }
+    
+    // called after checking to see if the place is valid for a road.
+    // Subtract from the person's bank a road and return true.
+    // if none are left return false
+    public boolean placedRoad(int playerId){
+        return false;
+    }
 
     @Override
     public String toString() {
