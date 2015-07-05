@@ -3,6 +3,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
+import shared.locations.EdgeLocation;
+
 public class Edge {
  
     private int ownerId;

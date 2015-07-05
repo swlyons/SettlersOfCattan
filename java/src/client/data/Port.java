@@ -1,5 +1,7 @@
 package client.data;
 
+import shared.locations.HexLocation;
+
 public class Port {
 
     private String resourceType;

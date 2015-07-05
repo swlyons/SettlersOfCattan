@@ -2,6 +2,9 @@ package client.data;
 
 import java.util.ArrayList;
 import shared.definitions.ResourceType;
+import shared.locations.EdgeLocation;
+import shared.locations.HexLocation;
+
 
 public class Hex {
     

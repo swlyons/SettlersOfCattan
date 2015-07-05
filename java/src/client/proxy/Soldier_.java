@@ -1,6 +1,6 @@
 package client.proxy;
 
-import client.data.HexLocation;
+import shared.locations.HexLocation;
 
 /**
  * contains information on playing a soldier card

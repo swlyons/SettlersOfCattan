@@ -1,9 +1,16 @@
 package client.managers;
 
-import client.data.*;
+import client.data.Edge;
+import client.data.Location;
+import client.data.Port;
+import client.data.VertexDirection;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
+import shared.locations.EdgeDirection;
+import shared.locations.EdgeLocation;
+import shared.locations.HexLocation;
+import shared.locations.VertexLocation;
 
 public class LocationManager {
 

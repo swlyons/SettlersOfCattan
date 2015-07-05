@@ -1,6 +1,6 @@
 package client.proxy;
 
-import client.data.VertexLocation;
+import shared.locations.VertexLocation;
 
 /**
  * contains information about a settlement building action

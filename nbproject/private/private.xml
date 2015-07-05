@@ -1,4 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
+    <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
+        <group>
+            <file>file:/C:/Users/ddennis/Documents/SettlersOfCattan/java/src/client/managers/GameManager.java</file>
+            <file>file:/C:/Users/ddennis/Documents/SettlersOfCattan/java/src/client/map/MapController.java</file>
+            <file>file:/C:/Users/ddennis/Documents/SettlersOfCattan/java/src/client/join/JoinGameController.java</file>
+            <file>file:/C:/Users/ddennis/Documents/SettlersOfCattan/java/src/client/managers/UserManager.java</file>
+            <file>file:/C:/Users/ddennis/Documents/SettlersOfCattan/java/src/shared/locations/HexLocation.java</file>
+            <file>file:/C:/Users/ddennis/Documents/SettlersOfCattan/java/src/client/data/GameInfo.java</file>
+            <file>file:/C:/Users/ddennis/Documents/SettlersOfCattan/java/src/client/data/PlayerInfo.java</file>
+            <file>file:/C:/Users/ddennis/Documents/SettlersOfCattan/java/src/client/managers/LocationManager.java</file>
+            <file>file:/C:/Users/ddennis/Documents/SettlersOfCattan/java/src/client/managers/MapManager.java</file>
+            <file>file:/C:/Users/ddennis/Documents/SettlersOfCattan/java/src/client/managers/ResourceManager.java</file>
+            <file>file:/C:/Users/ddennis/Documents/SettlersOfCattan/java/src/client/data/User.java</file>
+            <file>file:/C:/Users/ddennis/Documents/SettlersOfCattan/java/src/shared/definitions/DevCardType.java</file>
+            <file>file:/C:/Users/ddennis/Documents/SettlersOfCattan/java/src/client/data/Player.java</file>
+            <file>file:/C:/Users/ddennis/Documents/SettlersOfCattan/java/src/shared/definitions/CatanColor.java</file>
+            <file>file:/C:/Users/ddennis/Documents/SettlersOfCattan/java/src/shared/definitions/HexType.java</file>
+            <file>file:/C:/Users/ddennis/Documents/SettlersOfCattan/java/src/shared/definitions/PieceType.java</file>
+            <file>file:/C:/Users/ddennis/Documents/SettlersOfCattan/java/src/shared/definitions/PortType.java</file>
+            <file>file:/C:/Users/ddennis/Documents/SettlersOfCattan/java/src/shared/definitions/ResourceType.java</file>
+            <file>file:/C:/Users/ddennis/Documents/SettlersOfCattan/java/src/client/data/TradeOffer.java</file>
+            <file>file:/C:/Users/ddennis/Documents/SettlersOfCattan/java/src/client/data/DevCardList.java</file>
+            <file>file:/C:/Users/ddennis/Documents/SettlersOfCattan/java/src/client/data/Bank.java</file>
+            <file>file:/C:/Users/ddennis/Documents/SettlersOfCattan/java/src/client/data/Card.java</file>
+            <file>file:/C:/Users/ddennis/Documents/SettlersOfCattan/java/src/client/data/MessageLine.java</file>
+            <file>file:/C:/Users/ddennis/Documents/SettlersOfCattan/java/src/client/data/MessageList.java</file>
+            <file>file:/C:/Users/ddennis/Documents/SettlersOfCattan/java/src/client/data/RobPlayerInfo.java</file>
+            <file>file:/C:/Users/ddennis/Documents/SettlersOfCattan/java/src/shared/locations/EdgeDirection.java</file>
+            <file>file:/C:/Users/ddennis/Documents/SettlersOfCattan/java/src/shared/locations/EdgeLocation.java</file>
+            <file>file:/C:/Users/ddennis/Documents/SettlersOfCattan/java/src/client/data/EdgeLocation.java</file>
+            <file>file:/C:/Users/ddennis/Documents/SettlersOfCattan/java/src/client/data/ResourceList.java</file>
+        </group>
+    </open-files>
 </project-private>
