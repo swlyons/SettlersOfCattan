@@ -14,7 +14,7 @@ public class Location {
     private VertexLocation normalizedLocation;
 
     public Location(VertexLocation vertexLocationStart) {
-        whoCanBuild = new HashSet<Integer>();        
+        whoCanBuild = new HashSet<>();        
         normalizedLocation = vertexLocationStart.getNormalizedLocation();
         canBeSettled = true;
         isCity = false;
