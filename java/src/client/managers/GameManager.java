@@ -1,15 +1,15 @@
 package client.managers;
-import client.data.Game;
-import client.data.Card;
-import shared.locations.EdgeLocation;
-import shared.locations.HexLocation;
-import shared.locations.VertexLocation;
 
 import java.util.ArrayList;
+import javax.smartcardio.Card;
 
 public class GameManager {
 	
-	public GameManager () { }
+	public GameManager () { 
+            LocationManager locationManager = new LocationManager();
+            
+        
+        }
 	
 	
 	/**
