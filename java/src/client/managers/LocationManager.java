@@ -3,7 +3,7 @@ package client.managers;
 import client.data.Edge;
 import client.data.Location;
 import client.data.Port;
-import client.data.VertexDirection;
+import java.util.List;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
@@ -11,6 +11,8 @@ import shared.locations.EdgeDirection;
 import shared.locations.EdgeLocation;
 import shared.locations.HexLocation;
 import shared.locations.VertexLocation;
+import shared.locations.VertexDirection;
+
 
 public class LocationManager {
 
@@ -264,10 +266,10 @@ public class LocationManager {
      * settled, and award the ownerID of those that are with the appropriate
      * resources
      */
-    public ArrayList<Integer> awardTerrainResource(HexLocation triggeredHex) {
-        ArrayList<Integer> playerReceivesOneResource = new ArrayList<Integer>();
+    public List<Integer> awardTerrainResource(HexLocation triggeredHex) {
+        List<Integer> playerReceivesOneResource = new ArrayList<>();
         for (Location location : settledLocations) {
-            ArrayList<HexLocation> hexesAroundVertex = getHexLocationsAroundVertexLocation(location.getNormalizedLocation());
+            List<HexLocation> hexesAroundVertex = getHexLocationsAroundVertexLocation(location.getNormalizedLocation());
 
             for (HexLocation hexLocation : hexesAroundVertex) {
                 if (hexLocation.equivalent(triggeredHex)) {
@@ -285,8 +287,8 @@ public class LocationManager {
         return playerReceivesOneResource;
     }
 
-    public ArrayList<HexLocation> getHexLocationsAroundVertexLocation(VertexLocation vertex) {
-        ArrayList<HexLocation> hexes = new ArrayList<HexLocation>();
+    public List<HexLocation> getHexLocationsAroundVertexLocation(VertexLocation vertex) {
+        List<HexLocation> hexes = new ArrayList<>();
 
         hexes.add(vertex.getHexLoc());
         hexes.add(new HexLocation(vertex.getHexLoc().getX(), vertex.getHexLoc().getY() - 1));
@@ -307,7 +309,7 @@ public class LocationManager {
      * @post returns the list of Ports that the player has a settlement or city
      * on
      */
-    public ArrayList<Port> getPortsPlayerHas(int playerId) {
+    public List<Port> getPortsPlayerHas(int playerId) {
         Set<Port> portsAPlayerHas = new HashSet<Port>();
         ArrayList<VertexLocation> settlementsPlayerHas = new ArrayList<VertexLocation>();
 
@@ -318,7 +320,7 @@ public class LocationManager {
         }
 
         for (VertexLocation settlementPlayerHas : settlementsPlayerHas) {
-            ArrayList<HexLocation> neighboringHexes = getHexLocationsAroundVertexLocation(settlementPlayerHas.getNormalizedLocation());
+            List<HexLocation> neighboringHexes = getHexLocationsAroundVertexLocation(settlementPlayerHas.getNormalizedLocation());
 
             for (Port port : ports) {
                 for (HexLocation hexLocation : neighboringHexes) {
@@ -330,7 +332,7 @@ public class LocationManager {
 
         }
 
-        ArrayList<Port> portsPlayerHas = new ArrayList<Port>();
+        List<Port> portsPlayerHas = new ArrayList<Port>();
         portsPlayerHas.addAll(portsAPlayerHas);
         return portsPlayerHas;
     }
