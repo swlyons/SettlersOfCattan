@@ -8,6 +8,7 @@
                 <root id="src.src.dir" name="Source Code"/>
             </source-roots>
             <test-roots>
+                <root id="test.modeltests.dir"/>
                 <root id="test.test.dir" name="Test Packages"/>
             </test-roots>
         </data>
