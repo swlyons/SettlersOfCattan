@@ -3,13 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package modeltester;
+package client.managers;
 
 import client.data.Card;
 import client.data.Game;
-import client.managers.GameManager;
-import java.io.File;
-import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.After;
@@ -17,7 +14,6 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.apache.commons.io.IOUtils;
 import static org.junit.Assert.*;
 import shared.locations.EdgeLocation;
 import shared.locations.HexLocation;
@@ -53,15 +49,8 @@ public class GameManagerTest {
      */
     @Test
     public void testInitializeGame() {
+        System.out.println("initializeGame");
         String jsonData = "";
-        try{
-            FileInputStream inputStream = new FileInputStream("sample" + File.separator + "model.json");
-            jsonData = IOUtils.toString(inputStream);
-        }
-        catch(Exception fnf){
-            System.out.println(fnf.getMessage());
-        }
-        
         GameManager instance = new GameManager();
         instance.initializeGame(jsonData);
         // TODO review the generated test code and remove the default call to fail.
@@ -271,12 +260,4 @@ public class GameManagerTest {
         fail("The test case is a prototype.");
     }
     
-    public static void main(String[] args) {
-
-        String[] testClasses = new String[] {
-            "client.managers.GameManagerTest"
-        };
-
-        org.junit.runner.JUnitCore.main(testClasses);
-    }
 }

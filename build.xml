@@ -24,7 +24,7 @@
     <!-- YUIDoc output folder -->
     <property name="yuidoc.dir" value="${dest.dir}/javascript"/>
     <!-- Jar file path/name from here -->
-	<property name="demo.dir" value="demo"/>
+    <property name="demo.dir" value="demo"/>
     <property name="server.jar.file" value="${demo.dir}/server.jar"/>
     <property name="client.jar.file" value="${demo.dir}/client.jar"/>
   
@@ -35,9 +35,12 @@
 			<include name="**/*.jar" />
 		</fileset>
 	</path>
-        <path id="all-classpath">
-            <path refid="java.lib.classpath"/>
+        <path id="test-classpath">
+            <pathelement location="/java/lib/junit-4.11.jar"/>
             <pathelement location="${java.build}"/>
+            <fileset dir="${java.lib.dir}">
+                    <include name="**/*.jar" />
+            </fileset>
         </path>
 	
 	<!-- TARGETS -->
@@ -106,9 +109,11 @@
 	<target name="compile" depends="init" description="compile the source" >
 		<javac srcdir="${java.src}" destdir="${java.build}" debug="true" includeantruntime="true">
 			<classpath refid="java.lib.classpath" />
+                        <!--compilerarg value="-Xlint"/-->
 		</javac>
                 <javac srcdir="${test.dir}" destdir="${java.build}" debug="true" includeantruntime="true">
 			<classpath refid="java.lib.classpath" />
+                        <!--compilerarg value="-Xlint"/-->
 		</javac>
 	</target>
 	
@@ -158,18 +163,13 @@
 			</assertions>
 		</java>
 	</target>
+        
     <target name="model-test" depends="compile" description="verifies initialization of model from JSON model data">
-            <java classname="modeltester.GameManagerTest" fork="yes">
-                    <classpath>
-                            <path refid="all-classpath"/>
-                    </classpath>
-                    <assertions>
-                            <enable/>
-                    </assertions>
-            </java>
-    </target>
-    <target name="make-tester-zip" depends="package" description="makes a zip file for your testing team">
-        <zip destfile="./tester.zip" basedir="${java.dist}" />
+        <junit fork="yes" haltonfailure="yes">
+            <test name="client.managers.GameManagerTest" />
+            <formatter type="plain" usefile="false" />
+            <classpath refid="test-classpath" />
+        </junit>
     </target>
   
 </project>
