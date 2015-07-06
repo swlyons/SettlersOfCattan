@@ -9,7 +9,7 @@
     <property name="web.arg" value="gameplay"/>
     <property name="options.arg" value="ug"/>
      
-    <!-- Input folders -->
+    <!-- Input folders -->  
     <property name="java.dir" value="java"/>
     <property name="test.dir" value="test"/>
     <property name="java.src.dir" value="${java.dir}/src"/>
