@@ -3,6 +3,7 @@ package client.data;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
+import shared.locations.VertexLocation;
 
 public class Location {
 
@@ -13,7 +14,7 @@ public class Location {
     private VertexLocation normalizedLocation;
 
     public Location(VertexLocation vertexLocationStart) {
-        whoCanBuild = new HashSet<Integer>();        
+        whoCanBuild = new HashSet<>();        
         normalizedLocation = vertexLocationStart.getNormalizedLocation();
         canBeSettled = true;
         isCity = false;

@@ -18,4 +18,19 @@ public class MessageList {
 		this.lines = lines;
 	}
 
+    @Override
+    public String toString() {
+        
+        String messageLines = "{lines : [";
+        
+        for(MessageLine line : lines){
+            messageLines += line.toString() + ",";
+        }
+        
+        messageLines += "]}";
+        
+        return messageLines;
+    }
+        
+        
 }

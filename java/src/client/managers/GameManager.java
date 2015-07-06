@@ -1,16 +1,33 @@
 package client.managers;
 
-import client.data.*;
-import shared.locations.EdgeLocation;
-import shared.locations.VertexLocation;
-import java.util.Random;
+import client.data.Card;
+import client.data.Game;
+import client.data.Hex;
+import client.data.Player;
+import client.data.ResourceList;
+import com.google.gson.Gson;
+        
+import java.util.List;
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.Date;
-import shared.definitions.ResourceType;
+        
 import shared.definitions.DevCardType;
+import shared.definitions.ResourceType;
+import shared.locations.VertexLocation;
+import shared.locations.EdgeLocation;
+import shared.locations.HexLocation;
+
+import com.google.gson.GsonBuilder;
 
 public class GameManager {
-
+    private LocationManager locationManager;
+    private MapManager mapManager;
+    private ResourceManager resourceManager;
+    private UserManager userManager;
+    private Random randomness;
+    private Game game;
+    
     public GameManager() {
         locationManager = new LocationManager();
         mapManager = new MapManager();
@@ -18,24 +35,40 @@ public class GameManager {
         userManager = new UserManager();
         randomness = new Random();
         randomness.setSeed(new Date().getTime());
+        game = new Game();
     }
-    private LocationManager locationManager;
-    private MapManager mapManager;
-    private ResourceManager resourceManager;
-    private UserManager userManager;
-    private Random randomness;
-
+    
     /**
-     * @author Curt
-     * @param startInfo = string of information necessary to start the game
-     * @pre gameID matches an existing game. Players are in the game
-     * @post GameManager will walk players through starting 2 turns and
-     * structure placement for gameInit
+     * @author ddennis
+     * @param jsonData = JSON string of information to initialize the client model
+     * @pre model is accurate
+     * @post Will initialize the game model 
      */
-    public void initializeGame(int gameID, String startInfo) {
-
-    }
-
+    public void initializeGame(String jsonData) {
+        //create a json object
+        Gson model = new GsonBuilder().create();
+        
+        //initialize the client object model
+        game = model.fromJson(jsonData, Game.class);
+        
+        /* instantiate all the managers */
+        //Location Manager
+        locationManager.setPorts(game.getMap().getPorts());
+       
+        //Map Manager
+        mapManager.setHexList(game.getMap().getHexes());
+        
+        
+        //Resource Manager
+        List<ResourceList> gameBanks = new ArrayList<>();
+        for(Player player : game.getPlayers()){
+            gameBanks.add(player.getPlayerIndex(),player.getResources());
+        }
+        gameBanks.add(4, game.getBank());
+        resourceManager.setGameBanks(gameBanks);
+        
+    }    
+    /* canDo Methods */
     /**
      * @author Curt
      * @param gameID = unique ID of a game in the server's games list
@@ -60,11 +93,11 @@ public class GameManager {
     /**
      * @author Curt
      * @pre Server is running
-     * @post If games exists, all existing games will be listed. Otherwise a
+     * @post If games exist, all existing games will be listed. Otherwise a
      * message will display "No games found"
      */
-    public ArrayList<Game> listGames() {
-        return new ArrayList<Game>();
+    public List<Game> listGames(int gameID) {
+        return new ArrayList<>();
     }
 
     /**
@@ -74,7 +107,7 @@ public class GameManager {
      * @post Player will join a game
      */
     public void joinGame(int gameID) {
-
+        
     }
 
     /**
@@ -122,13 +155,13 @@ public class GameManager {
     public void rollDice(int dieRoll) {
 
 //        int dieRoll = randomness.nextInt(6) + randomness.nextInt(6) + 2;
-        ArrayList<Hex> hexesProducingResources = mapManager.getTerrainResourceHexes(dieRoll);
+        List<Hex> hexesProducingResources = mapManager.getTerrainResourceHexes(dieRoll);
 
         for (ResourceType resourceType : ResourceType.values()) {
-            ArrayList<Hex> hexesProducingAParticularResource = new ArrayList<Hex>();
+            List<Hex> hexesProducingAParticularResource = new ArrayList<>();
 
             for (Hex particularHex : hexesProducingResources) {
-                if (resourceType == particularHex.getResourceType()) {
+                if (resourceType == ResourceType.valueOf(particularHex.getResource().toUpperCase())) {
                     hexesProducingAParticularResource.add(particularHex);
                 }
             }
@@ -138,19 +171,38 @@ public class GameManager {
             }
 
             //If a player shows up, add one resource to them
-            ArrayList<Integer> playersEarningResources = new ArrayList<Integer>();
+            List<Integer> playersEarningResources = new ArrayList<>();
 
             for (Hex hexProducingResources : hexesProducingAParticularResource) {
-                playersEarningResources.addAll(locationManager.awardTerrainResource(hexProducingResources.getHexLocation()));
+                playersEarningResources.addAll(locationManager.awardTerrainResource(hexProducingResources.getLocation()));
             }
-
             int amountAvailable = 0;
-
-            for (int i = 0; i < resourceManager.getGameBanks().get(4).getResourcesCards().size(); i++) {
-                if (resourceManager.getGameBanks().get(4).getResourcesCards().get(i).getResourceType() == resourceType) {
+            ResourceList gameBank = resourceManager.getGameBanks().get(4);
+            switch(resourceType){
+                case ORE :
+                    amountAvailable = gameBank.getOre();
+                    break;
+                case WOOD:
+                    amountAvailable = gameBank.getWood();
+                    break;
+                case BRICK:
+                    amountAvailable = gameBank.getBrick();
+                    break;
+                case SHEEP:
+                    amountAvailable = gameBank.getSheep();
+                    break;
+                case WHEAT:
+                    amountAvailable = gameBank.getWheat();
+                    break;
+                default:
+                    break;
+            }
+            // replaced with switch statment (ddennis)
+            /*for (int i = 0; i < resourceManager.getGameBanks().get(4).getTotalResources(); i++) {
+                if (resourceManager.getGameBanks().get(4).get(i).getResourceType() == resourceType) {
                     amountAvailable++;
                 }
-            }
+            }*/
 
             if (amountAvailable >= playersEarningResources.size()) {
                 Card transferringCard = new Card(true, resourceType, DevCardType.MONOPOLY, true, false);
@@ -165,9 +217,10 @@ public class GameManager {
 
     public void diceIsSevenMoveRober(HexLocation newLocationForRobber) {
         mapManager.moveRobber(newLocationForRobber);
+        
         for (int i = 0; i < 4; i++) {
-            int numberOfResourceCards = 0;
-            if(resourceManager.getGameBanks().get(i).getResourcesCards().size()>=7)
+            int numberOfResourceCards = resourceManager.getGameBanks().get(i).getTotalResources();
+            if(numberOfResourceCards >=7)
             {
                 resourceManager.playerDiscardsHalfCards(i);
             }
@@ -243,4 +296,13 @@ public class GameManager {
     public void endTurn(int gameID) {
 
     }
+
+    public Game getGame() {
+        return game;
+    }
+
+    public void setGame(Game game) {
+        this.game = game;
+    }
+
 }

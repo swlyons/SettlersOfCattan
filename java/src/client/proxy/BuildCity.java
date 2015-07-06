@@ -1,6 +1,6 @@
 package client.proxy;
 
-import client.data.VertexLocation;
+import shared.locations.VertexLocation;
 
 /**
  * contains information about the action of building a city

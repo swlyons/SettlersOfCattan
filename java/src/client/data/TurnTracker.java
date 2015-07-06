@@ -2,45 +2,50 @@ package client.data;
 
 public class TurnTracker {
 
-	private int currentTurn;
-	private String status;
-	private int longestRoad;
-	private int largestArmy;
-	
-	public TurnTracker() {
-		
-	}
+    private int currentTurn;
+    private String status;
+    private int longestRoad;
+    private int largestArmy;
 
-	public int getCurrentTurn() {
-		return currentTurn;
-	}
+    public TurnTracker() {
 
-	public void setCurrentTurn(int currentTurn) {
-		this.currentTurn = currentTurn;
-	}
+    }
 
-	public String getStatus() {
-		return status;
-	}
+    public int getCurrentTurn() {
+        return currentTurn;
+    }
 
-	public void setStatus(String status) {
-		this.status = status;
-	}
+    public void setCurrentTurn(int currentTurn) {
+        this.currentTurn = currentTurn;
+    }
 
-	public int getLongestRoad() {
-		return longestRoad;
-	}
+    public String getStatus() {
+        return status;
+    }
 
-	public void setLongestRoad(int longestRoad) {
-		this.longestRoad = longestRoad;
-	}
+    public void setStatus(String status) {
+        this.status = status;
+    }
 
-	public int getLargestArmy() {
-		return largestArmy;
-	}
+    public int getLongestRoad() {
+        return longestRoad;
+    }
 
-	public void setLargestArmy(int largestArmy) {
-		this.largestArmy = largestArmy;
-	}
-	
+    public void setLongestRoad(int longestRoad) {
+        this.longestRoad = longestRoad;
+    }
+
+    public int getLargestArmy() {
+        return largestArmy;
+    }
+
+    public void setLargestArmy(int largestArmy) {
+        this.largestArmy = largestArmy;
+    }
+
+    @Override
+    public String toString() {
+        return "{" + "currentTurn : " + currentTurn + ", status : " + status + ", longestRoad : " + longestRoad + ", largestArmy : " + largestArmy + '}';
+    }
+
 }
