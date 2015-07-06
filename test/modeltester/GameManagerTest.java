@@ -3,10 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package client.managers;
+package modeltester;
 
 import client.data.Card;
 import client.data.Game;
+import client.managers.GameManager;
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.ArrayList;
@@ -273,7 +274,7 @@ public class GameManagerTest {
     public static void main(String[] args) {
 
         String[] testClasses = new String[] {
-                        "client.managers.GameManagerTest"
+            "client.managers.GameManagerTest"
         };
 
         org.junit.runner.JUnitCore.main(testClasses);
