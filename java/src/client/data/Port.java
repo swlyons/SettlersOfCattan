@@ -1,20 +1,25 @@
 package client.data;
 
+import shared.definitions.ResourceType;
 import shared.locations.HexLocation;
 
 public class Port {
 
-    private String resource;
-    private HexLocation location;
     private int ratio;
+    private ResourceType resource;
+    private HexLocation location;
     
-    public Port(){}
+    public Port(int ratio, ResourceType resource, HexLocation location){
+        this.ratio=ratio;
+        this.resource=resource;
+        this.location=location;
+    }
     
-        public String getResource() {
+        public ResourceType getResource() {
         return resource;
     }
 
-    public void setResource(String resource) {
+    public void setResource(ResourceType resource) {
         this.resource = resource;
     }
 
