@@ -80,7 +80,7 @@ public class GameManager {
     public void endGame(int gameID) {
 
     }
-    
+
     /**
      * @author Curt
      * @pre The server is running. Method triggered by a request from a
@@ -123,100 +123,99 @@ public class GameManager {
         hexes.add(new Hex(new HexLocation(-2, 0), 6, ResourceType.WOOD));
 
         List<Port> ports = new ArrayList<Port>();
-        
-        ports.add( new Port(2,ResourceType.BRICK,new HexLocation(-2,3)));
-        ports.add( new Port(2,ResourceType.ORE,new HexLocation(1,-3)));
-        ports.add( new Port(2,ResourceType.SHEEP,new HexLocation(3,-1)));
-        ports.add( new Port(2,ResourceType.WHEAT,new HexLocation(-1,-2)));
-        ports.add( new Port(2,ResourceType.WOOD,new HexLocation(-3,2)));
-        
-        ports.add( new Port(3,null,new HexLocation(-3,0)));
-        ports.add( new Port(3,null,new HexLocation(0,3)));
-        ports.add( new Port(3,null,new HexLocation(2,1)));
-        ports.add( new Port(3,null,new HexLocation(3,-3)));
-        
+
+        ports.add(new Port(2, ResourceType.BRICK, new HexLocation(-2, 3)));
+        ports.add(new Port(2, ResourceType.ORE, new HexLocation(1, -3)));
+        ports.add(new Port(2, ResourceType.SHEEP, new HexLocation(3, -1)));
+        ports.add(new Port(2, ResourceType.WHEAT, new HexLocation(-1, -2)));
+        ports.add(new Port(2, ResourceType.WOOD, new HexLocation(-3, 2)));
+
+        ports.add(new Port(3, null, new HexLocation(-3, 0)));
+        ports.add(new Port(3, null, new HexLocation(0, 3)));
+        ports.add(new Port(3, null, new HexLocation(2, 1)));
+        ports.add(new Port(3, null, new HexLocation(3, -3)));
+
         if (randomTiles) {
             for (int i = 0; i < hexes.size(); i++) {
                 int getRandomHex = randomness.nextInt(19);
                 HexLocation originalHexLocation = hexes.get(i).getLocation();
                 hexes.get(i).setLocation(hexes.get(getRandomHex).getLocation());
-                hexes.get(getRandomHex).setLocation(originalHexLocation);                
+                hexes.get(getRandomHex).setLocation(originalHexLocation);
             }
         }
-        
+
         if (randomNumbers) {
             for (int i = 0; i < hexes.size(); i++) {
-                if(hexes.get(i).getHasRobber()){
+                if (hexes.get(i).getHasRobber()) {
                     continue;
                 }
-                
+
                 int getRandomHex = randomness.nextInt(19);
-                
-                while(hexes.get(getRandomHex).getHasRobber()){
+
+                while (hexes.get(getRandomHex).getHasRobber()) {
                     getRandomHex = randomness.nextInt(19);
                 }
-                
+
                 int originalNumber = hexes.get(i).getRollValue();
                 hexes.get(i).setRollValue(hexes.get(getRandomHex).getRollValue());
                 hexes.get(getRandomHex).setRollValue(originalNumber);
-                
+
             }
-            
+
         }
-        
-        if(randomPorts){
+
+        if (randomPorts) {
             for (int i = 0; i < ports.size(); i++) {
                 int getRandomHex = randomness.nextInt(9);
                 HexLocation originalHexLocation = ports.get(i).getLocation();
                 ports.get(i).setLocation(ports.get(getRandomHex).getLocation());
-                ports.get(getRandomHex).setLocation(originalHexLocation);                
+                ports.get(getRandomHex).setLocation(originalHexLocation);
             }
         }
-            
 
         List<Location> unsettledLocations = new ArrayList<Location>();
         List<Edge> unsettledEdges = new ArrayList<Edge>();
-        for(Hex hex: hexes){
-            unsettledLocations.add(new Location(new VertexLocation(hex.getLocation(),VertexDirection.NorthEast)));
-            unsettledLocations.add(new Location(new VertexLocation(hex.getLocation(),VertexDirection.NorthWest)));
-            unsettledEdges.add(new Edge(new EdgeLocation(hex.getLocation(),EdgeDirection.NorthWest)));
-            unsettledEdges.add(new Edge(new EdgeLocation(hex.getLocation(),EdgeDirection.North)));
-            unsettledEdges.add(new Edge(new EdgeLocation(hex.getLocation(),EdgeDirection.NorthEast)));
+        for (Hex hex : hexes) {
+            unsettledLocations.add(new Location(new VertexLocation(hex.getLocation(), VertexDirection.NorthEast)));
+            unsettledLocations.add(new Location(new VertexLocation(hex.getLocation(), VertexDirection.NorthWest)));
+            unsettledEdges.add(new Edge(new EdgeLocation(hex.getLocation(), EdgeDirection.NorthWest)));
+            unsettledEdges.add(new Edge(new EdgeLocation(hex.getLocation(), EdgeDirection.North)));
+            unsettledEdges.add(new Edge(new EdgeLocation(hex.getLocation(), EdgeDirection.NorthEast)));
         }
-        
-        unsettledLocations.add(new Location(new VertexLocation(new HexLocation(2,1),VertexDirection.NorthEast)));
-        unsettledLocations.add(new Location(new VertexLocation(new HexLocation(2,1),VertexDirection.NorthWest)));
-        unsettledLocations.add(new Location(new VertexLocation(new HexLocation(1,2),VertexDirection.NorthEast)));
-        unsettledLocations.add(new Location(new VertexLocation(new HexLocation(1,2),VertexDirection.NorthWest)));
-        unsettledLocations.add(new Location(new VertexLocation(new HexLocation(0,3),VertexDirection.NorthEast)));
-        unsettledLocations.add(new Location(new VertexLocation(new HexLocation(0,3),VertexDirection.NorthWest)));
-        unsettledLocations.add(new Location(new VertexLocation(new HexLocation(-1,3),VertexDirection.NorthEast)));
-        unsettledLocations.add(new Location(new VertexLocation(new HexLocation(-1,3),VertexDirection.NorthWest)));
-        unsettledLocations.add(new Location(new VertexLocation(new HexLocation(-2,3),VertexDirection.NorthEast)));
-        unsettledLocations.add(new Location(new VertexLocation(new HexLocation(-2,3),VertexDirection.NorthWest)));
-        
-        unsettledEdges.add(new Edge(new EdgeLocation(new HexLocation(2,1),EdgeDirection.North)));
-        unsettledEdges.add(new Edge(new EdgeLocation(new HexLocation(2,1),EdgeDirection.NorthWest)));
-        unsettledEdges.add(new Edge(new EdgeLocation(new HexLocation(1,2),EdgeDirection.North)));
-        unsettledEdges.add(new Edge(new EdgeLocation(new HexLocation(1,2),EdgeDirection.NorthWest)));
-        unsettledEdges.add(new Edge(new EdgeLocation(new HexLocation(0,3),EdgeDirection.North)));
-        unsettledEdges.add(new Edge(new EdgeLocation(new HexLocation(-1,3),EdgeDirection.North)));
-        unsettledEdges.add(new Edge(new EdgeLocation(new HexLocation(-1,3),EdgeDirection.NorthEast)));
-        unsettledEdges.add(new Edge(new EdgeLocation(new HexLocation(-2,3),EdgeDirection.North)));
-        unsettledEdges.add(new Edge(new EdgeLocation(new HexLocation(-2,3),EdgeDirection.NorthEast)));
-        
+
+        unsettledLocations.add(new Location(new VertexLocation(new HexLocation(2, 1), VertexDirection.NorthEast)));
+        unsettledLocations.add(new Location(new VertexLocation(new HexLocation(2, 1), VertexDirection.NorthWest)));
+        unsettledLocations.add(new Location(new VertexLocation(new HexLocation(1, 2), VertexDirection.NorthEast)));
+        unsettledLocations.add(new Location(new VertexLocation(new HexLocation(1, 2), VertexDirection.NorthWest)));
+        unsettledLocations.add(new Location(new VertexLocation(new HexLocation(0, 3), VertexDirection.NorthEast)));
+        unsettledLocations.add(new Location(new VertexLocation(new HexLocation(0, 3), VertexDirection.NorthWest)));
+        unsettledLocations.add(new Location(new VertexLocation(new HexLocation(-1, 3), VertexDirection.NorthEast)));
+        unsettledLocations.add(new Location(new VertexLocation(new HexLocation(-1, 3), VertexDirection.NorthWest)));
+        unsettledLocations.add(new Location(new VertexLocation(new HexLocation(-2, 3), VertexDirection.NorthEast)));
+        unsettledLocations.add(new Location(new VertexLocation(new HexLocation(-2, 3), VertexDirection.NorthWest)));
+
+        unsettledEdges.add(new Edge(new EdgeLocation(new HexLocation(2, 1), EdgeDirection.North)));
+        unsettledEdges.add(new Edge(new EdgeLocation(new HexLocation(2, 1), EdgeDirection.NorthWest)));
+        unsettledEdges.add(new Edge(new EdgeLocation(new HexLocation(1, 2), EdgeDirection.North)));
+        unsettledEdges.add(new Edge(new EdgeLocation(new HexLocation(1, 2), EdgeDirection.NorthWest)));
+        unsettledEdges.add(new Edge(new EdgeLocation(new HexLocation(0, 3), EdgeDirection.North)));
+        unsettledEdges.add(new Edge(new EdgeLocation(new HexLocation(-1, 3), EdgeDirection.North)));
+        unsettledEdges.add(new Edge(new EdgeLocation(new HexLocation(-1, 3), EdgeDirection.NorthEast)));
+        unsettledEdges.add(new Edge(new EdgeLocation(new HexLocation(-2, 3), EdgeDirection.North)));
+        unsettledEdges.add(new Edge(new EdgeLocation(new HexLocation(-2, 3), EdgeDirection.NorthEast)));
+
         mapManager.setHexList(hexes);
         locationManager.setUnsettledLocations(unsettledLocations);
         locationManager.setUnsettledEdges(unsettledEdges);
         locationManager.setPorts(ports);
 
     }
-/*
+    /*
     
-int ratio, ResourceType resource, HexLocation location
+     int ratio, ResourceType resource, HexLocation location
     
-    */
-    
+     */
+
     /**
      * @author Curt
      * @pre Server is running
@@ -273,38 +272,38 @@ int ratio, ResourceType resource, HexLocation location
     public void placeSettlement(int gameID, HexLocation h, VertexLocation v) {
 
     }
-    
-    public void placeSecondSettlement(int playerId, VertexLocation v){
+
+    public void placeSecondSettlement(int playerId, VertexLocation v) {
         locationManager.settleLocation(v, playerId, true);
         List<HexLocation> neighbors = locationManager.getHexLocationsAroundVertexLocation(v);
-        ResourceList resourceList = new ResourceList(0,0,0,0,0);
+        ResourceList resourceList = new ResourceList(0, 0, 0, 0, 0);
 //        int brick, int ore, int sheep, int wheat, int wood
-        for(Hex hex : mapManager.getHexList()){
-            if(hex.equals(neighbors.get(0))||hex.equals(neighbors.get(1))||hex.equals(neighbors.get(2))){
-                if(hex.getResource()!=null){
-                    switch(hex.getResource()){
-                    case ORE:
-                        resourceList.setOre(resourceList.getOre()+1);
-                        break;
-                    case WOOD:
-                        resourceList.setWood(resourceList.getWood()+1);
-                        break;
-                    case BRICK:
-                        resourceList.setBrick(resourceList.getBrick()+1);
-                        break;
-                    case SHEEP:
-                        resourceList.setSheep(resourceList.getSheep()+1);
-                        break;
-                    case WHEAT:
-                        resourceList.setWheat(resourceList.getWheat()+1);
-                        break;
-                    default:
-                        break;
+        for (Hex hex : mapManager.getHexList()) {
+            if (hex.equals(neighbors.get(0)) || hex.equals(neighbors.get(1)) || hex.equals(neighbors.get(2))) {
+                if (hex.getResource() != null) {
+                    switch (hex.getResource()) {
+                        case ORE:
+                            resourceList.setOre(resourceList.getOre() + 1);
+                            break;
+                        case WOOD:
+                            resourceList.setWood(resourceList.getWood() + 1);
+                            break;
+                        case BRICK:
+                            resourceList.setBrick(resourceList.getBrick() + 1);
+                            break;
+                        case SHEEP:
+                            resourceList.setSheep(resourceList.getSheep() + 1);
+                            break;
+                        case WHEAT:
+                            resourceList.setWheat(resourceList.getWheat() + 1);
+                            break;
+                        default:
+                            break;
                     }
                 }
             }
         }
-        
+
         resourceManager.transferCard(4, playerId, resourceList);
     }
 
@@ -372,12 +371,14 @@ int ratio, ResourceType resource, HexLocation location
     }
 
     public void diceIsSevenMoveRober(HexLocation newLocationForRobber) {
-        mapManager.moveRobber(newLocationForRobber);
+        if (mapManager.moveRobber(newLocationForRobber))
+        {
 
-        for (int i = 0; i < 4; i++) {
-            int numberOfResourceCards = resourceManager.getGameBanks().get(i).getTotalResources();
-            if (numberOfResourceCards >= 7) {
-                resourceManager.playerDiscardsHalfCards(i);
+            for (int i = 0; i < 4; i++) {
+                int numberOfResourceCards = resourceManager.getGameBanks().get(i).getTotalResources();
+                if (numberOfResourceCards >= 7) {
+                    resourceManager.playerDiscardsHalfCards(i);
+                }
             }
         }
     }
