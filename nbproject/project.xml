@@ -5,10 +5,11 @@
         <data xmlns="http://www.netbeans.org/ns/j2se-project/3">
             <name>SettlersOfCattan</name>
             <source-roots>
-                <root id="src.test.dir" name="Test Packages"/>
                 <root id="src.src.dir" name="Source Code"/>
             </source-roots>
-            <test-roots/>
+            <test-roots>
+                <root id="test.test.dir" name="Test Packages"/>
+            </test-roots>
         </data>
     </configuration>
 </project>
