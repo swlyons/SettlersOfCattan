@@ -3,7 +3,8 @@ package client.managers;
 import client.data.Card;
 import client.data.Game;
 import client.data.Hex;
-
+import com.google.gson.Gson;
+        
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Random;
@@ -15,7 +16,7 @@ import shared.locations.VertexLocation;
 import shared.locations.EdgeLocation;
 import shared.locations.HexLocation;
 
-
+import com.google.gson.GsonBuilder;
 
 public class GameManager {
     private LocationManager locationManager;
@@ -23,6 +24,7 @@ public class GameManager {
     private ResourceManager resourceManager;
     private UserManager userManager;
     private Random randomness;
+    private Game game;
     
     public GameManager() {
         locationManager = new LocationManager();
@@ -31,19 +33,23 @@ public class GameManager {
         userManager = new UserManager();
         randomness = new Random();
         randomness.setSeed(new Date().getTime());
+        game = new Game();
     }
-
+    
     /**
      * @author Curt
-     * @param startInfo = string of information necessary to start the game
-     * @pre gameID matches an existing game. Players are in the game
-     * @post GameManager will walk players through starting 2 turns and
-     * structure placement for gameInit
+     * @param jsonData = JSON string of information to initialize the client model
+     * @pre model is accurate
+     * @post Will initialize the game model 
      */
-    public void initializeGame(int gameID, String startInfo) {
-
-    }
-
+    public void initializeGame(String jsonData) {
+        //create a json object
+        Gson model = new GsonBuilder().create();
+        game = model.fromJson(jsonData, Game.class);
+        
+        System.out.println(game);
+    }    
+    
     /**
      * @author Curt
      * @param gameID = unique ID of a game in the server's games list
@@ -68,10 +74,10 @@ public class GameManager {
     /**
      * @author Curt
      * @pre Server is running
-     * @post If games exists, all existing games will be listed. Otherwise a
+     * @post If games exist, all existing games will be listed. Otherwise a
      * message will display "No games found"
      */
-    public ArrayList<Game> listGames() {
+    public List<Game> listGames(int gameID) {
         return new ArrayList<>();
     }
 

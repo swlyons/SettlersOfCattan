@@ -3,17 +3,18 @@ import java.util.ArrayList;
 
 public class Game {
 		
-	private ArrayList<Player> players;
-	private Bank gameBank;
+	private Bank bank;
 	private MessageList chat;
 	private MessageList log;
+        private Map map;
+        private ArrayList<Player> players;
 	private TradeOffer tradeOffer;
 	private TurnTracker turnTracker;
 	private int version;
-	private int winnerID;
+	private int winner;
 	
 	public Game() {
-		players = new ArrayList<Player>();
+		players = new ArrayList<>();
 	}
 
 	public ArrayList<Player> getPlayers() {
@@ -23,10 +24,10 @@ public class Game {
 		this.players = players;
 	}
 	public Bank getGameBank() {
-		return gameBank;
+		return bank;
 	}
-	public void setGameBank(Bank gameBank) {
-		this.gameBank = gameBank;
+	public void setGameBank(Bank bank) {
+		this.bank = bank;
 	}
 	public MessageList getChat() {
 		return chat;
@@ -59,10 +60,16 @@ public class Game {
 		this.version = version;
 	}
 	public int getWinnerID() {
-		return winnerID;
+		return winner;
 	}
-	public void setWinnerID(int winnerID) {
-		this.winnerID = winnerID;
+	public void setWinnerID(int winner) {
+		this.winner = winner;
 	}
+
+    @Override
+    public String toString() {
+        return "Game{" + "chat=" + chat + ", log=" + log + ", players=" + players + ", version=" + version + ", winner=" + winner + '}';
+    }
 	
+        
 }

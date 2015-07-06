@@ -16,7 +16,7 @@ public class UserManager {
      * @pre
      * @post returns if the user was successfully created or not
      */
-    private boolean createUser(String username, String password, String passwordValidate){
+    public boolean createUser(String username, String password, String passwordValidate){
         boolean created = false;
        
         //may want to throw different exceptions instead of returning booleans
@@ -39,7 +39,7 @@ public class UserManager {
      * @post returns if the username and password combination exists in the
      * database
      */
-    private boolean authenticateUser(String username, String password){
+    public boolean authenticateUser(String username, String password){
         boolean authenticated = false;
         //if username is null return false
         
@@ -57,7 +57,7 @@ public class UserManager {
      * Registering a new user should reject the registration if the username is 
      * fewer than 3 or greater than seven characters
      */
-    private boolean validateUsername(String username){
+    public boolean validateUsername(String username){
         boolean isValid = false;
         //if username is null return false
         
@@ -76,7 +76,7 @@ public class UserManager {
      * characters (alphanumerics, underscores, hyphens, or if the password 
      * verification entry doesn’t match the original.
      */
-    private boolean validatePassword(String password){
+    public boolean validatePassword(String password){
         boolean isValid = false;
         
         
@@ -89,7 +89,7 @@ public class UserManager {
      * @pre
      * @post returns if password is exactly the same as passwordValidate
      */
-    private boolean validatePasswordsMatch(String password, String passwordValidate){
+    public boolean validatePasswordsMatch(String password, String passwordValidate){
        boolean isValid = false;
 
 

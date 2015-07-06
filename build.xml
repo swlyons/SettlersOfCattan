@@ -1,6 +1,8 @@
 ﻿<project name="Demo Server" default="server" basedir=".">
 
 	<!-- PROPERTIES -->
+        <!-- Directory where the Java compiler puts .class files -->
+	<property name="build" location="build"/>
 	<!-- ********** -->	
     
 	<!-- Directory paths for the java server, javascript, and dest dir for the student copy -->
@@ -34,7 +36,10 @@
 			<include name="**/*.jar" />
 		</fileset>
 	</path>
-
+        <path id="all-classpath">
+		<path refid="java.lib.classpath"/>
+		<pathelement location="${build}"/>
+	</path>
 	<!-- TARGETS -->
 	<!-- ******* -->
      
@@ -150,7 +155,16 @@
 			</assertions>
 		</java>
 	</target>
-    
+    <target name="model-test" depends="compile" description="verifies initilization of model from JSON model data">
+            <java classname="client.managers.GameManagerTest" fork="yes">
+                    <classpath>
+                            <path refid="all-classpath"/>
+                    </classpath>
+                    <assertions>
+                            <enable/>
+                    </assertions>
+            </java>
+    </target>
     <target name="make-tester-zip" depends="package" description="makes a zip file for your testing team">
         <zip destfile="./tester.zip" basedir="${java.dist}" />
     </target>
