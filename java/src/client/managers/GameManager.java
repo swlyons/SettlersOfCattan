@@ -3,6 +3,8 @@ package client.managers;
 import client.data.Card;
 import client.data.Game;
 import client.data.Hex;
+import client.data.Player;
+import client.data.ResourceList;
 import com.google.gson.Gson;
         
 import java.util.List;
@@ -48,8 +50,25 @@ public class GameManager {
         
         //initialize the client object model
         game = model.fromJson(jsonData, Game.class);
+        
+        /* instantiate all the managers */
+        //Location Manager
+        locationManager.setPorts(game.getMap().getPorts());
+       
+        //Map Manager
+        mapManager.setHexList(game.getMap().getHexes());
+        
+        
+        //Resource Manager
+        List<ResourceList> gameBanks = new ArrayList<>();
+        for(Player player : game.getPlayers()){
+            gameBanks.add(player.getPlayerIndex(),player.getResources());
+        }
+        gameBanks.add(4, game.getBank());
+        resourceManager.setGameBanks(gameBanks);
+        
     }    
-    
+    /* canDo Methods */
     /**
      * @author Curt
      * @param gameID = unique ID of a game in the server's games list
@@ -88,7 +107,7 @@ public class GameManager {
      * @post Player will join a game
      */
     public void joinGame(int gameID) {
-
+        
     }
 
     /**
@@ -157,14 +176,33 @@ public class GameManager {
             for (Hex hexProducingResources : hexesProducingAParticularResource) {
                 playersEarningResources.addAll(locationManager.awardTerrainResource(hexProducingResources.getLocation()));
             }
-
             int amountAvailable = 0;
-
-            for (int i = 0; i < resourceManager.getGameBanks().get(4).getResourcesCards().size(); i++) {
-                if (resourceManager.getGameBanks().get(4).getResourcesCards().get(i).getResourceType() == resourceType) {
+            ResourceList gameBank = resourceManager.getGameBanks().get(4);
+            switch(resourceType){
+                case ORE :
+                    amountAvailable = gameBank.getOre();
+                    break;
+                case WOOD:
+                    amountAvailable = gameBank.getWood();
+                    break;
+                case BRICK:
+                    amountAvailable = gameBank.getBrick();
+                    break;
+                case SHEEP:
+                    amountAvailable = gameBank.getSheep();
+                    break;
+                case WHEAT:
+                    amountAvailable = gameBank.getWheat();
+                    break;
+                default:
+                    break;
+            }
+            // replaced with switch statment (ddennis)
+            /*for (int i = 0; i < resourceManager.getGameBanks().get(4).getTotalResources(); i++) {
+                if (resourceManager.getGameBanks().get(4).get(i).getResourceType() == resourceType) {
                     amountAvailable++;
                 }
-            }
+            }*/
 
             if (amountAvailable >= playersEarningResources.size()) {
                 Card transferringCard = new Card(true, resourceType, DevCardType.MONOPOLY, true, false);
@@ -179,9 +217,10 @@ public class GameManager {
 
     public void diceIsSevenMoveRober(HexLocation newLocationForRobber) {
         mapManager.moveRobber(newLocationForRobber);
+        
         for (int i = 0; i < 4; i++) {
-            int numberOfResourceCards = 0;
-            if(resourceManager.getGameBanks().get(i).getResourcesCards().size()>=7)
+            int numberOfResourceCards = resourceManager.getGameBanks().get(i).getTotalResources();
+            if(numberOfResourceCards >=7)
             {
                 resourceManager.playerDiscardsHalfCards(i);
             }

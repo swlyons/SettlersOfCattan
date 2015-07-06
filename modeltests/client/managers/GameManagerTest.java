@@ -51,7 +51,7 @@ public class GameManagerTest {
         String jsonDataIn = "";
         String jsonDataOut = "";
         try {
-            jsonDataIn = FileUtils.readFileToString(new File("C:\\Users\\ddennis\\Documents\\SettlersOfCattan" + File.separator + "sample" + File.separator + "model.json"));
+            jsonDataIn = FileUtils.readFileToString(new File("C:\\Users\\ddennis\\Documents\\SettlersOfCattan" + File.separator + "sample" + File.separator + "smallExample.json"));
         } catch (IOException ex) {
             System.out.println(ex.getMessage() + "\n\t" + jsonDataIn);
         }

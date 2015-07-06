@@ -32,31 +32,31 @@ public class Map {
     }
 
     public ArrayList<Hex> getHexes() {
-        return (ArrayList)hexes;
+        return (ArrayList<Hex>)hexes;
     }
 
     public void setHexes(List<Hex> hexes) {
         this.hexes = hexes;
     }
 
-    public List<Port> getPorts() {
-        return ports;
+    public ArrayList<Port> getPorts() {
+        return (ArrayList<Port>)ports;
     }
 
     public void setPorts(List<Port> ports) {
         this.ports = ports;
     }
 
-    public ArrayList<VertexObject> getRoads() {
-        return (ArrayList)roads;
+    public ArrayList<EdgeValue> getRoads() {
+        return (ArrayList<EdgeValue>)roads;
     }
 
     public void setRoads(List<EdgeValue> roads) {
         this.roads = roads;
     }
 
-    public ArrayList<EdgeValue> getSettlements() {
-        return (ArrayList)settlements;
+    public ArrayList<VertexObject> getSettlements() {
+        return (ArrayList<VertexObject>)settlements;
     }
 
     public void setSettlements(List<VertexObject> settlements) {
@@ -64,7 +64,7 @@ public class Map {
     }
 
     public ArrayList<VertexObject> getCities() {
-        return (ArrayList)cities;
+        return (ArrayList<VertexObject>)cities;
     }
 
     public void setCities(List<VertexObject> cities) {

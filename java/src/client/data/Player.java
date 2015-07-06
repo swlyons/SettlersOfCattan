@@ -69,15 +69,7 @@ public class Player {
     public void setVictoryPoints(int victoryPoints) {
         this.victoryPoints = victoryPoints;
     }
-
-    public ResourceList getHand() {
-        return resources;
-    }
-
-    public void setHand(ResourceList resources) {
-        this.resources = resources;
-    }
-
+    
     public int getPlayerIndex() {
         return playerIndex;
     }
