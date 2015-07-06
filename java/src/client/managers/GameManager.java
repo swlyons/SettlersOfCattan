@@ -80,7 +80,7 @@ public class GameManager {
     public void endGame(int gameID) {
 
     }
-
+    
     /**
      * @author Curt
      * @pre The server is running. Method triggered by a request from a
@@ -272,6 +272,40 @@ int ratio, ResourceType resource, HexLocation location
      */
     public void placeSettlement(int gameID, HexLocation h, VertexLocation v) {
 
+    }
+    
+    public void placeSecondSettlement(int playerId, VertexLocation v){
+        locationManager.settleLocation(v, playerId, true);
+        List<HexLocation> neighbors = locationManager.getHexLocationsAroundVertexLocation(v);
+        ResourceList resourceList = new ResourceList(0,0,0,0,0);
+//        int brick, int ore, int sheep, int wheat, int wood
+        for(Hex hex : mapManager.getHexList()){
+            if(hex.equals(neighbors.get(0))||hex.equals(neighbors.get(1))||hex.equals(neighbors.get(2))){
+                if(hex.getResource()!=null){
+                    switch(hex.getResource()){
+                    case ORE:
+                        resourceList.setOre(resourceList.getOre()+1);
+                        break;
+                    case WOOD:
+                        resourceList.setWood(resourceList.getWood()+1);
+                        break;
+                    case BRICK:
+                        resourceList.setBrick(resourceList.getBrick()+1);
+                        break;
+                    case SHEEP:
+                        resourceList.setSheep(resourceList.getSheep()+1);
+                        break;
+                    case WHEAT:
+                        resourceList.setWheat(resourceList.getWheat()+1);
+                        break;
+                    default:
+                        break;
+                    }
+                }
+            }
+        }
+        
+        resourceManager.transferCard(4, playerId, resourceList);
     }
 
     /**
