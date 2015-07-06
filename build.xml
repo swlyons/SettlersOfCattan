@@ -1,10 +1,10 @@
 ﻿<project name="Demo Server" default="server" basedir=".">
 
-	<!-- PROPERTIES -->
-        <!-- Directory where the Java compiler puts .class files -->
-	<!-- ********** -->	
+    <!-- PROPERTIES -->
+    <!-- Directory where the Java compiler puts .class files -->
+    <!-- ********** -->	
     
-	<!-- Directory paths for the java server, javascript, and dest dir for the student copy -->
+    <!-- Directory paths for the java server, javascript, and dest dir for the student copy -->
     <property name="port.arg" value="8081"/>
     <property name="web.arg" value="gameplay"/>
     <property name="options.arg" value="ug"/>
@@ -28,54 +28,54 @@
     <property name="server.jar.file" value="${demo.dir}/server.jar"/>
     <property name="client.jar.file" value="${demo.dir}/client.jar"/>
   
-	<!-- CLASSPATHS -->
-	<!-- ********** -->
-        <path id="java.lib.classpath">
-		<fileset dir="${java.lib.dir}">
-			<include name="**/*.jar" />
-		</fileset>
-	</path>
-        <path id="test-classpath">
-            <pathelement location="/java/lib/junit-4.11.jar"/>
-            <pathelement location="${java.build}"/>
-            <fileset dir="${java.lib.dir}">
-                    <include name="**/*.jar" />
-            </fileset>
-        </path>
+    <!-- CLASSPATHS -->
+    <!-- ********** -->
+    <path id="java.lib.classpath">
+        <fileset dir="${java.lib.dir}">
+            <include name="**/*.jar" />
+        </fileset>
+    </path>
+    <path id="test.classpath">
+        <pathelement location="/java/lib/junit-4.11.jar"/>
+        <pathelement location="${java.build}"/>
+        <fileset dir="${java.lib.dir}">
+            <include name="**/*.jar" />
+        </fileset>
+    </path>
 	
-	<!-- TARGETS -->
-	<!-- ******* -->
+    <!-- TARGETS -->
+    <!-- ******* -->
      
-	<target name="server" description="Runs the demo server">
-		<java jar="${server.jar.file}" fork="true" dir="${demo.dir}">
-			<arg value="${port.arg}"/>
-			<arg value="${web.arg}"/>
-			<arg value="${options.arg}"/>
-			<assertions>
-				<enable/>
-			</assertions>
-		</java>
-	</target>
+    <target name="server" description="Runs the demo server">
+        <java jar="${server.jar.file}" fork="true" dir="${demo.dir}">
+            <arg value="${port.arg}"/>
+            <arg value="${web.arg}"/>
+            <arg value="${options.arg}"/>
+            <assertions>
+                <enable/>
+            </assertions>
+        </java>
+    </target>
     
-	<target name="client" description="Runs the demo client">
-		<java jar="${client.jar.file}" fork="true" dir="${demo.dir}">
-			<assertions>
-				<enable/>
-			</assertions>
-		</java>
-	</target>
+    <target name="client" description="Runs the demo client">
+        <java jar="${client.jar.file}" fork="true" dir="${demo.dir}">
+            <assertions>
+                <enable/>
+            </assertions>
+        </java>
+    </target>
     
     <target name="make-java-doc" description="Generate the Java docs">
         <echo> Making Java documentation </echo>
         <delete dir="${javadoc.dir}"/>
-		<javadoc destdir="${javadoc.dir}" Package="true">
-			<classpath refid="java.lib.classpath" />
-			<packageset dir="${java.src.dir}">
-				<include name="client/**"/>
-				<include name="shared/**"/>
-			</packageset>
-		</javadoc>
-   </target>
+        <javadoc destdir="${javadoc.dir}" Package="true">
+            <classpath refid="java.lib.classpath" />
+            <packageset dir="${java.src.dir}">
+                <include name="client/**"/>
+                <include name="shared/**"/>
+            </packageset>
+        </javadoc>
+    </target>
     
     <!--
     <target name="make-js-doc" description="Generate the JavaScript docs">
@@ -85,90 +85,90 @@
             <arg value="${yuidoc.dir}"/>
             <arg value="${javascript.dir}"/>
         </exec>
-	</target>
+        </target>
     -->
 
-  	<property name="java.dir" location="java"/>
-	<property name="java.src" location="${java.dir}/src"/>
-	<property name="java.images" location="${java.dir}/images"/>
-	<property name="java.build" location="${java.dir}/build"/>
-	<property name="java.dist" location="${java.dir}/dist"/>
-	<property name="java.lib" location="${java.dir}/lib"/>
+    <property name="java.dir" location="java"/>
+    <property name="java.src" location="${java.dir}/src"/>
+    <property name="java.images" location="${java.dir}/images"/>
+    <property name="java.build" location="${java.dir}/build"/>
+    <property name="java.dist" location="${java.dir}/dist"/>
+    <property name="java.lib" location="${java.dir}/lib"/>
  
-	<target name="init" description="create build directories">
-		<tstamp/>
-		<mkdir dir="${java.build}"/>
-		<mkdir dir="${java.dist}"/>
-	</target>
+    <target name="init" description="create build directories">
+        <tstamp/>
+        <mkdir dir="${java.build}"/>
+        <mkdir dir="${java.dist}"/>
+    </target>
 		
-	<target name="clean" description="clean build files" >
-		<delete dir="${java.build}"/>
-		<delete dir="${java.dist}"/>
-	</target>
+    <target name="clean" description="clean build files" >
+        <delete dir="${java.build}"/>
+        <delete dir="${java.dist}"/>
+    </target>
     
-	<target name="compile" depends="init" description="compile the source" >
-		<javac srcdir="${java.src}" destdir="${java.build}" debug="true" includeantruntime="true">
-			<classpath refid="java.lib.classpath" />
-                        <!--compilerarg value="-Xlint"/-->
-		</javac>
-                <javac srcdir="${test.dir}" destdir="${java.build}" debug="true" includeantruntime="true">
-			<classpath refid="java.lib.classpath" />
-                        <!--compilerarg value="-Xlint"/-->
-		</javac>
-	</target>
+    <target name="compile" depends="init" description="compile the source" >
+        <javac srcdir="${java.src}" destdir="${java.build}" debug="true" includeantruntime="true">
+            <classpath refid="java.lib.classpath" />
+            <!--compilerarg value="-Xlint"/-->
+        </javac>
+        <javac srcdir="${test.dir}" destdir="${java.build}" debug="true" includeantruntime="true">
+            <classpath refid="java.lib.classpath" />
+            <!--compilerarg value="-Xlint"/-->
+        </javac>
+    </target>
 	
-	<target name="package" depends="compile" description="package the jar file" >
-		<mkdir dir="${java.dist}/lib"/>
-		<copy todir="${java.dist}/lib">
-			<fileset dir="${java.lib}">
-				<include name="**"/>
-			</fileset>
-		</copy>
-		<mkdir dir="${java.dist}/images"/>
-		<copy todir="${java.dist}/images">
-			<fileset dir="${java.images}">
-				<include name="**"/>
-			</fileset>
-		</copy>
- 		<jar jarfile="${java.dist}/catan-client.jar" basedir="${java.build}">
-			<manifest>
-				<attribute name="Main-Class" value="client.main.Catan"/>
-				<attribute name="Class-Path" 
-					value="lib/gson-2.2.4.jar" />
-			</manifest>
-		</jar>
- 		<jar jarfile="${java.dist}/catan-server.jar" basedir="${java.build}">
-			<manifest>
-				<attribute name="Main-Class" value="PUT THE NAME OF YOUR SERVER'S MAIN CLASS HERE"/>
-				<attribute name="Class-Path" 
-					value="lib/gson-2.2.4.jar" />
-			</manifest>
-		</jar>
-	</target>
+    <target name="package" depends="compile" description="package the jar file" >
+        <mkdir dir="${java.dist}/lib"/>
+        <copy todir="${java.dist}/lib">
+            <fileset dir="${java.lib}">
+                <include name="**"/>
+            </fileset>
+        </copy>
+        <mkdir dir="${java.dist}/images"/>
+        <copy todir="${java.dist}/images">
+            <fileset dir="${java.images}">
+                <include name="**"/>
+            </fileset>
+        </copy>
+        <jar jarfile="${java.dist}/catan-client.jar" basedir="${java.build}">
+            <manifest>
+                <attribute name="Main-Class" value="client.main.Catan"/>
+                <attribute name="Class-Path" 
+                                           value="lib/gson-2.2.4.jar" />
+            </manifest>
+        </jar>
+        <jar jarfile="${java.dist}/catan-server.jar" basedir="${java.build}">
+            <manifest>
+                <attribute name="Main-Class" value="PUT THE NAME OF YOUR SERVER'S MAIN CLASS HERE"/>
+                <attribute name="Class-Path" 
+                                           value="lib/gson-2.2.4.jar" />
+            </manifest>
+        </jar>
+    </target>
 	
-	<target name="our-client" depends="package" description="compiles, packages, and runs the student client">
-		<java jar="${java.dist}/catan-client.jar" dir="${java.dist}" fork="yes">
-			<sysproperty key="com.sun.management.jmxremote" value=""/>
-			<assertions>
-				<enable/>
-			</assertions>
-		</java>
-	</target>
+    <target name="our-client" depends="package" description="compiles, packages, and runs the student client">
+        <java jar="${java.dist}/catan-client.jar" dir="${java.dist}" fork="yes">
+            <sysproperty key="com.sun.management.jmxremote" value=""/>
+            <assertions>
+                <enable/>
+            </assertions>
+        </java>
+    </target>
  	
-	<target name="our-server" depends="package" description="compiles, packages, and runs the student server">
-		<java jar="${java.dist}/catan-server.jar" dir="${java.dist}" fork="yes">
-			<sysproperty key="com.sun.management.jmxremote" value=""/>
-			<assertions>
-				<enable/>
-			</assertions>
-		</java>
-	</target>
+    <target name="our-server" depends="package" description="compiles, packages, and runs the student server">
+        <java jar="${java.dist}/catan-server.jar" dir="${java.dist}" fork="yes">
+            <sysproperty key="com.sun.management.jmxremote" value=""/>
+            <assertions>
+                <enable/>
+            </assertions>
+        </java>
+    </target>
         
     <target name="model-test" depends="compile" description="verifies initialization of model from JSON model data">
         <junit fork="yes" haltonfailure="yes">
-            <test name="client.managers.GameManagerTest" />
+            <test name="${java.dir}.client.manager.GameManagerTest" />
             <formatter type="plain" usefile="false" />
-            <classpath refid="test-classpath" />
+            <classpath refid="test.classpath" />
         </junit>
     </target>
   
