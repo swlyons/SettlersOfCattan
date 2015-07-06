@@ -47,7 +47,7 @@ public class GameManager {
         Gson model = new GsonBuilder().create();
         game = model.fromJson(jsonData, Game.class);
         
-        System.out.println(game);
+        System.out.println(game.getWinnerID());
     }    
     
     /**

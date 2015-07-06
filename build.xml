@@ -166,6 +166,8 @@
                 <pathelement location="${java.build}" />    
                 <pathelement location="${java.lib.dir}/junit-4.12.jar"/>
                 <pathelement location="${java.lib.dir}/hamcrest-core-1.3.jar"/>
+                <pathelement location="${java.lib.dir}/org.apache.commons.io.jar"/>
+                <pathelement location="${java.lib.dir}/gson-2.2.4.jar"/>
             </classpath>    
             <batchtest>
                 <fileset dir="${modeltest.dir}">
