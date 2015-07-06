@@ -160,8 +160,22 @@
             </assertions>
         </java>
     </target>
-        
-    <target name="model-tests" depends="compile" description="run automated server tests">
+    <target name="test" depends="compile">
+        <junit>
+            <classpath>
+                <pathelement location="${java.build}" />    
+                <pathelement location="${java.lib.dir}/junit-4.12.jar"/>
+                <pathelement location="${java.lib.dir}/hamcrest-core-1.3.jar"/>
+            </classpath>    
+            <batchtest>
+                <fileset dir="${test.dir}">
+                    <include name="**/*Test*" />
+                </fileset>
+            </batchtest>
+            <formatter type="brief" usefile="false"/>
+        </junit>
+    </target>  
+    <!--target name="model-tests" depends="compile" description="run automated server tests">
             <java classname="model.ClientModelTests" fork="yes">
                     <classpath>
                             <path refid="all-classpath"/>
@@ -170,7 +184,7 @@
                             <enable/>
                     </assertions>
             </java>
-    </target>
+    </target-->
   
 </project>
 

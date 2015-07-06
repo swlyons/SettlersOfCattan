@@ -31,18 +31,7 @@ public class ClientModelTests {
     }
 
     @Test
-    public void test_1() {
-        assertEquals("OK", "OK");
+    public void intializeModelTest() {
         assertTrue(true);
-        assertFalse(false);
-    }
-
-    public static void main(String[] args) {
-
-        String[] testClasses = new String[]{
-            "model.ClientModelTests"
-        };
-
-        org.junit.runner.JUnitCore.main(testClasses);
     }
 }
