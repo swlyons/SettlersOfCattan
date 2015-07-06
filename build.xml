@@ -35,12 +35,9 @@
             <include name="**/*.jar" />
         </fileset>
     </path>
-    <path id="test.classpath">
-        <pathelement location="/java/lib/junit-4.11.jar"/>
-        <pathelement location="${java.build}"/>
-        <fileset dir="${java.lib.dir}">
-            <include name="**/*.jar" />
-        </fileset>
+    <path id="all-classpath">
+            <path refid="java.lib.classpath"/>
+            <pathelement location="${java.build}"/>
     </path>
 	
     <!-- TARGETS -->
@@ -164,12 +161,15 @@
         </java>
     </target>
         
-    <target name="model-test" depends="compile" description="verifies initialization of model from JSON model data">
-        <junit fork="yes" haltonfailure="yes">
-            <test name="${java.dir}.client.manager.GameManagerTest" />
-            <formatter type="plain" usefile="false" />
-            <classpath refid="test.classpath" />
-        </junit>
+    <target name="model-tests" depends="compile" description="run automated server tests">
+            <java classname="model.ClientModelTests" fork="yes">
+                    <classpath>
+                            <path refid="all-classpath"/>
+                    </classpath>
+                    <assertions>
+                            <enable/>
+                    </assertions>
+            </java>
     </target>
   
 </project>
