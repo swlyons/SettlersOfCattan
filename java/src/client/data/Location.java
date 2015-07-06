@@ -8,16 +8,17 @@ import shared.locations.VertexLocation;
 public class Location {
 
     private int ownerID;
-    private Set<Integer> whoCanBuild;
     private boolean canBeSettled;
     private boolean isCity;
+    private Set<Integer> whoCanBuild;
     private VertexLocation normalizedLocation;
 
     public Location(VertexLocation vertexLocationStart) {
-        whoCanBuild = new HashSet<>();        
-        normalizedLocation = vertexLocationStart.getNormalizedLocation();
+        ownerID=4;
         canBeSettled = true;
         isCity = false;
+        whoCanBuild = new HashSet<>();        
+        normalizedLocation = vertexLocationStart.getNormalizedLocation();
     }
 
     public int getOwnerID() {

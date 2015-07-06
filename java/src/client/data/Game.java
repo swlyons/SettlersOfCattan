@@ -1,28 +1,39 @@
 package client.data;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Game {
 
+    private String name;
     private ResourceList bank;
     private MessageList chat;
     private MessageList log;
     private Map map;
-    private ArrayList<Player> players;
+    private List<Player> players;
     private TradeOffer tradeOffer;
     private TurnTracker turnTracker;
     private int version;
     private int winner;
 
-    public Game() {
-        players = new ArrayList<>();
+    public Game(List<Player> players, String name) {
+        this.players = players;
+        this.name = name;
     }
 
-    public ArrayList<Player> getPlayers() {
+    public void setName(String name){
+        this.name = name;
+    }
+    
+    public String getName(){
+        return name;
+    }
+    
+    public List<Player> getPlayers() {
         return players;
     }
 
-    public void setPlayers(ArrayList<Player> players) {
+    public void setPlayers(List<Player> players) {
         this.players = players;
     }
 

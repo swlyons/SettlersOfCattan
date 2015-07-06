@@ -16,11 +16,11 @@ import shared.locations.VertexDirection;
 
 public class LocationManager {
 
-    private ArrayList<Location> settledLocations;
-    private ArrayList<Location> unsettledLocations;
-    private ArrayList<Edge> settledEdges;
-    private ArrayList<Edge> unsettledEdges;
-    private ArrayList<Port> ports;
+    private List<Location> settledLocations;
+    private List<Location> unsettledLocations;
+    private List<Edge> settledEdges;
+    private List<Edge> unsettledEdges;
+    private List<Port> ports;
 
     public LocationManager() {
         settledLocations = new ArrayList<Location>();
@@ -30,6 +30,7 @@ public class LocationManager {
         ports = new ArrayList<Port>();
     }
 
+    
     /**
      *
      * @param locationToSettle = the location the current player wants to build
@@ -337,43 +338,43 @@ public class LocationManager {
         return portsPlayerHas;
     }
 
-    public ArrayList<Location> getSettledLocations() {
+    public List<Location> getSettledLocations() {
         return settledLocations;
     }
 
-    public ArrayList<Location> getUnsettledLocations() {
+    public List<Location> getUnsettledLocations() {
         return unsettledLocations;
     }
 
-    public void setSettledLocations(ArrayList<Location> settledLocationsNew) {
+    public void setSettledLocations(List<Location> settledLocationsNew) {
         settledLocations = settledLocationsNew;
     }
 
-    public void setUnsettledLocations(ArrayList<Location> unsettledLocationsNew) {
+    public void setUnsettledLocations(List<Location> unsettledLocationsNew) {
         unsettledLocations = unsettledLocationsNew;
     }
 
-    public ArrayList<Edge> getSettledEdges() {
+    public List<Edge> getSettledEdges() {
         return settledEdges;
     }
 
-    public ArrayList<Edge> getUnsettledEdges() {
+    public List<Edge> getUnsettledEdges() {
         return unsettledEdges;
     }
 
-    public void setSettledEdges(ArrayList<Edge> settledEdgesNew) {
+    public void setSettledEdges(List<Edge> settledEdgesNew) {
         settledEdges = settledEdgesNew;
     }
 
-    public ArrayList<Port> getPorts() {
+    public List<Port> getPorts() {
         return ports;
     }
 
-    public void setPorts(ArrayList<Port> portsNew) {
+    public void setPorts(List<Port> portsNew) {
         ports = portsNew;
     }
 
-    public void setUnsettledEdges(ArrayList<Edge> unsettledEdgesNew) {
+    public void setUnsettledEdges(List<Edge> unsettledEdgesNew) {
         unsettledEdges = unsettledEdgesNew;
     }
 

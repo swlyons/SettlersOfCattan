@@ -1,17 +1,20 @@
 package client.managers;
 
 import client.data.Card;
+import client.data.Edge;
 import client.data.Game;
 import client.data.Hex;
+import client.data.Location;
 import client.data.Player;
+import client.data.Port;
 import client.data.ResourceList;
 import com.google.gson.Gson;
-        
+
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.Date;
-        
+
 import shared.definitions.DevCardType;
 import shared.definitions.ResourceType;
 import shared.locations.VertexLocation;
@@ -19,56 +22,54 @@ import shared.locations.EdgeLocation;
 import shared.locations.HexLocation;
 
 import com.google.gson.GsonBuilder;
+import shared.locations.EdgeDirection;
+import shared.locations.VertexDirection;
 
 public class GameManager {
+
     private LocationManager locationManager;
     private MapManager mapManager;
     private ResourceManager resourceManager;
-    private UserManager userManager;
     private Random randomness;
     private Game game;
-    
+
     public GameManager() {
-        locationManager = new LocationManager();
-        mapManager = new MapManager();
-        resourceManager = new ResourceManager();
-        userManager = new UserManager();
         randomness = new Random();
         randomness.setSeed(new Date().getTime());
-        game = new Game();
     }
-    
+
     /**
      * @author ddennis
-     * @param jsonData = JSON string of information to initialize the client model
+     * @param jsonData = JSON string of information to initialize the client
+     * model
      * @pre model is accurate
-     * @post Will initialize the game model 
+     * @post Will initialize the game model
      */
     public void initializeGame(String jsonData) {
         //create a json object
         Gson model = new GsonBuilder().create();
-        
+
         //initialize the client object model
         game = model.fromJson(jsonData, Game.class);
-        
+
         /* instantiate all the managers */
         //Location Manager
         locationManager.setPorts(game.getMap().getPorts());
-       
+
         //Map Manager
         mapManager.setHexList(game.getMap().getHexes());
-        
-        
+
         //Resource Manager
         List<ResourceList> gameBanks = new ArrayList<>();
-        for(Player player : game.getPlayers()){
-            gameBanks.add(player.getPlayerIndex(),player.getResources());
+        for (Player player : game.getPlayers()) {
+            gameBanks.add(player.getPlayerIndex(), player.getResources());
         }
         gameBanks.add(4, game.getBank());
         resourceManager.setGameBanks(gameBanks);
-        
-    }    
+
+    }
     /* canDo Methods */
+
     /**
      * @author Curt
      * @param gameID = unique ID of a game in the server's games list
@@ -86,10 +87,136 @@ public class GameManager {
      * successfully logged in user.
      * @post Game is added to the list of games on server
      */
-    public void createGame() {
+    public void createGame(List<Player> players, boolean randomTiles, boolean randomNumbers, boolean randomPorts, String name) {
+        locationManager = new LocationManager();
+        mapManager = new MapManager();
+        resourceManager = new ResourceManager();
+        game = new Game(players, name);
+
+        ArrayList<Hex> hexes = new ArrayList<Hex>();
+
+        Hex robberHex = new Hex(new HexLocation(0, -2), 0, null);
+        robberHex.setHasRobber(true);
+
+        hexes.add(new Hex(new HexLocation(2, 0), 11, ResourceType.WOOD));
+        hexes.add(new Hex(new HexLocation(2, 1), 12, ResourceType.SHEEP));
+        hexes.add(new Hex(new HexLocation(2, 2), 9, ResourceType.WHEAT));
+
+        hexes.add(new Hex(new HexLocation(1, -2), 4, ResourceType.BRICK));
+        hexes.add(new Hex(new HexLocation(1, -1), 6, ResourceType.ORE));
+        hexes.add(new Hex(new HexLocation(1, 0), 5, ResourceType.BRICK));
+        hexes.add(new Hex(new HexLocation(1, 1), 10, ResourceType.SHEEP));
+
+        hexes.add(robberHex);
+        hexes.add(new Hex(new HexLocation(0, -1), 3, ResourceType.WOOD));
+        hexes.add(new Hex(new HexLocation(0, 0), 11, ResourceType.WHEAT));
+        hexes.add(new Hex(new HexLocation(0, 1), 4, ResourceType.WOOD));
+        hexes.add(new Hex(new HexLocation(0, 2), 8, ResourceType.WHEAT));
+
+        hexes.add(new Hex(new HexLocation(-1, -1), 8, ResourceType.BRICK));
+        hexes.add(new Hex(new HexLocation(-1, 0), 10, ResourceType.SHEEP));
+        hexes.add(new Hex(new HexLocation(-1, 1), 9, ResourceType.SHEEP));
+        hexes.add(new Hex(new HexLocation(-1, 2), 3, ResourceType.ORE));
+
+        hexes.add(new Hex(new HexLocation(-2, -2), 5, ResourceType.ORE));
+        hexes.add(new Hex(new HexLocation(-2, -1), 2, ResourceType.WHEAT));
+        hexes.add(new Hex(new HexLocation(-2, 0), 6, ResourceType.WOOD));
+
+        List<Port> ports = new ArrayList<Port>();
+        
+        ports.add( new Port(2,ResourceType.BRICK,new HexLocation(-2,3)));
+        ports.add( new Port(2,ResourceType.ORE,new HexLocation(1,-3)));
+        ports.add( new Port(2,ResourceType.SHEEP,new HexLocation(3,-1)));
+        ports.add( new Port(2,ResourceType.WHEAT,new HexLocation(-1,-2)));
+        ports.add( new Port(2,ResourceType.WOOD,new HexLocation(-3,2)));
+        
+        ports.add( new Port(3,null,new HexLocation(-3,0)));
+        ports.add( new Port(3,null,new HexLocation(0,3)));
+        ports.add( new Port(3,null,new HexLocation(2,1)));
+        ports.add( new Port(3,null,new HexLocation(3,-3)));
+        
+        if (randomTiles) {
+            for (int i = 0; i < hexes.size(); i++) {
+                int getRandomHex = randomness.nextInt(19);
+                HexLocation originalHexLocation = hexes.get(i).getLocation();
+                hexes.get(i).setLocation(hexes.get(getRandomHex).getLocation());
+                hexes.get(getRandomHex).setLocation(originalHexLocation);                
+            }
+        }
+        
+        if (randomNumbers) {
+            for (int i = 0; i < hexes.size(); i++) {
+                if(hexes.get(i).getHasRobber()){
+                    continue;
+                }
+                
+                int getRandomHex = randomness.nextInt(19);
+                
+                while(hexes.get(getRandomHex).getHasRobber()){
+                    getRandomHex = randomness.nextInt(19);
+                }
+                
+                int originalNumber = hexes.get(i).getRollValue();
+                hexes.get(i).setRollValue(hexes.get(getRandomHex).getRollValue());
+                hexes.get(getRandomHex).setRollValue(originalNumber);
+                
+            }
+            
+        }
+        
+        if(randomPorts){
+            for (int i = 0; i < ports.size(); i++) {
+                int getRandomHex = randomness.nextInt(9);
+                HexLocation originalHexLocation = ports.get(i).getLocation();
+                ports.get(i).setLocation(ports.get(getRandomHex).getLocation());
+                ports.get(getRandomHex).setLocation(originalHexLocation);                
+            }
+        }
+            
+
+        List<Location> unsettledLocations = new ArrayList<Location>();
+        List<Edge> unsettledEdges = new ArrayList<Edge>();
+        for(Hex hex: hexes){
+            unsettledLocations.add(new Location(new VertexLocation(hex.getLocation(),VertexDirection.NorthEast)));
+            unsettledLocations.add(new Location(new VertexLocation(hex.getLocation(),VertexDirection.NorthWest)));
+            unsettledEdges.add(new Edge(new EdgeLocation(hex.getLocation(),EdgeDirection.NorthWest)));
+            unsettledEdges.add(new Edge(new EdgeLocation(hex.getLocation(),EdgeDirection.North)));
+            unsettledEdges.add(new Edge(new EdgeLocation(hex.getLocation(),EdgeDirection.NorthEast)));
+        }
+        
+        unsettledLocations.add(new Location(new VertexLocation(new HexLocation(2,1),VertexDirection.NorthEast)));
+        unsettledLocations.add(new Location(new VertexLocation(new HexLocation(2,1),VertexDirection.NorthWest)));
+        unsettledLocations.add(new Location(new VertexLocation(new HexLocation(1,2),VertexDirection.NorthEast)));
+        unsettledLocations.add(new Location(new VertexLocation(new HexLocation(1,2),VertexDirection.NorthWest)));
+        unsettledLocations.add(new Location(new VertexLocation(new HexLocation(0,3),VertexDirection.NorthEast)));
+        unsettledLocations.add(new Location(new VertexLocation(new HexLocation(0,3),VertexDirection.NorthWest)));
+        unsettledLocations.add(new Location(new VertexLocation(new HexLocation(-1,3),VertexDirection.NorthEast)));
+        unsettledLocations.add(new Location(new VertexLocation(new HexLocation(-1,3),VertexDirection.NorthWest)));
+        unsettledLocations.add(new Location(new VertexLocation(new HexLocation(-2,3),VertexDirection.NorthEast)));
+        unsettledLocations.add(new Location(new VertexLocation(new HexLocation(-2,3),VertexDirection.NorthWest)));
+        
+        unsettledEdges.add(new Edge(new EdgeLocation(new HexLocation(2,1),EdgeDirection.North)));
+        unsettledEdges.add(new Edge(new EdgeLocation(new HexLocation(2,1),EdgeDirection.NorthWest)));
+        unsettledEdges.add(new Edge(new EdgeLocation(new HexLocation(1,2),EdgeDirection.North)));
+        unsettledEdges.add(new Edge(new EdgeLocation(new HexLocation(1,2),EdgeDirection.NorthWest)));
+        unsettledEdges.add(new Edge(new EdgeLocation(new HexLocation(0,3),EdgeDirection.North)));
+        unsettledEdges.add(new Edge(new EdgeLocation(new HexLocation(-1,3),EdgeDirection.North)));
+        unsettledEdges.add(new Edge(new EdgeLocation(new HexLocation(-1,3),EdgeDirection.NorthEast)));
+        unsettledEdges.add(new Edge(new EdgeLocation(new HexLocation(-2,3),EdgeDirection.North)));
+        unsettledEdges.add(new Edge(new EdgeLocation(new HexLocation(-2,3),EdgeDirection.NorthEast)));
+        
+        mapManager.setHexList(hexes);
+        locationManager.setUnsettledLocations(unsettledLocations);
+        locationManager.setUnsettledEdges(unsettledEdges);
+        locationManager.setPorts(ports);
 
     }
-
+/*
+    
+int ratio, ResourceType resource, HexLocation location
+    
+    */
+    
     /**
      * @author Curt
      * @pre Server is running
@@ -107,7 +234,7 @@ public class GameManager {
      * @post Player will join a game
      */
     public void joinGame(int gameID) {
-        
+
     }
 
     /**
@@ -156,12 +283,13 @@ public class GameManager {
 
 //        int dieRoll = randomness.nextInt(6) + randomness.nextInt(6) + 2;
         List<Hex> hexesProducingResources = mapManager.getTerrainResourceHexes(dieRoll);
+        ResourceList gameBank = resourceManager.getGameBanks().get(4);
 
         for (ResourceType resourceType : ResourceType.values()) {
             List<Hex> hexesProducingAParticularResource = new ArrayList<>();
 
             for (Hex particularHex : hexesProducingResources) {
-                if (resourceType == ResourceType.valueOf(particularHex.getResource().toUpperCase())) {
+                if (resourceType == particularHex.getResource()) {
                     hexesProducingAParticularResource.add(particularHex);
                 }
             }
@@ -176,10 +304,10 @@ public class GameManager {
             for (Hex hexProducingResources : hexesProducingAParticularResource) {
                 playersEarningResources.addAll(locationManager.awardTerrainResource(hexProducingResources.getLocation()));
             }
+
             int amountAvailable = 0;
-            ResourceList gameBank = resourceManager.getGameBanks().get(4);
-            switch(resourceType){
-                case ORE :
+            switch (resourceType) {
+                case ORE:
                     amountAvailable = gameBank.getOre();
                     break;
                 case WOOD:
@@ -197,12 +325,6 @@ public class GameManager {
                 default:
                     break;
             }
-            // replaced with switch statment (ddennis)
-            /*for (int i = 0; i < resourceManager.getGameBanks().get(4).getTotalResources(); i++) {
-                if (resourceManager.getGameBanks().get(4).get(i).getResourceType() == resourceType) {
-                    amountAvailable++;
-                }
-            }*/
 
             if (amountAvailable >= playersEarningResources.size()) {
                 Card transferringCard = new Card(true, resourceType, DevCardType.MONOPOLY, true, false);
@@ -217,11 +339,10 @@ public class GameManager {
 
     public void diceIsSevenMoveRober(HexLocation newLocationForRobber) {
         mapManager.moveRobber(newLocationForRobber);
-        
+
         for (int i = 0; i < 4; i++) {
             int numberOfResourceCards = resourceManager.getGameBanks().get(i).getTotalResources();
-            if(numberOfResourceCards >=7)
-            {
+            if (numberOfResourceCards >= 7) {
                 resourceManager.playerDiscardsHalfCards(i);
             }
         }

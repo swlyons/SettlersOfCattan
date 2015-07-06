@@ -11,11 +11,11 @@ public class Hex {
     private HexLocation location;
     private ArrayList<EdgeLocation> edgeLocations;
     private int rollValue;
-    private String resource;
+    private ResourceType resource;
     private boolean hasRobber;
     private int number;
     
-    public Hex(HexLocation hexStart, int rollValueStart, String resourceTypeStart){
+    public Hex(HexLocation hexStart, int rollValueStart, ResourceType resourceTypeStart){
         location=hexStart;
         rollValue=rollValueStart;
         resource=resourceTypeStart;
@@ -54,11 +54,11 @@ public class Hex {
         this.location = location;
     }
 
-    public String getResource() {
+    public ResourceType getResource() {
         return resource;
     }
 
-    public void setResource(String resource) {
+    public void setResource(ResourceType resource) {
         this.resource = resource;
     }
 
