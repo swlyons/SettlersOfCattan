@@ -18,11 +18,7 @@ import shared.locations.VertexLocation;
 import shared.locations.EdgeLocation;
 import shared.locations.HexLocation;
 
-<<<<<<< HEAD
 import com.google.gson.GsonBuilder;
-=======
-public class GameManager {
->>>>>>> 7071a9788250be0deba93f8906181d9d67b2a583
 
 public class GameManager {
     private LocationManager locationManager;
@@ -300,7 +296,6 @@ public class GameManager {
     public void endTurn(int gameID) {
 
     }
-<<<<<<< HEAD
 
     public Game getGame() {
         return game;
@@ -309,8 +304,5 @@ public class GameManager {
     public void setGame(Game game) {
         this.game = game;
     }
-    
-    
-=======
->>>>>>> 7071a9788250be0deba93f8906181d9d67b2a583
+
 }

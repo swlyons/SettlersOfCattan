@@ -176,17 +176,6 @@
             </batchtest>
             <formatter type="brief" usefile="false"/>
         </junit>
-    </target>  
-    <!--target name="model-tests" depends="compile" description="run automated server tests">
-            <java classname="model.ClientModelTests" fork="yes">
-                    <classpath>
-                            <path refid="all-classpath"/>
-                    </classpath>
-                    <assertions>
-                            <enable/>
-                    </assertions>
-            </java>
-    </target-->
-  
+    </target>    
 </project>
 
