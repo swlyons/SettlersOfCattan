@@ -270,4 +270,12 @@ public class GameManagerTest {
         fail("The test case is a prototype.");
     }
     
+    public static void main(String[] args) {
+
+        String[] testClasses = new String[] {
+                        "client.managers.GameManagerTest"
+        };
+
+        org.junit.runner.JUnitCore.main(testClasses);
+    }
 }
