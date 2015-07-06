@@ -5,10 +5,10 @@
  */
 package client.managers;
 
+import client.data.Game;
+import client.data.Player;
 import java.io.File;
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -22,22 +22,22 @@ import static org.junit.Assert.*;
  * @author ddennis
  */
 public class GameManagerTest {
-    
+
     public GameManagerTest() {
     }
-    
+
     @BeforeClass
     public static void setUpClass() {
     }
-    
+
     @AfterClass
     public static void tearDownClass() {
     }
-    
+
     @Before
     public void setUp() {
     }
-    
+
     @After
     public void tearDown() {
     }
@@ -48,17 +48,22 @@ public class GameManagerTest {
     @Test
     public void testInitializeGame() {
         System.out.println("initializeGame");
-        String jsonData = "";
+        String jsonDataIn = "";
+        String jsonDataOut = "";
         try {
-            jsonData = FileUtils.readFileToString(new File("C:\\Users\\ddennis\\Documents\\SettlersOfCattan" + File.separator + "sample" + File.separator + "model.json"));
+            jsonDataIn = FileUtils.readFileToString(new File("C:\\Users\\ddennis\\Documents\\SettlersOfCattan" + File.separator + "sample" + File.separator + "model.json"));
         } catch (IOException ex) {
-            System.out.println(ex.getMessage() + "\n\t" + jsonData);
+            System.out.println(ex.getMessage() + "\n\t" + jsonDataIn);
         }
         GameManager instance = new GameManager();
-        instance.initializeGame(jsonData);
-        
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        instance.initializeGame(jsonDataIn);
+
+        Game game = instance.getGame();
+        //print Json Model (Game)
+        System.out.println(game);
+
+        assertTrue("Model was successfully initialized", jsonDataIn.equals(jsonDataOut) && !jsonDataOut.isEmpty());
+
     }
-    
+
 }

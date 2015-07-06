@@ -64,6 +64,11 @@ public class ResourceList {
     public void setWood(int wood) {
         this.wood = wood;
     }
+
+    @Override
+    public String toString() {
+        return "{" + "brick : " + brick + ", ore : " + ore + ", sheep : " + sheep + ", wheat : " + wheat + ", wood : " + wood + '}';
+    }
     
     
 }

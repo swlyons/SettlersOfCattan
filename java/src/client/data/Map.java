@@ -17,13 +17,18 @@ import shared.locations.HexLocation;
 public class Map {
     private List<Hex> hexes;
     private List<Port> ports;
-    private List<VertexObject> roads;
+    private List<EdgeValue> roads;
     private List<VertexObject> settlements;
     private List <VertexObject> cities;
     private int radius;
     private HexLocation robber;
 
     public Map() {
+        hexes = new ArrayList<>();
+        ports = new ArrayList<>();
+        roads = new ArrayList<>();
+        settlements = new ArrayList<>();
+        cities = new ArrayList<>();
     }
 
     public ArrayList<Hex> getHexes() {
@@ -46,11 +51,11 @@ public class Map {
         return (ArrayList)roads;
     }
 
-    public void setRoads(List<VertexObject> roads) {
+    public void setRoads(List<EdgeValue> roads) {
         this.roads = roads;
     }
 
-    public ArrayList<VertexObject> getSettlements() {
+    public ArrayList<EdgeValue> getSettlements() {
         return (ArrayList)settlements;
     }
 
@@ -80,6 +85,13 @@ public class Map {
 
     public void setRobber(HexLocation robber) {
         this.robber = robber;
+    }
+  
+    @Override
+    public String toString() {
+        
+       
+        return "{" + "hexes : " + hexes + ", ports : " + ports + ", roads : " + roads + ", settlements : " + settlements + ", cities : " + cities + ", radius : " + radius + ", robber : " + robber + '}';
     }
     
     

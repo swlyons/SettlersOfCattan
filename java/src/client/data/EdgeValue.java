@@ -5,20 +5,16 @@
  */
 package client.data;
 
-import shared.locations.VertexLocation;
+import shared.locations.EdgeLocation;
 
 /**
  *
  * @author ddennis
  */
-public class VertexObject {
+public class EdgeValue {
+    
     private int owner;
-    private VertexLocation location;
-
-    public VertexObject(int owner, VertexLocation location) {
-        this.owner = owner;
-        this.location = location;
-    }
+    private EdgeLocation location;
 
     public int getOwner() {
         return owner;
@@ -28,17 +24,17 @@ public class VertexObject {
         this.owner = owner;
     }
 
-    public VertexLocation getDirection() {
+    public EdgeLocation getLocation() {
         return location;
     }
 
-    public void setDirection(VertexLocation location) {
+    public void setLocation(EdgeLocation location) {
         this.location = location;
     }
 
     @Override
     public String toString() {
-        return "{" + "owner : " + owner + ", location : " + location + '}';
+        return "{" + "owner : " + owner + ", location :" + location + '}';
     }
     
     

@@ -37,7 +37,7 @@ public class GameManager {
     }
     
     /**
-     * @author Curt
+     * @author ddennis
      * @param jsonData = JSON string of information to initialize the client model
      * @pre model is accurate
      * @post Will initialize the game model 
@@ -45,9 +45,9 @@ public class GameManager {
     public void initializeGame(String jsonData) {
         //create a json object
         Gson model = new GsonBuilder().create();
-        game = model.fromJson(jsonData, Game.class);
         
-        System.out.println(game.getWinnerID());
+        //initialize the client object model
+        game = model.fromJson(jsonData, Game.class);
     }    
     
     /**
@@ -142,7 +142,7 @@ public class GameManager {
             List<Hex> hexesProducingAParticularResource = new ArrayList<>();
 
             for (Hex particularHex : hexesProducingResources) {
-                if (resourceType == particularHex.getResourceType()) {
+                if (resourceType == ResourceType.valueOf(particularHex.getResource().toUpperCase())) {
                     hexesProducingAParticularResource.add(particularHex);
                 }
             }
@@ -155,7 +155,7 @@ public class GameManager {
             List<Integer> playersEarningResources = new ArrayList<>();
 
             for (Hex hexProducingResources : hexesProducingAParticularResource) {
-                playersEarningResources.addAll(locationManager.awardTerrainResource(hexProducingResources.getHexLocation()));
+                playersEarningResources.addAll(locationManager.awardTerrainResource(hexProducingResources.getLocation()));
             }
 
             int amountAvailable = 0;
@@ -257,4 +257,14 @@ public class GameManager {
     public void endTurn(int gameID) {
 
     }
+
+    public Game getGame() {
+        return game;
+    }
+
+    public void setGame(Game game) {
+        this.game = game;
+    }
+    
+    
 }

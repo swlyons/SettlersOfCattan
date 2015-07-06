@@ -37,5 +37,10 @@ public class TradeOffer {
     public void setOffer(ResourceList offer) {
         this.offer = offer;
     }
+
+    @Override
+    public String toString() {
+        return "{" + "sender=" + sender + ", recevier=" + recevier + ", offer=" + offer + '}';
+    }
     
 }

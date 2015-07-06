@@ -42,7 +42,7 @@ public class MapManager {
     public boolean moveRobber(HexLocation newLocationForRobber) {
         
         for(Hex hex : hexList){
-            if(hex.getHasRobber() && hex.getHexLocation().equals(newLocationForRobber)){
+            if(hex.getHasRobber() && hex.getLocation().equals(newLocationForRobber)){
                 return false;
             }
         }
