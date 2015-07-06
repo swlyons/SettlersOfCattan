@@ -1,6 +1,8 @@
 package client.managers;
 
 import client.data.User;
+import client.proxy.CredentialRequest;
+import client.proxy.ServerProxy;
 
 public class UserManager {
     
@@ -17,17 +19,25 @@ public class UserManager {
      * @post returns if the user was successfully created or not
      */
     private boolean createUser(String username, String password, String passwordValidate){
-        boolean created = false;
+        boolean created = true;
        
         //may want to throw different exceptions instead of returning booleans
-        if(validateUsername(username)){
-            created = true;
+        if(!validateUsername(username) && !validatePassword(password)){
+            created = false;
         }
-        if(validatePassword(password)){
-            created = true;
+        else if(!validatePasswordsMatch(password, passwordValidate)){
+            created = false;
         }
-        if(validatePasswordsMatch(password, passwordValidate)){
-            created = true;
+        else {
+        	CredentialRequest request = new CredentialRequest(username, password);
+	        String cookie = ServerProxy.getSingleton().Register(request);
+	        if (cookie == null) {
+	        	created = false;
+	        }
+	        else if (cookie.length() == 0) {
+	        	created = false;
+	        }
+	        //TODO: once we have a better concept of how a cookie works and what is valid, we should improve this logic.
         }
         return created;
     }
@@ -40,10 +50,21 @@ public class UserManager {
      * database
      */
     private boolean authenticateUser(String username, String password){
-        boolean authenticated = false;
-        //if username is null return false
-        
-        //use the DAO to query for the credentials
+        boolean authenticated = true;
+        if (!validateUsername(username) || !validatePassword(password)) {
+        	authenticated = false;
+        }
+        else {
+        	CredentialRequest request = new CredentialRequest(username, password);
+	        String cookie = ServerProxy.getSingleton().login(request);
+	        if (cookie == null) {
+	        	authenticated = false;
+	        }
+	        else if (cookie.length() == 0) {
+	        	authenticated = false;
+	        }
+	        //TODO: once we have a better concept of how a cookie works and what is valid, we should improve this logic.
+        }
         
         return authenticated;
     }
@@ -58,11 +79,16 @@ public class UserManager {
      * fewer than 3 or greater than seven characters
      */
     private boolean validateUsername(String username){
-        boolean isValid = false;
-        //if username is null return false
-        
-        //get list of users from the game
-        
+    	boolean isValid = true;
+        if (username == null) {
+        	isValid = false;
+        }
+        else if (username.length() < 3) {
+        	isValid = false;
+        }
+        else if (username.length() > 7) {
+        	isValid = false;
+        }
         return isValid;
     }
     
@@ -77,9 +103,16 @@ public class UserManager {
      * verification entry doesn’t match the original.
      */
     private boolean validatePassword(String password){
-        boolean isValid = false;
-        
-        
+        boolean isValid = true;
+        if (password == null) {
+        	isValid = false;
+        }
+        else if (password.length() < 5) {
+        	isValid = false;
+        }
+        else if (password.matches("(.*)[!a-zA-Z_-](.*)")) {
+        	isValid = false;
+        }
         return isValid;
     }
     /**
@@ -90,9 +123,13 @@ public class UserManager {
      * @post returns if password is exactly the same as passwordValidate
      */
     private boolean validatePasswordsMatch(String password, String passwordValidate){
-       boolean isValid = false;
-
-
-       return isValid;
+        boolean isValid = true;
+        if (password == null || passwordValidate == null) {
+        	isValid = false;
+        }
+        else if (!password.equals(passwordValidate)) {
+    		isValid = false;
+    	}
+    	return isValid;
     }
 }

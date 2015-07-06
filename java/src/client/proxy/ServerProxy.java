@@ -6,6 +6,18 @@ import client.data.Game;
 
 public class ServerProxy implements IServer {
 
+	private static IServer singleton = null;
+	public static IServer getSingleton() {
+		if (singleton == null) {
+			singleton = new ServerProxy();
+		}
+		return singleton;
+	}
+	
+	private ServerProxy() {
+		
+	}
+	
 	/**
 	 * Logs the player in
 	 * @param request the player's credentials
