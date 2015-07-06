@@ -1,6 +1,6 @@
 package client.data;
 
-import client.shared.definitions.ResourceType;
+import shared.definitions.ResourceType;
 
 public class TradeOffer {
 
@@ -8,7 +8,7 @@ public class TradeOffer {
     private int recevier;
     private ResourceList offer;
 
-    public TradeOffer(int sender, int recevier, ResourceType offer) {
+    public TradeOffer(int sender, int recevier, ResourceList offer) {
         this.sender = sender;
         this.recevier = recevier;
         this.offer = offer;
@@ -30,12 +30,17 @@ public class TradeOffer {
         this.recevier = recevier;
     }
 
-    public ResourceType getOffer() {
+    public ResourceList getOffer() {
         return offer;
     }
 
-    public void setOffer(ResourceType offer) {
+    public void setOffer(ResourceList offer) {
         this.offer = offer;
+    }
+
+    @Override
+    public String toString() {
+        return "{" + "sender=" + sender + ", recevier=" + recevier + ", offer=" + offer + '}';
     }
     
 }

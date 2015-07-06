@@ -1,40 +1,42 @@
 package client.managers;
 
+import java.util.List;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import client.data.Bank;
 import client.data.Card;
 import client.data.Player;
+import client.data.ResourceList;
+import shared.definitions.AwardType;
 
 public class ResourceManager {
 
-    private ArrayList<Bank> gameBanks;
-    private Map<Award, Player> awardMap = new HashMap<Award, Player>();
+    private List<ResourceList> gameBanks;
+    private Map<AwardType, Player> awardMap = new HashMap<AwardType, Player>();
 
     public ResourceManager() {
-        gameBanks = new ArrayList<Bank>();
-        awardMap = new HashMap<Award, Player>();
+        gameBanks = new ArrayList<ResourceList>();
+        awardMap = new HashMap<AwardType, Player>();
     }
 
-    public ResourceManager(ArrayList<Bank> gameBanks, Map<Award, Player> awardMap) {
+    public ResourceManager(ArrayList<ResourceList> gameBanks, Map<AwardType, Player> awardMap) {
         this.gameBanks = gameBanks;
         this.awardMap = awardMap;
     }
 
-    public ArrayList<Bank> getGameBanks() {
+    public List<ResourceList> getGameBanks() {
         return gameBanks;
     }
 
-    public void setGameBanks(ArrayList<Bank> gameBanks) {
+    public void setGameBanks(List<ResourceList> gameBanks) {
         this.gameBanks = gameBanks;
     }
 
-    public Map<Award, Player> getAwardMap() {
+    public Map<AwardType, Player> getAwardMap() {
         return awardMap;
     }
 
-    public void setAwardMap(Map<Award, Player> awardMap) {
+    public void setAwardMap(Map<AwardType, Player> awardMap) {
         this.awardMap = awardMap;
     }
 

@@ -1,9 +1,18 @@
 package client.managers;
 
-import client.data.*;
+import client.data.Edge;
+import client.data.Location;
+import client.data.Port;
+import java.util.List;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
+import shared.locations.EdgeDirection;
+import shared.locations.EdgeLocation;
+import shared.locations.HexLocation;
+import shared.locations.VertexLocation;
+import shared.locations.VertexDirection;
+
 
 public class LocationManager {
 
@@ -35,7 +44,7 @@ public class LocationManager {
     public boolean settleLocation(VertexLocation locationToSettle, int playerId, boolean firstRound) {
         Location locationToMove = null;
         for (Location location : unsettledLocations) {
-            if (location.getNormalizedLocation().equivalent(locationToSettle)) {
+            if (location.getNormalizedLocation().equals(locationToSettle)) {
                 if (firstRound) {
                     location.getWhoCanBuild().add(playerId);
                 }
@@ -52,9 +61,9 @@ public class LocationManager {
                         VertexLocation unusableLocation2 = new VertexLocation(new HexLocation(location.getNormalizedLocation().getHexLoc().getX() + 1, location.getNormalizedLocation().getHexLoc().getY()), VertexDirection.NorthWest);
                         VertexLocation unusableLocation3 = new VertexLocation(new HexLocation(location.getNormalizedLocation().getHexLoc().getX() + 1, location.getNormalizedLocation().getHexLoc().getY() - 1), VertexDirection.NorthWest);
                         for (Location locationUnavailable : unsettledLocations) {
-                            if (locationUnavailable.getNormalizedLocation().equivalent(unusableLocation1)
-                                    || locationUnavailable.getNormalizedLocation().equivalent(unusableLocation2)
-                                    || locationUnavailable.getNormalizedLocation().equivalent(unusableLocation3)) {
+                            if (locationUnavailable.getNormalizedLocation().equals(unusableLocation1)
+                                    || locationUnavailable.getNormalizedLocation().equals(unusableLocation2)
+                                    || locationUnavailable.getNormalizedLocation().equals(unusableLocation3)) {
                                 locationUnavailable.setCanBeSettled(false);
                             }
                         }
@@ -64,9 +73,9 @@ public class LocationManager {
                             EdgeLocation usableEdge2 = new EdgeLocation(location.getNormalizedLocation().getHexLoc(), EdgeDirection.NorthEast);
                             EdgeLocation usableEdge3 = new EdgeLocation(new HexLocation(location.getNormalizedLocation().getHexLoc().getX() + 1, location.getNormalizedLocation().getHexLoc().getY() - 1), EdgeDirection.NorthWest);
                             for (Edge edge : unsettledEdges) {
-                                if (edge.getEdgeLocation().equivalent(usableEdge1)
-                                        || edge.getEdgeLocation().equivalent(usableEdge2)
-                                        || edge.getEdgeLocation().equivalent(usableEdge3)) {
+                                if (edge.getEdgeLocation().equals(usableEdge1)
+                                        || edge.getEdgeLocation().equals(usableEdge2)
+                                        || edge.getEdgeLocation().equals(usableEdge3)) {
                                     edge.getWhoCanBuild().add(playerId);
                                 }
                             }
@@ -79,9 +88,9 @@ public class LocationManager {
                         VertexLocation unusableLocation2 = new VertexLocation(new HexLocation(location.getNormalizedLocation().getHexLoc().getX() - 1, location.getNormalizedLocation().getHexLoc().getY()), VertexDirection.NorthEast);
                         VertexLocation unusableLocation3 = new VertexLocation(new HexLocation(location.getNormalizedLocation().getHexLoc().getX() - 1, location.getNormalizedLocation().getHexLoc().getY() + 1), VertexDirection.NorthEast);
                         for (Location locationUnavailable : unsettledLocations) {
-                            if (locationUnavailable.getNormalizedLocation().equivalent(unusableLocation1)
-                                    || locationUnavailable.getNormalizedLocation().equivalent(unusableLocation2)
-                                    || locationUnavailable.getNormalizedLocation().equivalent(unusableLocation3)) {
+                            if (locationUnavailable.getNormalizedLocation().equals(unusableLocation1)
+                                    || locationUnavailable.getNormalizedLocation().equals(unusableLocation2)
+                                    || locationUnavailable.getNormalizedLocation().equals(unusableLocation3)) {
                                 locationUnavailable.setCanBeSettled(false);
                             }
                         }
@@ -91,9 +100,9 @@ public class LocationManager {
                             EdgeLocation usableEdge2 = new EdgeLocation(location.getNormalizedLocation().getHexLoc(), EdgeDirection.NorthWest);
                             EdgeLocation usableEdge3 = new EdgeLocation(new HexLocation(location.getNormalizedLocation().getHexLoc().getX() - 1, location.getNormalizedLocation().getHexLoc().getY()), EdgeDirection.NorthEast);
                             for (Edge edge : unsettledEdges) {
-                                if (edge.getEdgeLocation().equivalent(usableEdge1)
-                                        || edge.getEdgeLocation().equivalent(usableEdge2)
-                                        || edge.getEdgeLocation().equivalent(usableEdge3)) {
+                                if (edge.getEdgeLocation().equals(usableEdge1)
+                                        || edge.getEdgeLocation().equals(usableEdge2)
+                                        || edge.getEdgeLocation().equals(usableEdge3)) {
                                     edge.getWhoCanBuild().add(playerId);
                                 }
                             }
@@ -128,7 +137,7 @@ public class LocationManager {
     public boolean settleEdge(EdgeLocation edgeLocationToSettle, int playerId) {
         Edge edgeToMove = null;
         for (Edge edge : unsettledEdges) {
-            if (edgeLocationToSettle.equivalent(edge.getEdgeLocation())) {
+            if (edgeLocationToSettle.equals(edge.getEdgeLocation())) {
                 if (edge.getWhoCanBuild().contains(playerId)) {
                     edge.setOwnerId(playerId);
                     edgeToMove = edge;
@@ -138,8 +147,8 @@ public class LocationManager {
                         VertexLocation settleable1 = new VertexLocation(edge.getEdgeLocation().getHexLoc(), VertexDirection.NorthEast);
                         VertexLocation settleable2 = new VertexLocation(edge.getEdgeLocation().getHexLoc(), VertexDirection.NorthWest);
                         for (Location location : unsettledLocations) {
-                            if (location.getNormalizedLocation().equivalent(settleable1)
-                                    || location.getNormalizedLocation().equivalent(settleable2)) {
+                            if (location.getNormalizedLocation().equals(settleable1)
+                                    || location.getNormalizedLocation().equals(settleable2)) {
                                 location.getWhoCanBuild().add(playerId);
                             }
                         }
@@ -150,10 +159,10 @@ public class LocationManager {
                         EdgeLocation availableEdge4 = new EdgeLocation(new HexLocation(edge.getEdgeLocation().getHexLoc().getX() - 1, edge.getEdgeLocation().getHexLoc().getY()), EdgeDirection.NorthEast);
 
                         for (Edge addToEdge : unsettledEdges) {
-                            if (addToEdge.getEdgeLocation().equivalent(availableEdge1)
-                                    || addToEdge.getEdgeLocation().equivalent(availableEdge2)
-                                    || addToEdge.getEdgeLocation().equivalent(availableEdge3)
-                                    || addToEdge.getEdgeLocation().equivalent(availableEdge4)) {
+                            if (addToEdge.getEdgeLocation().equals(availableEdge1)
+                                    || addToEdge.getEdgeLocation().equals(availableEdge2)
+                                    || addToEdge.getEdgeLocation().equals(availableEdge3)
+                                    || addToEdge.getEdgeLocation().equals(availableEdge4)) {
                                 addToEdge.getWhoCanBuild().add(playerId);
                             }
                         }
@@ -163,8 +172,8 @@ public class LocationManager {
                         VertexLocation settleable1 = new VertexLocation(edge.getEdgeLocation().getHexLoc(), VertexDirection.NorthEast);
                         VertexLocation settleable2 = new VertexLocation(new HexLocation(edge.getEdgeLocation().getHexLoc().getX() + 1, edge.getEdgeLocation().getHexLoc().getY()), VertexDirection.NorthWest);
                         for (Location location : unsettledLocations) {
-                            if (location.getNormalizedLocation().equivalent(settleable1)
-                                    || location.getNormalizedLocation().equivalent(settleable2)) {
+                            if (location.getNormalizedLocation().equals(settleable1)
+                                    || location.getNormalizedLocation().equals(settleable2)) {
                                 location.getWhoCanBuild().add(playerId);
                             }
                         }
@@ -175,10 +184,10 @@ public class LocationManager {
                         EdgeLocation availableEdge4 = new EdgeLocation(new HexLocation(edge.getEdgeLocation().getHexLoc().getX() + 1, edge.getEdgeLocation().getHexLoc().getY()), EdgeDirection.North);
 
                         for (Edge addToEdge : unsettledEdges) {
-                            if (addToEdge.getEdgeLocation().equivalent(availableEdge1)
-                                    || addToEdge.getEdgeLocation().equivalent(availableEdge2)
-                                    || addToEdge.getEdgeLocation().equivalent(availableEdge3)
-                                    || addToEdge.getEdgeLocation().equivalent(availableEdge4)) {
+                            if (addToEdge.getEdgeLocation().equals(availableEdge1)
+                                    || addToEdge.getEdgeLocation().equals(availableEdge2)
+                                    || addToEdge.getEdgeLocation().equals(availableEdge3)
+                                    || addToEdge.getEdgeLocation().equals(availableEdge4)) {
                                 addToEdge.getWhoCanBuild().add(playerId);
                             }
                         }
@@ -188,8 +197,8 @@ public class LocationManager {
                         VertexLocation settleable1 = new VertexLocation(edge.getEdgeLocation().getHexLoc(), VertexDirection.NorthWest);
                         VertexLocation settleable2 = new VertexLocation(new HexLocation(edge.getEdgeLocation().getHexLoc().getX() - 1, edge.getEdgeLocation().getHexLoc().getY() + 1), VertexDirection.NorthEast);
                         for (Location location : unsettledLocations) {
-                            if (location.getNormalizedLocation().equivalent(settleable1)
-                                    || location.getNormalizedLocation().equivalent(settleable2)) {
+                            if (location.getNormalizedLocation().equals(settleable1)
+                                    || location.getNormalizedLocation().equals(settleable2)) {
                                 location.getWhoCanBuild().add(playerId);
                             }
                         }
@@ -200,10 +209,10 @@ public class LocationManager {
                         EdgeLocation availableEdge4 = new EdgeLocation(new HexLocation(edge.getEdgeLocation().getHexLoc().getX() - 1, edge.getEdgeLocation().getHexLoc().getY() + 1), EdgeDirection.North);
 
                         for (Edge addToEdge : unsettledEdges) {
-                            if (addToEdge.getEdgeLocation().equivalent(availableEdge1)
-                                    || addToEdge.getEdgeLocation().equivalent(availableEdge2)
-                                    || addToEdge.getEdgeLocation().equivalent(availableEdge3)
-                                    || addToEdge.getEdgeLocation().equivalent(availableEdge4)) {
+                            if (addToEdge.getEdgeLocation().equals(availableEdge1)
+                                    || addToEdge.getEdgeLocation().equals(availableEdge2)
+                                    || addToEdge.getEdgeLocation().equals(availableEdge3)
+                                    || addToEdge.getEdgeLocation().equals(availableEdge4)) {
                                 addToEdge.getWhoCanBuild().add(playerId);
                             }
                         }
@@ -237,7 +246,7 @@ public class LocationManager {
      */
     public boolean upgradeToCity(VertexLocation locationToUpgrade) {
         for (Location settledLocation : settledLocations) {
-            if (settledLocation.getNormalizedLocation().equivalent(locationToUpgrade)) {
+            if (settledLocation.getNormalizedLocation().equals(locationToUpgrade)) {
                 if (settledLocation.getIsCity()) {
                     return false;
                 } else {
@@ -257,13 +266,13 @@ public class LocationManager {
      * settled, and award the ownerID of those that are with the appropriate
      * resources
      */
-    public ArrayList<Integer> awardTerrainResource(HexLocation triggeredHex) {
-        ArrayList<Integer> playerReceivesOneResource = new ArrayList<Integer>();
+    public List<Integer> awardTerrainResource(HexLocation triggeredHex) {
+        List<Integer> playerReceivesOneResource = new ArrayList<>();
         for (Location location : settledLocations) {
-            ArrayList<HexLocation> hexesAroundVertex = getHexLocationsAroundVertexLocation(location.getNormalizedLocation());
+            List<HexLocation> hexesAroundVertex = getHexLocationsAroundVertexLocation(location.getNormalizedLocation());
 
             for (HexLocation hexLocation : hexesAroundVertex) {
-                if (hexLocation.equivalent(triggeredHex)) {
+                if (hexLocation.equals(triggeredHex)) {
                     //this is where the player gets added to a list to receive a resource
                     playerReceivesOneResource.add(location.getOwnerID());
                     if (location.getIsCity()) {
@@ -278,8 +287,8 @@ public class LocationManager {
         return playerReceivesOneResource;
     }
 
-    public ArrayList<HexLocation> getHexLocationsAroundVertexLocation(VertexLocation vertex) {
-        ArrayList<HexLocation> hexes = new ArrayList<HexLocation>();
+    public List<HexLocation> getHexLocationsAroundVertexLocation(VertexLocation vertex) {
+        List<HexLocation> hexes = new ArrayList<>();
 
         hexes.add(vertex.getHexLoc());
         hexes.add(new HexLocation(vertex.getHexLoc().getX(), vertex.getHexLoc().getY() - 1));
@@ -300,7 +309,7 @@ public class LocationManager {
      * @post returns the list of Ports that the player has a settlement or city
      * on
      */
-    public ArrayList<Port> getPortsPlayerHas(int playerId) {
+    public List<Port> getPortsPlayerHas(int playerId) {
         Set<Port> portsAPlayerHas = new HashSet<Port>();
         ArrayList<VertexLocation> settlementsPlayerHas = new ArrayList<VertexLocation>();
 
@@ -311,11 +320,11 @@ public class LocationManager {
         }
 
         for (VertexLocation settlementPlayerHas : settlementsPlayerHas) {
-            ArrayList<HexLocation> neighboringHexes = getHexLocationsAroundVertexLocation(settlementPlayerHas.getNormalizedLocation());
+            List<HexLocation> neighboringHexes = getHexLocationsAroundVertexLocation(settlementPlayerHas.getNormalizedLocation());
 
             for (Port port : ports) {
                 for (HexLocation hexLocation : neighboringHexes) {
-                    if (port.getLocation().equivalent(hexLocation)) {
+                    if (port.getLocation().equals(hexLocation)) {
                         portsAPlayerHas.add(port);
                     }
                 }
@@ -323,7 +332,7 @@ public class LocationManager {
 
         }
 
-        ArrayList<Port> portsPlayerHas = new ArrayList<Port>();
+        List<Port> portsPlayerHas = new ArrayList<Port>();
         portsPlayerHas.addAll(portsAPlayerHas);
         return portsPlayerHas;
     }

@@ -1,14 +1,17 @@
 package client.managers;
 
-import client.data.*;
+
+import client.data.Hex;
+import java.util.List;
 import java.util.ArrayList;
+import shared.locations.HexLocation;
 
 public class MapManager {
 
-    private ArrayList<Hex> hexList;
+    private List<Hex> hexList;
 
     public MapManager() {
-        hexList = new ArrayList<Hex>();
+        hexList = new ArrayList<>();
     }
 
     /**
@@ -18,8 +21,8 @@ public class MapManager {
      * settled, and award the ownerID of those that are with the appropriate
      * resources
      */
-    public ArrayList<Hex> getTerrainResourceHexes(int rollValue) {
-        ArrayList<Hex> hexesProducingResources = new ArrayList<Hex>();
+    public List<Hex> getTerrainResourceHexes(int rollValue) {
+        List<Hex> hexesProducingResources = new ArrayList<>();
 
         for (int i = 0; i < hexList.size(); i++) {
             if (hexList.get(i).getRollValue() == i && !hexList.get(i).getHasRobber()) {
@@ -39,7 +42,7 @@ public class MapManager {
     public boolean moveRobber(HexLocation newLocationForRobber) {
         
         for(Hex hex : hexList){
-            if(hex.getHasRobber() && hex.getHexLocation().equivalent(newLocationForRobber)){
+            if(hex.getHasRobber() && hex.getLocation().equals(newLocationForRobber)){
                 return false;
             }
         }
@@ -47,7 +50,7 @@ public class MapManager {
         return true;
     }
 
-    public ArrayList<Hex> getHexList() {
+    public List<Hex> getHexList() {
         return hexList;
     }
 

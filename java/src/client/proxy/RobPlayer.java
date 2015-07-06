@@ -1,6 +1,6 @@
 package client.proxy;
 
-import client.data.HexLocation;
+import shared.locations.HexLocation;
 
 /**
  * Contains the information for a rob request to be made.

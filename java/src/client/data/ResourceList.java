@@ -1,3 +1,4 @@
+package client.data;
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -62,6 +63,20 @@ public class ResourceList {
 
     public void setWood(int wood) {
         this.wood = wood;
+    }
+    /**
+     * 
+     * @pre none
+     * 
+     * @post returns a sum of all the resources in the current resource list
+     * 
+     */
+    public int getTotalResources(){
+        return (brick + ore + sheep + wood + wheat);
+    }
+    @Override
+    public String toString() {
+        return "{" + "brick : " + brick + ", ore : " + ore + ", sheep : " + sheep + ", wheat : " + wheat + ", wood : " + wood + '}';
     }
     
     

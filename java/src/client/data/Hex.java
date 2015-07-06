@@ -2,28 +2,24 @@ package client.data;
 
 import java.util.ArrayList;
 import shared.definitions.ResourceType;
+import shared.locations.EdgeLocation;
+import shared.locations.HexLocation;
+
 
 public class Hex {
     
-    private HexLocation hexLocation;
+    private HexLocation location;
     private ArrayList<EdgeLocation> edgeLocations;
     private int rollValue;
-    private ResourceType resourceType;
+    private String resource;
     private boolean hasRobber;
+    private int number;
     
-    public Hex(HexLocation hexStart, int rollValueStart, ResourceType resourceTypeStart){
-        hexLocation=hexStart;
+    public Hex(HexLocation hexStart, int rollValueStart, String resourceTypeStart){
+        location=hexStart;
         rollValue=rollValueStart;
-        resourceType=resourceTypeStart;
+        resource=resourceTypeStart;
         hasRobber=false;
-    }
-    
-        public HexLocation getHexLocation() {
-        return hexLocation;
-    }
-
-    public void setHexLocation(HexLocation hexLocation) {
-        this.hexLocation = hexLocation;
     }
 
     public ArrayList<EdgeLocation> getEdgeLocations() {
@@ -41,15 +37,7 @@ public class Hex {
     public void setRollValue(int rollValue) {
         this.rollValue = rollValue;
     }
-
-    public ResourceType getResourceType() {
-        return resourceType;
-    }
-
-    public void setResourceType(ResourceType resourceType) {
-        this.resourceType = resourceType;
-    }
-
+    
     public boolean getHasRobber() {
         return hasRobber;
     }
@@ -58,5 +46,34 @@ public class Hex {
         this.hasRobber = hasRobber;
     }
 
+    public HexLocation getLocation() {
+        return location;
+    }
+
+    public void setLocation(HexLocation location) {
+        this.location = location;
+    }
+
+    public String getResource() {
+        return resource;
+    }
+
+    public void setResource(String resource) {
+        this.resource = resource;
+    }
+
+    public int getNumber() {
+        return number;
+    }
+
+    public void setNumber(int number) {
+        this.number = number;
+    }
+
+    @Override
+    public String toString() {
+        return "{" + "location : " + location + ", resource : " + resource + ", number : " + number + '}';
+    }
+    
     
 }

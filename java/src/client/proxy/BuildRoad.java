@@ -1,6 +1,6 @@
 package client.proxy;
 
-import client.data.EdgeLocation;
+import shared.locations.EdgeLocation;
 
 /**
  * contains information about building a road

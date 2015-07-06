@@ -1,6 +1,6 @@
 package client.proxy;
 
-import client.data.EdgeLocation;
+import shared.locations.EdgeLocation;
 
 /**
  * Contains the information involved in playing a road building card
