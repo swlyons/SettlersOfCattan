@@ -6,7 +6,9 @@
 package client.communication;
 
 import client.ClientException;
+import client.data.Game;
 import client.data.User;
+import java.util.ArrayList;
 
 /**
  *
@@ -27,21 +29,27 @@ public class ClientCommunicatorFascadeSettlersOfCatan {
      * Client Communicator facade constructor
      */
     public ClientCommunicatorFascadeSettlersOfCatan() {
+       
 
     }
     
-    public boolean login(User credentials) throws ClientException {
+    public boolean login(User credentials) throws ClientException { 
         return (ClientCommunicator
                 .getSingleton()
-                .doPost(LOGIN_USER,credentials).getResponseBody()).equals("Success");
+                .doPost(LOGIN_USER,credentials, -1).getResponseBody()).equals("Success");
         
     }
-
+    public boolean register(User credentials) throws ClientException {
+        return (ClientCommunicator.getSingleton().doPost(REGISTER_USER,credentials, -1).getResponseBody()).equals("Success");
+    }
     // Local Image Methods and Constants
     private static final String LOGIN_USER = "user/login";
-    private static final String REGISTER_USER = "/user/register";
+    private static final String REGISTER_USER = "user/register";
 
-
+    
+    public ArrayList listGames(int playerID) throws ClientException {
+        return (ArrayList)ClientCommunicator.getSingleton().doGet(LIST_GAMES,"",playerID).getResponseBody();
+    }
     // Local User Methods and Constants
     private static final String LIST_GAMES = "games/list";
     private static final String CREATE_GAME = "games/create";
@@ -76,4 +84,5 @@ public class ClientCommunicatorFascadeSettlersOfCatan {
     
     private static final String LOG_LEVEL_UTIL = "util/changeLogLevel";
    
+    
 }

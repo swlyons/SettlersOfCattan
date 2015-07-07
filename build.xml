@@ -178,7 +178,7 @@
             </assertions>
         </java>
     </target>
-    <target name="test" depends="compile">
+    <target name="test" depends="compile, start-client">
         <junit>
             <classpath>
                 <pathelement location="${java.build}" />    
