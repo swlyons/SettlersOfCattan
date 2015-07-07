@@ -6,6 +6,7 @@
 package client.communication;
 
 import client.ClientException;
+import client.data.User;
 
 /**
  *
@@ -29,11 +30,10 @@ public class ClientCommunicatorFascadeSettlersOfCatan {
 
     }
     
-    public boolean login(String credentials) throws ClientException {
-        System.out.println("Here");
-        return ClientCommunicator
+    public boolean login(User credentials) throws ClientException {
+        return (ClientCommunicator
                 .getSingleton()
-                .doPost(LOGIN_USER,credentials).getResponseBody().equals("Success");
+                .doPost(LOGIN_USER,credentials).getResponseBody()).equals("Success");
         
     }
 

@@ -144,7 +144,7 @@ public class ClientCommunicator {
 			throws ClientException {
 		assert commandName != null;
 		assert postData != null;
-
+                
 		HttpURLResponse result = new HttpURLResponse();
 
 		try {
@@ -155,19 +155,24 @@ public class ClientCommunicator {
 			connection.setRequestMethod(HTTP_POST);
 			connection.setDoOutput(true);
 			connection.connect();
-                        
 			String data = model.toJson(postData);
+                        
                         connection.getOutputStream().write(data.getBytes());
 			connection.getOutputStream().close();
-
+                         
 			result.setResponseCode(connection.getResponseCode());
 			result.setResponseLength(connection.getContentLength());
+                        
 			if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
-				if (connection.getContentLength() == -1) {
+				if (connection.getContentLength() != -1) {
+                                   
                                     BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
                                     String content = br.readLine();
                                     if(commandName.equals("game/create")){
                                         result.setResponseBody(model.fromJson(content, ListCreate.class));
+                                    }
+                                    else if(commandName.contains("user")){
+                                        result.setResponseBody(content);
                                     }
                                     else{
                                         result.setResponseBody(model.fromJson(content, Game.class));
@@ -187,7 +192,7 @@ public class ClientCommunicator {
 
 	// Auxiliary Constants, Attributes, and Methods
 	private static String SERVER_HOST = "localhost";
-	private static int SERVER_PORT = 46339;
+	private static int SERVER_PORT = 8081;
 	private static String URL_PREFIX = "http://" + SERVER_HOST + ":"
 			+ SERVER_PORT;
 	private static final String HTTP_GET = "GET";

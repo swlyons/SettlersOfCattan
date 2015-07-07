@@ -5,6 +5,7 @@
  */
 package client.communication;
 
+import client.data.User;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -45,11 +46,12 @@ public class ClientCommunicatorFascadeSettlersOfCatanTest {
     @Test
     public void testLogin() throws Exception {
         System.out.println("login");
-        String credentials = "{\"username\":\"Sam\",\"password\" : \"sam\"}";
+        User user = new User("Sam", "sam");
         ClientCommunicatorFascadeSettlersOfCatan instance = new ClientCommunicatorFascadeSettlersOfCatan();
         boolean expResult = true;
-        boolean result = instance.login(credentials);
+        boolean result = instance.login(user);
         assertEquals(expResult, result);
+        
     }
     
 }

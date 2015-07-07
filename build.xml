@@ -168,7 +168,8 @@
     <target name="start-client" depends="compile" description="run client using server on specified host and port">
         <java classname="client.Client" fork="yes">
             <classpath>
-                <path refid="all-classpath"/>
+                <pathelement location="${java.lib.dir}/gson-2.2.4.jar"/>
+                <pathelement location="${java.build}" />
             </classpath>
             <arg value="${host.arg}"/>
             <arg value="${port.arg}"/>
