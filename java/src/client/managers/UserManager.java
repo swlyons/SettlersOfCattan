@@ -1,12 +1,22 @@
 package client.managers;
 
 import client.proxy.CredentialRequest;
+import client.proxy.IServer;
+import client.proxy.MockServer;
 import client.proxy.ServerProxy;
 
 public class UserManager {
 
+	private IServer server = ServerProxy.getSingleton();
+	
     public UserManager() {
 
+    }
+    
+    public UserManager(boolean testing) {
+    	if (testing) {
+    		server = new MockServer();
+    	}
     }
 
     /**
@@ -16,24 +26,30 @@ public class UserManager {
      * @pre
      * @post returns if the user was successfully created or not
      */
-    private boolean createUser(String username, String password, String passwordValidate) {
+    public boolean createUser(String username, String password, String passwordValidate) {
+    	System.out.println("start "+username+" : "+password+" , "+passwordValidate);
         boolean created = true;
 
         //may want to throw different exceptions instead of returning booleans
-        if (!validateUsername(username) && !validatePassword(password)) {
+        if (!validateUsername(username) || !validatePassword(password)) {
+        	System.out.println("failed validation");
             created = false;
         } else if (!validatePasswordsMatch(password, passwordValidate)) {
+        	System.out.println("mismatched validation");
             created = false;
         } else {
             CredentialRequest request = new CredentialRequest(username, password);
-            String cookie = ServerProxy.getSingleton().Register(request);
+            String cookie = server.Register(request);
             if (cookie == null) {
+            	System.out.println("bad response");
                 created = false;
-            } else if (cookie.length() == 0) {
+            } else if (cookie.length() == 0 || cookie.contains("Failed")) {
+            	System.out.println("bad response");
                 created = false;
             }
             //TODO: once we have a better concept of how a cookie works and what is valid, we should improve this logic.
         }
+        System.out.println("end");
         return created;
     }
 
@@ -45,16 +61,16 @@ public class UserManager {
      * @post returns if the username and password combination exists in the
      * database
      */
-    private boolean authenticateUser(String username, String password) {
+    public boolean authenticateUser(String username, String password) {
         boolean authenticated = true;
         if (!validateUsername(username) || !validatePassword(password)) {
             authenticated = false;
         } else {
             CredentialRequest request = new CredentialRequest(username, password);
-            String cookie = ServerProxy.getSingleton().login(request);
+            String cookie = server.login(request);
             if (cookie == null) {
                 authenticated = false;
-            } else if (cookie.length() == 0) {
+            } else if (cookie.length() == 0 || cookie.contains("Failed")) {
                 authenticated = false;
             }
             //TODO: once we have a better concept of how a cookie works and what is valid, we should improve this logic.
@@ -99,7 +115,7 @@ public class UserManager {
             isValid = false;
         } else if (password.length() < 5) {
             isValid = false;
-        } else if (password.matches("(.*)[!a-zA-Z_-](.*)")) {
+        } else if (password.contains("[!a-zA-Z_-]")) {
             isValid = false;
         }
         return isValid;
