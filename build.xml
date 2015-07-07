@@ -8,7 +8,8 @@
     <property name="port.arg" value="8081"/>
     <property name="web.arg" value="gameplay"/>
     <property name="options.arg" value="ug"/>
-     
+    <property name="host.arg" value="localhost"/>
+    
     <!-- Input folders -->  
     <property name="java.dir" value="java"/>
     <property name="modeltest.dir" value="modeltests"/>
@@ -36,8 +37,8 @@
         </fileset>
     </path>
     <path id="all-classpath">
-            <path refid="java.lib.classpath"/>
-            <pathelement location="${java.build}"/>
+        <path refid="java.lib.classpath"/>
+        <pathelement location="${java.build}"/>
     </path>
 	
     <!-- TARGETS -->
@@ -131,14 +132,14 @@
             <manifest>
                 <attribute name="Main-Class" value="client.main.Catan"/>
                 <attribute name="Class-Path" 
-                                           value="lib/gson-2.2.4.jar" />
+                           value="lib/gson-2.2.4.jar" />
             </manifest>
         </jar>
         <jar jarfile="${java.dist}/catan-server.jar" basedir="${java.build}">
             <manifest>
                 <attribute name="Main-Class" value="PUT THE NAME OF YOUR SERVER'S MAIN CLASS HERE"/>
                 <attribute name="Class-Path" 
-                                           value="lib/gson-2.2.4.jar" />
+                           value="lib/gson-2.2.4.jar" />
             </manifest>
         </jar>
     </target>
@@ -160,7 +161,24 @@
             </assertions>
         </java>
     </target>
-    <target name="model-test" depends="compile">
+    <!-- ant client {-Dhost=<SERVER_HOST>} {-Dport=<SERVER_PORT_NUMBER>} -->
+    <!-- EXAMPLE: ant client -Dhost=testserver.cs.byu.edu -Dport=39640 -->
+    <!-- If host and/or port number are omitted, default values are used. -->
+    <!-- EXAMPLE: ant client -->
+    <target name="start-client" depends="compile" description="run client using server on specified host and port">
+        <java classname="client.Client" fork="yes">
+            <classpath>
+                <pathelement location="${java.lib.dir}/gson-2.2.4.jar"/>
+                <pathelement location="${java.build}" />
+            </classpath>
+            <arg value="${host.arg}"/>
+            <arg value="${port.arg}"/>
+            <assertions>
+                <enable/>
+            </assertions>
+        </java>
+    </target>
+    <target name="test" depends="compile">
         <junit>
             <classpath>
                 <pathelement location="${java.build}" />    

@@ -3,8 +3,14 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/ddennis/Documents/SettlersOfCattan/test/client/managers/GameManagerTest.java</file>
+            <file>file:/C:/Users/ddennis/Documents/SettlersOfCattan/java/src/client/communication/ClientCommunicatorFascadeSettlersOfCatan.java</file>
+            <file>file:/C:/Users/ddennis/Documents/SettlersOfCattan/modeltests/client/communication/ClientCommunicatorFascadeSettlersOfCatanTest.java</file>
+            <file>file:/C:/Users/ddennis/Documents/SettlersOfCattan/modeltests/client/managers/GameManagerTest.java</file>
+            <file>file:/C:/Users/ddennis/Documents/SettlersOfCattan/java/src/client/ClientException.java</file>
             <file>file:/C:/Users/ddennis/Documents/SettlersOfCattan/build.xml</file>
+            <file>file:/C:/Users/ddennis/Documents/SettlersOfCattan/java/src/client/communication/ClientCommunicator.java</file>
+            <file>file:/C:/Users/ddennis/Documents/SettlersOfCattan/java/src/client/Client.java</file>
+            <file>file:/C:/Users/ddennis/Documents/SettlersOfCattan/java/src/client/communication/HttpURLResponse.java</file>
         </group>
     </open-files>
 </project-private>
