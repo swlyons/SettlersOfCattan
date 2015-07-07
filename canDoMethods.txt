@@ -1,0 +1,47 @@
+canLogin(username, password)
+canRegister(username, password, passwordRepeated)
+canJoinGame(username)
+canBuyDevCard(playerIndex)
+
+canUseCard(card, enabled) from dev.devCardView()
+resource is the resource to obtain (wheat, ore, etc...)
+canUseMonopolyCard(playerIndex, resource)
+canUserMonument(playerIndex)
+canUseRoadBuild(playerIndex)
+canUseSoldier("")
+canUseYearOfPlenty(resource1, resource2)
+
+canDiscard
+canIncreaseResourceAmount(resource)...these are for discarding
+canDecreaseResourceAmount(resource)
+
+canAcceptTrade(playerIndex)
+canIncreaseResourceAmount(resource)...these are for sending and receiving a trade
+canDecreaseAmount(resource)
+canSendTradeOffer(playerIndex)
+hasResourceToTrade(playerIndex, resource)
+canReceiveResource(playerIndex, resource)
+
+canDoSoldierAction()- can move the robber
+canPlacePiece(location, piecetype)
+canRobPlayer(playerIndex)
+canStartDoubleRoadBuilding() -- when road building progress development card is played
+canPlaceCity(location)
+canPlaceRoad(location)
+canPlaceRobber(locaion)
+canPlaceSettlement(location)
+
+canBuyCard()
+canPlayCard()
+canBuildCity()
+canBuildRoad()
+canBuildSettlement()
+
+canEndTurn()
+
+
+
+
+other things to think about
+available colors for players
+disable/enable Map btw turns
