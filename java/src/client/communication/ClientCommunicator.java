@@ -179,9 +179,14 @@ public class ClientCommunicator {
                                     }
 				}
 			} else {
-				throw new ClientException(String.format(
+                                if(commandName.contains("user")){
+                                        result.setResponseBody("Fail");
+                                }
+                                else{
+                                    throw new ClientException(String.format(
 						"doPost failed: %s (http code %d)", commandName,
 						connection.getResponseCode()));
+                                }
 			}
 		} catch (IOException e) {
 			throw new ClientException(String.format("doPost failed: %s",

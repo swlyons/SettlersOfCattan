@@ -52,6 +52,14 @@ public class ClientCommunicatorFascadeSettlersOfCatanTest {
         boolean result = instance.login(user);
         assertEquals(expResult, result);
         
+        user = new User("Sam", "lyons");
+        expResult = false;
+        result = instance.login(user);
+        assertEquals(expResult, result);
+        
+        System.out.print("...PASSED");
+        System.out.println();
+        
     }
     
 }
