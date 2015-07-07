@@ -9,14 +9,25 @@ public class MockServer implements IServer {
 
 	@Override
 	public String login(CredentialRequest request) {
-		// TODO Auto-generated method stub
-		return null;
+		String goodUsername = "Jamie";
+		String goodPassword = "password";
+		
+		if (request.getUsername() == goodUsername && request.getPassword() == goodPassword) {
+			return "success";
+		}
+		
+		return "Failed to login - bad username or password.";
 	}
 
 	@Override
 	public String Register(CredentialRequest request) {
-		// TODO Auto-generated method stub
-		return null;
+		String usedUsername = "Jamie";
+		
+		if (!request.getUsername().equals(usedUsername) && request.getUsername().length() > 0) {
+			return "success";
+		}
+		
+		return "Failed to login - bad username or password.";
 	}
 
 	@Override
