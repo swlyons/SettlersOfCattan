@@ -1,11 +1,11 @@
 package client.data;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class Game {
-
-    private String name;
+    
+    private String title;
+    private String id;
     private ResourceList bank;
     private MessageList chat;
     private MessageList log;
@@ -16,19 +16,25 @@ public class Game {
     private int version;
     private int winner;
 
-    public Game(List<Player> players, String name) {
+    public Game(List<Player> players, String title) {
         this.players = players;
-        this.name = name;
+        this.title = title;
     }
 
-    public void setName(String name){
-        this.name = name;
+    public void setTitle(String title){
+        this.title = title;
     }
     
-    public String getName(){
-        return name;
+    public String getTitle(){
+        return title;
     }
-    
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
     public List<Player> getPlayers() {
         return players;
     }
@@ -103,7 +109,7 @@ public class Game {
 
     @Override
     public String toString() {
-        return "{" + "bank : " + bank + ", chat : " + chat + ", log : " + log + ", map : " + map + ", players : " + players + ", tradeOffer : " + tradeOffer + ", turnTracker : " + turnTracker + ", version : " + version + ", winner : " + winner + '}';
+        return "{" + "title : " + title + ", id : " + id + ", bank : " + bank + ", chat : " + chat + ", log : " + log + ", map : " + map + ", players : " + players + ", tradeOffer : " + tradeOffer + ", turnTracker : " + turnTracker + ", version : " + version + ", winner : " + winner + '}';
     }
 
     
