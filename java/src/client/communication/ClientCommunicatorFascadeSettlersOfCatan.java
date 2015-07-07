@@ -27,16 +27,21 @@ public class ClientCommunicatorFascadeSettlersOfCatan {
      * Client Communicator facade constructor
      */
     public ClientCommunicatorFascadeSettlersOfCatan() {
+       
 
     }
     
-    public boolean login(User credentials) throws ClientException {
+    public boolean login(User credentials) throws ClientException { 
         return (ClientCommunicator
                 .getSingleton()
                 .doPost(LOGIN_USER,credentials).getResponseBody()).equals("Success");
         
     }
-
+    public boolean register(User credentials) throws ClientException {
+        return (ClientCommunicator
+                .getSingleton()
+                .doPost(REGISTER_USER,credentials).getResponseBody()).equals("Success");
+    }
     // Local Image Methods and Constants
     private static final String LOGIN_USER = "user/login";
     private static final String REGISTER_USER = "/user/register";
@@ -76,4 +81,5 @@ public class ClientCommunicatorFascadeSettlersOfCatan {
     
     private static final String LOG_LEVEL_UTIL = "util/changeLogLevel";
    
+    
 }

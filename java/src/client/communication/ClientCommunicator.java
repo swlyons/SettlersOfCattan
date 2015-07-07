@@ -15,6 +15,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLDecoder;
+import java.util.HashMap;
+import java.util.Map;
 import org.apache.commons.io.IOUtils;
 
 /**
@@ -46,6 +49,7 @@ public class ClientCommunicator {
 	 */
 	private ClientCommunicator() {
 		model = new GsonBuilder().create();
+                cookies = new HashMap<>();
 	}
 
 	// Queries
@@ -120,7 +124,6 @@ public class ClientCommunicator {
                                     BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
                                     String content = br.readLine();
                                     //only games/list and game/create have a different model
-                                    
                                     if(commandName.equals("game/list")){
                                         result.setResponseBody(model.fromJson(content, ListCreate.class));
                                     }
@@ -158,6 +161,7 @@ public class ClientCommunicator {
 			String data = model.toJson(postData);
                         
                         connection.getOutputStream().write(data.getBytes());
+                        
 			connection.getOutputStream().close();
                          
 			result.setResponseCode(connection.getResponseCode());
@@ -173,6 +177,13 @@ public class ClientCommunicator {
                                     }
                                     else if(commandName.contains("user")){
                                         result.setResponseBody(content);
+                                        if(commandName.equals("user/login") && content.equals("Success"))
+                                        {
+                                            String cookie = connection.getHeaderField("Set-Cookie").split(";")[0].split("=")[1];
+                                            String decodedCookie = URLDecoder.decode(cookie, "UTF-8");
+                                            int id = model.fromJson(decodedCookie, Cookie.class).playerID;
+                                            cookies.put(id, cookie);
+                                        }  
                                     }
                                     else{
                                         result.setResponseBody(model.fromJson(content, Game.class));
@@ -204,7 +215,8 @@ public class ClientCommunicator {
 	private static final String HTTP_POST = "POST";
 
 	private Gson model;
-
+        private Map<Integer,String> cookies;
+        
 	// Singleton Instance
 	private static ClientCommunicator singleton = null;
 
@@ -233,5 +245,13 @@ public class ClientCommunicator {
             private Game game;
             private Player player;
         }
+        
+        //cookie model
+        public class Cookie{
+           private String name;
+           private String password;
+           private int playerID;
+        }
+            
         
 }
