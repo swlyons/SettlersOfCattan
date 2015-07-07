@@ -304,7 +304,7 @@ public class GameManager {
             }
         }
 
-        resourceManager.transferCard(4, playerId, resourceList);
+        //resourceManager.transferCard(4, playerId, resourceList);
     }
 
     /**
