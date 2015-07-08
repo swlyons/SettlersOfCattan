@@ -3,6 +3,7 @@ package client.proxy;
 import java.util.List;
 
 import client.data.Game;
+import client.data.User;
 
 public class ServerProxy implements IServer {
 
@@ -25,7 +26,7 @@ public class ServerProxy implements IServer {
 	 * @pre the requests username and password are valid for login
 	 * @post returns a valid cookie for the user whose credentials were passed in.
 	 */
-	public String login(CredentialRequest request) {
+	public String login(User request) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -37,7 +38,7 @@ public class ServerProxy implements IServer {
 	 * @pre The username and password are valid AND the username is not already in use.
 	 * @post returns a valid cookie for the user that just registered.
 	 */
-	public String Register(CredentialRequest request) {
+	public String Register(User request) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -71,7 +72,7 @@ public class ServerProxy implements IServer {
 	 * @pre the request contains valid data
 	 * @post the player is joined to the game specified with the color indicated.
 	 */
-	public void JoinGame(JoinGameReqeust request) {
+	public void JoinGame(JoinGameRequest request) {
 		// TODO Auto-generated method stub
 
 	}

@@ -111,7 +111,7 @@ public class ClientCommunicator {
         HttpURLResponse result = new HttpURLResponse();
 
         try {
-            URL url = new URL(URL_PREFIX + "/" + commandName + "/" + params);
+            URL url = new URL(URL_PREFIX + "/" + commandName + params);
             HttpURLConnection connection = (HttpURLConnection) url
                     .openConnection();
             connection.setRequestMethod(HTTP_GET);
@@ -123,7 +123,6 @@ public class ClientCommunicator {
 
             result.setResponseCode(connection.getResponseCode());
             result.setResponseLength(connection.getContentLength());
-
             if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
                 if (connection.getContentLength() != -1) {
                     BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
@@ -133,24 +132,12 @@ public class ClientCommunicator {
                         Type listType = new TypeToken<ArrayList<Game>>() {
                         }.getType();
                         result.setResponseBody(model.fromJson(content, listType));
-                    } else if (commandName.contains("user")) {
-                        result.setResponseBody(content);
-                        if (commandName.equals("user/login") && content.equals("Success")) {
-                            String userCookie = connection.getHeaderField("Set-Cookie").split(";")[0];
-                            String decodedCookie = URLDecoder.decode(userCookie.split("=")[1], "UTF-8");
-                            int id = model.fromJson(decodedCookie, CookieModel.class).getPlayerID();
-                            cookies.put(id, userCookie + cookies.get(id));
-                        }
-                    } else if (commandName.equals("games/join")) {
-                        result.setResponseBody(content);
-                        if (commandName.equals("user/login") && content.equals("Success")) {
-                            String gameCookie = connection.getHeaderField("Set-Cookie").split(";")[0];
-                            String decodedCookie = URLDecoder.decode(gameCookie, "UTF-8");
-                            int id = model.fromJson(decodedCookie, CookieModel.class).getPlayerID();
-                            cookies.put(id, cookies.get(id) + gameCookie);
-                        }
                     } else {
-                        result.setResponseBody(model.fromJson(content, Game.class));
+                        if (content.equals("\"true\"")) {
+                            result.setResponseBody(new Game(new ArrayList(), content));
+                        } else {
+                            result.setResponseBody(model.fromJson(content, Game.class));
+                        }
                     }
                 }
             } else {
@@ -178,14 +165,14 @@ public class ClientCommunicator {
             HttpURLConnection connection = (HttpURLConnection) url
                     .openConnection();
             connection.setRequestMethod(HTTP_POST);
-            //set cookie
+
+            //set cookie by player id
             if (playerID > -1) {
                 connection.setRequestProperty("Cookie", cookies.get(playerID));
             }
             connection.setDoOutput(true);
             connection.connect();
             String data = model.toJson(postData);
-
             connection.getOutputStream().write(data.getBytes());
 
             connection.getOutputStream().close();
@@ -193,41 +180,44 @@ public class ClientCommunicator {
             result.setResponseCode(connection.getResponseCode());
             result.setResponseLength(connection.getContentLength());
 
+            //get the content
             if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
 
                 if (connection.getContentLength() != -1) {
 
                     BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
                     String content = br.readLine();
-
                     if (commandName.contains("user")) {
                         result.setResponseBody(content);
                         if (commandName.equals("user/login") && content.equals("Success")) {
                             String userCookie = connection.getHeaderField("Set-Cookie").split(";")[0];
                             String decodedCookie = URLDecoder.decode(userCookie.split("=")[1], "UTF-8");
                             int id = model.fromJson(decodedCookie, CookieModel.class).getPlayerID();
-                            cookies.put(id, userCookie + cookies.get(id));
+                            cookies.put(id, userCookie + ((cookies.get(id) != null) ? " ;" + cookies.get(id) : ""));
                         }
                     } else if (commandName.equals("games/join")) {
                         result.setResponseBody(content);
-                        if (commandName.equals("user/login") && content.equals("Success")) {
+                        if (content.equals("Success")) {
                             String gameCookie = connection.getHeaderField("Set-Cookie").split(";")[0];
-                            String decodedCookie = URLDecoder.decode(gameCookie, "UTF-8");
-                            int id = model.fromJson(decodedCookie, CookieModel.class).getPlayerID();
-                            cookies.put(id, cookies.get(id) + gameCookie);
+                            cookies.put(playerID, ((cookies.get(playerID) != null) ? cookies.get(playerID) + "; " : "") + gameCookie);
                         }
                     } else {
+                        if (commandName.equals("games/save") || commandName.equals("games/load")) {
+                            result.setResponseBody(content);
+                        }
                         result.setResponseBody(model.fromJson(content, Game.class));
                     }
                 }
             } else {
-                if (commandName.contains("user")) {
-                    result.setResponseBody("Fail:" + connection.getResponseCode());
-                } else {
-                    throw new ClientException(String.format(
-                            "doPost failed: %s (http code %d)", commandName,
-                            connection.getResponseCode()));
-                }
+                String content = "Failed"; //br.readLine();
+                result.setResponseBody(content);
+                /*if (commandName.contains("user")) {
+                    
+                 } else {
+                 throw new ClientException(String.format(
+                 "doPost failed: %s (http code %d)", commandName,
+                 connection.getResponseCode()));
+                 }*/
             }
         } catch (IOException e) {
             throw new ClientException(String.format("doPost failed: %s",

@@ -9,20 +9,19 @@ package client.proxy;
  *
  * @author ddennis
  */
-public class LoadGameRequest {
-    private String name;
+public class AddAIRequest {
+    private String AIType;
 
-    public LoadGameRequest(String name) {
-        this.name = name;
+    public AddAIRequest(String AIType) {
+        this.AIType = AIType;
     }
 
-    public String getName() {
-        return name;
+    public String getAIType() {
+        return AIType;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setAIType(String AIType) {
+        this.AIType = AIType;
     }
-    
     
 }
