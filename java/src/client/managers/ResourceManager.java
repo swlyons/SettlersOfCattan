@@ -2,42 +2,30 @@ package client.managers;
 
 import java.util.List;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import client.data.Card;
-import client.data.Player;
+import client.data.Bank;
+import client.data.DevCardList;
 import client.data.ResourceList;
-import shared.definitions.AwardType;
+import shared.definitions.DevCardType;
 
 public class ResourceManager {
 
-    private List<ResourceList> gameBanks;
-    private Map<AwardType, Player> awardMap = new HashMap<AwardType, Player>();
+    private List<Bank> gameBanks;
+    private final int mainBankIndex = 4;
 
     public ResourceManager() {
-        gameBanks = new ArrayList<ResourceList>();
-        awardMap = new HashMap<AwardType, Player>();
+        gameBanks = new ArrayList<Bank>();
     }
 
-    public ResourceManager(ArrayList<ResourceList> gameBanks, Map<AwardType, Player> awardMap) {
+    public ResourceManager(ArrayList<Bank> gameBanks) {
         this.gameBanks = gameBanks;
-        this.awardMap = awardMap;
     }
 
-    public List<ResourceList> getGameBanks() {
+    public List<Bank> getGameBanks() {
         return gameBanks;
     }
 
-    public void setGameBanks(List<ResourceList> gameBanks) {
+    public void setGameBanks(List<Bank> gameBanks) {
         this.gameBanks = gameBanks;
-    }
-
-    public Map<AwardType, Player> getAwardMap() {
-        return awardMap;
-    }
-
-    public void setAwardMap(Map<AwardType, Player> awardMap) {
-        this.awardMap = awardMap;
     }
 
     /**
@@ -53,25 +41,30 @@ public class ResourceManager {
      * player with the startIndex to the player with the destinationIndex
      * returns success of transaction
      */
-    public boolean transferCard(int startIndex, int destinationIndex, Card cardType) {
+    public boolean transferResourceCard(int startIndex, int destinationIndex, ResourceList request) {
         // if the card from the player is not available. return false.
+    	ResourceList start = gameBanks.get(startIndex).getResourcesCards();
+    	ResourceList destination = gameBanks.get(destinationIndex).getResourcesCards();
+    	
+    	if(start.hasCardsAvailable(request)) {
 
-        return false;
-    }
+    		start.removeBrick(request.getBrick());
+    		start.removeOre(request.getOre());
+    		start.removeWheat(request.getWheat());
+    		start.removeSheep(request.getSheep());
+    		start.removeWood(request.getWood());
+    		
+    		destination.addBrick(request.getBrick());
+    		destination.addOre(request.getOre());
+    		destination.addWheat(request.getWheat());
+    		destination.addSheep(request.getSheep());
+    		destination.addWood(request.getWood());		
+        	return true;
 
-    /**
-     *
-     * @param bankIndex
-     * @param cardType
-     * @pre bankIndex must be an index of either an existing player or the bank
-     * and cardType must be an actual cardType
-     *
-     * @post returns if the player (or bank) has the specified cardType
-     */
-    public boolean hasCardAvailable(int bankIndex, int cardType) {
-        boolean isAvailable = false;
-
-        return isAvailable;
+    	} else {
+    		return false;
+    	}
+    	
     }
 
     /**
@@ -79,10 +72,32 @@ public class ResourceManager {
      * @pre largest army award must be in the game
      * @post returns if the largest army award has been given
      */
-    public boolean awardLargestArmy() {
-        boolean awarded = false;
+    public int moveLargestArmy() {
+    	int max = -1;
+    	int previousOwnerIndex = -1;
+    	for(int i = 0; i < gameBanks.size(); i++) {
+    		Bank b = gameBanks.get(i);
+    		if(b.HasLargestArmy()){
+    			max = b.getSoldiers();
+    			previousOwnerIndex = i;
+    		}
+    	}
 
-        return awarded;
+    	int newOwnerIndex = previousOwnerIndex;
+    	for(int i = 0; i < gameBanks.size(); i++) {
+    		Bank b = gameBanks.get(i);
+    		if(b.getSoldiers() > max && i != previousOwnerIndex){
+    			//Remove Largest army from previous owner:
+    			Bank prev = gameBanks.get(previousOwnerIndex);
+    			prev.setHasLargestArmy(false);
+
+    			//Give it to the new owner
+    			b.setHasLargestArmy(true);
+    			newOwnerIndex = i;
+    		}
+    	}
+    	
+    	return newOwnerIndex;    	
     }
 
     /**
@@ -90,19 +105,33 @@ public class ResourceManager {
      * @pre longest road award must be in the game
      * @post returns if the longest road award has been given
      */
-    public boolean awardLongestRoad() {
-        boolean awarded = false;
+    public boolean moveLongestRoad() {
+    	boolean changed = false;
 
-        return awarded;
-    }
+    	int max = -1;
+    	int previousOwnerIndex = -1;
+    	for(int i = 0; i < gameBanks.size(); i++) {
+    		Bank b = gameBanks.get(i);
+    		if(b.HasLongestRoad()){
+    			max = 15 - b.getRoads();
+    			previousOwnerIndex = i;
+    		}
+    	}
+    	
+    	for(int i = 0; i < gameBanks.size(); i++) {
+    		Bank b = gameBanks.get(i);
+    		if((15 - b.getSoldiers()) > max && i != previousOwnerIndex){
+    			//Remove Largest army from previous owner:
+    			Bank prev = gameBanks.get(previousOwnerIndex);
+    			prev.setHasLongestRoad(false);
 
-    /**
-     * @pre there must be development cards in the game
-     *
-     * @post will have shuffled to development cards in the deck
-     */
-    public void shuffleDevelopmentCards() {
-
+    			//Give it to the new owner
+    			b.setHasLongestRoad(true);
+    			changed = true;
+    		}
+    	}
+    	
+        return changed;
     }
 
     /**
@@ -115,8 +144,10 @@ public class ResourceManager {
      * @post the soldier card for the the specified bankIndex(player or bank)
      * will be used
      */
-    public void useSoldier(int bankIndex) {
-
+    public void soldierUsed(int bankIndex) {
+    	Bank b = gameBanks.get(bankIndex);
+    	b.getDevelopmentCards().removeSoldier();
+    	b.addSoldier();
     }
 
     /**
@@ -129,8 +160,10 @@ public class ResourceManager {
      * @post the monument card for the the specified bankIndex(player or bank)
      * will be used
      */
-    public void useMonument(int bankIndex) {
-
+    public void monumentUsed(int bankIndex) {
+    	Bank b = gameBanks.get(bankIndex);
+    	b.getDevelopmentCards().removeMonument();
+    	b.addMonument();
     }
 
     /**
@@ -143,8 +176,9 @@ public class ResourceManager {
      * @post the monopoly card for the the specified bankIndex(player or bank)
      * will be used
      */
-    public void useMonopoly(int bankIndex) {
-
+    public void monopolyUsed(int bankIndex) {
+    	Bank b = gameBanks.get(bankIndex);
+    	b.getDevelopmentCards().removeMonopoly();
     }
 
     /**
@@ -157,8 +191,9 @@ public class ResourceManager {
      * @post the year of plenty card for the the specified bankIndex(player or
      * bank) will be used
      */
-    public void useYearOfPlenty(int bankIndex) {
-
+    public void yearOfPlentyUsed(int bankIndex) {
+    	Bank b = gameBanks.get(bankIndex);
+    	b.getDevelopmentCards().removeYearOfPlenty();
     }
 
     /**
@@ -171,13 +206,15 @@ public class ResourceManager {
      * @post the roadBuilding card for the the specified bankIndex(player or
      * bank) will be used
      */
-    public void useRoadBuilding(int bankIndex) {
-
+    public void roadBuildingUsed(int bankIndex) {
+    	Bank b = gameBanks.get(bankIndex);
+    	b.getDevelopmentCards().removeRoadBuilding();
     }
 
     /**
      *
      * @param bankIndex
+     * @throws Exception 
      *
      * @pre bankIndex must be the index of either and existing player or game
      * bank
@@ -185,8 +222,62 @@ public class ResourceManager {
      * @post the player/bank specified by the bankIndex will have bought another
      * development card
      */
-    public void buyDevelopmentCard(int bankIndex) {
+    public void buyDevelopmentCard(int destinationIndex) throws Exception {
+    	Bank destination = gameBanks.get(destinationIndex);
+    	Bank mainBank = gameBanks.get(mainBankIndex);
+    	
+    	ResourceList cost = new ResourceList(0,1,1,1,0);
+    	
+    	if(mainBank.getDevelopmentCards().totalCardsRemaining() > 0){
+    		if(destination.getResourcesCards().hasCardsAvailable(cost)) {
+    			transferResourceCard(destinationIndex, mainBankIndex, cost);
 
+    			DevCardType type = mainBank.getDevelopmentCards().selectRandomDevCard();
+    			transferDevelopmentCard(destinationIndex, type);
+    			
+    		} else {
+    			throw new Exception("Player cannot pay the cost");
+    		}
+    	} else {
+    		throw new Exception("No more development cards remaining");
+    	}
+    }
+    
+    /**
+    *
+    * @param destinationIndex
+    * @param requestType
+    *
+    * @pre destinationIndex are actual indexes of players and
+    * requestType is an actual type of card
+    *
+    * @post a card specified by the requestType will have been transfered from the
+    * main bank to the player with the destinationIndex
+    * returns success of transaction
+    */
+    public boolean transferDevelopmentCard(int destinationIndex, DevCardType requestType) {
+        // this will only be called by the buyDevelopment card, which will never request a card the main bank doesn't have.
+    	DevCardList start = gameBanks.get(mainBankIndex).getDevelopmentCards();
+    	DevCardList destination = gameBanks.get(destinationIndex).getUnusableDevCards();
+
+    	if(requestType == DevCardType.MONOPOLY){
+    		start.removeMonopoly();
+    		destination.addMonopoly();
+    	} else if(requestType == DevCardType.MONUMENT) {
+    		start.removeMonument();
+    		destination.addMonument();
+    	} else if(requestType == DevCardType.ROAD_BUILD) {
+    		start.removeRoadBuilding();
+    		destination.addRoadBuilding();
+    	} else if(requestType == DevCardType.YEAR_OF_PLENTY) {
+    		start.removeYearOfPlenty();
+    		destination.addYearOfPlenty();
+    	} else {
+    		start.removeSoldier();
+    		destination.addSoldier();
+    	}
+    	
+    	return true;    	
     }
 
     /**
@@ -195,38 +286,56 @@ public class ResourceManager {
      * @post will have made the cards usable for current player
      */
     public void makeCardsUsable() {
-
+    	for(Bank b : gameBanks){
+   			b.makeCardsUsable();
+    	}
     }
 
     //player has seven or more card. The robber was moved. The player must now discard half of their cards
-    public void playerDiscardsHalfCards(int playerId) {
-
+    public void playerDiscardsHalfCards(int playerIndex, ResourceList toDiscard) {
+    	transferResourceCard(playerIndex, mainBankIndex, toDiscard);
     }
     
     //called after checking to see if the place is valid for a settlement or city.
     // Subtract from the person's bank a settlement and return true.
     // if none are left return false
-    public boolean placedSettlement(int playerId){
-        return false;
+    public boolean placedSettlement(int playerIndex){
+    	Bank b = gameBanks.get(playerIndex);
+    	if(b.getSettlements() > 0){
+    		b.removeSettlement();
+    		return true;
+    	} else
+    		return false;
+    	
     }
 
      //called after checking to see if the place is valid for a settlement or city.
      //Subtract from the person's bank a city and add to the person's bank a settlement return true
     // if none are left return false (or if somehow this method was called and the person has 5 settlements already)
-    public boolean placedCity(int playerId){
-        return false;
+    public boolean placedCity(int playerIndex){
+    	Bank b = gameBanks.get(playerIndex);
+    	if(b.getCities() > 0){
+    		b.addSettlement();
+    		b.removeCity();
+    		return true;
+    	} else
+    		return false;
     }
     
     // called after checking to see if the place is valid for a road.
     // Subtract from the person's bank a road and return true.
     // if none are left return false
-    public boolean placedRoad(int playerId){
-        return false;
-    }
+    public boolean placedRoad(int playerIndex){
+    	Bank b = gameBanks.get(playerIndex);
+    	if(b.getRoads() > 0){
+    		b.removeRoad();
+    		return true;
+    	} else
+    		return false;    }
 
     @Override
     public String toString() {
-        return "ResourceManager{" + "gameBanks=" + gameBanks + ", awardMap=" + awardMap + '}';
+        return "ResourceManager{" + "gameBanks=" + gameBanks.toString() + "}";
     }
 
 }

@@ -1,4 +1,7 @@
 package client.data;
+
+import shared.definitions.ResourceType;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -17,6 +20,42 @@ public class ResourceList {
     private int wheat;
     private int wood;
 
+    public ResourceList() {
+    	brick = 0;
+    	ore = 0;
+    	sheep = 0;
+    	wheat = 0;
+    	wood = 0;
+    }
+    
+    public ResourceList(ResourceType type) {
+    	brick = 0;
+    	ore = 0;
+    	sheep = 0;
+    	wheat = 0;
+    	wood = 0;
+    	
+    	switch(type){
+    	case BRICK:
+    		brick++;
+    		break;
+    	case ORE:
+    		ore++;
+    		break;
+    	case SHEEP:
+    		sheep++;
+    		break;
+    	case WHEAT:
+    		wheat++;
+    		break;
+    	case WOOD:
+    		wood++;
+    		break;
+   		default:
+   			//Should never occur
+    	}
+    }
+    
     public ResourceList(int brick, int ore, int sheep, int wheat, int wood) {
         this.brick = brick;
         this.ore = ore;
@@ -32,6 +71,14 @@ public class ResourceList {
     public void setBrick(int brick) {
         this.brick = brick;
     }
+    
+    public void addBrick(int amount) {
+    	this.brick += amount;
+    }
+
+    public void removeBrick(int amount) {
+    	this.brick -= amount;
+    }
 
     public int getOre() {
         return ore;
@@ -39,6 +86,14 @@ public class ResourceList {
 
     public void setOre(int ore) {
         this.ore = ore;
+    }
+
+    public void addOre(int amount) {
+    	this.ore += amount;
+    }
+
+    public void removeOre(int amount) {
+    	this.ore -= amount;
     }
 
     public int getSheep() {
@@ -49,12 +104,28 @@ public class ResourceList {
         this.sheep = sheep;
     }
 
+    public void addSheep(int amount) {
+    	this.sheep += amount;
+    }
+
+    public void removeSheep(int amount) {
+    	this.sheep -= amount;
+    }
+
     public int getWheat() {
         return wheat;
     }
 
     public void setWheat(int wheat) {
         this.wheat = wheat;
+    }
+
+    public void addWheat(int amount) {
+    	this.wheat += amount;
+    }
+
+    public void removeWheat(int amount) {
+    	this.wheat -= amount;
     }
 
     public int getWood() {
@@ -64,6 +135,20 @@ public class ResourceList {
     public void setWood(int wood) {
         this.wood = wood;
     }
+    
+    public void addWood(int amount) {
+    	this.wood += amount;
+    }
+
+    public void removeWood(int amount) {
+    	this.wood -= amount;
+    }
+
+    public boolean hasCardsAvailable(ResourceList request) {	
+    	return request.getBrick() <= this.getBrick() && request.getOre() <= this.getOre() && request.getSheep() <= this.getSheep() 
+    			&& request.getWheat() <= this.getWheat() && request.getWheat() <= this.getWheat();
+    }
+    
     /**
      * 
      * @pre none

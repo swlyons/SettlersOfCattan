@@ -1,7 +1,5 @@
 package client.data;
 
-import shared.definitions.ResourceType;
-
 public class TradeOffer {
 
     private int sender;
