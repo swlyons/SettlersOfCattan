@@ -1,6 +1,7 @@
 package client.managers;
 
-import client.data.Card;
+import client.data.Bank;
+import client.data.DevCardList;
 import client.data.Edge;
 import client.data.Game;
 import client.data.Hex;
@@ -16,6 +17,7 @@ import java.util.Random;
 import java.util.Date;
 
 import shared.definitions.DevCardType;
+import shared.definitions.PieceType;
 import shared.definitions.ResourceType;
 import shared.locations.VertexLocation;
 import shared.locations.EdgeLocation;
@@ -32,6 +34,7 @@ public class GameManager {
     private ResourceManager resourceManager;
     private Random randomness;
     private Game game;
+    private final int mainBankIndex = 4;
 
     public GameManager() {
         randomness = new Random();
@@ -60,11 +63,18 @@ public class GameManager {
         mapManager.setHexList(game.getMap().getHexes());
 
         //Resource Manager
-        List<ResourceList> gameBanks = new ArrayList<>();
-        for (Player player : game.getPlayers()) {
-            gameBanks.add(player.getPlayerIndex(), player.getResources());
+        List<Bank> gameBanks = new ArrayList<>();
+        for (int i = 0; i < game.getPlayers().size(); i++) {
+        	Player p = game.getPlayers().get(i);
+        	boolean hasLargestArmy = (p.getPlayerID() == game.getTurnTracker().getLargestArmy());
+        	boolean hasLongestRoad = (p.getPlayerID() == game.getTurnTracker().getLongestRoad());
+        	gameBanks.add(new Bank(p, hasLargestArmy, hasLongestRoad));
         }
-        gameBanks.add(4, game.getBank());
+
+        DevCardList mainBankDevCards = new DevCardList(game.getPlayers());
+    	boolean hasLargestArmy = (mainBankIndex == game.getTurnTracker().getLargestArmy());
+    	boolean hasLongestRoad = (mainBankIndex == game.getTurnTracker().getLongestRoad());
+        gameBanks.add(new Bank(game.getBank(), mainBankDevCards, hasLargestArmy, hasLongestRoad));
         resourceManager.setGameBanks(gameBanks);
 
     }
@@ -316,7 +326,7 @@ public class GameManager {
 
 //        int dieRoll = randomness.nextInt(6) + randomness.nextInt(6) + 2;
         List<Hex> hexesProducingResources = mapManager.getTerrainResourceHexes(dieRoll);
-        ResourceList gameBank = resourceManager.getGameBanks().get(4);
+        ResourceList gameBank = resourceManager.getGameBanks().get(mainBankIndex).getResourcesCards();
 
         for (ResourceType resourceType : ResourceType.values()) {
             List<Hex> hexesProducingAParticularResource = new ArrayList<>();
@@ -360,9 +370,9 @@ public class GameManager {
             }
 
             if (amountAvailable >= playersEarningResources.size()) {
-                Card transferringCard = new Card(true, resourceType, DevCardType.MONOPOLY, true, false);
+                ResourceList resource = new ResourceList(resourceType);
                 for (Integer earningPlayer : playersEarningResources) {
-                    resourceManager.transferCard(4, earningPlayer, transferringCard);
+                    resourceManager.transferResourceCard(mainBankIndex, earningPlayer, resource);
                 }
             }
 
@@ -370,14 +380,14 @@ public class GameManager {
 
     }
 
-    public void diceIsSevenMoveRober(HexLocation newLocationForRobber) {
+    public void diceIsSevenMoveRobber(HexLocation newLocationForRobber) {
         if (mapManager.moveRobber(newLocationForRobber))
         {
 
             for (int i = 0; i < 4; i++) {
-                int numberOfResourceCards = resourceManager.getGameBanks().get(i).getTotalResources();
+                int numberOfResourceCards = resourceManager.getGameBanks().get(i).getResourcesCards().getTotalResources();
                 if (numberOfResourceCards >= 7) {
-                    resourceManager.playerDiscardsHalfCards(i);
+                    resourceManager.playerDiscardsHalfCards(i, new ResourceList());
                 }
             }
         }
@@ -391,7 +401,7 @@ public class GameManager {
      * @post Success = Cards will be transferred between current player bank and
      * game bank.
      */
-    public boolean buy(int gameID, String card) {
+    public boolean buyDevCard() {
 
         return false;
     }
@@ -404,7 +414,7 @@ public class GameManager {
      * @post Success = Structure built, player victory point incremented,
      * structure count decremented.
      */
-    public boolean build(int gameID, String object) {
+    public boolean build(int gameID, PieceType type) {
 
         return false;
     }
@@ -422,7 +432,7 @@ public class GameManager {
      * @post Failure = Receiver doesn't have the requested cards; Success =
      * cards are transferred between the two player's banks.
      */
-    public boolean trade(int gameID, int senderID, int receiverID, ArrayList<Card> offer, ArrayList<Card> request) {
+    public boolean trade(int gameID, int senderID, int receiverID, ResourceList offer, ResourceList request) {
 
         return false;
     }
@@ -436,7 +446,7 @@ public class GameManager {
      * card. Then it will be moved to another part of the player's bank) Card
      * effect will be carried out.
      */
-    public boolean useCard(int gameID, Card c) {
+    public boolean useDevCard(DevCardType type) {
 
         return false;
     }
