@@ -54,7 +54,7 @@ public class MapManager {
         return hexList;
     }
 
-    public void setHexList(ArrayList<Hex> hexListNew) {
+    public void setHexList(List<Hex> hexListNew) {
         hexList = hexListNew;
     }
 
