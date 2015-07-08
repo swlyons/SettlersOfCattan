@@ -869,6 +869,7 @@ public class GameManagerTest {
     	banks.get(0).setDevelopmentCards(cards);
     	target.getResourceManager().setGameBanks(banks);
     	
-    	
+    	target.useMonument();
+    	assertTrue(target.getResourceManager().getGameBanks().get(0).getMonuments() == 0);
     }
 }
