@@ -27,7 +27,6 @@ public class UserManager {
      * @post returns if the user was successfully created or not
      */
     public boolean createUser(String username, String password, String passwordValidate) {
-    	System.out.println("start "+username+" : "+password+" , "+passwordValidate);
         boolean created = true;
 
         //may want to throw different exceptions instead of returning booleans
@@ -45,7 +44,6 @@ public class UserManager {
             }
             //TODO: once we have a better concept of how a cookie works and what is valid, we should improve this logic.
         }
-        System.out.println("end");
         return created;
     }
 
