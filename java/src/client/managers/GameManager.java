@@ -142,12 +142,12 @@ public class GameManager {
                 }
                 resourceManager.setGameBanks(gameBanks);
 
-	}
+            }
+        }
 	/* canDo Methods */
 
 	/**
 	 * @author Curt
-	 * @param gameID
 	 *            = unique ID of a game in the server's games list
 	 * @pre gameID matches an existing game
 	 * @post Game will be terminated. Players will be evicted from game if still
