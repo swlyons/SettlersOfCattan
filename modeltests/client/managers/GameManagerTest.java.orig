@@ -824,6 +824,26 @@ public class GameManagerTest {
 	// assert("Model was successfully initialized",
 	// jsonDataIn.equals(jsonDataOut) && !jsonDataOut.isEmpty());
 	// }
+	
+	@Test
+	public void testRollDice() {
+		
+	}
+	
+	@Test
+	public void testBuildRoad() {
+		
+	}
+	
+	@Test
+	public void testBuildStructure() {
+		
+	}
+	
+	@Test
+	public void testTrade() {
+		
+	}
 
 	@Test
 	public void testCanBuyDevCard() {
@@ -844,18 +864,22 @@ public class GameManagerTest {
 
 		String previousResourceString = (prevResources.toString());
 
-		// Verified devCardList was empty, now if we buy a card it should have
-		// one.
 		instance.buyDevCard();
 		DevCardList newDevCards = instance.getResourceManager().getGameBanks()
 				.get(0).getUnusableDevCards();
 		ResourceList newResources = instance.getResourceManager()
+<<<<<<< HEAD
 				.getGameBanks().get(0).getResourcesCards();
-		;
+
 		assert (newDevCards.totalCardsRemaining() == 1);
 
 		// If we add the resources back and the result is equal to the previous
 		// quantities, then they had been removed properly
+=======
+				.getGameBanks().get(0).getResourcesCards();		
+		assert(newDevCards.totalCardsRemaining() == 1);
+		
+>>>>>>> 913de443126c58b770d6325be2ddf0d926fe918c
 		newResources.addOre(1);
 		newResources.addWheat(1);
 		newResources.addSheep(1);
@@ -863,6 +887,7 @@ public class GameManagerTest {
 
 	}
 
+<<<<<<< HEAD
 	@Test
 	public void testPlayMonument() {
 		GameManager target = new GameManager();
@@ -906,51 +931,83 @@ public class GameManagerTest {
 		assertTrue(playedBefore + 1 == playedAfter);
 		assertTrue(heldAfter + 1 == heldBefore);
 	}
-
+	
 	@Test
-	public void testCreateGame() {
-		GameManager game = new GameManager();
-		game.createGame(false, false, false, "Muahahahahhahahhahha");
-		assertTrue(game.getGame().getTitle().equals("Muahahahahhahahhahha"));
-		assertFalse(game.getGame().getTitle().equals("Milk"));
-		List<Hex> hexesBasic = game.getMapManager().getHexList();
-		List<Location> locationsBasic = game.getLocationManager()
-				.getUnsettledLocations();
-		List<Edge> edgesBasic = game.getLocationManager().getUnsettledEdges();
-		List<Port> portsBasic = game.getLocationManager().getPorts();
-		game = new GameManager();
-		game.createGame(false, false, false, "Muahahahahhahahhahha");
-		for (int i = 0; i < game.getMapManager().getHexList().size(); i++) {
-			assertTrue(hexesBasic
-					.get(i)
-					.getLocation()
-					.equals(game.getMapManager().getHexList().get(i)
-							.getLocation()));
-			assertTrue(hexesBasic.get(i).getNumber() == game.getMapManager()
-					.getHexList().get(i).getNumber());
-		}
-		for (int i = 0; i < game.getLocationManager().getPorts().size(); i++) {
-			assertTrue(portsBasic
-					.get(i)
-					.getLocation()
-					.equals(game.getLocationManager().getPorts().get(i)
-							.getLocation()));
-		}
-		for (int i = 0; i < game.getLocationManager().getUnsettledLocations()
-				.size(); i++) {
-			assertTrue(locationsBasic
-					.get(i)
-					.getNormalizedLocation()
-					.equals(game.getLocationManager().getUnsettledLocations()
-							.get(i).getNormalizedLocation()));
-		}
-		for (int i = 0; i < game.getLocationManager().getUnsettledEdges()
-				.size(); i++) {
-			assertTrue(edgesBasic
-					.get(i)
-					.getEdgeLocation()
-					.equals(game.getLocationManager().getUnsettledEdges()
-							.get(i).getEdgeLocation()));
-		}
+	public void testPlayRoadBuilding() {
+		
 	}
+	
+	@Test
+	public void testPlayMonopoly() {
+		
+	}
+	
+	@Test
+	public void testPlayYearOfPlenty() {
+		
+	}
+=======
+    @Test
+    public void testPlayMonument() {
+    	GameManager target = new GameManager();
+    	target.initializeGame(jsonDataIn);
+    	DevCardList cards = new DevCardList(1,1,1,1,1);
+    	List<Bank> banks = target.getResourceManager().getGameBanks();
+    	banks.get(0).setDevelopmentCards(cards);
+    	target.getResourceManager().setGameBanks(banks);
+    	
+    	int playedBefore = target.getResourceManager().getGameBanks().get(0).getMonuments();
+    	int heldBefore = target.getResourceManager().getGameBanks().get(0).getDevelopmentCards().getMonument();
+    	target.useMonument();
+    	int playedAfter = target.getResourceManager().getGameBanks().get(0).getMonuments();
+    	int heldAfter = target.getResourceManager().getGameBanks().get(0).getDevelopmentCards().getMonument();
+    	assertTrue(playedBefore + 1 == playedAfter);
+    	assertTrue(heldAfter + 1 == heldBefore);
+    }
+    @Test
+    public void testPlaySoldier() {
+    	GameManager target = new GameManager();
+    	target.initializeGame(jsonDataIn);
+    	DevCardList cards = new DevCardList(1,1,1,1,1);
+    	List<Bank> banks = target.getResourceManager().getGameBanks();
+    	banks.get(0).setDevelopmentCards(cards);
+    	target.getResourceManager().setGameBanks(banks);
+    	
+    	int playedBefore = target.getResourceManager().getGameBanks().get(0).getSoldiers();
+    	int heldBefore = target.getResourceManager().getGameBanks().get(0).getDevelopmentCards().getSoldier();
+    	target.useSoldier(new HexLocation(0, 0));
+    	int playedAfter = target.getResourceManager().getGameBanks().get(0).getSoldiers();
+    	int heldAfter = target.getResourceManager().getGameBanks().get(0).getDevelopmentCards().getSoldier();
+    	assertTrue(playedBefore + 1 == playedAfter);
+    	assertTrue(heldAfter + 1 == heldBefore);
+//	 	assertTrue(target.getMapManager().getRobberLocation().equals(new HexLocation(0, 0)));
+    }
+    
+    @Test
+    public void testCreateGame(){
+        GameManager game = new GameManager();
+        game.createGame(false, false, false, "Muahahahahhahahhahha");
+        assertTrue(game.getGame().getTitle().equals("Muahahahahhahahhahha"));
+        assertFalse(game.getGame().getTitle().equals("Milk"));        
+        List<Hex> hexesBasic = game.getMapManager().getHexList();
+        List<Location> locationsBasic = game.getLocationManager().getUnsettledLocations();
+        List<Edge> edgesBasic = game.getLocationManager().getUnsettledEdges();
+        List<Port> portsBasic = game.getLocationManager().getPorts();        
+        game = new GameManager();
+        game.createGame(false, false, false, "Muahahahahhahahhahha");        
+        for(int i = 0;i<game.getMapManager().getHexList().size();i++){
+            assertTrue(hexesBasic.get(i).getLocation().equals(game.getMapManager().getHexList().get(i).getLocation()));
+            assertTrue(hexesBasic.get(i).getNumber()==game.getMapManager().getHexList().get(i).getNumber());            
+        }        
+        for(int i = 0;i<game.getLocationManager().getPorts().size();i++){
+            assertTrue(portsBasic.get(i).getLocation().equals(game.getLocationManager().getPorts().get(i).getLocation()));
+        }        
+        for(int i = 0; i<game.getLocationManager().getUnsettledLocations().size();i++){
+            assertTrue(locationsBasic.get(i).getNormalizedLocation().equals(game.getLocationManager().getUnsettledLocations().get(i).getNormalizedLocation()));
+        }
+        for(int i = 0; i<game.getLocationManager().getUnsettledEdges().size();i++){
+            assertTrue(edgesBasic.get(i).getEdgeLocation().equals(game.getLocationManager().getUnsettledEdges().get(i).getEdgeLocation()));
+        }               
+    }
+>>>>>>> 913de443126c58b770d6325be2ddf0d926fe918c
 }
