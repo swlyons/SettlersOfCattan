@@ -855,6 +855,19 @@ public class GameManagerTest {
 
 	}
 
+<<<<<<< HEAD
+//    @Test
+//    public void testPlayMonument() {
+//    	GameManager target = new GameManager();
+//    	target.initializeGame(jsonDataIn);
+//    	DevCardList cards = new DevCardList(1,1,1,1,1);
+//    	List<Bank> banks = target.getResourceManager().getGameBanks();
+//    	banks.get(0).setDevelopmentCards(cards);
+//    	target.getResourceManager().setGameBanks(banks);
+//    	
+//    	
+//    }
+=======
     @Test
     public void testPlayMonument() {
     	GameManager target = new GameManager();
@@ -889,6 +902,7 @@ public class GameManagerTest {
     	int heldAfter = target.getResourceManager().getGameBanks().get(0).getDevelopmentCards().getSoldier();
     	assertTrue(playedBefore + 1 == playedAfter);
     	assertTrue(heldAfter + 1 == heldBefore);
-//	 	assertTrue(target.getMapManager().getRobberLocation().equals(new HexLocation(0, 0)));
+    	//assertTrue(target.getMapManager().getRobberLocation().equals(new HexLocation(0, 0)));
     }
+>>>>>>> a8280b68a778a32e927c374952de9f0989c27bf5
 }

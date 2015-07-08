@@ -52,116 +52,128 @@ public class GameManager {
 	 * @post Will initialize the game model
 	 */
 	public void initializeGame(String jsonData) {
-            try{
-                // create a json object
-                Gson model = new GsonBuilder().create();
+		try {
+			// create a json object
+			Gson model = new GsonBuilder().create();
 
-                // initialize the client object model
-                game = model.fromJson(jsonData, Game.class);
+			// initialize the client object model
+			game = model.fromJson(jsonData, Game.class);
 
-                if(game.getTurnTracker().getLargestArmy()==-1){
-                    game.getTurnTracker().setLargestArmy(4);
-                }
-                if(game.getTurnTracker().getLongestRoad()==-1){
-                    game.getTurnTracker().setLongestRoad(4);
-                }
-                
-                Map map = game.getMap();
+			if (game.getTurnTracker().getLargestArmy() == -1) {
+				game.getTurnTracker().setLargestArmy(4);
+			}
+			if (game.getTurnTracker().getLongestRoad() == -1) {
+				game.getTurnTracker().setLongestRoad(4);
+			}
 
-                HexLocation robberLocation = map.getRobber();
+			Map map = game.getMap();
 
-                if(mapManager==null){
-                    mapManager = new MapManager();
-                    mapManager.setHexList(map.getHexes());                    
-                }
+			HexLocation robberLocation = map.getRobber();
 
-                for(Hex hex : mapManager.getHexList()){
-                    if(hex.getLocation().equals(robberLocation)){
-                            hex.setHasRobber(true);
-                        }else{
-                            hex.setHasRobber(false);
-                        }
-                }
+			if (mapManager == null) {
+				mapManager = new MapManager();
+				mapManager.setHexList(map.getHexes());
+			}
 
-                if(locationManager==null){
-                    locationManager = new LocationManager();
-                    createUnsettledAreas(mapManager.getHexList());
-                    locationManager.setPorts(map.getPorts());
-                }
+			for (Hex hex : mapManager.getHexList()) {
+				if (hex.getLocation().equals(robberLocation)) {
+					hex.setHasRobber(true);
+				} else {
+					hex.setHasRobber(false);
+				}
+			}
 
-                for(VertexObject settlement : map.getSettlements()){
+			if (locationManager == null) {
+				locationManager = new LocationManager();
+				createUnsettledAreas(mapManager.getHexList());
+				locationManager.setPorts(map.getPorts());
+			}
 
-                    Location settlementLocation = null;
+			for (VertexObject settlement : map.getSettlements()) {
 
-                    for(Location location : locationManager.getUnsettledLocations()){
-                        if(location.getNormalizedLocation().equals(settlement.getDirection())){                            
-                            location.setIsCity(false);
-                            location.getWhoCanBuild().add(settlement.getOwner());                            
-                            settlementLocation = location;
-                            break;
-                        }
+				Location settlementLocation = null;
 
-                    }
+				for (Location location : locationManager
+						.getUnsettledLocations()) {
+					if (location.getNormalizedLocation().equals(
+							settlement.getDirection())) {
+						location.setIsCity(false);
+						location.getWhoCanBuild().add(settlement.getOwner());
+						settlementLocation = location;
+						break;
+					}
 
-                    if(settlementLocation!=null){
-                        if(!locationManager.settleLocation(settlementLocation.getNormalizedLocation(), settlement.getOwner(), false)){
-                            throw new Exception("Unable to settle location from initializeGame.");
-                        }
-                    }
+				}
 
-                }
+				if (settlementLocation != null) {
+					if (!locationManager.settleLocation(
+							settlementLocation.getNormalizedLocation(),
+							settlement.getOwner(), false)) {
+						throw new Exception(
+								"Unable to settle location from initializeGame.");
+					}
+				}
 
-                for(VertexObject city : map.getCities()){
-                    for(Location location : locationManager.getSettledLocations()){
-                        if(location.getNormalizedLocation().equals(city.getDirection())){
-                            locationManager.upgradeToCity(city.getDirection());
-                        }
-                    }
-                }
+			}
 
-                for(EdgeValue road : map.getRoads()){
-                    Edge roadLocation = null;
+			for (VertexObject city : map.getCities()) {
+				for (Location location : locationManager.getSettledLocations()) {
+					if (location.getNormalizedLocation().equals(
+							city.getDirection())) {
+						locationManager.upgradeToCity(city.getDirection());
+					}
+				}
+			}
 
-                    for(Edge edge : locationManager.getUnsettledEdges()){
-                        if(edge.getEdgeLocation().equals(road.getLocation())){
-                            edge.getWhoCanBuild().add(road.getOwner());
-                            roadLocation = edge;
-                            break;
-                        }
-                    }
+			for (EdgeValue road : map.getRoads()) {
+				Edge roadLocation = null;
 
-                    if(roadLocation!=null){
-                        if(!locationManager.settleEdge(roadLocation.getEdgeLocation(), road.getOwner())){
-                            throw new Exception("Unable to settle edge from initializeGame.");
-                        }
-                    }
+				for (Edge edge : locationManager.getUnsettledEdges()) {
+					if (edge.getEdgeLocation().equals(road.getLocation())) {
+						edge.getWhoCanBuild().add(road.getOwner());
+						roadLocation = edge;
+						break;
+					}
+				}
 
+				if (roadLocation != null) {
+					if (!locationManager.settleEdge(
+							roadLocation.getEdgeLocation(), road.getOwner())) {
+						throw new Exception(
+								"Unable to settle edge from initializeGame.");
+					}
+				}
+			}
 
-                    // Resource Manager
-                    List<Bank> gameBanks = new ArrayList<>();
-                    for (int i = 0; i < game.getPlayers().size(); i++) {
-                            Player p = game.getPlayers().get(i);
-                            boolean hasLargestArmy = (p.getPlayerID() == game.getTurnTracker().getLargestArmy());
-                            boolean hasLongestRoad = (p.getPlayerID() == game.getTurnTracker().getLongestRoad());
-                            gameBanks.add(new Bank(p, hasLargestArmy, hasLongestRoad));
-                    }
+			// Resource Manager
+			List<Bank> gameBanks = new ArrayList<>();
+			for (int i = 0; i < game.getPlayers().size(); i++) {
+				Player p = game.getPlayers().get(i);
+				boolean hasLargestArmy = (p.getPlayerID() == game
+						.getTurnTracker().getLargestArmy());
+				boolean hasLongestRoad = (p.getPlayerID() == game
+						.getTurnTracker().getLongestRoad());
+				gameBanks.add(new Bank(p, hasLargestArmy, hasLongestRoad));
+			}
 
-                    DevCardList mainBankDevCards = new DevCardList(game.getPlayers());
-                    boolean hasLargestArmy = (mainBankIndex == game.getTurnTracker().getLargestArmy());
-                    boolean hasLongestRoad = (mainBankIndex == game.getTurnTracker().getLongestRoad());
-                    gameBanks.add(new Bank(game.getBank(), mainBankDevCards, hasLargestArmy, hasLongestRoad));
-                    if(resourceManager==null){
-                        resourceManager = new ResourceManager();
-                    }
-                    resourceManager.setGameBanks(gameBanks);
+			DevCardList mainBankDevCards = new DevCardList(game.getPlayers());
+			boolean hasLargestArmy = (mainBankIndex == game.getTurnTracker()
+					.getLargestArmy());
+			boolean hasLongestRoad = (mainBankIndex == game.getTurnTracker()
+					.getLongestRoad());
+			gameBanks.add(new Bank(game.getBank(), mainBankDevCards,
+					hasLargestArmy, hasLongestRoad));
+			if (resourceManager == null) {
+				resourceManager = new ResourceManager();
+			}
+			resourceManager.setGameBanks(gameBanks);
 
-                }
+		} catch (Exception e) {
+			System.out.println(e);
+		}
 
-            }catch(Exception e){
-                System.out.println(e);            
-            }
-            
-        }
+	}
+
 	/* canDo Methods */
 
 	/**
@@ -458,13 +470,14 @@ public class GameManager {
 
 	public void diceIsSevenMoveRobber(HexLocation newLocationForRobber) {
 		if (mapManager.moveRobber(newLocationForRobber)) {
-                    for (int i = 0; i < 4; i++) {
-                        int numberOfResourceCards = resourceManager.getGameBanks().get(i).getResourcesCards()
-                                        .getTotalResources();
-                        if (numberOfResourceCards >= 7) {
-                                resourceManager.playerDiscardsHalfCards(i, new ResourceList());
-                        }
-                    }
+			for (int i = 0; i < 4; i++) {
+				int numberOfResourceCards = resourceManager.getGameBanks()
+						.get(i).getResourcesCards().getTotalResources();
+				if (numberOfResourceCards >= 7) {
+					resourceManager.playerDiscardsHalfCards(i,
+							new ResourceList());
+				}
+			}
 		}
 	}
 
@@ -759,7 +772,7 @@ public class GameManager {
 	 *       in all player's hands will be marked as usable.
 	 */
 	public void endTurn() {
-            resourceManager.makeCardsUsable();
+		resourceManager.makeCardsUsable();
 		// TODO: interact with GUI to disable for non-current player
 	}
 
@@ -774,11 +787,11 @@ public class GameManager {
 	public ResourceManager getResourceManager() {
 		return resourceManager;
 	}
-	
+
 	public LocationManager getLocationManager() {
 		return locationManager;
 	}
-	
+
 	public MapManager getMapManager() {
 		return mapManager;
 	}
