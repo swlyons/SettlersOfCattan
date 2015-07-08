@@ -186,7 +186,7 @@ public class ClientCommunicator {
 
             result.setResponseCode(connection.getResponseCode());
             result.setResponseLength(connection.getContentLength());
-            if(commandName.equals("moves/Road_Building"))
+            if(commandName.equals("moves/Soldier"))
                 System.out.println(data);
             //System.out.println(cookies.get(playerID))
             //get the content

@@ -49,7 +49,7 @@ public class ServerProxy implements IServer {
 	 * @pre none
 	 * @post returns a list of GameData for all currently unfinished games.
 	 */
-	public List<GameData> ListGames() {
+	public String ListGames() {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -61,7 +61,7 @@ public class ServerProxy implements IServer {
 	 * @pre valid request is passed in.
 	 * @post the game is created and will show on the game list.
 	 */
-	public GameData CreateGame(CreateGameRequest request) {
+	public String CreateGame(CreateGameRequest request) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -72,9 +72,9 @@ public class ServerProxy implements IServer {
 	 * @pre the request contains valid data
 	 * @post the player is joined to the game specified with the color indicated.
 	 */
-	public void JoinGame(JoinGameRequest request) {
+	public String JoinGame(JoinGameRequest request) {
 		// TODO Auto-generated method stub
-
+		return null;
 	}
 
 	/**
@@ -83,9 +83,9 @@ public class ServerProxy implements IServer {
 	 * @pre the request has valid data
 	 * @post the game indicated is saved under the specified name.
 	 */
-	public void SaveGame(SaveGameRequest request) {
+	public String SaveGame(SaveGameRequest request) {
 		// TODO Auto-generated method stub
-
+		return null;
 	}
 
 	/**
@@ -94,9 +94,9 @@ public class ServerProxy implements IServer {
 	 * @pre the load request is valid AND the file to load exists on the server
 	 * @post the specified game is loaded and restored
 	 */
-	public void LoadGame(LoadGameRequest request) {
+	public String LoadGame(LoadGameRequest request) {
 		// TODO Auto-generated method stub
-
+		return null;
 	}
 
 	/**
@@ -106,7 +106,7 @@ public class ServerProxy implements IServer {
 	 * @pre version is >= 0 AND version <= the highest version number
 	 * @post result is the game model version that matches the version input.
 	 */
-	public Game GetModel(int version) {
+	public String GetModel(int version) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -117,7 +117,7 @@ public class ServerProxy implements IServer {
 	 * @pre none
 	 * @post the result game model's newest version is the same as its version 0
 	 */
-	public Game ResetGame() {
+	public String ResetGame() {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -127,9 +127,9 @@ public class ServerProxy implements IServer {
 	 * @pre the passed commands are all valid.
 	 * @post the server has done all the commands passed in and no others.
 	 */
-	public void DoGameCommands(List<Command> commands) {
+	public String DoGameCommands(List<Command> commands) {
 		// TODO Auto-generated method stub
-
+		return null;
 	}
 
 	/**
@@ -138,7 +138,7 @@ public class ServerProxy implements IServer {
 	 * @pre none
 	 * @post returns a list of any and all commands
 	 */
-	public List<Command> GetGameCommands() {
+	public String GetGameCommands() {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -150,7 +150,7 @@ public class ServerProxy implements IServer {
 	 * @pre the request is valid
 	 * @post The game model is updated with the new message AND the returned model is the new game state.
 	 */
-	public Game SendChat(client.proxy.SendChat request) {
+	public String SendChat(client.proxy.SendChat request) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -162,7 +162,7 @@ public class ServerProxy implements IServer {
 	 * @pre the data in the request must be valid
 	 * @post the specified player rolls the indicated number AND it is their turn AND the result is the game state after that roll is made.
 	 */
-	public Game RollNumber(client.proxy.RollNumber request) {
+	public String RollNumber(client.proxy.RollNumber request) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -174,7 +174,7 @@ public class ServerProxy implements IServer {
 	 * @pre the request is valid AND the specified player is the current player
 	 * @post the specified player's turn is over AND returns the game state immediately after it happens
 	 */
-	public Game RobPlayer(client.proxy.RobPlayer request) {
+	public String RobPlayer(client.proxy.RobPlayer request) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -186,7 +186,7 @@ public class ServerProxy implements IServer {
 	 * @pre the request is valid AND the specified player is the current player
 	 * @post the specified player's turn is over AND returns the game state immediately after it happens
 	 */
-	public Game FinishTurn(FinishMove request) {
+	public String FinishTurn(FinishMove request) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -198,7 +198,7 @@ public class ServerProxy implements IServer {
 	 * @pre the request is valid AND the indicated player has the requisite resource cards
 	 * @post the indicated player buys a dev card AND returns the game state immediately afterwards
 	 */
-	public Game BuyDevCard(client.proxy.BuyDevCard request) {
+	public String BuyDevCard(client.proxy.BuyDevCard request) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -210,7 +210,11 @@ public class ServerProxy implements IServer {
 	 * @pre The specified player has the dev card AND they didn't draw it this turn AND they haven't played any other dev cards this turn AND it is their turn AND the two chosen resources are different
 	 * @post The specifed player plays a YoP card and gets the resource cards of the two chosen types AND returns the game state immediately afterwards.
 	 */
+<<<<<<< HEAD
 	public Game PlayYearOfPlenty(Year_Of_Plenty request) {
+=======
+	public String PlayYearOfPlenty(Year_Of_Plenty_ request) {
+>>>>>>> a8280b68a778a32e927c374952de9f0989c27bf5
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -222,7 +226,11 @@ public class ServerProxy implements IServer {
 	 * @pre the specified player has the dev card AND they didn't draw it this turn AND they haven't played any other dev cards this turn AND it is their turn AND the edge locations are valid for building.
 	 * @post the specified player plays the card with the indicated choices AND returns the game state immediately after.
 	 */
+<<<<<<< HEAD
 	public Game PlayRoadBuilding(Road_Building request) {
+=======
+	public String PlayRoadBuilding(Road_Building_ request) {
+>>>>>>> a8280b68a778a32e927c374952de9f0989c27bf5
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -234,7 +242,11 @@ public class ServerProxy implements IServer {
 	 * @pre the specified player has the dev card AND they didn't draw it this turn AND they haven't played any other dev cards this turn AND it is their turn AND victim index != player index AND location didn't have the robber previously.
 	 * @post the specified player plays the card with the indicated choices AND returns the game state immediately after.
 	 */
+<<<<<<< HEAD
 	public Game PlaySoldier(Soldier request) {
+=======
+	public String PlaySoldier(Soldier_ request) {
+>>>>>>> a8280b68a778a32e927c374952de9f0989c27bf5
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -246,7 +258,11 @@ public class ServerProxy implements IServer {
 	 * @pre the specified player has the dev card AND they didn't draw it this turn AND they haven't played any other dev cards this turn AND it is their turn
 	 * @post the specified player plays the card with the indicated choice AND returns the game state immediately after.
 	 */
+<<<<<<< HEAD
 	public Game PlayMonopoly(Monopoly request) {
+=======
+	public String PlayMonopoly(Monopoly_ request) {
+>>>>>>> a8280b68a778a32e927c374952de9f0989c27bf5
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -258,7 +274,11 @@ public class ServerProxy implements IServer {
 	 * @pre the specified player has the dev card AND they didn't draw it this turn AND they haven't played any other dev cards this turn AND it is their turn
 	 * @post the specified player plays the card AND returns the game state immediately after.
 	 */
+<<<<<<< HEAD
 	public Game PlayMonument(Monument request) {
+=======
+	public String PlayMonument(Monument_ request) {
+>>>>>>> a8280b68a778a32e927c374952de9f0989c27bf5
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -270,7 +290,7 @@ public class ServerProxy implements IServer {
 	 * @pre the request is valid AND the indicated player has the requisite resources IF not free AND they have a road piece to place AND the chosen edge is valid for building AND it is their turn
 	 * @post The indicated play builds a road on the chosen spot AND lose the requisite resources IF not free AND returns the game state immediately after.
 	 */
-	public Game BuildRoad(client.proxy.BuildRoad request) {
+	public String BuildRoad(client.proxy.BuildRoad request) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -282,7 +302,7 @@ public class ServerProxy implements IServer {
 	 * @pre the request is valid AND the indicated player has the requisite resources IF not free AND they have a settlement piece to place AND the chosen location is valid for building AND it is their turn
 	 * @post The indicated play builds a settlement on the chosen location AND lose the requisite resources IF not free AND returns the game state immediately after.
 	 */
-	public Game BuildSettlement(client.proxy.BuildSettlement request) {
+	public String BuildSettlement(client.proxy.BuildSettlement request) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -294,7 +314,7 @@ public class ServerProxy implements IServer {
 	 * @pre the request is valid AND the indicated player has the requisite resources AND they have a city piece to place AND they have a settlement on the selected vertex AND it is their turn
 	 * @post The indicated play builds a city on the chosen vertex AND lose the requisite resources AND returns the settlement that was there to their supply AND returns the game state immediately after.
 	 */
-	public Game BuildCity(client.proxy.BuildCity request) {
+	public String BuildCity(client.proxy.BuildCity request) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -306,7 +326,7 @@ public class ServerProxy implements IServer {
 	 * @pre the indicated player has the cards they offer AND it is their turn AND the offer contains 1 or more cards AND the receiver isn't the sending player AND it is the sender's turn.
 	 * @post the trade offer is extended AND the game state immediately after is returned.
 	 */
-	public Game OfferTrade(client.proxy.OfferTrade request) {
+	public String OfferTrade(client.proxy.OfferTrade request) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -318,7 +338,7 @@ public class ServerProxy implements IServer {
 	 * @pre the indicated player was offered a trade AND it isn't their turn
 	 * @post the indicated player either accepts or rejects depending on willAccept AND the game state immediately after this is returned.
 	 */
-	public Game AcceptTrade(client.proxy.AcceptTrade request) {
+	public String AcceptTrade(client.proxy.AcceptTrade request) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -330,7 +350,7 @@ public class ServerProxy implements IServer {
 	 * @pre the indicated player has a port for the appropriate trading ratio AND the have a sufficient number of input resource cards AND it is their turn.
 	 * @post the trade is performed AND returns the game state immediately afterward.
 	 */
-	public Game MaritimeTrade(client.proxy.MaritimeTrade request) {
+	public String MaritimeTrade(client.proxy.MaritimeTrade request) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -342,7 +362,7 @@ public class ServerProxy implements IServer {
 	 * @pre the indicated player has >= 7 cards in their hand AND the cards to be discarded total in number half the players hand size rounded down AND all the discarded cards were cards the player had in their hand.
 	 * @post the player discards the cards AND the bank gains the discarded cards AND returns the game state immediately after this action. 
 	 */
-	public Game DiscardCards(client.proxy.DiscardCards request) {
+	public String DiscardCards(client.proxy.DiscardCards request) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -353,9 +373,9 @@ public class ServerProxy implements IServer {
 	 * @pre the request is valid
 	 * @post the server's log level is changes to what was specified.
 	 */
-	public void ChangeLogLevel(ChangeLogLevelRequest request) {
+	public String ChangeLogLevel(ChangeLogLevelRequest request) {
 		// TODO Auto-generated method stub
-
+		return null;
 	}
 
 	/**
@@ -364,7 +384,7 @@ public class ServerProxy implements IServer {
 	 * @pre none
 	 * @post returns the current state of the current game
 	 */
-	public Game UpdateMap() {
+	public String UpdateMap() {
 		// TODO Auto-generated method stub
 		return null;
 	}

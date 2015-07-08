@@ -501,13 +501,16 @@ public class ClientCommunicatorFascadeSettlersOfCatanTest {
     @Test
     public void testSoldier() throws Exception {
         System.out.println("soldier");
-        Soldier soldier = null;
+        Soldier soldier = new Soldier(0);
+        soldier.setVicitmIndex(0);
+        soldier.setLocation(new HexLocation(0,0));
         ClientCommunicatorFascadeSettlersOfCatan instance = new ClientCommunicatorFascadeSettlersOfCatan();
         Game expResult = null;
         Game result = instance.soldier(soldier);
         assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        
+        System.out.print("...PASSED");
+        System.out.println();
     }
 
     /**

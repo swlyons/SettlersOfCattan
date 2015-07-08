@@ -49,6 +49,15 @@ public class MapManager {
         
         return true;
     }
+    
+    public HexLocation getRobberLocation() {
+    	for (Hex hex : hexList) {
+    		if (hex.getHasRobber()) {
+    			return hex.getLocation();
+    		}
+    	}
+    	return null;
+    }
 
     public List<Hex> getHexList() {
         return hexList;

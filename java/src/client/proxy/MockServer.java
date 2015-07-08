@@ -32,169 +32,189 @@ public class MockServer implements IServer {
 	}
 
 	@Override
-	public List<GameData> ListGames() {
+	public String ListGames() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public GameData CreateGame(CreateGameRequest request) {
+	public String CreateGame(CreateGameRequest request) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public void JoinGame(JoinGameRequest request) {
+	public String JoinGame(JoinGameRequest request) {
 		// TODO Auto-generated method stub
-
+		return null;
 	}
 
 	@Override
-	public void SaveGame(SaveGameRequest request) {
+	public String SaveGame(SaveGameRequest request) {
 		// TODO Auto-generated method stub
-
+		return null;
 	}
 
 	@Override
-	public void LoadGame(LoadGameRequest request) {
+	public String LoadGame(LoadGameRequest request) {
 		// TODO Auto-generated method stub
-
+		return null;
 	}
 
 	@Override
-	public Game GetModel(int version) {
+	public String GetModel(int version) {
 		return this.UpdateMap();
 	}
 
 	@Override
-	public Game ResetGame() {
+	public String ResetGame() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public void DoGameCommands(List<Command> commands) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public List<Command> GetGameCommands() {
+	public String DoGameCommands(List<Command> commands) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Game SendChat(client.proxy.SendChat request) {
+	public String GetGameCommands() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Game RollNumber(client.proxy.RollNumber request) {
+	public String SendChat(client.proxy.SendChat request) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Game RobPlayer(client.proxy.RobPlayer request) {
+	public String RollNumber(client.proxy.RollNumber request) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Game FinishTurn(FinishMove request) {
+	public String RobPlayer(client.proxy.RobPlayer request) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Game BuyDevCard(client.proxy.BuyDevCard request) {
+	public String FinishTurn(FinishMove request) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
+	public String BuyDevCard(client.proxy.BuyDevCard request) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+<<<<<<< HEAD
 	public Game PlayYearOfPlenty(Year_Of_Plenty request) {
+=======
+	public String PlayYearOfPlenty(Year_Of_Plenty_ request) {
+>>>>>>> a8280b68a778a32e927c374952de9f0989c27bf5
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
+<<<<<<< HEAD
 	public Game PlayRoadBuilding(Road_Building request) {
+=======
+	public String PlayRoadBuilding(Road_Building_ request) {
+>>>>>>> a8280b68a778a32e927c374952de9f0989c27bf5
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
+<<<<<<< HEAD
 	public Game PlaySoldier(Soldier request) {
+=======
+	public String PlaySoldier(Soldier_ request) {
+>>>>>>> a8280b68a778a32e927c374952de9f0989c27bf5
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
+<<<<<<< HEAD
 	public Game PlayMonopoly(Monopoly request) {
+=======
+	public String PlayMonopoly(Monopoly_ request) {
+>>>>>>> a8280b68a778a32e927c374952de9f0989c27bf5
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
+<<<<<<< HEAD
 	public Game PlayMonument(Monument request) {
+=======
+	public String PlayMonument(Monument_ request) {
+>>>>>>> a8280b68a778a32e927c374952de9f0989c27bf5
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Game BuildRoad(client.proxy.BuildRoad request) {
+	public String BuildRoad(client.proxy.BuildRoad request) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Game BuildSettlement(client.proxy.BuildSettlement request) {
+	public String BuildSettlement(client.proxy.BuildSettlement request) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Game BuildCity(client.proxy.BuildCity request) {
+	public String BuildCity(client.proxy.BuildCity request) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Game OfferTrade(client.proxy.OfferTrade request) {
+	public String OfferTrade(client.proxy.OfferTrade request) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Game AcceptTrade(client.proxy.AcceptTrade request) {
+	public String AcceptTrade(client.proxy.AcceptTrade request) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Game MaritimeTrade(client.proxy.MaritimeTrade request) {
+	public String MaritimeTrade(client.proxy.MaritimeTrade request) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Game DiscardCards(client.proxy.DiscardCards request) {
+	public String DiscardCards(client.proxy.DiscardCards request) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public void ChangeLogLevel(ChangeLogLevelRequest request) {
+	public String ChangeLogLevel(ChangeLogLevelRequest request) {
 		// TODO Auto-generated method stub
-
+		return null;
 	}
 
 	@Override
-	public Game UpdateMap() {
-		String foo = "{\"deck\": {\"yearOfPlenty\": 2,    \"monopoly\": 2,    \"soldier\": 14,    \"roadBuilding\": 2,    \"monument\": 5  },"+
+	public String UpdateMap() {
+		return "{\"deck\": {\"yearOfPlenty\": 2,    \"monopoly\": 2,    \"soldier\": 14,    \"roadBuilding\": 2,    \"monument\": 5  },"+
 "  \"map\": {    \"hexes\": [      {        \"location\": {          \"x\": 0,          \"y\": -2        }      },"+
 "      {        \"resource\": \"brick\",        \"location\": {          \"x\": 1,          \"y\": -2        },        \"number\": 4"+
 "      },      {        \"resource\": \"wood\",        \"location\": {          \"x\": 2,          \"y\": -2        },"+
@@ -227,10 +247,6 @@ public class MockServer implements IServer {
 "      \"name\": \"string\",      \"color\": \"red\"    },    null,    null,    null  ],  \"log\": {    \"lines\": []  },  \"chat\": {    \"lines\": []"+
 "  },  \"bank\": {    \"brick\": 24,    \"wood\": 24,    \"sheep\": 24,    \"wheat\": 24,    \"ore\": 24  },  \"turnTracker\": {    \"status\": \"FirstRound\","+
 "    \"currentTurn\": 0,    \"longestRoad\": -1,    \"largestArmy\": -1  },  \"winner\": -1,  \"version\": 0}";
-		
-		GameManager instance = new GameManager();
-        instance.initializeGame(foo);
-        return instance.getGame();
 	}
 
 }

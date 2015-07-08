@@ -13,6 +13,10 @@ public class Soldier extends Command {
     private int vicitmIndex;
     private HexLocation location;
 
+    public Soldier(int playerIndex) {
+        super("Soldier", playerIndex);
+    }
+    
     public int getVicitmIndex() {
         return vicitmIndex;
     }
