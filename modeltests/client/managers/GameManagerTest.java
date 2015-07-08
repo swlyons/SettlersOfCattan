@@ -808,24 +808,6 @@ public class GameManagerTest {
 	/**
 	 * Test of initializeGame method, of class GameManager.
 	 */
-<<<<<<< HEAD
-        @Test
-	public void testInitializeGame() {
-		System.out.println("initializeGame");
-		String jsonDataOut = "";
-
-		GameManager instance = new GameManager();
-		instance.initializeGame(jsonDataIn);
-
-		Game game = instance.getGame();
-		// print Json Model (Game)
-		// System.out.println(game);
-
-		// add test case to compare
-//		assert("Model was successfully initialized",
-//				jsonDataIn.equals(jsonDataOut) && !jsonDataOut.isEmpty());
-	}
-=======
 //	@Test
 //	public void testInitializeGame() {
 //		System.out.println("initializeGame");
@@ -842,7 +824,6 @@ public class GameManagerTest {
 //		assert("Model was successfully initialized",
 //				jsonDataIn.equals(jsonDataOut) && !jsonDataOut.isEmpty());
 //	}
->>>>>>> 1fdea780a643c9a5206d5e8ad4538026a694f821
 
 	@Test
 	public void testCanBuyDevCard() {
@@ -853,15 +834,8 @@ public class GameManagerTest {
 
 		Game game = instance.getGame();
 
-<<<<<<< HEAD
-		// CurrentPlayer is Sam. Same has enough resources for a DevCard
-		game.getTurnTracker().setCurrentTurn(0);
-		DevCardList prevDevCards = instance.getResourceManager().getGameBanks()
-				.get(0).getDevelopmentCards();
-=======
 		// CurrentPlayer is Sam. Sam has enough resources for a DevCard
 		game.getTurnTracker().setCurrentTurn(0);
->>>>>>> 1fdea780a643c9a5206d5e8ad4538026a694f821
 		ResourceList prevResources = instance.getResourceManager()
 				.getGameBanks().get(0).getResourcesCards();
 
@@ -871,25 +845,13 @@ public class GameManagerTest {
 		DevCardList newDevCards = instance.getResourceManager().getGameBanks()
 				.get(0).getUnusableDevCards();
 		ResourceList newResources = instance.getResourceManager()
-				.getGameBanks().get(0).getResourcesCards();
-<<<<<<< HEAD
-
-		String newStatus = (prevDevCards.toString() + "\n"
-				+ newDevCards.toString() + "\n" + newResources.toString() + "\n");
-//		assert("devCard amount incremented one",
-//				prevDevCards.totalCardsRemaining() == newDevCards
-//						.totalCardsRemaining() - 1);
-//		assert("The correct 3 resources have been removed",
-//				prevResources.equals(newResources));
-=======
-		
+				.getGameBanks().get(0).getResourcesCards();		
 		assert(newDevCards.totalCardsRemaining() == 1);
 		
 		newResources.addOre(1);
 		newResources.addWheat(1);
 		newResources.addSheep(1);
 		assert(newResources.toString().equals(previousResourceString));
->>>>>>> 1fdea780a643c9a5206d5e8ad4538026a694f821
 
 	}
 
