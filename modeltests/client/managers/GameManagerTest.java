@@ -878,4 +878,23 @@ public class GameManagerTest {
     	assertTrue(playedBefore + 1 == playedAfter);
     	assertTrue(heldAfter + 1 == heldBefore);
     }
+    
+    @Test
+    public void testPlaySoldier() {
+    	GameManager target = new GameManager();
+    	target.initializeGame(jsonDataIn);
+    	DevCardList cards = new DevCardList(1,1,1,1,1);
+    	List<Bank> banks = target.getResourceManager().getGameBanks();
+    	banks.get(0).setDevelopmentCards(cards);
+    	target.getResourceManager().setGameBanks(banks);
+    	
+    	int playedBefore = target.getResourceManager().getGameBanks().get(0).getSoldiers();
+    	int heldBefore = target.getResourceManager().getGameBanks().get(0).getDevelopmentCards().getSoldier();
+    	target.useSoldier(new HexLocation(0, 0));
+    	int playedAfter = target.getResourceManager().getGameBanks().get(0).getSoldiers();
+    	int heldAfter = target.getResourceManager().getGameBanks().get(0).getDevelopmentCards().getSoldier();
+    	assertTrue(playedBefore + 1 == playedAfter);
+    	assertTrue(heldAfter + 1 == heldBefore);
+    	assertTrue(target.getMapManager().getRobberLocation().equals(new HexLocation(0, 0)));
+    }
 }
