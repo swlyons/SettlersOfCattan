@@ -5,6 +5,7 @@
  */
 package client.managers;
 
+import client.data.Bank;
 import client.data.DevCardList;
 import client.data.Game;
 import client.data.Player;
@@ -13,6 +14,7 @@ import client.managers.GameManager;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
@@ -858,4 +860,15 @@ public class GameManagerTest {
 
 	}
 
+    @Test
+    public void testPlayMonument() {
+    	GameManager target = new GameManager();
+    	target.initializeGame(jsonDataIn);
+    	DevCardList cards = new DevCArrayList(1,1,1,1,1);
+    	ArrayList<Bank> banks = target.getResourceManager().getGameBanks();
+    	banks.get(0).setDevelopmentCards(cards);
+    	target.getResourceManager().setGameBanks(banks);
+    	
+    	
+    }
 }
