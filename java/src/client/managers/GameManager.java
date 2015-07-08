@@ -57,93 +57,98 @@ public class GameManager {
 
 		// initialize the client object model
 		game = model.fromJson(jsonData, Game.class);
+		Map map = game.getMap();
+		HexLocation robberLocation = map.getRobber();
 
-                Map map = game.getMap();
-                
-                HexLocation robberLocation = map.getRobber();
+		if (mapManager == null) {
+			mapManager = new MapManager();
+			mapManager.setHexList(map.getHexes());
+		}
+
+		for (Hex hex : mapManager.getHexList()) {
+			if (hex.getLocation().equals(robberLocation)) {
+				hex.setHasRobber(true);
+			} else {
+				hex.setHasRobber(false);
+			}
+		}
+
+		if (locationManager == null) {
+			locationManager = new LocationManager();
+			createUnsettledAreas(mapManager.getHexList());
+			locationManager.setPorts(map.getPorts());
+		}
+
+		for (VertexObject settlement : map.getSettlements()) {
+
+			Location settlementLocation = null;
+
+			for (Location location : locationManager.getUnsettledLocations()) {
+				if (location.getNormalizedLocation().equals(
+						settlement.getDirection())) {
+					location.setIsCity(false);
+					location.getWhoCanBuild().add(settlement.getOwner());
+					settlementLocation = location;
+					break;
+				}
+
+			}
+
+			if (settlementLocation != null) {
+				if (!locationManager.settleLocation(
+						settlementLocation.getNormalizedLocation(),
+						settlement.getOwner(), false)) {
+					System.out
+							.println("Unable to settle location from initializeGame");
+				}
+			}
+
+		}
+
+		for (EdgeValue road : map.getRoads()) {
+			Edge roadLocation = null;
+
+			for (Edge edge : locationManager.getUnsettledEdges()) {
+				if (edge.getEdgeLocation().equals(road.getLocation())) {
+					edge.getWhoCanBuild().add(road.getOwner());
+					roadLocation = edge;
+					break;
+				}
+			}
+
+			if (roadLocation != null) {
+				if (!locationManager.settleEdge(roadLocation.getEdgeLocation(),
+						road.getOwner())) {
+					System.out
+							.println("Unable to settle edge from initializeGame");
+				}
+			}
+		}
 		
-                if(mapManager==null){
-                    mapManager = new MapManager();
-                    mapManager.setHexList(map.getHexes());                    
-                }
-                
-                for(Hex hex : mapManager.getHexList()){
-                    if(hex.getLocation().equals(robberLocation)){
-                        hex.setHasRobber(true);
-                    }else{
-                        hex.setHasRobber(false);
-                    }
-                }
-                
-                if(locationManager==null){
-                    locationManager = new LocationManager();
-                    createUnsettledAreas(mapManager.getHexList());
-                    locationManager.setPorts(map.getPorts());
-                }
-                
-                for(VertexObject settlement : map.getSettlements()){
-                    
-                    Location settlementLocation = null;
-                     
-                    for(Location location : locationManager.getUnsettledLocations()){
-                        if(location.getNormalizedLocation().equals(settlement.getDirection())){                            
-                            location.setIsCity(false);
-                            location.getWhoCanBuild().add(settlement.getOwner());                            
-                            settlementLocation = location;
-                            break;
-                        }
-                        
-                    }
-                    
-                    if(settlementLocation!=null){
-                        if(!locationManager.settleLocation(settlementLocation.getNormalizedLocation(), settlement.getOwner(), false)){
-                            System.out.println("Unable to settle location from initializeGame");
-                        }
-                    }
-                    
-                }
-
-                for(EdgeValue road : map.getRoads()){
-                    Edge roadLocation = null;
-                    
-                    for(Edge edge : locationManager.getUnsettledEdges()){
-                        if(edge.getEdgeLocation().equals(road.getLocation())){
-                            edge.getWhoCanBuild().add(road.getOwner());
-                            roadLocation = edge;
-                            break;
-                        }
-                    }
-                    
-                    if(roadLocation!=null){
-                        if(!locationManager.settleEdge(roadLocation.getEdgeLocation(), road.getOwner())){
-                            System.out.println("Unable to settle edge from initializeGame");
-                        }
-                }
-                
-                                
-                
-
-
 		// Resource Manager
 		List<Bank> gameBanks = new ArrayList<>();
 		for (int i = 0; i < game.getPlayers().size(); i++) {
 			Player p = game.getPlayers().get(i);
-			boolean hasLargestArmy = (p.getPlayerID() == game.getTurnTracker().getLargestArmyHolder());
-			boolean hasLongestRoad = (p.getPlayerID() == game.getTurnTracker().getLongestRoadHolder());
+			boolean hasLargestArmy = (p.getPlayerID() == game.getTurnTracker()
+					.getLargestArmyHolder());
+			boolean hasLongestRoad = (p.getPlayerID() == game.getTurnTracker()
+					.getLongestRoadHolder());
 			gameBanks.add(new Bank(p, hasLargestArmy, hasLongestRoad));
 		}
 
 		DevCardList mainBankDevCards = new DevCardList(game.getPlayers());
-		boolean hasLargestArmy = (mainBankIndex == game.getTurnTracker().getLargestArmyHolder());
-		boolean hasLongestRoad = (mainBankIndex == game.getTurnTracker().getLongestRoadHolder());
-		gameBanks.add(new Bank(game.getBank(), mainBankDevCards, hasLargestArmy, hasLongestRoad));
-		if(resourceManager==null){
-                    resourceManager = new ResourceManager();
-                }
-                resourceManager.setGameBanks(gameBanks);
+		boolean hasLargestArmy = (mainBankIndex == game.getTurnTracker()
+				.getLargestArmyHolder());
+		boolean hasLongestRoad = (mainBankIndex == game.getTurnTracker()
+				.getLongestRoadHolder());
+		gameBanks.add(new Bank(game.getBank(), mainBankDevCards,
+				hasLargestArmy, hasLongestRoad));
+		if (resourceManager == null) {
+			resourceManager = new ResourceManager();
+		}
+		resourceManager.setGameBanks(gameBanks);
 
 	}
-	/* canDo Methods */
 
 	/**
 	 * @author Curt
@@ -168,8 +173,8 @@ public class GameManager {
 	 *      lobby
 	 * @post Game is added to the list of games on server
 	 */
-	public void createGame(List<Player> players, boolean randomTiles, boolean randomNumbers, boolean randomPorts,
-			String name) {
+	public void createGame(List<Player> players, boolean randomTiles,
+			boolean randomNumbers, boolean randomPorts, String name) {
 		locationManager = new LocationManager();
 		mapManager = new MapManager();
 		resourceManager = new ResourceManager();
@@ -239,7 +244,8 @@ public class GameManager {
 				}
 
 				int originalNumber = hexes.get(i).getRollValue();
-				hexes.get(i).setRollValue(hexes.get(getRandomHex).getRollValue());
+				hexes.get(i).setRollValue(
+						hexes.get(getRandomHex).getRollValue());
 				hexes.get(getRandomHex).setRollValue(originalNumber);
 
 			}
@@ -255,49 +261,72 @@ public class GameManager {
 			}
 		}
 
-                
-                createUnsettledAreas(hexes);
-                
+		createUnsettledAreas(hexes);
+
 		mapManager.setHexList(hexes);
 		locationManager.setPorts(ports);
 
 	}
-        
-        public void createUnsettledAreas(List<Hex> hexes){
+
+	public void createUnsettledAreas(List<Hex> hexes) {
 		List<Location> unsettledLocations = new ArrayList<Location>();
 		List<Edge> unsettledEdges = new ArrayList<Edge>();
 		for (Hex hex : hexes) {
-			unsettledLocations.add(new Location(new VertexLocation(hex.getLocation(), VertexDirection.NorthEast)));
-			unsettledLocations.add(new Location(new VertexLocation(hex.getLocation(), VertexDirection.NorthWest)));
-			unsettledEdges.add(new Edge(new EdgeLocation(hex.getLocation(), EdgeDirection.NorthWest)));
-			unsettledEdges.add(new Edge(new EdgeLocation(hex.getLocation(), EdgeDirection.North)));
-			unsettledEdges.add(new Edge(new EdgeLocation(hex.getLocation(), EdgeDirection.NorthEast)));
+			unsettledLocations.add(new Location(new VertexLocation(hex
+					.getLocation(), VertexDirection.NorthEast)));
+			unsettledLocations.add(new Location(new VertexLocation(hex
+					.getLocation(), VertexDirection.NorthWest)));
+			unsettledEdges.add(new Edge(new EdgeLocation(hex.getLocation(),
+					EdgeDirection.NorthWest)));
+			unsettledEdges.add(new Edge(new EdgeLocation(hex.getLocation(),
+					EdgeDirection.North)));
+			unsettledEdges.add(new Edge(new EdgeLocation(hex.getLocation(),
+					EdgeDirection.NorthEast)));
 		}
 
-		unsettledLocations.add(new Location(new VertexLocation(new HexLocation(2, 1), VertexDirection.NorthEast)));
-		unsettledLocations.add(new Location(new VertexLocation(new HexLocation(2, 1), VertexDirection.NorthWest)));
-		unsettledLocations.add(new Location(new VertexLocation(new HexLocation(1, 2), VertexDirection.NorthEast)));
-		unsettledLocations.add(new Location(new VertexLocation(new HexLocation(1, 2), VertexDirection.NorthWest)));
-		unsettledLocations.add(new Location(new VertexLocation(new HexLocation(0, 3), VertexDirection.NorthEast)));
-		unsettledLocations.add(new Location(new VertexLocation(new HexLocation(0, 3), VertexDirection.NorthWest)));
-		unsettledLocations.add(new Location(new VertexLocation(new HexLocation(-1, 3), VertexDirection.NorthEast)));
-		unsettledLocations.add(new Location(new VertexLocation(new HexLocation(-1, 3), VertexDirection.NorthWest)));
-		unsettledLocations.add(new Location(new VertexLocation(new HexLocation(-2, 3), VertexDirection.NorthEast)));
-		unsettledLocations.add(new Location(new VertexLocation(new HexLocation(-2, 3), VertexDirection.NorthWest)));
+		unsettledLocations.add(new Location(new VertexLocation(new HexLocation(
+				2, 1), VertexDirection.NorthEast)));
+		unsettledLocations.add(new Location(new VertexLocation(new HexLocation(
+				2, 1), VertexDirection.NorthWest)));
+		unsettledLocations.add(new Location(new VertexLocation(new HexLocation(
+				1, 2), VertexDirection.NorthEast)));
+		unsettledLocations.add(new Location(new VertexLocation(new HexLocation(
+				1, 2), VertexDirection.NorthWest)));
+		unsettledLocations.add(new Location(new VertexLocation(new HexLocation(
+				0, 3), VertexDirection.NorthEast)));
+		unsettledLocations.add(new Location(new VertexLocation(new HexLocation(
+				0, 3), VertexDirection.NorthWest)));
+		unsettledLocations.add(new Location(new VertexLocation(new HexLocation(
+				-1, 3), VertexDirection.NorthEast)));
+		unsettledLocations.add(new Location(new VertexLocation(new HexLocation(
+				-1, 3), VertexDirection.NorthWest)));
+		unsettledLocations.add(new Location(new VertexLocation(new HexLocation(
+				-2, 3), VertexDirection.NorthEast)));
+		unsettledLocations.add(new Location(new VertexLocation(new HexLocation(
+				-2, 3), VertexDirection.NorthWest)));
 
-		unsettledEdges.add(new Edge(new EdgeLocation(new HexLocation(2, 1), EdgeDirection.North)));
-		unsettledEdges.add(new Edge(new EdgeLocation(new HexLocation(2, 1), EdgeDirection.NorthWest)));
-		unsettledEdges.add(new Edge(new EdgeLocation(new HexLocation(1, 2), EdgeDirection.North)));
-		unsettledEdges.add(new Edge(new EdgeLocation(new HexLocation(1, 2), EdgeDirection.NorthWest)));
-		unsettledEdges.add(new Edge(new EdgeLocation(new HexLocation(0, 3), EdgeDirection.North)));
-		unsettledEdges.add(new Edge(new EdgeLocation(new HexLocation(-1, 3), EdgeDirection.North)));
-		unsettledEdges.add(new Edge(new EdgeLocation(new HexLocation(-1, 3), EdgeDirection.NorthEast)));
-		unsettledEdges.add(new Edge(new EdgeLocation(new HexLocation(-2, 3), EdgeDirection.North)));
-		unsettledEdges.add(new Edge(new EdgeLocation(new HexLocation(-2, 3), EdgeDirection.NorthEast)));
+		unsettledEdges.add(new Edge(new EdgeLocation(new HexLocation(2, 1),
+				EdgeDirection.North)));
+		unsettledEdges.add(new Edge(new EdgeLocation(new HexLocation(2, 1),
+				EdgeDirection.NorthWest)));
+		unsettledEdges.add(new Edge(new EdgeLocation(new HexLocation(1, 2),
+				EdgeDirection.North)));
+		unsettledEdges.add(new Edge(new EdgeLocation(new HexLocation(1, 2),
+				EdgeDirection.NorthWest)));
+		unsettledEdges.add(new Edge(new EdgeLocation(new HexLocation(0, 3),
+				EdgeDirection.North)));
+		unsettledEdges.add(new Edge(new EdgeLocation(new HexLocation(-1, 3),
+				EdgeDirection.North)));
+		unsettledEdges.add(new Edge(new EdgeLocation(new HexLocation(-1, 3),
+				EdgeDirection.NorthEast)));
+		unsettledEdges.add(new Edge(new EdgeLocation(new HexLocation(-2, 3),
+				EdgeDirection.North)));
+		unsettledEdges.add(new Edge(new EdgeLocation(new HexLocation(-2, 3),
+				EdgeDirection.NorthEast)));
 
 		locationManager.setUnsettledLocations(unsettledLocations);
-		locationManager.setUnsettledEdges(unsettledEdges);            
-        }
+		locationManager.setUnsettledEdges(unsettledEdges);
+	}
 
 	public void joinGame(int playerUserID, String name, String color) {
 		// TODO: interact better with the GUI to handle login
@@ -325,8 +354,10 @@ public class GameManager {
 	public void rollDice(int dieRoll) {
 
 		// int dieRoll = randomness.nextInt(6) + randomness.nextInt(6) + 2;
-		List<Hex> hexesProducingResources = mapManager.getTerrainResourceHexes(dieRoll);
-		ResourceList gameBank = resourceManager.getGameBanks().get(mainBankIndex).getResourcesCards();
+		List<Hex> hexesProducingResources = mapManager
+				.getTerrainResourceHexes(dieRoll);
+		ResourceList gameBank = resourceManager.getGameBanks()
+				.get(mainBankIndex).getResourcesCards();
 
 		for (ResourceType resourceType : ResourceType.values()) {
 			List<Hex> hexesProducingAParticularResource = new ArrayList<>();
@@ -345,8 +376,9 @@ public class GameManager {
 			List<Integer> playersEarningResources = new ArrayList<>();
 
 			for (Hex hexProducingResources : hexesProducingAParticularResource) {
-				playersEarningResources
-						.addAll(locationManager.awardTerrainResource(hexProducingResources.getLocation()));
+				playersEarningResources.addAll(locationManager
+						.awardTerrainResource(hexProducingResources
+								.getLocation()));
 			}
 
 			int amountAvailable = 0;
@@ -373,7 +405,8 @@ public class GameManager {
 			if (amountAvailable >= playersEarningResources.size()) {
 				ResourceList resource = new ResourceList(resourceType);
 				for (Integer earningPlayer : playersEarningResources) {
-					resourceManager.transferResourceCard(mainBankIndex, earningPlayer, resource);
+					resourceManager.transferResourceCard(mainBankIndex,
+							earningPlayer, resource);
 				}
 			}
 
@@ -385,10 +418,11 @@ public class GameManager {
 		if (mapManager.moveRobber(newLocationForRobber)) {
 
 			for (int i = 0; i < 4; i++) {
-				int numberOfResourceCards = resourceManager.getGameBanks().get(i).getResourcesCards()
-						.getTotalResources();
+				int numberOfResourceCards = resourceManager.getGameBanks()
+						.get(i).getResourcesCards().getTotalResources();
 				if (numberOfResourceCards >= 7) {
-					resourceManager.playerDiscardsHalfCards(i, new ResourceList());
+					resourceManager.playerDiscardsHalfCards(i,
+							new ResourceList());
 				}
 			}
 		}
@@ -429,10 +463,12 @@ public class GameManager {
 	public void placeSecondSettlement(VertexLocation v) {
 		int currentPlayer = game.getTurnTracker().getCurrentPlayerIndex();
 		locationManager.settleLocation(v, currentPlayer, true);
-		List<HexLocation> neighbors = locationManager.getHexLocationsAroundVertexLocation(v);
+		List<HexLocation> neighbors = locationManager
+				.getHexLocationsAroundVertexLocation(v);
 		ResourceList resourceList = new ResourceList(0, 0, 0, 0, 0);
 		for (Hex hex : mapManager.getHexList()) {
-			if (hex.equals(neighbors.get(0)) || hex.equals(neighbors.get(1)) || hex.equals(neighbors.get(2))) {
+			if (hex.equals(neighbors.get(0)) || hex.equals(neighbors.get(1))
+					|| hex.equals(neighbors.get(2))) {
 				if (hex.getResource() != null) {
 					switch (hex.getResource()) {
 					case ORE:
@@ -456,9 +492,10 @@ public class GameManager {
 				}
 			}
 		}
-		resourceManager.transferResourceCard(mainBankIndex, currentPlayer, resourceList);
+		resourceManager.transferResourceCard(mainBankIndex, currentPlayer,
+				resourceList);
 	}
-	
+
 	/**
 	 * @author Curt
 	 * @param gameID
@@ -472,12 +509,13 @@ public class GameManager {
 	public boolean buildRoad(EdgeLocation edge) {
 		int currentPlayer = game.getTurnTracker().getCurrentPlayerIndex();
 		Bank playerBank = resourceManager.getGameBanks().get(currentPlayer);
-		ResourceList cost = new ResourceList(1,0,0,0,1);
-		if (playerBank.getRoads() > 0 && playerBank.getResourcesCards().hasCardsAvailable(cost)) {
-			resourceManager.transferResourceCard(currentPlayer, mainBankIndex, cost);
+		ResourceList cost = new ResourceList(1, 0, 0, 0, 1);
+		if (playerBank.getRoads() > 0
+				&& playerBank.getResourcesCards().hasCardsAvailable(cost)) {
+			resourceManager.transferResourceCard(currentPlayer, mainBankIndex,
+					cost);
 			resourceManager.placedRoad(currentPlayer);
-			locationManager.settleEdge(edge, currentPlayer);
-			return true;
+			return locationManager.settleEdge(edge, currentPlayer);
 		} else {
 			return false;
 		}
@@ -488,23 +526,24 @@ public class GameManager {
 		Bank playerBank = resourceManager.getGameBanks().get(currentPlayer);
 		ResourceList cost = new ResourceList();
 
-		switch(type) {
+		switch (type) {
 		case SETTLEMENT:
-			cost = new ResourceList(1,0,1,1,1);
-			if(playerBank.getResourcesCards().hasCardsAvailable(cost)){
-				resourceManager.transferResourceCard(currentPlayer, mainBankIndex, cost);
+			cost = new ResourceList(1, 0, 1, 1, 1);
+			if (playerBank.getResourcesCards().hasCardsAvailable(cost)) {
+				resourceManager.transferResourceCard(currentPlayer,
+						mainBankIndex, cost);
 				resourceManager.placedSettlement(currentPlayer);
-				locationManager.settleLocation(v, currentPlayer, false);
-				return true;				
+				return locationManager.settleLocation(v, currentPlayer, false);
 			} else {
 				return false;
 			}
 		case CITY:
-			cost = new ResourceList(0,3,0,2,0);			
-			if(playerBank.getResourcesCards().hasCardsAvailable(cost)){
-				resourceManager.transferResourceCard(currentPlayer, mainBankIndex, cost);
+			cost = new ResourceList(0, 3, 0, 2, 0);
+			if (playerBank.getResourcesCards().hasCardsAvailable(cost)) {
+				resourceManager.transferResourceCard(currentPlayer,
+						mainBankIndex, cost);
 				resourceManager.placedCity(currentPlayer);
-				return true;				
+				return true;
 			} else {
 				return false;
 			}
@@ -512,7 +551,7 @@ public class GameManager {
 			return false;
 		}
 	}
-	
+
 	/**
 	 * @author Curt
 	 * @param gameID
@@ -525,29 +564,33 @@ public class GameManager {
 	 */
 	public boolean buyDevCard() {
 		int currentPlayer = game.getTurnTracker().getCurrentPlayerIndex();
-		Bank playerBank = resourceManager.getGameBanks().get(currentPlayer);		
+		Bank playerBank = resourceManager.getGameBanks().get(currentPlayer);
 		ResourceList cost = new ResourceList(0, 1, 1, 1, 0);
-		
-		if(playerBank.getResourcesCards().hasCardsAvailable(cost)) {
-			resourceManager.transferResourceCard(currentPlayer, mainBankIndex, cost);
+
+		if (playerBank.getResourcesCards().hasCardsAvailable(cost)) {
+			resourceManager.transferResourceCard(currentPlayer, mainBankIndex,
+					cost);
 			resourceManager.devCardBought(currentPlayer);
 			return true;
 		} else {
-			return false;			
+			return false;
 		}
 	}
 
-
-	public boolean tradeOffer(int senderID, int receiverID, ResourceList offer, ResourceList request) {
-		ResourceList senderResources = resourceManager.getGameBanks().get(senderID).getResourcesCards();
-		ResourceList receiverResources = resourceManager.getGameBanks().get(receiverID).getResourcesCards();
-		if (senderResources.hasCardsAvailable(offer) && receiverResources.hasCardsAvailable(request)) {
-			if(receiverID == mainBankIndex) {
+	public boolean tradeOffer(int senderID, int receiverID, ResourceList offer,
+			ResourceList request) {
+		ResourceList senderResources = resourceManager.getGameBanks()
+				.get(senderID).getResourcesCards();
+		ResourceList receiverResources = resourceManager.getGameBanks()
+				.get(receiverID).getResourcesCards();
+		if (senderResources.hasCardsAvailable(offer)
+				&& receiverResources.hasCardsAvailable(request)) {
+			if (receiverID == mainBankIndex) {
 				tradeAccepted(senderID, receiverID, offer, request);
 				return true;
 			} else {
-				//TODO: prompt receiver for acceptance
-				return true;				
+				// TODO: prompt receiver for acceptance
+				return true;
 			}
 		} else {
 			return false;
@@ -572,10 +615,14 @@ public class GameManager {
 	 * @post Failure = Receiver doesn't have the requested cards; Success =
 	 *       cards are transferred between the two player's banks.
 	 */
-	public boolean tradeAccepted(int senderID, int receiverID, ResourceList offer, ResourceList request) {
-		ResourceList senderResources = resourceManager.getGameBanks().get(senderID).getResourcesCards();
-		ResourceList receiverResources = resourceManager.getGameBanks().get(receiverID).getResourcesCards();
-		if (senderResources.hasCardsAvailable(offer) && receiverResources.hasCardsAvailable(request)) {
+	public boolean tradeAccepted(int senderID, int receiverID,
+			ResourceList offer, ResourceList request) {
+		ResourceList senderResources = resourceManager.getGameBanks()
+				.get(senderID).getResourcesCards();
+		ResourceList receiverResources = resourceManager.getGameBanks()
+				.get(receiverID).getResourcesCards();
+		if (senderResources.hasCardsAvailable(offer)
+				&& receiverResources.hasCardsAvailable(request)) {
 			resourceManager.transferResourceCard(senderID, receiverID, offer);
 			resourceManager.transferResourceCard(receiverID, senderID, request);
 			return true;
@@ -584,20 +631,20 @@ public class GameManager {
 		}
 	}
 
-	
-	public void useMonopoly(ResourceType r){
+	public void useMonopoly(ResourceType r) {
 		int currentPlayer = game.getTurnTracker().getCurrentPlayerIndex();
-		//TODO: use GUI to prompt user for Resource Type
-		for(int i = 0; i < 4; i++) {
-			if(i != currentPlayer) {
-				ResourceList playerResources = resourceManager.getGameBanks().get(i).getResourcesCards();
+		// TODO: use GUI to prompt user for Resource Type
+		for (int i = 0; i < 4; i++) {
+			if (i != currentPlayer) {
+				ResourceList playerResources = resourceManager.getGameBanks()
+						.get(i).getResourcesCards();
 				ResourceList allResource = new ResourceList();
 				switch (r) {
 				case BRICK:
 					allResource.setBrick(playerResources.getBrick());
 					break;
 				case ORE:
-					allResource.setOre(playerResources.getOre());						
+					allResource.setOre(playerResources.getOre());
 					break;
 				case WHEAT:
 					allResource.setWheat(playerResources.getWheat());
@@ -610,31 +657,32 @@ public class GameManager {
 					break;
 				default:
 					return;
-				}					
-				resourceManager.transferResourceCard(i, currentPlayer, allResource);
+				}
+				resourceManager.transferResourceCard(i, currentPlayer,
+						allResource);
 			}
 		}
-		resourceManager.monopolyUsed(currentPlayer);	
+		resourceManager.monopolyUsed(currentPlayer);
 	}
 
 	public void useMonument() {
 		int currentPlayer = game.getTurnTracker().getCurrentPlayerIndex();
 		Player p = game.getPlayers().get(currentPlayer);
 		p.setVictoryPoints(p.getVictoryPoints() + 1);
-		resourceManager.monumentUsed(currentPlayer);		
+		resourceManager.monumentUsed(currentPlayer);
 	}
 
 	public void useRoadBuilding(EdgeLocation road1, EdgeLocation road2) {
-		int currentPlayer = game.getTurnTracker().getCurrentPlayerIndex();			
+		int currentPlayer = game.getTurnTracker().getCurrentPlayerIndex();
 		Bank b = resourceManager.getGameBanks().get(currentPlayer);
-		if(b.getRoads() > 0 && road1 != null) {
+		if (b.getRoads() > 0 && road1 != null) {
 			placeFreeRoad(road1);
 		}
-		
-		if(b.getRoads() > 0 && road2 != null) {
+
+		if (b.getRoads() > 0 && road2 != null) {
 			placeFreeRoad(road2);
 		}
-		
+
 		resourceManager.roadBuildingUsed(currentPlayer);
 	}
 
@@ -643,22 +691,24 @@ public class GameManager {
 		ResourceList r = new ResourceList();
 		r.add(type1, 1);
 		r.add(type2, 1);
-		ResourceList mainBankResources = resourceManager.getGameBanks().get(mainBankIndex).getResourcesCards();
-		if(mainBankResources.hasCardsAvailable(r)) {
-			resourceManager.transferResourceCard(mainBankIndex, currentPlayer, r);
+		ResourceList mainBankResources = resourceManager.getGameBanks()
+				.get(mainBankIndex).getResourcesCards();
+		if (mainBankResources.hasCardsAvailable(r)) {
+			resourceManager.transferResourceCard(mainBankIndex, currentPlayer,
+					r);
 			resourceManager.yearOfPlentyUsed(currentPlayer);
 			return true;
 		} else {
 			return false;
-		}		
+		}
 	}
-	
+
 	public void useSoldier(HexLocation h) {
 		int currentPlayer = game.getTurnTracker().getCurrentPlayerIndex();
 		diceIsSevenMoveRobber(h);
 		resourceManager.soldierUsed(currentPlayer);
 	}
-	
+
 	/**
 	 * @author Curt
 	 * @param gameID
@@ -670,7 +720,7 @@ public class GameManager {
 	 */
 	public void endTurn() {
 		game.getTurnTracker().nextTurn();
-		//TODO: interact with GUI to disable for non-current player
+		// TODO: interact with GUI to disable for non-current player
 	}
 
 	public Game getGame() {
@@ -681,4 +731,7 @@ public class GameManager {
 		this.game = game;
 	}
 
+	public ResourceManager getResourceManager(){
+		return resourceManager;
+	}
 }
