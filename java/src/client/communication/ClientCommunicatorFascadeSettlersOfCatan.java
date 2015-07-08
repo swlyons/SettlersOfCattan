@@ -12,6 +12,25 @@ import client.proxy.SaveGameRequest;
 import client.ClientException;
 import client.data.Game;
 import client.data.User;
+import client.proxy.AcceptTrade;
+import client.proxy.AddAIRequest;
+import client.proxy.BuildCity;
+import client.proxy.BuildRoad;
+import client.proxy.BuildSettlement;
+import client.proxy.BuyDevCard;
+import client.proxy.Command;
+import client.proxy.DiscardCards;
+import client.proxy.FinishMove;
+import client.proxy.MaritimeTrade;
+import client.proxy.Monopoly;
+import client.proxy.Monument;
+import client.proxy.OfferTrade;
+import client.proxy.Road_Building;
+import client.proxy.RobPlayer;
+import client.proxy.RollNumber;
+import client.proxy.SendChat;
+import client.proxy.Soldier;
+import client.proxy.Year_Of_Plenty;
 import java.util.ArrayList;
 
 /**
@@ -74,19 +93,19 @@ public class ClientCommunicatorFascadeSettlersOfCatan {
         return (Game) ClientCommunicator.getSingleton().doGet(MODEL_GAME, version, 0).getResponseBody();
     }
     public Game resetGame() throws ClientException {
-        return (Game) ClientCommunicator.getSingleton().doPost(RESET_GAME, "", 0).getResponseBody();
+        return (Game) ClientCommunicator.getSingleton().doPost(RESET_GAME,"", 0).getResponseBody();
     }
-    public Game getGameCommands() throws ClientException {
-        return (Game) ClientCommunicator.getSingleton().doGet(COMMANDS_GAME, "", 0).getResponseBody();
+    public ArrayList getGameCommands() throws ClientException {
+        return (ArrayList) ClientCommunicator.getSingleton().doGet(COMMANDS_GAME, "", 0).getResponseBody();
     }
-    public Game executeGameCommand() throws ClientException {
-        return (Game) ClientCommunicator.getSingleton().doPost(COMMANDS_GAME, "", 0).getResponseBody();
+    public Game executeGameCommands(ArrayList<Command> commands) throws ClientException {
+        return (Game) ClientCommunicator.getSingleton().doPost(COMMANDS_GAME, commands, 0).getResponseBody();
     }
-    public Game addAIToGame() throws ClientException {
-        return (Game) ClientCommunicator.getSingleton().doPost(ADD_AI_GAME, "", 0).getResponseBody();
+    public Game addAIToGame(AddAIRequest addAIRequest) throws ClientException {
+        return (Game) ClientCommunicator.getSingleton().doPost(ADD_AI_GAME, addAIRequest, 0).getResponseBody();
     }
-    public Game listAITypesInGame() throws ClientException {
-        return (Game) ClientCommunicator.getSingleton().doGet(LIST_AI_GAME, "", 0).getResponseBody();
+    public ArrayList<String> listAITypesInGame() throws ClientException {
+        return (ArrayList<String>) ClientCommunicator.getSingleton().doGet(LIST_AI_GAME, "", 0).getResponseBody();
     }
     // Local User Methods and Constants
     private static final String LIST_GAMES = "games/list";
@@ -100,6 +119,57 @@ public class ClientCommunicatorFascadeSettlersOfCatan {
     private static final String ADD_AI_GAME = "game/addAI";
     private static final String LIST_AI_GAME = "game/listAI";
 
+    public Game sendChat(SendChat sendChat) throws ClientException {
+        return (Game) ClientCommunicator.getSingleton().doPost(SEND_CHAT_MOVES, sendChat, 0).getResponseBody();
+    } 
+    public Game rollNumber(RollNumber rollNumber) throws ClientException {
+        return (Game) ClientCommunicator.getSingleton().doPost(ROLL_MOVES, rollNumber, 0).getResponseBody();
+    } 
+    public Game robPlayer(RobPlayer robPlayer) throws ClientException {
+        return (Game) ClientCommunicator.getSingleton().doPost(ROB_PLAYER_MOVES, robPlayer, 0).getResponseBody();
+    } 
+    public Game finishMove(FinishMove finishMove) throws ClientException {
+        return (Game) ClientCommunicator.getSingleton().doPost(FINISH_TURN_MOVES, finishMove, 0).getResponseBody();
+    } 
+    public Game buyDevCard(BuyDevCard buyDevCard) throws ClientException {
+        return (Game) ClientCommunicator.getSingleton().doPost(BUY_DEV_CARD_MOVES, buyDevCard, 0).getResponseBody();
+    } 
+    public Game year_Of_Plenty(Year_Of_Plenty year_of_plenty) throws ClientException {
+        return (Game) ClientCommunicator.getSingleton().doPost(YEAR_OF_PLENTY_MOVES, year_of_plenty, 0).getResponseBody();
+    } 
+    public Game roadBuilding(Road_Building roadBuilding) throws ClientException {
+        return (Game) ClientCommunicator.getSingleton().doPost(ROAD_BUILDING_MOVES, roadBuilding, 0).getResponseBody();
+    } 
+    public Game soldier(Soldier soldier) throws ClientException {
+        return (Game) ClientCommunicator.getSingleton().doPost(SOLDIER_MOVES, soldier, 0).getResponseBody();
+    } 
+    public Game monopoly(Monopoly monopoly) throws ClientException {
+        return (Game) ClientCommunicator.getSingleton().doPost(MONOPOLY_MOVES, monopoly, 0).getResponseBody();
+    } 
+    public Game monument(Monument monument) throws ClientException {
+        return (Game) ClientCommunicator.getSingleton().doPost(MONUMENT_MOVES, monument, 0).getResponseBody();
+    } 
+    public Game offerTrade(OfferTrade offerTrade) throws ClientException {
+        return (Game) ClientCommunicator.getSingleton().doPost(OFFER_TRADE_MOVES, offerTrade, 0).getResponseBody();
+    } 
+    public Game acceptTrade(AcceptTrade acceptTrade) throws ClientException {
+        return (Game) ClientCommunicator.getSingleton().doPost(ACCEPT_TRADE_MOVES, acceptTrade, 0).getResponseBody();
+    } 
+    public Game buildSettlement(BuildSettlement buildSettlement) throws ClientException {
+        return (Game) ClientCommunicator.getSingleton().doPost(BUILD_SETTLEMENT_MOVES, buildSettlement, 0).getResponseBody();
+    } 
+    public Game buildCity(BuildCity buildCity) throws ClientException {
+        return (Game) ClientCommunicator.getSingleton().doPost(BUILD_CITY_MOVES, buildCity, 0).getResponseBody();
+    } 
+    public Game buildRoad(BuildRoad buildRoad) throws ClientException {
+        return (Game) ClientCommunicator.getSingleton().doPost(BUILD_ROAD_MOVES, buildRoad, 0).getResponseBody();
+    } 
+    public Game maritimeTrade(MaritimeTrade maritimeTrade) throws ClientException {
+        return (Game) ClientCommunicator.getSingleton().doPost(MARITIME_TRADE_MOVES, maritimeTrade, 0).getResponseBody();
+    } 
+    public Game discardCards(DiscardCards discardCards) throws ClientException {
+        return (Game) ClientCommunicator.getSingleton().doPost(DISCARD_CARDS_MOVES, discardCards, 0).getResponseBody();
+    } 
     private static final String SEND_CHAT_MOVES = "moves/sendChat";
     private static final String ROLL_MOVES = "moves/rollNumber";
     private static final String ROB_PLAYER_MOVES = "moves/robPlayer";
@@ -117,7 +187,8 @@ public class ClientCommunicatorFascadeSettlersOfCatan {
     private static final String BUILD_ROAD_MOVES = "moves/buildRoad";
     private static final String MARITIME_TRADE_MOVES = "moves/maritimeTrade";
     private static final String DISCARD_CARDS_MOVES = "moves/discardCards";
-
-    private static final String LOG_LEVEL_UTIL = "util/changeLogLevel";
+    
+    //not implemented for this phase
+    //private static final String LOG_LEVEL_UTIL = "util/changeLogLevel";
 
 }

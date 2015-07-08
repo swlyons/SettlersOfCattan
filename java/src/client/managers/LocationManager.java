@@ -57,10 +57,10 @@ public class LocationManager {
                     location.getWhoCanBuild().clear();
                     location.getWhoCanBuild().add(playerId);
 
-                    if (location.getNormalizedLocation().getDir() == VertexDirection.NorthEast) {
-                        VertexLocation unusableLocation1 = new VertexLocation(location.getNormalizedLocation().getHexLoc(), VertexDirection.NorthWest);
-                        VertexLocation unusableLocation2 = new VertexLocation(new HexLocation(location.getNormalizedLocation().getHexLoc().getX() + 1, location.getNormalizedLocation().getHexLoc().getY()), VertexDirection.NorthWest);
-                        VertexLocation unusableLocation3 = new VertexLocation(new HexLocation(location.getNormalizedLocation().getHexLoc().getX() + 1, location.getNormalizedLocation().getHexLoc().getY() - 1), VertexDirection.NorthWest);
+                    if (location.getNormalizedLocation().getDir() == VertexDirection.NE) {
+                        VertexLocation unusableLocation1 = new VertexLocation(location.getNormalizedLocation().getHexLoc(), VertexDirection.NW);
+                        VertexLocation unusableLocation2 = new VertexLocation(new HexLocation(location.getNormalizedLocation().getHexLoc().getX() + 1, location.getNormalizedLocation().getHexLoc().getY()), VertexDirection.NW);
+                        VertexLocation unusableLocation3 = new VertexLocation(new HexLocation(location.getNormalizedLocation().getHexLoc().getX() + 1, location.getNormalizedLocation().getHexLoc().getY() - 1), VertexDirection.NW);
                         for (Location locationUnavailable : unsettledLocations) {
                             if (locationUnavailable.getNormalizedLocation().equals(unusableLocation1)
                                     || locationUnavailable.getNormalizedLocation().equals(unusableLocation2)
@@ -70,9 +70,9 @@ public class LocationManager {
                         }
 
                         if (firstRound) {
-                            EdgeLocation usableEdge1 = new EdgeLocation(location.getNormalizedLocation().getHexLoc(), EdgeDirection.North);
-                            EdgeLocation usableEdge2 = new EdgeLocation(location.getNormalizedLocation().getHexLoc(), EdgeDirection.NorthEast);
-                            EdgeLocation usableEdge3 = new EdgeLocation(new HexLocation(location.getNormalizedLocation().getHexLoc().getX() + 1, location.getNormalizedLocation().getHexLoc().getY() - 1), EdgeDirection.NorthWest);
+                            EdgeLocation usableEdge1 = new EdgeLocation(location.getNormalizedLocation().getHexLoc(), EdgeDirection.N);
+                            EdgeLocation usableEdge2 = new EdgeLocation(location.getNormalizedLocation().getHexLoc(), EdgeDirection.NE);
+                            EdgeLocation usableEdge3 = new EdgeLocation(new HexLocation(location.getNormalizedLocation().getHexLoc().getX() + 1, location.getNormalizedLocation().getHexLoc().getY() - 1), EdgeDirection.NW);
                             for (Edge edge : unsettledEdges) {
                                 if (edge.getEdgeLocation().equals(usableEdge1)
                                         || edge.getEdgeLocation().equals(usableEdge2)
@@ -84,10 +84,10 @@ public class LocationManager {
 
                     }
 
-                    if (location.getNormalizedLocation().getDir() == VertexDirection.NorthWest) {
-                        VertexLocation unusableLocation1 = new VertexLocation(location.getNormalizedLocation().getHexLoc(), VertexDirection.NorthEast);
-                        VertexLocation unusableLocation2 = new VertexLocation(new HexLocation(location.getNormalizedLocation().getHexLoc().getX() - 1, location.getNormalizedLocation().getHexLoc().getY()), VertexDirection.NorthEast);
-                        VertexLocation unusableLocation3 = new VertexLocation(new HexLocation(location.getNormalizedLocation().getHexLoc().getX() - 1, location.getNormalizedLocation().getHexLoc().getY() + 1), VertexDirection.NorthEast);
+                    if (location.getNormalizedLocation().getDir() == VertexDirection.NW) {
+                        VertexLocation unusableLocation1 = new VertexLocation(location.getNormalizedLocation().getHexLoc(), VertexDirection.NE);
+                        VertexLocation unusableLocation2 = new VertexLocation(new HexLocation(location.getNormalizedLocation().getHexLoc().getX() - 1, location.getNormalizedLocation().getHexLoc().getY()), VertexDirection.NE);
+                        VertexLocation unusableLocation3 = new VertexLocation(new HexLocation(location.getNormalizedLocation().getHexLoc().getX() - 1, location.getNormalizedLocation().getHexLoc().getY() + 1), VertexDirection.NE);
                         for (Location locationUnavailable : unsettledLocations) {
                             if (locationUnavailable.getNormalizedLocation().equals(unusableLocation1)
                                     || locationUnavailable.getNormalizedLocation().equals(unusableLocation2)
@@ -97,9 +97,9 @@ public class LocationManager {
                         }
 
                         if (firstRound) {
-                            EdgeLocation usableEdge1 = new EdgeLocation(location.getNormalizedLocation().getHexLoc(), EdgeDirection.North);
-                            EdgeLocation usableEdge2 = new EdgeLocation(location.getNormalizedLocation().getHexLoc(), EdgeDirection.NorthWest);
-                            EdgeLocation usableEdge3 = new EdgeLocation(new HexLocation(location.getNormalizedLocation().getHexLoc().getX() - 1, location.getNormalizedLocation().getHexLoc().getY()), EdgeDirection.NorthEast);
+                            EdgeLocation usableEdge1 = new EdgeLocation(location.getNormalizedLocation().getHexLoc(), EdgeDirection.N);
+                            EdgeLocation usableEdge2 = new EdgeLocation(location.getNormalizedLocation().getHexLoc(), EdgeDirection.NW);
+                            EdgeLocation usableEdge3 = new EdgeLocation(new HexLocation(location.getNormalizedLocation().getHexLoc().getX() - 1, location.getNormalizedLocation().getHexLoc().getY()), EdgeDirection.NE);
                             for (Edge edge : unsettledEdges) {
                                 if (edge.getEdgeLocation().equals(usableEdge1)
                                         || edge.getEdgeLocation().equals(usableEdge2)
@@ -144,9 +144,9 @@ public class LocationManager {
                     edgeToMove = edge;
                     edge.getWhoCanBuild().clear();
 
-                    if (edge.getEdgeLocation().getDir() == EdgeDirection.North) {
-                        VertexLocation settleable1 = new VertexLocation(edge.getEdgeLocation().getHexLoc(), VertexDirection.NorthEast);
-                        VertexLocation settleable2 = new VertexLocation(edge.getEdgeLocation().getHexLoc(), VertexDirection.NorthWest);
+                    if (edge.getEdgeLocation().getDir() == EdgeDirection.N) {
+                        VertexLocation settleable1 = new VertexLocation(edge.getEdgeLocation().getHexLoc(), VertexDirection.NE);
+                        VertexLocation settleable2 = new VertexLocation(edge.getEdgeLocation().getHexLoc(), VertexDirection.NE);
                         for (Location location : unsettledLocations) {
                             if (location.getNormalizedLocation().equals(settleable1)
                                     || location.getNormalizedLocation().equals(settleable2)) {
@@ -154,10 +154,10 @@ public class LocationManager {
                             }
                         }
 
-                        EdgeLocation availableEdge1 = new EdgeLocation(edge.getEdgeLocation().getHexLoc(), EdgeDirection.NorthEast);
-                        EdgeLocation availableEdge2 = new EdgeLocation(edge.getEdgeLocation().getHexLoc(), EdgeDirection.NorthWest);
-                        EdgeLocation availableEdge3 = new EdgeLocation(new HexLocation(edge.getEdgeLocation().getHexLoc().getX() + 1, edge.getEdgeLocation().getHexLoc().getY() - 1), EdgeDirection.NorthWest);
-                        EdgeLocation availableEdge4 = new EdgeLocation(new HexLocation(edge.getEdgeLocation().getHexLoc().getX() - 1, edge.getEdgeLocation().getHexLoc().getY()), EdgeDirection.NorthEast);
+                        EdgeLocation availableEdge1 = new EdgeLocation(edge.getEdgeLocation().getHexLoc(), EdgeDirection.NE);
+                        EdgeLocation availableEdge2 = new EdgeLocation(edge.getEdgeLocation().getHexLoc(), EdgeDirection.NW);
+                        EdgeLocation availableEdge3 = new EdgeLocation(new HexLocation(edge.getEdgeLocation().getHexLoc().getX() + 1, edge.getEdgeLocation().getHexLoc().getY() - 1), EdgeDirection.NW);
+                        EdgeLocation availableEdge4 = new EdgeLocation(new HexLocation(edge.getEdgeLocation().getHexLoc().getX() - 1, edge.getEdgeLocation().getHexLoc().getY()), EdgeDirection.NE);
 
                         for (Edge addToEdge : unsettledEdges) {
                             if (addToEdge.getEdgeLocation().equals(availableEdge1)
@@ -169,9 +169,9 @@ public class LocationManager {
                         }
                     }
 
-                    if (edge.getEdgeLocation().getDir() == EdgeDirection.NorthEast) {
-                        VertexLocation settleable1 = new VertexLocation(edge.getEdgeLocation().getHexLoc(), VertexDirection.NorthEast);
-                        VertexLocation settleable2 = new VertexLocation(new HexLocation(edge.getEdgeLocation().getHexLoc().getX() + 1, edge.getEdgeLocation().getHexLoc().getY()), VertexDirection.NorthWest);
+                    if (edge.getEdgeLocation().getDir() == EdgeDirection.NE) {
+                        VertexLocation settleable1 = new VertexLocation(edge.getEdgeLocation().getHexLoc(), VertexDirection.NE);
+                        VertexLocation settleable2 = new VertexLocation(new HexLocation(edge.getEdgeLocation().getHexLoc().getX() + 1, edge.getEdgeLocation().getHexLoc().getY()), VertexDirection.NW);
                         for (Location location : unsettledLocations) {
                             if (location.getNormalizedLocation().equals(settleable1)
                                     || location.getNormalizedLocation().equals(settleable2)) {
@@ -179,10 +179,10 @@ public class LocationManager {
                             }
                         }
 
-                        EdgeLocation availableEdge1 = new EdgeLocation(edge.getEdgeLocation().getHexLoc(), EdgeDirection.North);
-                        EdgeLocation availableEdge2 = new EdgeLocation(new HexLocation(edge.getEdgeLocation().getHexLoc().getX() + 1, edge.getEdgeLocation().getHexLoc().getY() - 1), EdgeDirection.NorthWest);
-                        EdgeLocation availableEdge3 = new EdgeLocation(new HexLocation(edge.getEdgeLocation().getHexLoc().getX() + 1, edge.getEdgeLocation().getHexLoc().getY()), EdgeDirection.NorthWest);
-                        EdgeLocation availableEdge4 = new EdgeLocation(new HexLocation(edge.getEdgeLocation().getHexLoc().getX() + 1, edge.getEdgeLocation().getHexLoc().getY()), EdgeDirection.North);
+                        EdgeLocation availableEdge1 = new EdgeLocation(edge.getEdgeLocation().getHexLoc(), EdgeDirection.N);
+                        EdgeLocation availableEdge2 = new EdgeLocation(new HexLocation(edge.getEdgeLocation().getHexLoc().getX() + 1, edge.getEdgeLocation().getHexLoc().getY() - 1), EdgeDirection.NW);
+                        EdgeLocation availableEdge3 = new EdgeLocation(new HexLocation(edge.getEdgeLocation().getHexLoc().getX() + 1, edge.getEdgeLocation().getHexLoc().getY()), EdgeDirection.NW);
+                        EdgeLocation availableEdge4 = new EdgeLocation(new HexLocation(edge.getEdgeLocation().getHexLoc().getX() + 1, edge.getEdgeLocation().getHexLoc().getY()), EdgeDirection.N);
 
                         for (Edge addToEdge : unsettledEdges) {
                             if (addToEdge.getEdgeLocation().equals(availableEdge1)
@@ -194,9 +194,9 @@ public class LocationManager {
                         }
                     }
 
-                    if (edge.getEdgeLocation().getDir() == EdgeDirection.NorthWest) {
-                        VertexLocation settleable1 = new VertexLocation(edge.getEdgeLocation().getHexLoc(), VertexDirection.NorthWest);
-                        VertexLocation settleable2 = new VertexLocation(new HexLocation(edge.getEdgeLocation().getHexLoc().getX() - 1, edge.getEdgeLocation().getHexLoc().getY() + 1), VertexDirection.NorthEast);
+                    if (edge.getEdgeLocation().getDir() == EdgeDirection.NW) {
+                        VertexLocation settleable1 = new VertexLocation(edge.getEdgeLocation().getHexLoc(), VertexDirection.NW);
+                        VertexLocation settleable2 = new VertexLocation(new HexLocation(edge.getEdgeLocation().getHexLoc().getX() - 1, edge.getEdgeLocation().getHexLoc().getY() + 1), VertexDirection.NE);
                         for (Location location : unsettledLocations) {
                             if (location.getNormalizedLocation().equals(settleable1)
                                     || location.getNormalizedLocation().equals(settleable2)) {
@@ -204,10 +204,10 @@ public class LocationManager {
                             }
                         }
 
-                        EdgeLocation availableEdge1 = new EdgeLocation(edge.getEdgeLocation().getHexLoc(), EdgeDirection.North);
-                        EdgeLocation availableEdge2 = new EdgeLocation(new HexLocation(edge.getEdgeLocation().getHexLoc().getX() - 1, edge.getEdgeLocation().getHexLoc().getY()), EdgeDirection.NorthEast);
-                        EdgeLocation availableEdge3 = new EdgeLocation(new HexLocation(edge.getEdgeLocation().getHexLoc().getX() - 1, edge.getEdgeLocation().getHexLoc().getY() + 1), EdgeDirection.NorthEast);
-                        EdgeLocation availableEdge4 = new EdgeLocation(new HexLocation(edge.getEdgeLocation().getHexLoc().getX() - 1, edge.getEdgeLocation().getHexLoc().getY() + 1), EdgeDirection.North);
+                        EdgeLocation availableEdge1 = new EdgeLocation(edge.getEdgeLocation().getHexLoc(), EdgeDirection.N);
+                        EdgeLocation availableEdge2 = new EdgeLocation(new HexLocation(edge.getEdgeLocation().getHexLoc().getX() - 1, edge.getEdgeLocation().getHexLoc().getY()), EdgeDirection.NE);
+                        EdgeLocation availableEdge3 = new EdgeLocation(new HexLocation(edge.getEdgeLocation().getHexLoc().getX() - 1, edge.getEdgeLocation().getHexLoc().getY() + 1), EdgeDirection.NE);
+                        EdgeLocation availableEdge4 = new EdgeLocation(new HexLocation(edge.getEdgeLocation().getHexLoc().getX() - 1, edge.getEdgeLocation().getHexLoc().getY() + 1), EdgeDirection.N);
 
                         for (Edge addToEdge : unsettledEdges) {
                             if (addToEdge.getEdgeLocation().equals(availableEdge1)
@@ -294,7 +294,7 @@ public class LocationManager {
         hexes.add(vertex.getHexLoc());
         hexes.add(new HexLocation(vertex.getHexLoc().getX(), vertex.getHexLoc().getY() - 1));
 
-        if (VertexDirection.NorthEast == vertex.getDir()) {
+        if (VertexDirection.NE == vertex.getDir()) {
             hexes.add(new HexLocation(vertex.getHexLoc().getX() + 1, vertex.getHexLoc().getY() - 1));
         } else {
             //case of it's NorthWest

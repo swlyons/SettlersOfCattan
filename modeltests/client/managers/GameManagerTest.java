@@ -6,17 +6,12 @@
 package client.managers;
 
 import client.data.*;
-import client.managers.GameManager;
 
 import shared.locations.*;
 import shared.definitions.*;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -24,7 +19,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
-import org.junit.Ignore;
 
 /**
  *
@@ -805,27 +799,7 @@ public class GameManagerTest {
 	@After
 	public void tearDown() {
 	}
-
-	/**
-	 * Test of initializeGame method, of class GameManager.
-	 */
-	// @Test
-	// public void testInitializeGame() {
-	// System.out.println("initializeGame");
-	// String jsonDataOut = "";
-	//
-	// GameManager instance = new GameManager();
-	// instance.initializeGame(jsonDataIn);
-	//
-	// Game game = instance.getGame();
-	// // print Json Model (Game)
-	// // System.out.println(game);
-	//
-	// // add test case to compare
-	// assert("Model was successfully initialized",
-	// jsonDataIn.equals(jsonDataOut) && !jsonDataOut.isEmpty());
-	// }
-
+        
 	@Test
 	public void testCanBuyDevCard() {
 		GameManager instance = new GameManager();
@@ -950,7 +924,7 @@ public class GameManagerTest {
 		int heldBefore = target.getResourceManager().getGameBanks().get(0)
 				.getDevelopmentCards().getYearOfPlenty();
 
-		target.useYearOfPlenty(ResourceType.BRICK, ResourceType.BRICK);
+		target.useYearOfPlenty(ResourceType.brick, ResourceType.brick);
 		int brickAfter = target.getResourceManager().getGameBanks().get(0)
 				.getResourcesCards().getBrick();
 		int heldAfter = target.getResourceManager().getGameBanks().get(0)
@@ -973,7 +947,7 @@ public class GameManagerTest {
 		int userBrickBefore = target.getResourceManager().getGameBanks().get(0)
 				.getResourcesCards().getBrick();
 
-		target.useMonopoly(ResourceType.BRICK);
+		target.useMonopoly(ResourceType.brick);
 		int userBrickAfter = target.getResourceManager().getGameBanks().get(0)
 				.getResourcesCards().getBrick();
 

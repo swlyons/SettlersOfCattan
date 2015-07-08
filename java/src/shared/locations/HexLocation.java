@@ -17,7 +17,7 @@ public class HexLocation {
         return x;
     }
 
-    private void setX(int x) {
+    public void setX(int x) {
         this.x = x;
     }
 
@@ -25,7 +25,7 @@ public class HexLocation {
         return y;
     }
 
-    private void setY(int y) {
+    public void setY(int y) {
         this.y = y;
     }
 
@@ -66,17 +66,17 @@ public class HexLocation {
 
     public HexLocation getNeighborLoc(EdgeDirection dir) {
         switch (dir) {
-            case NorthWest:
+            case NW:
                 return new HexLocation(x - 1, y);
-            case North:
+            case N:
                 return new HexLocation(x, y - 1);
-            case NorthEast:
+            case NE:
                 return new HexLocation(x + 1, y - 1);
-            case SouthWest:
+            case SW:
                 return new HexLocation(x - 1, y + 1);
-            case South:
+            case S:
                 return new HexLocation(x, y + 1);
-            case SouthEast:
+            case SE:
                 return new HexLocation(x + 1, y);
             default:
                 assert false;

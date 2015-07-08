@@ -5,20 +5,10 @@ package client.proxy;
  * @author Aaron
  *
  */
-public class BuyDevCard extends Request{
-	private String type = "buyDevCard";
-	private int playerIndex;
-	
-	public String getType() {
-		return type;
-	}
-	public void setType(String type) {
-		this.type = type;
-	}
-	public int getPlayerIndex() {
-		return playerIndex;
-	}
-	public void setPlayerIndex(int playerIndex) {
-		this.playerIndex = playerIndex;
-	}
+public class BuyDevCard extends Command{
+
+    public BuyDevCard(int playerIndex) {
+        super("buyDevCard", playerIndex);
+    }
+	       
 }

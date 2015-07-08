@@ -5,20 +5,10 @@ package client.proxy;
  * @author Aaron
  *
  */
-public class FinishMove extends Request{
-	private String type = "finishTurn";
-	private int playerIndex;
+public class FinishMove extends Command{
+
+    public FinishMove(int playerIndex) {
+        super("finishTurn", playerIndex);
+    }
 	
-	public String getType() {
-		return type;
-	}
-	public void setType(String type) {
-		this.type = type;
-	}
-	public int getPlayerIndex() {
-		return playerIndex;
-	}
-	public void setPlayerIndex(int playerIndex) {
-		this.playerIndex = playerIndex;
-	}
 }
