@@ -14,6 +14,28 @@ public class Bank {
     private int soldiers;
     private int monuments;
     private final int mainBankIndex = 4;
+    
+    public Bank(boolean isMainBankInitializer){
+    	if(isMainBankInitializer){
+    		this.ownerID = mainBankIndex;
+    		this.settlements = 0;
+    		this.cities = 0;
+    		this.roads = 0;
+    		this.hasLargestArmy = true;
+    		this.hasLongestRoad = true;
+    	} else {
+    		this.settlements = 5;
+    		this.cities = 4;
+    		this.roads = 15;
+    		this.hasLargestArmy = false;
+    		this.hasLongestRoad = false;
+    	}
+		this.resourcesCards = new ResourceList(isMainBankInitializer);
+		this.developmentCards = new DevCardList(isMainBankInitializer);
+		this.unusableDevCards = new DevCardList();
+		this.soldiers = 0;
+		this.monuments = 0;
+    }
 
     public Bank(Player p, boolean hasLargestArmy, boolean hasLongestRoad) {
 	    this.ownerID = p.getPlayerID();
