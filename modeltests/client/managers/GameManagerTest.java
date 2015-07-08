@@ -1852,4 +1852,9 @@ private String jsonDataIn = "";
 
     }
 
+    @Test
+    public void testPlayMonument() {
+    	GameManager target = new GameManager();
+    	target.initializeGame(jsonDataIn);
+    }
 }
