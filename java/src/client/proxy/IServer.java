@@ -149,11 +149,7 @@ public interface IServer {
 	 * @pre The specified player has the dev card AND they didn't draw it this turn AND they haven't played any other dev cards this turn AND it is their turn AND the two chosen resources are different
 	 * @post The specifed player plays a YoP card and gets the resource cards of the two chosen types AND returns the game state immediately afterwards.
 	 */
-<<<<<<< HEAD
-	public Game PlayYearOfPlenty(Year_Of_Plenty request);
-=======
-	public String PlayYearOfPlenty(Year_Of_Plenty_ request);
->>>>>>> a8280b68a778a32e927c374952de9f0989c27bf5
+	public String PlayYearOfPlenty(Year_Of_Plenty request);
 	
 	/**
 	 * makes a player play a Road Building dev card
@@ -162,11 +158,7 @@ public interface IServer {
 	 * @pre the specified player has the dev card AND they didn't draw it this turn AND they haven't played any other dev cards this turn AND it is their turn AND the edge locations are valid for building.
 	 * @post the specified player plays the card with the indicated choices AND returns the game state immediately after.
 	 */
-<<<<<<< HEAD
-	public Game PlayRoadBuilding(Road_Building request);
-=======
-	public String PlayRoadBuilding(Road_Building_ request);
->>>>>>> a8280b68a778a32e927c374952de9f0989c27bf5
+	public String PlayRoadBuilding(Road_Building request);
 	
 	/**
 	 * makes a player play a soldier card
@@ -175,11 +167,7 @@ public interface IServer {
 	 * @pre the specified player has the dev card AND they didn't draw it this turn AND they haven't played any other dev cards this turn AND it is their turn AND victim index != player index AND location didn't have the robber previously.
 	 * @post the specified player plays the card with the indicated choices AND returns the game state immediately after.
 	 */
-<<<<<<< HEAD
-	public Game PlaySoldier(Soldier request);
-=======
-	public String PlaySoldier(Soldier_ request);
->>>>>>> a8280b68a778a32e927c374952de9f0989c27bf5
+	public String PlaySoldier(Soldier request);
 	
 	/**
 	 * makes a player play a monopoly card
@@ -188,11 +176,7 @@ public interface IServer {
 	 * @pre the specified player has the dev card AND they didn't draw it this turn AND they haven't played any other dev cards this turn AND it is their turn
 	 * @post the specified player plays the card with the indicated choice AND returns the game state immediately after.
 	 */
-<<<<<<< HEAD
-	public Game PlayMonopoly(Monopoly request);
-=======
-	public String PlayMonopoly(Monopoly_ request);
->>>>>>> a8280b68a778a32e927c374952de9f0989c27bf5
+	public String PlayMonopoly(Monopoly request);
 	
 	/**
 	 * makes a player play a monument card
@@ -201,11 +185,7 @@ public interface IServer {
 	 * @pre the specified player has the dev card AND they didn't draw it this turn AND they haven't played any other dev cards this turn AND it is their turn
 	 * @post the specified player plays the card AND returns the game state immediately after.
 	 */
-<<<<<<< HEAD
-	public Game PlayMonument(Monument request);
-=======
-	public String PlayMonument(Monument_ request);
->>>>>>> a8280b68a778a32e927c374952de9f0989c27bf5
+	public String PlayMonument(Monument request);
 	
 	/**
 	 * Causes a player to build a road
