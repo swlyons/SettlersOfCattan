@@ -12,7 +12,6 @@ import client.proxy.SaveGameRequest;
 import client.data.Game;
 import client.data.User;
 import client.proxy.AcceptTrade;
-import client.proxy.AddAIRequest;
 import client.proxy.BuildCity;
 import client.proxy.BuildRoad;
 import client.proxy.BuildSettlement;
@@ -30,25 +29,20 @@ import client.proxy.RollNumber;
 import client.proxy.SendChat;
 import client.proxy.Soldier;
 import client.proxy.Year_Of_Plenty;
-import com.google.gson.JsonArray;
 import java.util.ArrayList;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.Ignore;
 import java.util.UUID;
 import static org.junit.Assert.*;
-import org.junit.Ignore;
 import shared.definitions.ResourceType;
 import shared.locations.EdgeDirection;
 import shared.locations.EdgeLocation;
 import shared.locations.HexLocation;
 import shared.locations.VertexDirection;
 import shared.locations.VertexLocation;
-
-@Ignore
 
 /**
  *
@@ -279,7 +273,7 @@ public class ClientCommunicatorFascadeSettlersOfCatanTest {
     public void testGetGameCommands() throws Exception {
         System.out.print("getGameCommands");
         ClientCommunicatorFascadeSettlersOfCatan instance = new ClientCommunicatorFascadeSettlersOfCatan();
-        int expResult = 2;
+        int expResult = 3;
         //must login and join a game first
         instance.login(new User("Sam", "sam"));
         instance.joinGame(new JoinGameRequest(0, "red"));
@@ -383,7 +377,7 @@ public class ClientCommunicatorFascadeSettlersOfCatanTest {
         RollNumber rollNumber = new RollNumber(0);
         rollNumber.setNumber(8);
         ClientCommunicatorFascadeSettlersOfCatan instance = new ClientCommunicatorFascadeSettlersOfCatan();
-        int expResult = 7;
+        int expResult = 8;
         instance.login(new User("Sam", "sam"));
         instance.joinGame(new JoinGameRequest(0, "red"));
         Game result = instance.rollNumber(rollNumber);

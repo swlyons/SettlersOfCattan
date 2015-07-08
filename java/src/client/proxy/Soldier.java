@@ -10,7 +10,7 @@ import shared.locations.HexLocation;
  */
 public class Soldier extends Command {
 
-    private int vicitmIndex;
+    private int victimIndex;
     private HexLocation location;
 
     public Soldier(int playerIndex) {
@@ -18,11 +18,11 @@ public class Soldier extends Command {
     }
     
     public int getVicitmIndex() {
-        return vicitmIndex;
+        return victimIndex;
     }
 
-    public void setVicitmIndex(int vicitmIndex) {
-        this.vicitmIndex = vicitmIndex;
+    public void setVicitmIndex(int victimIndex) {
+        this.victimIndex = victimIndex;
     }
 
     public HexLocation getLocation() {
