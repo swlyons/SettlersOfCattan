@@ -5,16 +5,15 @@
  */
 package client.managers;
 
-import client.data.Bank;
-import client.data.DevCardList;
-import client.data.Game;
-import client.data.Player;
-import client.data.ResourceList;
+import client.data.*;
 import client.managers.GameManager;
+
+import shared.locations.*;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
@@ -864,11 +863,36 @@ public class GameManagerTest {
     public void testPlayMonument() {
     	GameManager target = new GameManager();
     	target.initializeGame(jsonDataIn);
-    	DevCardList cards = new DevCArrayList(1,1,1,1,1);
-    	ArrayList<Bank> banks = target.getResourceManager().getGameBanks();
+    	DevCardList cards = new DevCardList(1,1,1,1,1);
+    	List<Bank> banks = target.getResourceManager().getGameBanks();
     	banks.get(0).setDevelopmentCards(cards);
     	target.getResourceManager().setGameBanks(banks);
     	
+    	int playedBefore = target.getResourceManager().getGameBanks().get(0).getMonuments();
+    	int heldBefore = target.getResourceManager().getGameBanks().get(0).getDevelopmentCards().getMonument();
+    	target.useMonument();
+    	int playedAfter = target.getResourceManager().getGameBanks().get(0).getMonuments();
+    	int heldAfter = target.getResourceManager().getGameBanks().get(0).getDevelopmentCards().getMonument();
+    	assertTrue(playedBefore + 1 == playedAfter);
+    	assertTrue(heldAfter + 1 == heldBefore);
+    }
+    
+    @Test
+    public void testPlaySoldier() {
+    	GameManager target = new GameManager();
+    	target.initializeGame(jsonDataIn);
+    	DevCardList cards = new DevCardList(1,1,1,1,1);
+    	List<Bank> banks = target.getResourceManager().getGameBanks();
+    	banks.get(0).setDevelopmentCards(cards);
+    	target.getResourceManager().setGameBanks(banks);
     	
+    	int playedBefore = target.getResourceManager().getGameBanks().get(0).getSoldiers();
+    	int heldBefore = target.getResourceManager().getGameBanks().get(0).getDevelopmentCards().getSoldier();
+    	target.useSoldier(new HexLocation(0, 0));
+    	int playedAfter = target.getResourceManager().getGameBanks().get(0).getSoldiers();
+    	int heldAfter = target.getResourceManager().getGameBanks().get(0).getDevelopmentCards().getSoldier();
+    	assertTrue(playedBefore + 1 == playedAfter);
+    	assertTrue(heldAfter + 1 == heldBefore);
+    	//assertTrue(target.getMapManager().getRobberLocation().equals(new HexLocation(0, 0)));
     }
 }

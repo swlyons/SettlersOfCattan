@@ -744,4 +744,12 @@ public class GameManager {
 	public ResourceManager getResourceManager() {
 		return resourceManager;
 	}
+	
+	public LocationManager getLocationManager() {
+		return locationManager;
+	}
+	
+	public MapManager getMapManager() {
+		return mapManager;
+	}
 }
