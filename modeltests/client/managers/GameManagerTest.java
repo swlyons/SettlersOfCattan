@@ -808,27 +808,45 @@ public class GameManagerTest {
 	/**
 	 * Test of initializeGame method, of class GameManager.
 	 */
-//	@Test
-//	public void testInitializeGame() {
-//		System.out.println("initializeGame");
-//		String jsonDataOut = "";
-//
-//		GameManager instance = new GameManager();
-//		instance.initializeGame(jsonDataIn);
-//
-//		Game game = instance.getGame();
-//		// print Json Model (Game)
-//		// System.out.println(game);
-//
-//		// add test case to compare
-//		assert("Model was successfully initialized",
-//				jsonDataIn.equals(jsonDataOut) && !jsonDataOut.isEmpty());
-//	}
+	// @Test
+	// public void testInitializeGame() {
+	// System.out.println("initializeGame");
+	// String jsonDataOut = "";
+	//
+	// GameManager instance = new GameManager();
+	// instance.initializeGame(jsonDataIn);
+	//
+	// Game game = instance.getGame();
+	// // print Json Model (Game)
+	// // System.out.println(game);
+	//
+	// // add test case to compare
+	// assert("Model was successfully initialized",
+	// jsonDataIn.equals(jsonDataOut) && !jsonDataOut.isEmpty());
+	// }
+	
+	@Test
+	public void testRollDice() {
+		
+	}
+	
+	@Test
+	public void testBuildRoad() {
+		
+	}
+	
+	@Test
+	public void testBuildStructure() {
+		
+	}
+	
+	@Test
+	public void testTrade() {
+		
+	}
 
 	@Test
 	public void testCanBuyDevCard() {
-//		System.out.println("canBuyDevCard");
-
 		GameManager instance = new GameManager();
 		instance.initializeGame(jsonDataIn);
 
@@ -836,6 +854,11 @@ public class GameManagerTest {
 
 		// CurrentPlayer is Sam. Sam has enough resources for a DevCard
 		game.getTurnTracker().setCurrentTurn(0);
+
+		DevCardList prevDevCards = instance.getResourceManager().getGameBanks()
+				.get(0).getUnusableDevCards();
+		assert (prevDevCards.totalCardsRemaining() == 0);
+
 		ResourceList prevResources = instance.getResourceManager()
 				.getGameBanks().get(0).getResourcesCards();
 
@@ -845,76 +868,11 @@ public class GameManagerTest {
 		DevCardList newDevCards = instance.getResourceManager().getGameBanks()
 				.get(0).getUnusableDevCards();
 		ResourceList newResources = instance.getResourceManager()
-				.getGameBanks().get(0).getResourcesCards();		
-		assert(newDevCards.totalCardsRemaining() == 1);
-		
 		newResources.addOre(1);
 		newResources.addWheat(1);
 		newResources.addSheep(1);
-		assert(newResources.toString().equals(previousResourceString));
+		assert (newResources.toString().equals(previousResourceString));
 
 	}
 
-    @Test
-    public void testPlayMonument() {
-    	GameManager target = new GameManager();
-    	target.initializeGame(jsonDataIn);
-    	DevCardList cards = new DevCardList(1,1,1,1,1);
-    	List<Bank> banks = target.getResourceManager().getGameBanks();
-    	banks.get(0).setDevelopmentCards(cards);
-    	target.getResourceManager().setGameBanks(banks);
-    	
-    	int playedBefore = target.getResourceManager().getGameBanks().get(0).getMonuments();
-    	int heldBefore = target.getResourceManager().getGameBanks().get(0).getDevelopmentCards().getMonument();
-    	target.useMonument();
-    	int playedAfter = target.getResourceManager().getGameBanks().get(0).getMonuments();
-    	int heldAfter = target.getResourceManager().getGameBanks().get(0).getDevelopmentCards().getMonument();
-    	assertTrue(playedBefore + 1 == playedAfter);
-    	assertTrue(heldAfter + 1 == heldBefore);
-    }
-    @Test
-    public void testPlaySoldier() {
-    	GameManager target = new GameManager();
-    	target.initializeGame(jsonDataIn);
-    	DevCardList cards = new DevCardList(1,1,1,1,1);
-    	List<Bank> banks = target.getResourceManager().getGameBanks();
-    	banks.get(0).setDevelopmentCards(cards);
-    	target.getResourceManager().setGameBanks(banks);
-    	
-    	int playedBefore = target.getResourceManager().getGameBanks().get(0).getSoldiers();
-    	int heldBefore = target.getResourceManager().getGameBanks().get(0).getDevelopmentCards().getSoldier();
-    	target.useSoldier(new HexLocation(0, 0));
-    	int playedAfter = target.getResourceManager().getGameBanks().get(0).getSoldiers();
-    	int heldAfter = target.getResourceManager().getGameBanks().get(0).getDevelopmentCards().getSoldier();
-    	assertTrue(playedBefore + 1 == playedAfter);
-    	assertTrue(heldAfter + 1 == heldBefore);
-//	 	assertTrue(target.getMapManager().getRobberLocation().equals(new HexLocation(0, 0)));
-    }
-    
-    @Test
-    public void testCreateGame(){
-        GameManager game = new GameManager();
-        game.createGame(false, false, false, "Muahahahahhahahhahha");
-        assertTrue(game.getGame().getTitle().equals("Muahahahahhahahhahha"));
-        assertFalse(game.getGame().getTitle().equals("Milk"));        
-        List<Hex> hexesBasic = game.getMapManager().getHexList();
-        List<Location> locationsBasic = game.getLocationManager().getUnsettledLocations();
-        List<Edge> edgesBasic = game.getLocationManager().getUnsettledEdges();
-        List<Port> portsBasic = game.getLocationManager().getPorts();        
-        game = new GameManager();
-        game.createGame(false, false, false, "Muahahahahhahahhahha");        
-        for(int i = 0;i<game.getMapManager().getHexList().size();i++){
-            assertTrue(hexesBasic.get(i).getLocation().equals(game.getMapManager().getHexList().get(i).getLocation()));
-            assertTrue(hexesBasic.get(i).getNumber()==game.getMapManager().getHexList().get(i).getNumber());            
-        }        
-        for(int i = 0;i<game.getLocationManager().getPorts().size();i++){
-            assertTrue(portsBasic.get(i).getLocation().equals(game.getLocationManager().getPorts().get(i).getLocation()));
-        }        
-        for(int i = 0; i<game.getLocationManager().getUnsettledLocations().size();i++){
-            assertTrue(locationsBasic.get(i).getNormalizedLocation().equals(game.getLocationManager().getUnsettledLocations().get(i).getNormalizedLocation()));
-        }
-        for(int i = 0; i<game.getLocationManager().getUnsettledEdges().size();i++){
-            assertTrue(edgesBasic.get(i).getEdgeLocation().equals(game.getLocationManager().getUnsettledEdges().get(i).getEdgeLocation()));
-        }               
-    }
 }
