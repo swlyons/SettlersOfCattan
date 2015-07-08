@@ -115,51 +115,31 @@ public class MockServer implements IServer {
 	}
 
 	@Override
-<<<<<<< HEAD
-	public Game PlayYearOfPlenty(Year_Of_Plenty request) {
-=======
-	public String PlayYearOfPlenty(Year_Of_Plenty_ request) {
->>>>>>> a8280b68a778a32e927c374952de9f0989c27bf5
+	public String PlayYearOfPlenty(Year_Of_Plenty request) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-<<<<<<< HEAD
-	public Game PlayRoadBuilding(Road_Building request) {
-=======
-	public String PlayRoadBuilding(Road_Building_ request) {
->>>>>>> a8280b68a778a32e927c374952de9f0989c27bf5
+	public String PlayRoadBuilding(Road_Building request) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-<<<<<<< HEAD
-	public Game PlaySoldier(Soldier request) {
-=======
-	public String PlaySoldier(Soldier_ request) {
->>>>>>> a8280b68a778a32e927c374952de9f0989c27bf5
+	public String PlaySoldier(Soldier request) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-<<<<<<< HEAD
-	public Game PlayMonopoly(Monopoly request) {
-=======
-	public String PlayMonopoly(Monopoly_ request) {
->>>>>>> a8280b68a778a32e927c374952de9f0989c27bf5
+	public String PlayMonopoly(Monopoly request) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-<<<<<<< HEAD
-	public Game PlayMonument(Monument request) {
-=======
-	public String PlayMonument(Monument_ request) {
->>>>>>> a8280b68a778a32e927c374952de9f0989c27bf5
+	public String PlayMonument(Monument request) {
 		// TODO Auto-generated method stub
 		return null;
 	}

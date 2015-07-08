@@ -257,7 +257,7 @@ public class ServerProxy implements IServer {
 	 * @pre the specified player has the dev card AND they didn't draw it this turn AND they haven't played any other dev cards this turn AND it is their turn
 	 * @post the specified player plays the card AND returns the game state immediately after.
 	 */
-	public String PlayMonument(Monument_ request) {
+	public String PlayMonument(Monument request) {
 		// TODO Auto-generated method stub
 		return null;
 	}
