@@ -198,6 +198,40 @@ public class ResourceList {
 	public int getTotalResources() {
 		return (brick + ore + sheep + wood + wheat);
 	}
+	
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + brick;
+		result = prime * result + ore;
+		result = prime * result + sheep;
+		result = prime * result + wheat;
+		result = prime * result + wood;
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ResourceList other = (ResourceList) obj;
+		if (brick != other.getBrick())
+			return false;
+		if (ore != other.getOre())
+			return false;
+		if (sheep != other.getSheep())
+			return false;
+		if (wheat != other.getWheat())
+			return false;
+		if (wood != other.getWood())
+			return false;
+		return true;
+	}
 
 	@Override
 	public String toString() {
