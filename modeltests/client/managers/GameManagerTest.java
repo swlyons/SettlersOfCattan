@@ -806,22 +806,22 @@ public class GameManagerTest {
 	/**
 	 * Test of initializeGame method, of class GameManager.
 	 */
-	@Test
-	public void testInitializeGame() {
-		System.out.println("initializeGame");
-		String jsonDataOut = "";
-
-		GameManager instance = new GameManager();
-		instance.initializeGame(jsonDataIn);
-
-		Game game = instance.getGame();
-		// print Json Model (Game)
-		// System.out.println(game);
-
-		// add test case to compare
-		assert("Model was successfully initialized",
-				jsonDataIn.equals(jsonDataOut) && !jsonDataOut.isEmpty());
-	}
+//	@Test
+//	public void testInitializeGame() {
+//		System.out.println("initializeGame");
+//		String jsonDataOut = "";
+//
+//		GameManager instance = new GameManager();
+//		instance.initializeGame(jsonDataIn);
+//
+//		Game game = instance.getGame();
+//		// print Json Model (Game)
+//		// System.out.println(game);
+//
+//		// add test case to compare
+//		assert("Model was successfully initialized",
+//				jsonDataIn.equals(jsonDataOut) && !jsonDataOut.isEmpty());
+//	}
 
 	@Test
 	public void testCanBuyDevCard() {
@@ -832,7 +832,7 @@ public class GameManagerTest {
 
 		Game game = instance.getGame();
 
-		// CurrentPlayer is Sam. Same has enough resources for a DevCard
+		// CurrentPlayer is Sam. Sam has enough resources for a DevCard
 		game.getTurnTracker().setCurrentPlayerIndex(0);
 		DevCardList prevDevCards = instance.getResourceManager().getGameBanks()
 				.get(0).getDevelopmentCards();
@@ -850,11 +850,12 @@ public class GameManagerTest {
 
 		String newStatus = (prevDevCards.toString() + "\n"
 				+ newDevCards.toString() + "\n" + newResources.toString() + "\n");
-		assert("devCard amount incremented one",
-				prevDevCards.totalCardsRemaining() == newDevCards
+
+		System.out.println(previousStatus + newStatus);
+		
+		assert(prevDevCards.totalCardsRemaining() == newDevCards
 						.totalCardsRemaining() - 1);
-		assert("The correct 3 resources have been removed",
-				prevResources.equals(newResources));
+		assert(prevResources.equals(newResources));
 
 	}
 
