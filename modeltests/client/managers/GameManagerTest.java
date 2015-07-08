@@ -9,6 +9,7 @@ import client.data.*;
 import client.managers.GameManager;
 
 import shared.locations.*;
+import shared.definitions.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -905,6 +906,83 @@ public class GameManagerTest {
 				.getDevelopmentCards().getSoldier();
 		assertTrue(playedBefore + 1 == playedAfter);
 		assertTrue(heldAfter + 1 == heldBefore);
+	}
+
+	@Test
+	public void testPlayRoadBuilding() {
+		GameManager target = new GameManager();
+		target.initializeGame(jsonDataIn);
+		DevCardList cards = new DevCardList(1, 1, 1, 1, 1);
+		List<Bank> banks = target.getResourceManager().getGameBanks();
+		banks.get(0).setDevelopmentCards(cards);
+		target.getResourceManager().setGameBanks(banks);
+
+		int brickBefore = target.getResourceManager().getGameBanks().get(0)
+				.getResourcesCards().getBrick();
+		int heldBefore = target.getResourceManager().getGameBanks().get(0)
+				.getDevelopmentCards().getRoadBuilding();
+
+		target.useRoadBuilding(new EdgeLocation(new HexLocation(0, 0),
+				EdgeDirection.NE), new EdgeLocation(new HexLocation(0, 0),
+				EdgeDirection.NE));
+		int brickAfter = target.getResourceManager().getGameBanks().get(0)
+				.getResourcesCards().getBrick();
+		int heldAfter = target.getResourceManager().getGameBanks().get(0)
+				.getDevelopmentCards().getRoadBuilding();
+
+		//if there is exactly one less roadbuilding card now than before, it worked.
+		assert(heldAfter + 1 == heldBefore);
+		//if no bricks were removed from the resources, then it called the right method to play roads for free.
+		assert(brickAfter == brickBefore);
+	}
+
+	@Test
+	public void testPlayYearOfPlenty() {
+		GameManager target = new GameManager();
+		target.initializeGame(jsonDataIn);
+		DevCardList cards = new DevCardList(1, 1, 1, 1, 1);
+		List<Bank> banks = target.getResourceManager().getGameBanks();
+		banks.get(0).setDevelopmentCards(cards);
+		target.getResourceManager().setGameBanks(banks);
+
+		int brickBefore = target.getResourceManager().getGameBanks().get(0)
+				.getResourcesCards().getBrick();
+		int heldBefore = target.getResourceManager().getGameBanks().get(0)
+				.getDevelopmentCards().getYearOfPlenty();
+
+		target.useYearOfPlenty(ResourceType.BRICK, ResourceType.BRICK);
+		int brickAfter = target.getResourceManager().getGameBanks().get(0)
+				.getResourcesCards().getBrick();
+		int heldAfter = target.getResourceManager().getGameBanks().get(0)
+				.getDevelopmentCards().getYearOfPlenty();
+
+		//if there is exactly one less roadbuilding card now than before, it worked.
+		assert(heldAfter + 1 == heldBefore);
+		assert(brickAfter - 2 == brickBefore);
+	}
+
+	@Test
+	public void testPlayMonopoly() {
+		GameManager target = new GameManager();
+		target.initializeGame(jsonDataIn);
+		DevCardList cards = new DevCardList(1, 1, 1, 1, 1);
+		List<Bank> banks = target.getResourceManager().getGameBanks();
+		banks.get(0).setDevelopmentCards(cards);
+		target.getResourceManager().setGameBanks(banks);
+
+		int userBrickBefore = target.getResourceManager().getGameBanks().get(0)
+				.getResourcesCards().getBrick();
+
+		target.useMonopoly(ResourceType.BRICK);
+		int userBrickAfter = target.getResourceManager().getGameBanks().get(0)
+				.getResourcesCards().getBrick();
+
+		for(int i = 1; i < 4; i++) {
+			ResourceList r = target.getResourceManager().getGameBanks().get(i).getResourcesCards();
+			assert(r.getBrick() == 0);
+		}
+		//if there is exactly one less roadbuilding card now than before, it worked.
+		assert(userBrickAfter > userBrickBefore);
 	}
 
 	@Test
