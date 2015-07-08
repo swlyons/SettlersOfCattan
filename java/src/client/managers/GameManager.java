@@ -137,7 +137,10 @@ public class GameManager {
 		boolean hasLargestArmy = (mainBankIndex == game.getTurnTracker().getLargestArmyHolder());
 		boolean hasLongestRoad = (mainBankIndex == game.getTurnTracker().getLongestRoadHolder());
 		gameBanks.add(new Bank(game.getBank(), mainBankDevCards, hasLargestArmy, hasLongestRoad));
-		resourceManager.setGameBanks(gameBanks);
+		if(resourceManager==null){
+                    resourceManager = new ResourceManager();
+                }
+                resourceManager.setGameBanks(gameBanks);
 
 	}
 	/* canDo Methods */
