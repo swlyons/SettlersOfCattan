@@ -388,27 +388,6 @@ public class ClientCommunicatorFascadeSettlersOfCatanTest {
     }
 
     /**
-     * Test of robPlayer method, of class ClientCommunicatorFascadeSettlersOfCatan.
-     */
-    @Test
-    public void testRobPlayer() throws Exception {
-        System.out.println("robPlayer");
-        RobPlayer robPlayer = new RobPlayer(0);
-        robPlayer.setVictimIndex(1);
-        robPlayer.setLocation(new HexLocation(0,0));
-        ClientCommunicatorFascadeSettlersOfCatan instance = new ClientCommunicatorFascadeSettlersOfCatan();
-        Game expResult = null;
-        instance.login(new User("Sam", "sam"));
-        instance.joinGame(new JoinGameRequest(0, "red"));
-        Game result = instance.robPlayer(robPlayer);
-        //should only have 1 wheat resource now
-        assertEquals(expResult, result.getId());
-       
-        System.out.print("...PASSED");
-        System.out.println();
-    }
-
-    /**
      * Test of finishMove method, of class ClientCommunicatorFascadeSettlersOfCatan.
      */
     @Test

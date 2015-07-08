@@ -924,7 +924,7 @@ public class GameManagerTest {
 		int heldBefore = target.getResourceManager().getGameBanks().get(0)
 				.getDevelopmentCards().getYearOfPlenty();
 
-		target.useYearOfPlenty(ResourceType.BRICK, ResourceType.BRICK);
+		target.useYearOfPlenty(ResourceType.brick, ResourceType.brick);
 		int brickAfter = target.getResourceManager().getGameBanks().get(0)
 				.getResourcesCards().getBrick();
 		int heldAfter = target.getResourceManager().getGameBanks().get(0)
@@ -947,7 +947,7 @@ public class GameManagerTest {
 		int userBrickBefore = target.getResourceManager().getGameBanks().get(0)
 				.getResourcesCards().getBrick();
 
-		target.useMonopoly(ResourceType.BRICK);
+		target.useMonopoly(ResourceType.brick);
 		int userBrickAfter = target.getResourceManager().getGameBanks().get(0)
 				.getResourcesCards().getBrick();
 
