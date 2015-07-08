@@ -59,6 +59,13 @@ public class GameManager {
                 // initialize the client object model
                 game = model.fromJson(jsonData, Game.class);
 
+                if(game.getTurnTracker().getLargestArmy()==-1){
+                    game.getTurnTracker().setLargestArmy(4);
+                }
+                if(game.getTurnTracker().getLongestRoad()==-1){
+                    game.getTurnTracker().setLongestRoad(4);
+                }
+                
                 Map map = game.getMap();
 
                 HexLocation robberLocation = map.getRobber();
@@ -394,14 +401,13 @@ public class GameManager {
 
 	public void diceIsSevenMoveRobber(HexLocation newLocationForRobber) {
 		if (mapManager.moveRobber(newLocationForRobber)) {
-
-			for (int i = 0; i < 4; i++) {
-				int numberOfResourceCards = resourceManager.getGameBanks().get(i).getResourcesCards()
-						.getTotalResources();
-				if (numberOfResourceCards >= 7) {
-					resourceManager.playerDiscardsHalfCards(i, new ResourceList());
-				}
-			}
+                    for (int i = 0; i < 4; i++) {
+                        int numberOfResourceCards = resourceManager.getGameBanks().get(i).getResourcesCards()
+                                        .getTotalResources();
+                        if (numberOfResourceCards >= 7) {
+                                resourceManager.playerDiscardsHalfCards(i, new ResourceList());
+                        }
+                    }
 		}
 	}
 
