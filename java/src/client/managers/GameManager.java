@@ -52,108 +52,124 @@ public class GameManager {
 	 * @post Will initialize the game model
 	 */
 	public void initializeGame(String jsonData) {
-		// create a json object
-		Gson model = new GsonBuilder().create();
+		try {
+			// create a json object
+			Gson model = new GsonBuilder().create();
 
-		// initialize the client object model
-		game = model.fromJson(jsonData, Game.class);
-		Map map = game.getMap();
-		HexLocation robberLocation = map.getRobber();
+			// initialize the client object model
+			game = model.fromJson(jsonData, Game.class);
+			Map map = game.getMap();
+			HexLocation robberLocation = map.getRobber();
 
-		if (mapManager == null) {
-			mapManager = new MapManager();
-			mapManager.setHexList(map.getHexes());
-		}
-
-		for (Hex hex : mapManager.getHexList()) {
-			if (hex.getLocation().equals(robberLocation)) {
-				hex.setHasRobber(true);
-			} else {
-				hex.setHasRobber(false);
+			if (mapManager == null) {
+				mapManager = new MapManager();
+				mapManager.setHexList(map.getHexes());
 			}
-		}
 
-		if (locationManager == null) {
-			locationManager = new LocationManager();
-			createUnsettledAreas(mapManager.getHexList());
-			locationManager.setPorts(map.getPorts());
-		}
+			for (Hex hex : mapManager.getHexList()) {
+				if (hex.getLocation().equals(robberLocation)) {
+					hex.setHasRobber(true);
+				} else {
+					hex.setHasRobber(false);
+				}
+			}
 
-		for (VertexObject settlement : map.getSettlements()) {
+			if (locationManager == null) {
+				locationManager = new LocationManager();
+				createUnsettledAreas(mapManager.getHexList());
+				locationManager.setPorts(map.getPorts());
+			}
 
-			Location settlementLocation = null;
+			for (VertexObject settlement : map.getSettlements()) {
 
-			for (Location location : locationManager.getUnsettledLocations()) {
-				if (location.getNormalizedLocation().equals(
-						settlement.getDirection())) {
-					location.setIsCity(false);
-					location.getWhoCanBuild().add(settlement.getOwner());
-					settlementLocation = location;
-					break;
+				Location settlementLocation = null;
+
+				for (Location location : locationManager
+						.getUnsettledLocations()) {
+					if (location.getNormalizedLocation().equals(
+							settlement.getDirection())) {
+						location.setIsCity(false);
+						location.getWhoCanBuild().add(settlement.getOwner());
+						settlementLocation = location;
+						break;
+					}
+
+				}
+
+				if (settlementLocation != null) {
+					if (!locationManager.settleLocation(
+							settlementLocation.getNormalizedLocation(),
+							settlement.getOwner(), false)) {
+						throw new Exception(
+								"Unable to settle location from initializeGame.");
+					}
 				}
 
 			}
 
-			if (settlementLocation != null) {
-				if (!locationManager.settleLocation(
-						settlementLocation.getNormalizedLocation(),
-						settlement.getOwner(), false)) {
-					System.out
-							.println("Unable to settle location from initializeGame");
+			for (VertexObject city : map.getCities()) {
+				for (Location location : locationManager.getSettledLocations()) {
+					if (location.getNormalizedLocation().equals(
+							city.getDirection())) {
+						locationManager.upgradeToCity(city.getDirection());
+					}
 				}
 			}
 
-		}
+			for (EdgeValue road : map.getRoads()) {
+				Edge roadLocation = null;
 
-		for (EdgeValue road : map.getRoads()) {
-			Edge roadLocation = null;
-
-			for (Edge edge : locationManager.getUnsettledEdges()) {
-				if (edge.getEdgeLocation().equals(road.getLocation())) {
-					edge.getWhoCanBuild().add(road.getOwner());
-					roadLocation = edge;
-					break;
+				for (Edge edge : locationManager.getUnsettledEdges()) {
+					if (edge.getEdgeLocation().equals(road.getLocation())) {
+						edge.getWhoCanBuild().add(road.getOwner());
+						roadLocation = edge;
+						break;
+					}
 				}
+
+				if (roadLocation != null) {
+					if (!locationManager.settleEdge(
+							roadLocation.getEdgeLocation(), road.getOwner())) {
+						throw new Exception(
+								"Unable to settle edge from initializeGame.");
+					}
+				}
+				
 			}
 
-			if (roadLocation != null) {
-				if (!locationManager.settleEdge(roadLocation.getEdgeLocation(),
-						road.getOwner())) {
-					System.out
-							.println("Unable to settle edge from initializeGame");
-				}
+			// Resource Manager
+			List<Bank> gameBanks = new ArrayList<>();
+			for (int i = 0; i < game.getPlayers().size(); i++) {
+				Player p = game.getPlayers().get(i);
+				boolean hasLargestArmy = (p.getPlayerID() == game
+						.getTurnTracker().getLargestArmyHolder());
+				boolean hasLongestRoad = (p.getPlayerID() == game
+						.getTurnTracker().getLongestRoadHolder());
+				gameBanks.add(new Bank(p, hasLargestArmy, hasLongestRoad));
 			}
-		}
-		
-		// Resource Manager
-		List<Bank> gameBanks = new ArrayList<>();
-		for (int i = 0; i < game.getPlayers().size(); i++) {
-			Player p = game.getPlayers().get(i);
-			boolean hasLargestArmy = (p.getPlayerID() == game.getTurnTracker()
+
+			DevCardList mainBankDevCards = new DevCardList(game.getPlayers());
+			boolean hasLargestArmy = (mainBankIndex == game.getTurnTracker()
 					.getLargestArmyHolder());
-			boolean hasLongestRoad = (p.getPlayerID() == game.getTurnTracker()
+			boolean hasLongestRoad = (mainBankIndex == game.getTurnTracker()
 					.getLongestRoadHolder());
-			gameBanks.add(new Bank(p, hasLargestArmy, hasLongestRoad));
-		}
+			gameBanks.add(new Bank(game.getBank(), mainBankDevCards,
+					hasLargestArmy, hasLongestRoad));
+			if (resourceManager == null) {
+				resourceManager = new ResourceManager();
+			}
+			resourceManager.setGameBanks(gameBanks);
 
-		DevCardList mainBankDevCards = new DevCardList(game.getPlayers());
-		boolean hasLargestArmy = (mainBankIndex == game.getTurnTracker()
-				.getLargestArmyHolder());
-		boolean hasLongestRoad = (mainBankIndex == game.getTurnTracker()
-				.getLongestRoadHolder());
-		gameBanks.add(new Bank(game.getBank(), mainBankDevCards,
-				hasLargestArmy, hasLongestRoad));
-		if (resourceManager == null) {
-			resourceManager = new ResourceManager();
+		} catch (Exception e) {
+			System.out.println(e);
 		}
-		resourceManager.setGameBanks(gameBanks);
 
 	}
 
+	/* canDo Methods */
+
 	/**
-	 * @author Curt
-	 * @param gameID
-	 *            = unique ID of a game in the server's games list
+	 * @author Curt = unique ID of a game in the server's games list
 	 * @pre gameID matches an existing game
 	 * @post Game will be terminated. Players will be evicted from game if still
 	 *       inside.
@@ -543,7 +559,7 @@ public class GameManager {
 				resourceManager.transferResourceCard(currentPlayer,
 						mainBankIndex, cost);
 				resourceManager.placedCity(currentPlayer);
-				return true;
+				return locationManager.upgradeToCity(v);
 			} else {
 				return false;
 			}
@@ -731,7 +747,7 @@ public class GameManager {
 		this.game = game;
 	}
 
-	public ResourceManager getResourceManager(){
+	public ResourceManager getResourceManager() {
 		return resourceManager;
 	}
 }
