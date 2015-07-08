@@ -29,7 +29,23 @@ public class DevCardList {
 		this.soldier = 0;
 		this.yearOfPlenty = 0;
 	}
-	
+
+	public DevCardList(boolean isMainBankInitializer) {
+		if (isMainBankInitializer) {
+			monopoly = 2;
+			monument = 5;
+			roadBuilding = 2;
+			soldier = 14;
+			yearOfPlenty = 2;
+		} else {
+			monopoly = 0;
+			monument = 0;
+			roadBuilding = 0;
+			soldier = 0;
+			yearOfPlenty = 0;
+		}
+	}
+
 	public DevCardList(List<Player> players) {
 		this.monopoly = 2;
 		this.monument = 5;

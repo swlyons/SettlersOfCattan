@@ -2,50 +2,90 @@ package client.data;
 
 public class TurnTracker {
 
-    private int currentTurn;
-    private String status;
-    private int longestRoad;
-    private int largestArmy;
+	private int currentRound;
+	private int currentPlayerIndex;
+	private String status;
+	private int longestRoadHolder;
+	private int largestArmyHolder;
 
-    public TurnTracker() {
+	public TurnTracker() {
+		currentRound = 1;
+		currentPlayerIndex = 0;
+		longestRoadHolder = 4;
+		largestArmyHolder = 4;
+	}
 
-    }
+	public int getcurrentRound() {
+		return currentRound;
+	}
 
-    public int getCurrentTurn() {
-        return currentTurn;
-    }
+	public void setcurrentRound(int currentRound) {
+		this.currentRound = currentRound;
+	}
 
-    public void setCurrentTurn(int currentTurn) {
-        this.currentTurn = currentTurn;
-    }
+	public void nextTurn() {
+		currentPlayerIndex++;
+		if (currentPlayerIndex == 4) {
+			nextRound();
+		}
+	}
 
-    public String getStatus() {
-        return status;
-    }
+	private void nextRound() {
+		currentPlayerIndex = 0;
+		currentRound++;
+	}
 
-    public void setStatus(String status) {
-        this.status = status;
-    }
+	public int getCurrentPlayerIndex() {
+		if (currentRound != 2) {
+			return currentPlayerIndex;
+		} else {
+			switch (currentPlayerIndex) {
+			case 0:
+				return 3;
+			case 1:
+				return 2;
+			case 2:
+				return 1;
+			case 3:
+				return 0;
+			default:	//shouldn't hit this
+				return -1;
+			}
+		}
+	}
 
-    public int getLongestRoad() {
-        return longestRoad;
-    }
+	public void setCurrentPlayerIndex(int currentPlayerIndex) {
+		this.currentPlayerIndex = currentPlayerIndex;
+	}
 
-    public void setLongestRoad(int longestRoad) {
-        this.longestRoad = longestRoad;
-    }
+	public String getStatus() {
+		return status;
+	}
 
-    public int getLargestArmy() {
-        return largestArmy;
-    }
+	public void setStatus(String status) {
+		this.status = status;
+	}
 
-    public void setLargestArmy(int largestArmy) {
-        this.largestArmy = largestArmy;
-    }
+	public int getLongestRoadHolder() {
+		return longestRoadHolder;
+	}
 
-    @Override
-    public String toString() {
-        return "{" + "currentTurn : " + currentTurn + ", status : " + status + ", longestRoad : " + longestRoad + ", largestArmy : " + largestArmy + '}';
-    }
+	public void setLongestRoadHolder(int longestRoadHolder) {
+		this.longestRoadHolder = longestRoadHolder;
+	}
+
+	public int getLargestArmyHolder() {
+		return largestArmyHolder;
+	}
+
+	public void setLargestArmyHolder(int largestArmyHolder) {
+		this.largestArmyHolder = largestArmyHolder;
+	}
+
+	@Override
+	public String toString() {
+		return "{" + "currentRound : " + currentRound + ", status : " + status + ", longestRoadHolder : "
+				+ longestRoadHolder + ", largestArmyHolder : " + largestArmyHolder + '}';
+	}
 
 }

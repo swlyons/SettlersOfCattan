@@ -13,156 +13,196 @@ import shared.definitions.ResourceType;
  * @author ddennis
  */
 public class ResourceList {
-    
-    private int brick;
-    private int ore;
-    private int sheep;
-    private int wheat;
-    private int wood;
 
-    public ResourceList() {
-    	brick = 0;
-    	ore = 0;
-    	sheep = 0;
-    	wheat = 0;
-    	wood = 0;
-    }
-    
-    public ResourceList(ResourceType type) {
-    	brick = 0;
-    	ore = 0;
-    	sheep = 0;
-    	wheat = 0;
-    	wood = 0;
-    	
-    	switch(type){
-    	case BRICK:
-    		brick++;
-    		break;
-    	case ORE:
-    		ore++;
-    		break;
-    	case SHEEP:
-    		sheep++;
-    		break;
-    	case WHEAT:
-    		wheat++;
-    		break;
-    	case WOOD:
-    		wood++;
-    		break;
-   		default:
-   			//Should never occur
-    	}
-    }
-    
-    public ResourceList(int brick, int ore, int sheep, int wheat, int wood) {
-        this.brick = brick;
-        this.ore = ore;
-        this.sheep = sheep;
-        this.wheat = wheat;
-        this.wood = wood;
-    }
+	private int brick;
+	private int ore;
+	private int sheep;
+	private int wheat;
+	private int wood;
 
-    public int getBrick() {
-        return brick;
-    }
+	public ResourceList() {
+		brick = 0;
+		ore = 0;
+		sheep = 0;
+		wheat = 0;
+		wood = 0;
+	}
 
-    public void setBrick(int brick) {
-        this.brick = brick;
-    }
-    
-    public void addBrick(int amount) {
-    	this.brick += amount;
-    }
+	public ResourceList(boolean isMainBankInitializer) {
+		if (isMainBankInitializer) {
+			brick = 19;
+			ore = 19;
+			sheep = 19;
+			wheat = 19;
+			wood = 19;	
+		} else {
+			brick = 0;
+			ore = 0;
+			sheep = 0;
+			wheat = 0;
+			wood = 0;
+		}
+	}
 
-    public void removeBrick(int amount) {
-    	this.brick -= amount;
-    }
+	public ResourceList(ResourceType type) {
+		brick = 0;
+		ore = 0;
+		sheep = 0;
+		wheat = 0;
+		wood = 0;
 
-    public int getOre() {
-        return ore;
-    }
+		switch (type) {
+		case BRICK:
+			brick++;
+			break;
+		case ORE:
+			ore++;
+			break;
+		case SHEEP:
+			sheep++;
+			break;
+		case WHEAT:
+			wheat++;
+			break;
+		case WOOD:
+			wood++;
+			break;
+		default:
+			// Should never occur
+		}
+	}
 
-    public void setOre(int ore) {
-        this.ore = ore;
-    }
+	public ResourceList(int brick, int ore, int sheep, int wheat, int wood) {
+		this.brick = brick;
+		this.ore = ore;
+		this.sheep = sheep;
+		this.wheat = wheat;
+		this.wood = wood;
+	}
 
-    public void addOre(int amount) {
-    	this.ore += amount;
-    }
+	public int getBrick() {
+		return brick;
+	}
 
-    public void removeOre(int amount) {
-    	this.ore -= amount;
-    }
+	public void setBrick(int brick) {
+		this.brick = brick;
+	}
 
-    public int getSheep() {
-        return sheep;
-    }
+	public void addBrick(int amount) {
+		this.brick += amount;
+	}
 
-    public void setSheep(int sheep) {
-        this.sheep = sheep;
-    }
+	public void removeBrick(int amount) {
+		this.brick -= amount;
+	}
 
-    public void addSheep(int amount) {
-    	this.sheep += amount;
-    }
+	public int getOre() {
+		return ore;
+	}
 
-    public void removeSheep(int amount) {
-    	this.sheep -= amount;
-    }
+	public void setOre(int ore) {
+		this.ore = ore;
+	}
 
-    public int getWheat() {
-        return wheat;
-    }
+	public void addOre(int amount) {
+		this.ore += amount;
+	}
 
-    public void setWheat(int wheat) {
-        this.wheat = wheat;
-    }
+	public void removeOre(int amount) {
+		this.ore -= amount;
+	}
 
-    public void addWheat(int amount) {
-    	this.wheat += amount;
-    }
+	public int getSheep() {
+		return sheep;
+	}
 
-    public void removeWheat(int amount) {
-    	this.wheat -= amount;
-    }
+	public void setSheep(int sheep) {
+		this.sheep = sheep;
+	}
 
-    public int getWood() {
-        return wood;
-    }
+	public void addSheep(int amount) {
+		this.sheep += amount;
+	}
 
-    public void setWood(int wood) {
-        this.wood = wood;
-    }
-    
-    public void addWood(int amount) {
-    	this.wood += amount;
-    }
+	public void removeSheep(int amount) {
+		this.sheep -= amount;
+	}
 
-    public void removeWood(int amount) {
-    	this.wood -= amount;
-    }
+	public int getWheat() {
+		return wheat;
+	}
 
-    public boolean hasCardsAvailable(ResourceList request) {	
-    	return request.getBrick() <= this.getBrick() && request.getOre() <= this.getOre() && request.getSheep() <= this.getSheep() 
-    			&& request.getWheat() <= this.getWheat() && request.getWheat() <= this.getWheat();
-    }
-    
-    /**
-     * 
-     * @pre none
-     * 
-     * @post returns a sum of all the resources in the current resource list
-     * 
-     */
-    public int getTotalResources(){
-        return (brick + ore + sheep + wood + wheat);
-    }
-    @Override
-    public String toString() {
-        return "{" + "brick : " + brick + ", ore : " + ore + ", sheep : " + sheep + ", wheat : " + wheat + ", wood : " + wood + '}';
-    }
-    
-    
+	public void setWheat(int wheat) {
+		this.wheat = wheat;
+	}
+
+	public void addWheat(int amount) {
+		this.wheat += amount;
+	}
+
+	public void removeWheat(int amount) {
+		this.wheat -= amount;
+	}
+
+	public int getWood() {
+		return wood;
+	}
+
+	public void setWood(int wood) {
+		this.wood = wood;
+	}
+
+	public void addWood(int amount) {
+		this.wood += amount;
+	}
+
+	public void removeWood(int amount) {
+		this.wood -= amount;
+	}
+
+	public void add(ResourceType type, int amount) {
+		switch(type) {
+		case BRICK:
+			this.brick += amount;
+			break;
+		case ORE:
+			this.ore += amount;
+			break;
+		case SHEEP:
+			this.sheep += amount;
+			break;
+		case WHEAT:
+			this.wheat += amount;
+			break;
+		case WOOD:
+			this.wood += amount;
+			break;
+		default:
+			return;
+		}
+	}
+	
+	public boolean hasCardsAvailable(ResourceList request) {
+		return request.getBrick() <= this.getBrick() && request.getOre() <= this.getOre()
+				&& request.getSheep() <= this.getSheep() && request.getWheat() <= this.getWheat()
+				&& request.getWheat() <= this.getWheat();
+	}
+
+	/**
+	 * 
+	 * @pre none
+	 * 
+	 * @post returns a sum of all the resources in the current resource list
+	 * 
+	 */
+	public int getTotalResources() {
+		return (brick + ore + sheep + wood + wheat);
+	}
+
+	@Override
+	public String toString() {
+		return "{" + "brick : " + brick + ", ore : " + ore + ", sheep : " + sheep + ", wheat : " + wheat + ", wood : "
+				+ wood + '}';
+	}
+
 }
