@@ -1,6 +1,6 @@
 package client.managers;
 
-import client.proxy.CredentialRequest;
+import client.data.User;
 import client.proxy.IServer;
 import client.proxy.MockServer;
 import client.proxy.ServerProxy;
@@ -38,7 +38,7 @@ public class UserManager {
         	System.out.println("mismatched validation");
             created = false;
         } else {
-            CredentialRequest request = new CredentialRequest(username, password);
+            User request = new User(username, password);
             String cookie = server.Register(request);
             if (cookie == null) {
             	System.out.println("bad response");
@@ -66,7 +66,7 @@ public class UserManager {
         if (!validateUsername(username) || !validatePassword(password)) {
             authenticated = false;
         } else {
-            CredentialRequest request = new CredentialRequest(username, password);
+            User request = new User(username, password);
             String cookie = server.login(request);
             if (cookie == null) {
                 authenticated = false;

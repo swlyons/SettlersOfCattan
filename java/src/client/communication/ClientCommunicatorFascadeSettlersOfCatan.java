@@ -5,6 +5,10 @@
  */
 package client.communication;
 
+import client.proxy.JoinGameRequest;
+import client.proxy.LoadGameRequest;
+import client.proxy.CreateGameRequest;
+import client.proxy.SaveGameRequest;
 import client.ClientException;
 import client.data.Game;
 import client.data.User;
@@ -29,26 +33,60 @@ public class ClientCommunicatorFascadeSettlersOfCatan {
      * Client Communicator facade constructor
      */
     public ClientCommunicatorFascadeSettlersOfCatan() {
-       
 
     }
-    
-    public boolean login(User credentials) throws ClientException { 
+
+    public boolean login(User credentials) throws ClientException {
         return (ClientCommunicator
                 .getSingleton()
-                .doPost(LOGIN_USER,credentials, -1).getResponseBody()).equals("Success");
-        
+                .doPost(LOGIN_USER, credentials, -1).getResponseBody()).equals("Success");
+
     }
+
     public boolean register(User credentials) throws ClientException {
-        return (ClientCommunicator.getSingleton().doPost(REGISTER_USER,credentials, -1).getResponseBody()).equals("Success");
+        return (ClientCommunicator.getSingleton().doPost(REGISTER_USER, credentials, -1).getResponseBody()).equals("Success");
     }
     // Local Image Methods and Constants
     private static final String LOGIN_USER = "user/login";
     private static final String REGISTER_USER = "user/register";
 
+    public ArrayList listGames() throws ClientException {
+        return (ArrayList) ClientCommunicator.getSingleton().doGet(LIST_GAMES, "", -1).getResponseBody();
+    }
+
+    public Game createGame(CreateGameRequest createGameRequest) throws ClientException {
+        return (Game) ClientCommunicator.getSingleton().doPost(CREATE_GAME, createGameRequest, -1).getResponseBody();
+    }
+
+    public boolean joinGame(JoinGameRequest joinGameRequest) throws ClientException {
+        return ClientCommunicator.getSingleton().doPost(JOIN_GAME, joinGameRequest, 0).getResponseBody().equals("Success");
+    }
+
+    public boolean saveGame(SaveGameRequest saveGameRequest) throws ClientException {
+        return ClientCommunicator.getSingleton().doPost(SAVE_GAME, saveGameRequest, -1).getResponseBody().equals("Success");
+    }
+
+    public boolean loadGame(LoadGameRequest loadGameRequest) throws ClientException {
+        return ClientCommunicator.getSingleton().doPost(LOAD_GAME, loadGameRequest, -1).getResponseBody().equals("Success");
+    }
     
-    public ArrayList listGames(int playerID) throws ClientException {
-        return (ArrayList)ClientCommunicator.getSingleton().doGet(LIST_GAMES,"",playerID).getResponseBody();
+    public Game getGameModel(String version) throws ClientException {
+        return (Game) ClientCommunicator.getSingleton().doGet(MODEL_GAME, version, 0).getResponseBody();
+    }
+    public Game resetGame() throws ClientException {
+        return (Game) ClientCommunicator.getSingleton().doPost(RESET_GAME, "", 0).getResponseBody();
+    }
+    public Game getGameCommands() throws ClientException {
+        return (Game) ClientCommunicator.getSingleton().doGet(COMMANDS_GAME, "", 0).getResponseBody();
+    }
+    public Game executeGameCommand() throws ClientException {
+        return (Game) ClientCommunicator.getSingleton().doPost(COMMANDS_GAME, "", 0).getResponseBody();
+    }
+    public Game addAIToGame() throws ClientException {
+        return (Game) ClientCommunicator.getSingleton().doPost(ADD_AI_GAME, "", 0).getResponseBody();
+    }
+    public Game listAITypesInGame() throws ClientException {
+        return (Game) ClientCommunicator.getSingleton().doGet(LIST_AI_GAME, "", 0).getResponseBody();
     }
     // Local User Methods and Constants
     private static final String LIST_GAMES = "games/list";
@@ -56,14 +94,12 @@ public class ClientCommunicatorFascadeSettlersOfCatan {
     private static final String JOIN_GAME = "games/join";
     private static final String SAVE_GAME = "games/save";
     private static final String LOAD_GAME = "games/load";
-    private static final String MODEL_GAME = "games/model";
-    private static final String RESET_GAME = "games/reset";
-    private static final String COMMANDS_GAME = "games/commands";
-    private static final String ADD_AI_GAME = "games/addAI";
-    private static final String LIST_AI_GAME = "games/listAI";
-    
-    
-    
+    private static final String MODEL_GAME = "game/model";
+    private static final String RESET_GAME = "game/reset";
+    private static final String COMMANDS_GAME = "game/commands";
+    private static final String ADD_AI_GAME = "game/addAI";
+    private static final String LIST_AI_GAME = "game/listAI";
+
     private static final String SEND_CHAT_MOVES = "moves/sendChat";
     private static final String ROLL_MOVES = "moves/rollNumber";
     private static final String ROB_PLAYER_MOVES = "moves/robPlayer";
@@ -81,8 +117,7 @@ public class ClientCommunicatorFascadeSettlersOfCatan {
     private static final String BUILD_ROAD_MOVES = "moves/buildRoad";
     private static final String MARITIME_TRADE_MOVES = "moves/maritimeTrade";
     private static final String DISCARD_CARDS_MOVES = "moves/discardCards";
-    
+
     private static final String LOG_LEVEL_UTIL = "util/changeLogLevel";
-   
-    
+
 }

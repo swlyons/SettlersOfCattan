@@ -3,12 +3,13 @@ package client.proxy;
 import java.util.List;
 
 import client.data.Game;
+import client.data.User;
 import client.managers.GameManager;
 
 public class MockServer implements IServer {
 
 	@Override
-	public String login(CredentialRequest request) {
+	public String login(User request) {
 		String goodUsername = "Jamie";
 		String goodPassword = "password";
 		
@@ -20,7 +21,7 @@ public class MockServer implements IServer {
 	}
 
 	@Override
-	public String Register(CredentialRequest request) {
+	public String Register(User request) {
 		String usedUsername = "Jamie";
 		
 		if (!request.getUsername().equals(usedUsername) && request.getUsername().length() > 0) {
@@ -43,7 +44,7 @@ public class MockServer implements IServer {
 	}
 
 	@Override
-	public void JoinGame(JoinGameReqeust request) {
+	public void JoinGame(JoinGameRequest request) {
 		// TODO Auto-generated method stub
 
 	}
