@@ -1062,19 +1062,19 @@ public class MapComponent extends JComponent
 		
 		switch (hexType)
 		{
-			case WOOD:
+			case wood:
 				return "images/land/forest.gif";
-			case BRICK:
+			case brick:
 				return "images/land/brick.gif";
-			case SHEEP:
+			case sheep:
 				return "images/land/pasture.gif";
-			case WHEAT:
+			case wheat:
 				return "images/land/wheat.gif";
-			case ORE:
+			case ore:
 				return "images/land/ore.gif";
-			case DESERT:
+			case desert:
 				return "images/land/desert.gif";
-			case WATER:
+			case water:
 				return "images/land/water.gif";
 			default:
 				assert false;

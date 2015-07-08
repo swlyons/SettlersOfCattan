@@ -209,37 +209,37 @@ public class GameManager {
 		Hex robberHex = new Hex(new HexLocation(0, -2), 0, null);
 		robberHex.setHasRobber(true);
 
-		hexes.add(new Hex(new HexLocation(2, 0), 11, ResourceType.WOOD));
-		hexes.add(new Hex(new HexLocation(2, 1), 12, ResourceType.SHEEP));
-		hexes.add(new Hex(new HexLocation(2, 2), 9, ResourceType.WHEAT));
+		hexes.add(new Hex(new HexLocation(2, 0), 11, ResourceType.wood));
+		hexes.add(new Hex(new HexLocation(2, 1), 12, ResourceType.sheep));
+		hexes.add(new Hex(new HexLocation(2, 2), 9, ResourceType.wheat));
 
-		hexes.add(new Hex(new HexLocation(1, -2), 4, ResourceType.BRICK));
-		hexes.add(new Hex(new HexLocation(1, -1), 6, ResourceType.ORE));
-		hexes.add(new Hex(new HexLocation(1, 0), 5, ResourceType.BRICK));
-		hexes.add(new Hex(new HexLocation(1, 1), 10, ResourceType.SHEEP));
+		hexes.add(new Hex(new HexLocation(1, -2), 4, ResourceType.brick));
+		hexes.add(new Hex(new HexLocation(1, -1), 6, ResourceType.ore));
+		hexes.add(new Hex(new HexLocation(1, 0), 5, ResourceType.brick));
+		hexes.add(new Hex(new HexLocation(1, 1), 10, ResourceType.sheep));
 
 		hexes.add(robberHex);
-		hexes.add(new Hex(new HexLocation(0, -1), 3, ResourceType.WOOD));
-		hexes.add(new Hex(new HexLocation(0, 0), 11, ResourceType.WHEAT));
-		hexes.add(new Hex(new HexLocation(0, 1), 4, ResourceType.WOOD));
-		hexes.add(new Hex(new HexLocation(0, 2), 8, ResourceType.WHEAT));
+		hexes.add(new Hex(new HexLocation(0, -1), 3, ResourceType.wood));
+		hexes.add(new Hex(new HexLocation(0, 0), 11, ResourceType.wheat));
+		hexes.add(new Hex(new HexLocation(0, 1), 4, ResourceType.wood));
+		hexes.add(new Hex(new HexLocation(0, 2), 8, ResourceType.wheat));
 
-		hexes.add(new Hex(new HexLocation(-1, -1), 8, ResourceType.BRICK));
-		hexes.add(new Hex(new HexLocation(-1, 0), 10, ResourceType.SHEEP));
-		hexes.add(new Hex(new HexLocation(-1, 1), 9, ResourceType.SHEEP));
-		hexes.add(new Hex(new HexLocation(-1, 2), 3, ResourceType.ORE));
+		hexes.add(new Hex(new HexLocation(-1, -1), 8, ResourceType.brick));
+		hexes.add(new Hex(new HexLocation(-1, 0), 10, ResourceType.sheep));
+		hexes.add(new Hex(new HexLocation(-1, 1), 9, ResourceType.sheep));
+		hexes.add(new Hex(new HexLocation(-1, 2), 3, ResourceType.ore));
 
-		hexes.add(new Hex(new HexLocation(-2, -2), 5, ResourceType.ORE));
-		hexes.add(new Hex(new HexLocation(-2, -1), 2, ResourceType.WHEAT));
-		hexes.add(new Hex(new HexLocation(-2, 0), 6, ResourceType.WOOD));
+		hexes.add(new Hex(new HexLocation(-2, -2), 5, ResourceType.ore));
+		hexes.add(new Hex(new HexLocation(-2, -1), 2, ResourceType.wheat));
+		hexes.add(new Hex(new HexLocation(-2, 0), 6, ResourceType.wood));
 
 		List<Port> ports = new ArrayList<Port>();
 
-		ports.add(new Port(2, ResourceType.BRICK, new HexLocation(-2, 3)));
-		ports.add(new Port(2, ResourceType.ORE, new HexLocation(1, -3)));
-		ports.add(new Port(2, ResourceType.SHEEP, new HexLocation(3, -1)));
-		ports.add(new Port(2, ResourceType.WHEAT, new HexLocation(-1, -2)));
-		ports.add(new Port(2, ResourceType.WOOD, new HexLocation(-3, 2)));
+		ports.add(new Port(2, ResourceType.brick, new HexLocation(-2, 3)));
+		ports.add(new Port(2, ResourceType.ore, new HexLocation(1, -3)));
+		ports.add(new Port(2, ResourceType.sheep, new HexLocation(3, -1)));
+		ports.add(new Port(2, ResourceType.wheat, new HexLocation(-1, -2)));
+		ports.add(new Port(2, ResourceType.wood, new HexLocation(-3, 2)));
 
 		ports.add(new Port(3, null, new HexLocation(-3, 0)));
 		ports.add(new Port(3, null, new HexLocation(0, 3)));
@@ -403,19 +403,19 @@ public class GameManager {
 
 			int amountAvailable = 0;
 			switch (resourceType) {
-			case ORE:
+			case ore:
 				amountAvailable = gameBank.getOre();
 				break;
-			case WOOD:
+			case wood:
 				amountAvailable = gameBank.getWood();
 				break;
-			case BRICK:
+			case brick:
 				amountAvailable = gameBank.getBrick();
 				break;
-			case SHEEP:
+			case sheep:
 				amountAvailable = gameBank.getSheep();
 				break;
-			case WHEAT:
+			case wheat:
 				amountAvailable = gameBank.getWheat();
 				break;
 			default:
@@ -491,19 +491,19 @@ public class GameManager {
 					|| hex.equals(neighbors.get(2))) {
 				if (hex.getResource() != null) {
 					switch (hex.getResource()) {
-					case ORE:
+					case ore:
 						resourceList.setOre(resourceList.getOre() + 1);
 						break;
-					case WOOD:
+					case wood:
 						resourceList.setWood(resourceList.getWood() + 1);
 						break;
-					case BRICK:
+					case brick:
 						resourceList.setBrick(resourceList.getBrick() + 1);
 						break;
-					case SHEEP:
+					case sheep:
 						resourceList.setSheep(resourceList.getSheep() + 1);
 						break;
-					case WHEAT:
+					case wheat:
 						resourceList.setWheat(resourceList.getWheat() + 1);
 						break;
 					default:
@@ -660,19 +660,19 @@ public class GameManager {
 						.get(i).getResourcesCards();
 				ResourceList allResource = new ResourceList();
 				switch (r) {
-				case BRICK:
+				case brick:
 					allResource.setBrick(playerResources.getBrick());
 					break;
-				case ORE:
+				case ore:
 					allResource.setOre(playerResources.getOre());
 					break;
-				case WHEAT:
+				case wheat:
 					allResource.setWheat(playerResources.getWheat());
 					break;
-				case SHEEP:
+				case sheep:
 					allResource.setSheep(playerResources.getSheep());
 					break;
-				case WOOD:
+				case wood:
 					allResource.setWood(playerResources.getWood());
 					break;
 				default:

@@ -52,19 +52,19 @@ public class ResourceList {
 		wood = 0;
 
 		switch (type) {
-		case BRICK:
+		case brick:
 			brick++;
 			break;
-		case ORE:
+		case ore:
 			ore++;
 			break;
-		case SHEEP:
+		case sheep:
 			sheep++;
 			break;
-		case WHEAT:
+		case wheat:
 			wheat++;
 			break;
-		case WOOD:
+		case wood:
 			wood++;
 			break;
 		default:
@@ -162,19 +162,19 @@ public class ResourceList {
 
 	public void add(ResourceType type, int amount) {
 		switch(type) {
-		case BRICK:
+		case brick:
 			this.brick += amount;
 			break;
-		case ORE:
+		case ore:
 			this.ore += amount;
 			break;
-		case SHEEP:
+		case sheep:
 			this.sheep += amount;
 			break;
-		case WHEAT:
+		case wheat:
 			this.wheat += amount;
 			break;
-		case WOOD:
+		case wood:
 			this.wood += amount;
 			break;
 		default:

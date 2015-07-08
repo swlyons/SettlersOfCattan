@@ -12,6 +12,10 @@ public class Monopoly extends Command {
 
     private ResourceType resource;
 
+    public Monopoly(int playerIndex) {
+        super("Monopoly", playerIndex);
+    }
+    
     public ResourceType getResource() {
         return resource;
     }

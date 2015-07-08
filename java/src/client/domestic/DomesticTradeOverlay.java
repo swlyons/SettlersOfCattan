@@ -71,11 +71,11 @@ public class DomesticTradeOverlay extends OverlayView implements IDomesticTradeO
 		this.resourceButtonsMap = new HashMap<ResourceType, ArrayList<JButton>>();
 		this.upDownPanels = new ArrayList<JPanel>();
 		this.upDownPanelByResourceType = new HashMap<ResourceType, JPanel>();
-		JPanel brickTile = this.setupResourceTile("images/resources/brick.png", ResourceType.BRICK);
-		JPanel oreTile = this.setupResourceTile("images/resources/ore.png", ResourceType.ORE);
-		JPanel sheepTile = this.setupResourceTile("images/resources/sheep.png", ResourceType.SHEEP);
-		JPanel wheatTile = this.setupResourceTile("images/resources/wheat.png", ResourceType.WHEAT);
-		JPanel woodTile = this.setupResourceTile("images/resources/wood.png", ResourceType.WOOD);
+		JPanel brickTile = this.setupResourceTile("images/resources/brick.png", ResourceType.brick);
+		JPanel oreTile = this.setupResourceTile("images/resources/ore.png", ResourceType.ore);
+		JPanel sheepTile = this.setupResourceTile("images/resources/sheep.png", ResourceType.sheep);
+		JPanel wheatTile = this.setupResourceTile("images/resources/wheat.png", ResourceType.wheat);
+		JPanel woodTile = this.setupResourceTile("images/resources/wood.png", ResourceType.wood);
 		
 		JPanel resourceTilesPanel = new JPanel();
 		resourceTilesPanel.setLayout(new BoxLayout(resourceTilesPanel, BoxLayout.X_AXIS));
