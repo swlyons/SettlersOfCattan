@@ -469,26 +469,6 @@ public class ClientCommunicatorFascadeSettlersOfCatanTest {
         System.out.println();
     }
 
-    /**
-     * Test of soldier method, of class ClientCommunicatorFascadeSettlersOfCatan.
-     */
-    @Test
-    public void testSoldier() throws Exception {
-        System.out.println("soldier");
-        Soldier soldier = new Soldier(0);
-        soldier.setVicitmIndex(0);
-        soldier.setLocation(new HexLocation(0,0));
-        ClientCommunicatorFascadeSettlersOfCatan instance = new ClientCommunicatorFascadeSettlersOfCatan();
-        Game expResult = null;
-        instance.login(new User("Sam", "sam"));
-        instance.joinGame(new JoinGameRequest(0, "red"));
-        Game result = instance.soldier(soldier);
-        
-        assertEquals(expResult, result.getTitle());
-        
-        System.out.print("...PASSED");
-        System.out.println();
-    }
 
     /**
      * Test of monopoly method, of class ClientCommunicatorFascadeSettlersOfCatan.
