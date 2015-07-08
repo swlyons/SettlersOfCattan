@@ -134,7 +134,7 @@ public class ClientCommunicator {
                         result.setResponseBody(model.fromJson(content, listType));
                     } else {
                         if (content.equals("\"true\"")) {
-                            result.setResponseBody(new Game(new ArrayList(), content));
+                            result.setResponseBody(new Game(content));
                         } else {
                             result.setResponseBody(model.fromJson(content, Game.class));
                         }
