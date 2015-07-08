@@ -84,8 +84,8 @@ public class TurnTracker {
 
 	@Override
 	public String toString() {
-		return "{" + "currentRound : " + currentRound + ", status : " + status + ", longestRoadHolder : "
-				+ longestRoadHolder + ", largestArmyHolder : " + largestArmyHolder + '}';
+		return "{" + "currentRound : " + currentRound + ", status : " + status + ", currentPlayer: " + currentPlayerIndex 
+				+ ", longestRoadHolder : " + longestRoadHolder + ", largestArmyHolder : " + largestArmyHolder + '}';
 	}
 
 }
