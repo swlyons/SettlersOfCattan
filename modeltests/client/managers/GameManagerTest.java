@@ -23,6 +23,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
+import org.junit.Ignore;
 
 /**
  *
@@ -844,8 +845,7 @@ public class GameManagerTest {
 		DevCardList newDevCards = instance.getResourceManager().getGameBanks()
 				.get(0).getUnusableDevCards();
 		ResourceList newResources = instance.getResourceManager()
-				.getGameBanks().get(0).getResourcesCards();
-		
+				.getGameBanks().get(0).getResourcesCards();		
 		assert(newDevCards.totalCardsRemaining() == 1);
 		
 		newResources.addOre(1);
@@ -872,7 +872,6 @@ public class GameManagerTest {
     	assertTrue(playedBefore + 1 == playedAfter);
     	assertTrue(heldAfter + 1 == heldBefore);
     }
-    
     @Test
     public void testPlaySoldier() {
     	GameManager target = new GameManager();
@@ -890,5 +889,32 @@ public class GameManagerTest {
     	assertTrue(playedBefore + 1 == playedAfter);
     	assertTrue(heldAfter + 1 == heldBefore);
 //	 	assertTrue(target.getMapManager().getRobberLocation().equals(new HexLocation(0, 0)));
+    }
+    
+    @Test
+    public void testCreateGame(){
+        GameManager game = new GameManager();
+        game.createGame(false, false, false, "Muahahahahhahahhahha");
+        assertTrue(game.getGame().getTitle().equals("Muahahahahhahahhahha"));
+        assertFalse(game.getGame().getTitle().equals("Milk"));        
+        List<Hex> hexesBasic = game.getMapManager().getHexList();
+        List<Location> locationsBasic = game.getLocationManager().getUnsettledLocations();
+        List<Edge> edgesBasic = game.getLocationManager().getUnsettledEdges();
+        List<Port> portsBasic = game.getLocationManager().getPorts();        
+        game = new GameManager();
+        game.createGame(false, false, false, "Muahahahahhahahhahha");        
+        for(int i = 0;i<game.getMapManager().getHexList().size();i++){
+            assertTrue(hexesBasic.get(i).getLocation().equals(game.getMapManager().getHexList().get(i).getLocation()));
+            assertTrue(hexesBasic.get(i).getNumber()==game.getMapManager().getHexList().get(i).getNumber());            
+        }        
+        for(int i = 0;i<game.getLocationManager().getPorts().size();i++){
+            assertTrue(portsBasic.get(i).getLocation().equals(game.getLocationManager().getPorts().get(i).getLocation()));
+        }        
+        for(int i = 0; i<game.getLocationManager().getUnsettledLocations().size();i++){
+            assertTrue(locationsBasic.get(i).getNormalizedLocation().equals(game.getLocationManager().getUnsettledLocations().get(i).getNormalizedLocation()));
+        }
+        for(int i = 0; i<game.getLocationManager().getUnsettledEdges().size();i++){
+            assertTrue(edgesBasic.get(i).getEdgeLocation().equals(game.getLocationManager().getUnsettledEdges().get(i).getEdgeLocation()));
+        }               
     }
 }
