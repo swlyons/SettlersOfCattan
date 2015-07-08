@@ -6,5 +6,9 @@ package client.proxy;
  *
  */
 public class FinishMove extends Command{
+
+    public FinishMove(int playerIndex) {
+        super("finishTurn", playerIndex);
+    }
 	
 }

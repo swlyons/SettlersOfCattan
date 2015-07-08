@@ -179,16 +179,16 @@ public class ClientCommunicator {
             connection.connect();
 
             String data = model.toJson(postData);
-
-            System.out.println(data);
+            
             connection.getOutputStream().write(data.getBytes());
 
             connection.getOutputStream().close();
 
             result.setResponseCode(connection.getResponseCode());
             result.setResponseLength(connection.getContentLength());
-
-            //System.out.println(cookies.get(playerID));
+            if(commandName.equals("moves/Road_Building"))
+                System.out.println(data);
+            //System.out.println(cookies.get(playerID))
             //get the content
             if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
 
@@ -216,7 +216,6 @@ public class ClientCommunicator {
                         if (commandName.equals("games/save") || commandName.equals("games/load")) {
                             result.setResponseBody(content);
                         }
-
                         result.setResponseBody(model.fromJson(content, Game.class));
                     }
                 }

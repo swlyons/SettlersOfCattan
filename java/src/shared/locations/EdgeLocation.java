@@ -6,43 +6,43 @@ package shared.locations;
 public class EdgeLocation
 {
 	
-	private HexLocation hexLoc;
-	private EdgeDirection dir;
+	private HexLocation location;
+	private EdgeDirection direction;
 	
-	public EdgeLocation(HexLocation hexLoc, EdgeDirection dir)
+	public EdgeLocation(HexLocation location, EdgeDirection direction)
 	{
-		setHexLoc(hexLoc);
-		setDir(dir);
+		setHexLoc(location);
+		setDir(direction);
 	}
 	
 	public HexLocation getHexLoc()
 	{
-		return hexLoc;
+		return location;
 	}
 	
-	private void setHexLoc(HexLocation hexLoc)
+	private void setHexLoc(HexLocation location)
 	{
-		if(hexLoc == null)
+		if(location == null)
 		{
 			throw new IllegalArgumentException("hexLoc cannot be null");
 		}
-		this.hexLoc = hexLoc;
+		this.location = location;
 	}
 	
 	public EdgeDirection getDir()
 	{
-		return dir;
+		return direction;
 	}
 	
 	private void setDir(EdgeDirection dir)
 	{
-		this.dir = dir;
+		this.direction = dir;
 	}
 	
 	@Override
 	public String toString()
 	{
-		return "EdgeLocation [hexLoc=" + hexLoc + ", dir=" + dir + "]";
+		return "EdgeLocation [hexLoc=" + location + ", dir=" + direction + "]";
 	}
 	
 	@Override
@@ -50,8 +50,8 @@ public class EdgeLocation
 	{
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((dir == null) ? 0 : dir.hashCode());
-		result = prime * result + ((hexLoc == null) ? 0 : hexLoc.hashCode());
+		result = prime * result + ((direction == null) ? 0 : direction.hashCode());
+		result = prime * result + ((location == null) ? 0 : location.hashCode());
 		return result;
 	}
 	
@@ -65,14 +65,14 @@ public class EdgeLocation
 		if(getClass() != obj.getClass())
 			return false;
 		EdgeLocation other = (EdgeLocation)obj;
-		if(dir != other.dir)
+		if(direction != other.direction)
 			return false;
-		if(hexLoc == null)
+		if(location == null)
 		{
-			if(other.hexLoc != null)
+			if(other.location != null)
 				return false;
 		}
-		else if(!hexLoc.equals(other.hexLoc))
+		else if(!location.equals(other.location))
 			return false;
 		return true;
 	}
@@ -90,7 +90,7 @@ public class EdgeLocation
 		
 		// Return an EdgeLocation that has direction NW, N, or NE
 		
-		switch (dir)
+		switch (direction)
 		{
 			case NW:
 			case N:
@@ -99,8 +99,8 @@ public class EdgeLocation
 			case SW:
 			case S:
 			case SE:
-				return new EdgeLocation(hexLoc.getNeighborLoc(dir),
-										dir.getOppositeDirection());
+				return new EdgeLocation(location.getNeighborLoc(direction),
+										direction.getOppositeDirection());
 			default:
 				assert false;
 				return null;

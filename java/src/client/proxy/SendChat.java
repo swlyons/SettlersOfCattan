@@ -9,7 +9,10 @@ package client.proxy;
 public class SendChat extends Command {
 
     private String content;
-
+    
+    public SendChat(int playerIndex){
+        super("sendChat", playerIndex);
+    }
     public String getContent() {
         return content;
     }

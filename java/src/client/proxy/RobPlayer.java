@@ -13,6 +13,10 @@ public class RobPlayer extends Command {
     private int victimIndex;
     private HexLocation location;
 
+    public RobPlayer(int playerIndex) {
+        super("robPlayer", playerIndex);
+    }
+    
     public int getVictimIndex() {
         return victimIndex;
     }
