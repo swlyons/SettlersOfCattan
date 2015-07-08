@@ -729,6 +729,7 @@ public class GameManager {
 	 *       in all player's hands will be marked as usable.
 	 */
 	public void endTurn() {
+            resourceManager.makeCardsUsable();
 		// TODO: interact with GUI to disable for non-current player
 	}
 
@@ -742,5 +743,13 @@ public class GameManager {
 
 	public ResourceManager getResourceManager() {
 		return resourceManager;
+	}
+	
+	public LocationManager getLocationManager() {
+		return locationManager;
+	}
+	
+	public MapManager getMapManager() {
+		return mapManager;
 	}
 }
