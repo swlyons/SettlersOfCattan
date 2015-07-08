@@ -23,7 +23,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
-import org.junit.Ignore;
 
 /**
  *
@@ -808,24 +807,6 @@ public class GameManagerTest {
 	/**
 	 * Test of initializeGame method, of class GameManager.
 	 */
-<<<<<<< HEAD
-        @Test
-	public void testInitializeGame() {
-		System.out.println("initializeGame");
-		String jsonDataOut = "";
-
-		GameManager instance = new GameManager();
-		instance.initializeGame(jsonDataIn);
-
-		Game game = instance.getGame();
-		// print Json Model (Game)
-		// System.out.println(game);
-
-		// add test case to compare
-//		assert("Model was successfully initialized",
-//				jsonDataIn.equals(jsonDataOut) && !jsonDataOut.isEmpty());
-	}
-=======
 //	@Test
 //	public void testInitializeGame() {
 //		System.out.println("initializeGame");
@@ -842,7 +823,6 @@ public class GameManagerTest {
 //		assert("Model was successfully initialized",
 //				jsonDataIn.equals(jsonDataOut) && !jsonDataOut.isEmpty());
 //	}
->>>>>>> 1fdea780a643c9a5206d5e8ad4538026a694f821
 
 	@Test
 	public void testCanBuyDevCard() {
@@ -853,15 +833,8 @@ public class GameManagerTest {
 
 		Game game = instance.getGame();
 
-<<<<<<< HEAD
-		// CurrentPlayer is Sam. Same has enough resources for a DevCard
-		game.getTurnTracker().setCurrentTurn(0);
-		DevCardList prevDevCards = instance.getResourceManager().getGameBanks()
-				.get(0).getDevelopmentCards();
-=======
 		// CurrentPlayer is Sam. Sam has enough resources for a DevCard
 		game.getTurnTracker().setCurrentTurn(0);
->>>>>>> 1fdea780a643c9a5206d5e8ad4538026a694f821
 		ResourceList prevResources = instance.getResourceManager()
 				.getGameBanks().get(0).getResourcesCards();
 
@@ -872,16 +845,6 @@ public class GameManagerTest {
 				.get(0).getUnusableDevCards();
 		ResourceList newResources = instance.getResourceManager()
 				.getGameBanks().get(0).getResourcesCards();
-<<<<<<< HEAD
-
-		String newStatus = (prevDevCards.toString() + "\n"
-				+ newDevCards.toString() + "\n" + newResources.toString() + "\n");
-//		assert("devCard amount incremented one",
-//				prevDevCards.totalCardsRemaining() == newDevCards
-//						.totalCardsRemaining() - 1);
-//		assert("The correct 3 resources have been removed",
-//				prevResources.equals(newResources));
-=======
 		
 		assert(newDevCards.totalCardsRemaining() == 1);
 		
@@ -889,10 +852,22 @@ public class GameManagerTest {
 		newResources.addWheat(1);
 		newResources.addSheep(1);
 		assert(newResources.toString().equals(previousResourceString));
->>>>>>> 1fdea780a643c9a5206d5e8ad4538026a694f821
 
 	}
 
+<<<<<<< HEAD
+//    @Test
+//    public void testPlayMonument() {
+//    	GameManager target = new GameManager();
+//    	target.initializeGame(jsonDataIn);
+//    	DevCardList cards = new DevCardList(1,1,1,1,1);
+//    	List<Bank> banks = target.getResourceManager().getGameBanks();
+//    	banks.get(0).setDevelopmentCards(cards);
+//    	target.getResourceManager().setGameBanks(banks);
+//    	
+//    	
+//    }
+=======
     @Test
     public void testPlayMonument() {
     	GameManager target = new GameManager();
@@ -910,6 +885,7 @@ public class GameManagerTest {
     	assertTrue(playedBefore + 1 == playedAfter);
     	assertTrue(heldAfter + 1 == heldBefore);
     }
+    
     @Test
     public void testPlaySoldier() {
     	GameManager target = new GameManager();
@@ -926,33 +902,7 @@ public class GameManagerTest {
     	int heldAfter = target.getResourceManager().getGameBanks().get(0).getDevelopmentCards().getSoldier();
     	assertTrue(playedBefore + 1 == playedAfter);
     	assertTrue(heldAfter + 1 == heldBefore);
-//	 	assertTrue(target.getMapManager().getRobberLocation().equals(new HexLocation(0, 0)));
+    	//assertTrue(target.getMapManager().getRobberLocation().equals(new HexLocation(0, 0)));
     }
-    
-    @Test
-    public void testCreateGame(){
-        GameManager game = new GameManager();
-        game.createGame(false, false, false, "Muahahahahhahahhahha");
-        assertTrue(game.getGame().getTitle().equals("Muahahahahhahahhahha"));
-        assertFalse(game.getGame().getTitle().equals("Milk"));        
-        List<Hex> hexesBasic = game.getMapManager().getHexList();
-        List<Location> locationsBasic = game.getLocationManager().getUnsettledLocations();
-        List<Edge> edgesBasic = game.getLocationManager().getUnsettledEdges();
-        List<Port> portsBasic = game.getLocationManager().getPorts();        
-        game = new GameManager();
-        game.createGame(false, false, false, "Muahahahahhahahhahha");        
-        for(int i = 0;i<game.getMapManager().getHexList().size();i++){
-            assertTrue(hexesBasic.get(i).getLocation().equals(game.getMapManager().getHexList().get(i).getLocation()));
-            assertTrue(hexesBasic.get(i).getNumber()==game.getMapManager().getHexList().get(i).getNumber());            
-        }        
-        for(int i = 0;i<game.getLocationManager().getPorts().size();i++){
-            assertTrue(portsBasic.get(i).getLocation().equals(game.getLocationManager().getPorts().get(i).getLocation()));
-        }        
-        for(int i = 0; i<game.getLocationManager().getUnsettledLocations().size();i++){
-            assertTrue(locationsBasic.get(i).getNormalizedLocation().equals(game.getLocationManager().getUnsettledLocations().get(i).getNormalizedLocation()));
-        }
-        for(int i = 0; i<game.getLocationManager().getUnsettledEdges().size();i++){
-            assertTrue(edgesBasic.get(i).getEdgeLocation().equals(game.getLocationManager().getUnsettledEdges().get(i).getEdgeLocation()));
-        }               
-    }
+>>>>>>> a8280b68a778a32e927c374952de9f0989c27bf5
 }
