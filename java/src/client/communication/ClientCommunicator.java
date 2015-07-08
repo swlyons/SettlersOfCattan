@@ -7,6 +7,8 @@ package client.communication;
 
 import client.ClientException;
 import client.data.Game;
+import client.proxy.BuyDevCard;
+import client.proxy.Command;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
@@ -128,11 +130,15 @@ public class ClientCommunicator {
                     BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
                     String content = br.readLine();
                     //only games/list
-                    if (commandName.equals("games/list")) {
+                    if (commandName.equals("games/list") || commandName.equals("game/commands")) {
                         Type listType = new TypeToken<ArrayList<Game>>() {
                         }.getType();
                         result.setResponseBody(model.fromJson(content, listType));
-                    } else {
+                    } else if (commandName.equals("game/listAI")) {
+                        Type listType = new TypeToken<ArrayList<String>>() {
+                        }.getType();
+                        result.setResponseBody(model.fromJson(content, listType));
+                    }else {
                         if (content.equals("\"true\"")) {
                             result.setResponseBody(new Game(new ArrayList(), content));
                         } else {
@@ -161,7 +167,6 @@ public class ClientCommunicator {
 
         try {
             URL url = new URL(URL_PREFIX + "/" + commandName);
-
             HttpURLConnection connection = (HttpURLConnection) url
                     .openConnection();
             connection.setRequestMethod(HTTP_POST);
@@ -172,7 +177,10 @@ public class ClientCommunicator {
             }
             connection.setDoOutput(true);
             connection.connect();
+
             String data = model.toJson(postData);
+
+            System.out.println(data);
             connection.getOutputStream().write(data.getBytes());
 
             connection.getOutputStream().close();
@@ -180,6 +188,7 @@ public class ClientCommunicator {
             result.setResponseCode(connection.getResponseCode());
             result.setResponseLength(connection.getContentLength());
 
+            //System.out.println(cookies.get(playerID));
             //get the content
             if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
 
@@ -190,21 +199,24 @@ public class ClientCommunicator {
                     if (commandName.contains("user")) {
                         result.setResponseBody(content);
                         if (commandName.equals("user/login") && content.equals("Success")) {
+
                             String userCookie = connection.getHeaderField("Set-Cookie").split(";")[0];
                             String decodedCookie = URLDecoder.decode(userCookie.split("=")[1], "UTF-8");
                             int id = model.fromJson(decodedCookie, CookieModel.class).getPlayerID();
-                            cookies.put(id, userCookie + ((cookies.get(id) != null) ? " ;" + cookies.get(id) : ""));
+                            cookies.put(id, userCookie + ((cookies.get(id) != null) ? "; " + cookies.get(id) : ""));
                         }
                     } else if (commandName.equals("games/join")) {
                         result.setResponseBody(content);
                         if (content.equals("Success")) {
                             String gameCookie = connection.getHeaderField("Set-Cookie").split(";")[0];
+                            //cookies.put(playerID, "");
                             cookies.put(playerID, ((cookies.get(playerID) != null) ? cookies.get(playerID) + "; " : "") + gameCookie);
                         }
                     } else {
                         if (commandName.equals("games/save") || commandName.equals("games/load")) {
                             result.setResponseBody(content);
                         }
+
                         result.setResponseBody(model.fromJson(content, Game.class));
                     }
                 }

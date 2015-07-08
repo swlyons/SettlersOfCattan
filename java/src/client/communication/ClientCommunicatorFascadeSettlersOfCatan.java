@@ -12,6 +12,9 @@ import client.proxy.SaveGameRequest;
 import client.ClientException;
 import client.data.Game;
 import client.data.User;
+import client.proxy.AddAIRequest;
+import client.proxy.BuyDevCard;
+import client.proxy.Command;
 import java.util.ArrayList;
 
 /**
@@ -74,19 +77,19 @@ public class ClientCommunicatorFascadeSettlersOfCatan {
         return (Game) ClientCommunicator.getSingleton().doGet(MODEL_GAME, version, 0).getResponseBody();
     }
     public Game resetGame() throws ClientException {
-        return (Game) ClientCommunicator.getSingleton().doPost(RESET_GAME, "", 0).getResponseBody();
+        return (Game) ClientCommunicator.getSingleton().doPost(RESET_GAME,"", 0).getResponseBody();
     }
-    public Game getGameCommands() throws ClientException {
-        return (Game) ClientCommunicator.getSingleton().doGet(COMMANDS_GAME, "", 0).getResponseBody();
+    public ArrayList getGameCommands() throws ClientException {
+        return (ArrayList) ClientCommunicator.getSingleton().doGet(COMMANDS_GAME, "", 0).getResponseBody();
     }
-    public Game executeGameCommand() throws ClientException {
-        return (Game) ClientCommunicator.getSingleton().doPost(COMMANDS_GAME, "", 0).getResponseBody();
+    public Game executeGameCommands(ArrayList<Command> commands) throws ClientException {
+        return (Game) ClientCommunicator.getSingleton().doPost(COMMANDS_GAME, commands, 0).getResponseBody();
     }
-    public Game addAIToGame() throws ClientException {
-        return (Game) ClientCommunicator.getSingleton().doPost(ADD_AI_GAME, "", 0).getResponseBody();
+    public Game addAIToGame(AddAIRequest addAIRequest) throws ClientException {
+        return (Game) ClientCommunicator.getSingleton().doPost(ADD_AI_GAME, addAIRequest, 0).getResponseBody();
     }
-    public Game listAITypesInGame() throws ClientException {
-        return (Game) ClientCommunicator.getSingleton().doGet(LIST_AI_GAME, "", 0).getResponseBody();
+    public ArrayList<String> listAITypesInGame() throws ClientException {
+        return (ArrayList<String>) ClientCommunicator.getSingleton().doGet(LIST_AI_GAME, "", 0).getResponseBody();
     }
     // Local User Methods and Constants
     private static final String LIST_GAMES = "games/list";

@@ -7,24 +7,11 @@ import shared.locations.EdgeLocation;
  * @author Aaron
  *
  */
-public class Road_Building_ extends Request{
-	private String type = "Road_Building";
-	private int playerIndex;
+public class Road_Building extends Command{
 	private EdgeLocation spot1;
 	private EdgeLocation spot2;
 	
-	public String getType() {
-		return type;
-	}
-	public void setType(String type) {
-		this.type = type;
-	}
-	public int getPlayerIndex() {
-		return playerIndex;
-	}
-	public void setPlayerIndex(int playerIndex) {
-		this.playerIndex = playerIndex;
-	}
+	
 	public EdgeLocation getSpot1() {
 		return spot1;
 	}

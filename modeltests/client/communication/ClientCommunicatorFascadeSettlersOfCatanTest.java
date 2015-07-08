@@ -11,6 +11,11 @@ import client.proxy.CreateGameRequest;
 import client.proxy.SaveGameRequest;
 import client.data.Game;
 import client.data.User;
+import client.proxy.AddAIRequest;
+import client.proxy.BuildCity;
+import client.proxy.BuyDevCard;
+import client.proxy.Command;
+import com.google.gson.JsonArray;
 import java.util.ArrayList;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -19,6 +24,10 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import java.util.UUID;
 import static org.junit.Assert.*;
+import org.junit.Ignore;
+import shared.locations.HexLocation;
+import shared.locations.VertexDirection;
+import shared.locations.VertexLocation;
 
 /**
  *
@@ -147,13 +156,11 @@ public class ClientCommunicatorFascadeSettlersOfCatanTest {
         System.out.print("joinGame");
         ClientCommunicatorFascadeSettlersOfCatan instance = new ClientCommunicatorFascadeSettlersOfCatan();
         boolean expResult = true;
-        JoinGameRequest joinGameRequest = new JoinGameRequest(0, "puce");
-        boolean result = instance.joinGame(joinGameRequest);
+        boolean result = instance.joinGame(new JoinGameRequest(0, "red"));
         assertEquals(expResult, result);
 
         expResult = false;
-        joinGameRequest = new JoinGameRequest(-1, "red");
-        result = instance.joinGame(joinGameRequest);
+        result = instance.joinGame(new JoinGameRequest(-1, "red"));
         assertEquals(expResult, result);
 
         System.out.print("...PASSED");
@@ -220,16 +227,23 @@ public class ClientCommunicatorFascadeSettlersOfCatanTest {
 
     /**
      * Test of resetGame method, of class ClientCommunicatorFascadeSettlersOfCatan.
+     * @throws java.lang.Exception
      */
     @Test
     public void testResetGame() throws Exception {
         System.out.print("resetGame");
         ClientCommunicatorFascadeSettlersOfCatan instance = new ClientCommunicatorFascadeSettlersOfCatan();
-        Game expResult = null;
+        int expResult = 108;
+        //must login and join a game first
+        instance.login(new User("Sam", "sam"));
+        instance.joinGame(new JoinGameRequest(0, "red"));
         Game result = instance.resetGame();
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+
+        assertEquals(expResult,result.getBank().getTotalResources());
+      
+        
+        System.out.print("...PASSED");
+        System.out.println();
     }
 
     /**
@@ -239,11 +253,17 @@ public class ClientCommunicatorFascadeSettlersOfCatanTest {
     public void testGetGameCommands() throws Exception {
         System.out.print("getGameCommands");
         ClientCommunicatorFascadeSettlersOfCatan instance = new ClientCommunicatorFascadeSettlersOfCatan();
-        Game expResult = null;
-        Game result = instance.getGameCommands();
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        int expResult = 0;
+        //must login and join a game first
+        instance.login(new User("Sam", "sam"));
+        instance.joinGame(new JoinGameRequest(0, "red"));
+        ArrayList<Command> result = instance.getGameCommands();
+        assertEquals(expResult, result.size());
+        
+        //TODO: add a move command and check again
+        
+        System.out.print("...PASSED");
+        System.out.println();
     }
 
     /**
@@ -253,25 +273,42 @@ public class ClientCommunicatorFascadeSettlersOfCatanTest {
     public void testExecuteGameCommand() throws Exception {
         System.out.print("executeGameCommand");
         ClientCommunicatorFascadeSettlersOfCatan instance = new ClientCommunicatorFascadeSettlersOfCatan();
-        Game expResult = null;
-        Game result = instance.executeGameCommand();
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        String expResult = "Sam built a road";
+        //must login and join a game first
+        instance.login(new User("Sam", "sam"));
+        instance.joinGame(new JoinGameRequest(0, "red"));
+        BuildCity buildCity = new BuildCity(0);
+        buildCity.setVertexLocation(new VertexLocation(new HexLocation(0,0), VertexDirection.NW));
+        
+        ArrayList<Command> commands = new ArrayList<>();
+        commands.add(new BuyDevCard(0));
+        commands.add(buildCity);
+        
+        Game result = instance.executeGameCommands(commands);
+        
+        assertEquals(expResult, result.getLog().getLines().get(0).getMessage());
+        
+        System.out.print("...PASSED");
+        System.out.println();
     }
 
     /**
      * Test of addAIToGame method, of class ClientCommunicatorFascadeSettlersOfCatan.
      */
+    @Ignore //not implemented yet
     @Test
     public void testAddAIToGame() throws Exception {
         System.out.print("addAIToGame");
         ClientCommunicatorFascadeSettlersOfCatan instance = new ClientCommunicatorFascadeSettlersOfCatan();
         Game expResult = null;
-        Game result = instance.addAIToGame();
+        //only LARGEST_ARMY Works for now
+        instance.login(new User("Sam", "sam"));
+        instance.joinGame(new JoinGameRequest(0, "red"));
+        Game result = instance.addAIToGame(new AddAIRequest("LARGEST_ARMY"));
         assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        
+        System.out.print("...PASSED");
+        System.out.println();
     }
 
     /**
@@ -281,11 +318,12 @@ public class ClientCommunicatorFascadeSettlersOfCatanTest {
     public void testListAITypesInGame() throws Exception {
         System.out.print("listAITypesInGame");
         ClientCommunicatorFascadeSettlersOfCatan instance = new ClientCommunicatorFascadeSettlersOfCatan();
-        Game expResult = null;
-        Game result = instance.listAITypesInGame();
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        String expResult = "LARGEST_ARMY";
+        ArrayList<String> result = instance.listAITypesInGame();
+        assertEquals(expResult, result.get(0));
+        
+        System.out.print("...PASSED");
+        System.out.println();
     }
 
 }

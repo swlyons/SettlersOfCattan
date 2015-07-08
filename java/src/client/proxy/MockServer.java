@@ -115,31 +115,31 @@ public class MockServer implements IServer {
 	}
 
 	@Override
-	public Game PlayYearOfPlenty(Year_Of_Plenty_ request) {
+	public Game PlayYearOfPlenty(Year_Of_Plenty request) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Game PlayRoadBuilding(Road_Building_ request) {
+	public Game PlayRoadBuilding(Road_Building request) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Game PlaySoldier(Soldier_ request) {
+	public Game PlaySoldier(Soldier request) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Game PlayMonopoly(Monopoly_ request) {
+	public Game PlayMonopoly(Monopoly request) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Game PlayMonument(Monument_ request) {
+	public Game PlayMonument(Monument request) {
 		// TODO Auto-generated method stub
 		return null;
 	}

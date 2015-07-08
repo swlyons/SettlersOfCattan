@@ -210,7 +210,7 @@ public class ServerProxy implements IServer {
 	 * @pre The specified player has the dev card AND they didn't draw it this turn AND they haven't played any other dev cards this turn AND it is their turn AND the two chosen resources are different
 	 * @post The specifed player plays a YoP card and gets the resource cards of the two chosen types AND returns the game state immediately afterwards.
 	 */
-	public Game PlayYearOfPlenty(Year_Of_Plenty_ request) {
+	public Game PlayYearOfPlenty(Year_Of_Plenty request) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -222,7 +222,7 @@ public class ServerProxy implements IServer {
 	 * @pre the specified player has the dev card AND they didn't draw it this turn AND they haven't played any other dev cards this turn AND it is their turn AND the edge locations are valid for building.
 	 * @post the specified player plays the card with the indicated choices AND returns the game state immediately after.
 	 */
-	public Game PlayRoadBuilding(Road_Building_ request) {
+	public Game PlayRoadBuilding(Road_Building request) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -234,7 +234,7 @@ public class ServerProxy implements IServer {
 	 * @pre the specified player has the dev card AND they didn't draw it this turn AND they haven't played any other dev cards this turn AND it is their turn AND victim index != player index AND location didn't have the robber previously.
 	 * @post the specified player plays the card with the indicated choices AND returns the game state immediately after.
 	 */
-	public Game PlaySoldier(Soldier_ request) {
+	public Game PlaySoldier(Soldier request) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -246,7 +246,7 @@ public class ServerProxy implements IServer {
 	 * @pre the specified player has the dev card AND they didn't draw it this turn AND they haven't played any other dev cards this turn AND it is their turn
 	 * @post the specified player plays the card with the indicated choice AND returns the game state immediately after.
 	 */
-	public Game PlayMonopoly(Monopoly_ request) {
+	public Game PlayMonopoly(Monopoly request) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -258,7 +258,7 @@ public class ServerProxy implements IServer {
 	 * @pre the specified player has the dev card AND they didn't draw it this turn AND they haven't played any other dev cards this turn AND it is their turn
 	 * @post the specified player plays the card AND returns the game state immediately after.
 	 */
-	public Game PlayMonument(Monument_ request) {
+	public Game PlayMonument(Monument request) {
 		// TODO Auto-generated method stub
 		return null;
 	}

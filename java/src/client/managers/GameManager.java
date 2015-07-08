@@ -193,33 +193,33 @@ public class GameManager {
 		List<Location> unsettledLocations = new ArrayList<Location>();
 		List<Edge> unsettledEdges = new ArrayList<Edge>();
 		for (Hex hex : hexes) {
-			unsettledLocations.add(new Location(new VertexLocation(hex.getLocation(), VertexDirection.NorthEast)));
-			unsettledLocations.add(new Location(new VertexLocation(hex.getLocation(), VertexDirection.NorthWest)));
-			unsettledEdges.add(new Edge(new EdgeLocation(hex.getLocation(), EdgeDirection.NorthWest)));
-			unsettledEdges.add(new Edge(new EdgeLocation(hex.getLocation(), EdgeDirection.North)));
-			unsettledEdges.add(new Edge(new EdgeLocation(hex.getLocation(), EdgeDirection.NorthEast)));
+			unsettledLocations.add(new Location(new VertexLocation(hex.getLocation(), VertexDirection.NE)));
+			unsettledLocations.add(new Location(new VertexLocation(hex.getLocation(), VertexDirection.NW)));
+			unsettledEdges.add(new Edge(new EdgeLocation(hex.getLocation(), EdgeDirection.NW)));
+			unsettledEdges.add(new Edge(new EdgeLocation(hex.getLocation(), EdgeDirection.N)));
+			unsettledEdges.add(new Edge(new EdgeLocation(hex.getLocation(), EdgeDirection.NE)));
 		}
 
-		unsettledLocations.add(new Location(new VertexLocation(new HexLocation(2, 1), VertexDirection.NorthEast)));
-		unsettledLocations.add(new Location(new VertexLocation(new HexLocation(2, 1), VertexDirection.NorthWest)));
-		unsettledLocations.add(new Location(new VertexLocation(new HexLocation(1, 2), VertexDirection.NorthEast)));
-		unsettledLocations.add(new Location(new VertexLocation(new HexLocation(1, 2), VertexDirection.NorthWest)));
-		unsettledLocations.add(new Location(new VertexLocation(new HexLocation(0, 3), VertexDirection.NorthEast)));
-		unsettledLocations.add(new Location(new VertexLocation(new HexLocation(0, 3), VertexDirection.NorthWest)));
-		unsettledLocations.add(new Location(new VertexLocation(new HexLocation(-1, 3), VertexDirection.NorthEast)));
-		unsettledLocations.add(new Location(new VertexLocation(new HexLocation(-1, 3), VertexDirection.NorthWest)));
-		unsettledLocations.add(new Location(new VertexLocation(new HexLocation(-2, 3), VertexDirection.NorthEast)));
-		unsettledLocations.add(new Location(new VertexLocation(new HexLocation(-2, 3), VertexDirection.NorthWest)));
+		unsettledLocations.add(new Location(new VertexLocation(new HexLocation(2, 1), VertexDirection.NE)));
+		unsettledLocations.add(new Location(new VertexLocation(new HexLocation(2, 1), VertexDirection.NW)));
+		unsettledLocations.add(new Location(new VertexLocation(new HexLocation(1, 2), VertexDirection.NE)));
+		unsettledLocations.add(new Location(new VertexLocation(new HexLocation(1, 2), VertexDirection.NW)));
+		unsettledLocations.add(new Location(new VertexLocation(new HexLocation(0, 3), VertexDirection.NE)));
+		unsettledLocations.add(new Location(new VertexLocation(new HexLocation(0, 3), VertexDirection.NW)));
+		unsettledLocations.add(new Location(new VertexLocation(new HexLocation(-1, 3), VertexDirection.NE)));
+		unsettledLocations.add(new Location(new VertexLocation(new HexLocation(-1, 3), VertexDirection.NW)));
+		unsettledLocations.add(new Location(new VertexLocation(new HexLocation(-2, 3), VertexDirection.NE)));
+		unsettledLocations.add(new Location(new VertexLocation(new HexLocation(-2, 3), VertexDirection.NW)));
 
-		unsettledEdges.add(new Edge(new EdgeLocation(new HexLocation(2, 1), EdgeDirection.North)));
-		unsettledEdges.add(new Edge(new EdgeLocation(new HexLocation(2, 1), EdgeDirection.NorthWest)));
-		unsettledEdges.add(new Edge(new EdgeLocation(new HexLocation(1, 2), EdgeDirection.North)));
-		unsettledEdges.add(new Edge(new EdgeLocation(new HexLocation(1, 2), EdgeDirection.NorthWest)));
-		unsettledEdges.add(new Edge(new EdgeLocation(new HexLocation(0, 3), EdgeDirection.North)));
-		unsettledEdges.add(new Edge(new EdgeLocation(new HexLocation(-1, 3), EdgeDirection.North)));
-		unsettledEdges.add(new Edge(new EdgeLocation(new HexLocation(-1, 3), EdgeDirection.NorthEast)));
-		unsettledEdges.add(new Edge(new EdgeLocation(new HexLocation(-2, 3), EdgeDirection.North)));
-		unsettledEdges.add(new Edge(new EdgeLocation(new HexLocation(-2, 3), EdgeDirection.NorthEast)));
+		unsettledEdges.add(new Edge(new EdgeLocation(new HexLocation(2, 1), EdgeDirection.N)));
+		unsettledEdges.add(new Edge(new EdgeLocation(new HexLocation(2, 1), EdgeDirection.NW)));
+		unsettledEdges.add(new Edge(new EdgeLocation(new HexLocation(1, 2), EdgeDirection.N)));
+		unsettledEdges.add(new Edge(new EdgeLocation(new HexLocation(1, 2), EdgeDirection.NW)));
+		unsettledEdges.add(new Edge(new EdgeLocation(new HexLocation(0, 3), EdgeDirection.N)));
+		unsettledEdges.add(new Edge(new EdgeLocation(new HexLocation(-1, 3), EdgeDirection.N)));
+		unsettledEdges.add(new Edge(new EdgeLocation(new HexLocation(-1, 3), EdgeDirection.NE)));
+		unsettledEdges.add(new Edge(new EdgeLocation(new HexLocation(-2, 3), EdgeDirection.N)));
+		unsettledEdges.add(new Edge(new EdgeLocation(new HexLocation(-2, 3), EdgeDirection.NE)));
 
 		mapManager.setHexList(hexes);
 		locationManager.setUnsettledLocations(unsettledLocations);

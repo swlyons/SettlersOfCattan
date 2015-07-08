@@ -3,22 +3,22 @@ package client.proxy;
 import shared.locations.HexLocation;
 
 /**
- * Contains the information for a rob request to be made.
+ * contains information on playing a soldier card
  *
  * @author Aaron
  *
  */
-public class RobPlayer extends Command {
+public class Soldier extends Command {
 
-    private int victimIndex;
+    private int vicitmIndex;
     private HexLocation location;
 
-    public int getVictimIndex() {
-        return victimIndex;
+    public int getVicitmIndex() {
+        return vicitmIndex;
     }
 
-    public void setVictimIndex(int victimIndex) {
-        this.victimIndex = victimIndex;
+    public void setVicitmIndex(int vicitmIndex) {
+        this.vicitmIndex = vicitmIndex;
     }
 
     public HexLocation getLocation() {
