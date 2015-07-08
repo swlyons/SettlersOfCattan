@@ -439,6 +439,7 @@ public class GameManager {
 	}
 
 	public void diceIsSevenMoveRobber(HexLocation newLocationForRobber) {
+		//TODO: players needs to choose the cards they discard for the call to "playerDiscardsHalfCards()"
 		if (mapManager.moveRobber(newLocationForRobber)) {
 			for (int i = 0; i < 4; i++) {
 				int numberOfResourceCards = resourceManager.getGameBanks()

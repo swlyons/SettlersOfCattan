@@ -807,27 +807,45 @@ public class GameManagerTest {
 	/**
 	 * Test of initializeGame method, of class GameManager.
 	 */
-//	@Test
-//	public void testInitializeGame() {
-//		System.out.println("initializeGame");
-//		String jsonDataOut = "";
-//
-//		GameManager instance = new GameManager();
-//		instance.initializeGame(jsonDataIn);
-//
-//		Game game = instance.getGame();
-//		// print Json Model (Game)
-//		// System.out.println(game);
-//
-//		// add test case to compare
-//		assert("Model was successfully initialized",
-//				jsonDataIn.equals(jsonDataOut) && !jsonDataOut.isEmpty());
-//	}
+	// @Test
+	// public void testInitializeGame() {
+	// System.out.println("initializeGame");
+	// String jsonDataOut = "";
+	//
+	// GameManager instance = new GameManager();
+	// instance.initializeGame(jsonDataIn);
+	//
+	// Game game = instance.getGame();
+	// // print Json Model (Game)
+	// // System.out.println(game);
+	//
+	// // add test case to compare
+	// assert("Model was successfully initialized",
+	// jsonDataIn.equals(jsonDataOut) && !jsonDataOut.isEmpty());
+	// }
+	
+	@Test
+	public void testRollDice() {
+		
+	}
+	
+	@Test
+	public void testBuildRoad() {
+		
+	}
+	
+	@Test
+	public void testBuildStructure() {
+		
+	}
+	
+	@Test
+	public void testTrade() {
+		
+	}
 
 	@Test
 	public void testCanBuyDevCard() {
-//		System.out.println("canBuyDevCard");
-
 		GameManager instance = new GameManager();
 		instance.initializeGame(jsonDataIn);
 
@@ -835,6 +853,11 @@ public class GameManagerTest {
 
 		// CurrentPlayer is Sam. Sam has enough resources for a DevCard
 		game.getTurnTracker().setCurrentTurn(0);
+
+		DevCardList prevDevCards = instance.getResourceManager().getGameBanks()
+				.get(0).getUnusableDevCards();
+		assert (prevDevCards.totalCardsRemaining() == 0);
+
 		ResourceList prevResources = instance.getResourceManager()
 				.getGameBanks().get(0).getResourcesCards();
 
@@ -845,50 +868,74 @@ public class GameManagerTest {
 				.get(0).getUnusableDevCards();
 		ResourceList newResources = instance.getResourceManager()
 				.getGameBanks().get(0).getResourcesCards();
-		
-		assert(newDevCards.totalCardsRemaining() == 1);
-		
+
+		assert (newDevCards.totalCardsRemaining() == 1);
+
+		// If we add the resources back and the result is equal to the previous
+		// quantities, then they had been removed properly
 		newResources.addOre(1);
 		newResources.addWheat(1);
 		newResources.addSheep(1);
-		assert(newResources.toString().equals(previousResourceString));
+		assert (newResources.toString().equals(previousResourceString));
 
 	}
 
-    @Test
-    public void testPlayMonument() {
-    	GameManager target = new GameManager();
-    	target.initializeGame(jsonDataIn);
-    	DevCardList cards = new DevCardList(1,1,1,1,1);
-    	List<Bank> banks = target.getResourceManager().getGameBanks();
-    	banks.get(0).setDevelopmentCards(cards);
-    	target.getResourceManager().setGameBanks(banks);
-    	
-    	int playedBefore = target.getResourceManager().getGameBanks().get(0).getMonuments();
-    	int heldBefore = target.getResourceManager().getGameBanks().get(0).getDevelopmentCards().getMonument();
-    	target.useMonument();
-    	int playedAfter = target.getResourceManager().getGameBanks().get(0).getMonuments();
-    	int heldAfter = target.getResourceManager().getGameBanks().get(0).getDevelopmentCards().getMonument();
-    	assertTrue(playedBefore + 1 == playedAfter);
-    	assertTrue(heldAfter + 1 == heldBefore);
-    }
-    
-    @Test
-    public void testPlaySoldier() {
-    	GameManager target = new GameManager();
-    	target.initializeGame(jsonDataIn);
-    	DevCardList cards = new DevCardList(1,1,1,1,1);
-    	List<Bank> banks = target.getResourceManager().getGameBanks();
-    	banks.get(0).setDevelopmentCards(cards);
-    	target.getResourceManager().setGameBanks(banks);
-    	
-    	int playedBefore = target.getResourceManager().getGameBanks().get(0).getSoldiers();
-    	int heldBefore = target.getResourceManager().getGameBanks().get(0).getDevelopmentCards().getSoldier();
-    	target.useSoldier(new HexLocation(0, 0));
-    	int playedAfter = target.getResourceManager().getGameBanks().get(0).getSoldiers();
-    	int heldAfter = target.getResourceManager().getGameBanks().get(0).getDevelopmentCards().getSoldier();
-    	assertTrue(playedBefore + 1 == playedAfter);
-    	assertTrue(heldAfter + 1 == heldBefore);
-//	 	assertTrue(target.getMapManager().getRobberLocation().equals(new HexLocation(0, 0)));
-    }
+	@Test
+	public void testPlayMonument() {
+		GameManager target = new GameManager();
+		target.initializeGame(jsonDataIn);
+		DevCardList cards = new DevCardList(1, 1, 1, 1, 1);
+		List<Bank> banks = target.getResourceManager().getGameBanks();
+		banks.get(0).setDevelopmentCards(cards);
+		target.getResourceManager().setGameBanks(banks);
+
+		int playedBefore = target.getResourceManager().getGameBanks().get(0)
+				.getMonuments();
+		int heldBefore = target.getResourceManager().getGameBanks().get(0)
+				.getDevelopmentCards().getMonument();
+		target.useMonument();
+		int playedAfter = target.getResourceManager().getGameBanks().get(0)
+				.getMonuments();
+		int heldAfter = target.getResourceManager().getGameBanks().get(0)
+				.getDevelopmentCards().getMonument();
+		assertTrue(playedBefore + 1 == playedAfter);
+		assertTrue(heldAfter + 1 == heldBefore);
+	}
+
+	@Test
+	public void testPlaySoldier() {
+		GameManager target = new GameManager();
+		target.initializeGame(jsonDataIn);
+		DevCardList cards = new DevCardList(1, 1, 1, 1, 1);
+		List<Bank> banks = target.getResourceManager().getGameBanks();
+		banks.get(0).setDevelopmentCards(cards);
+		target.getResourceManager().setGameBanks(banks);
+
+		int playedBefore = target.getResourceManager().getGameBanks().get(0)
+				.getSoldiers();
+		int heldBefore = target.getResourceManager().getGameBanks().get(0)
+				.getDevelopmentCards().getSoldier();
+		target.useSoldier(new HexLocation(0, 0));
+		int playedAfter = target.getResourceManager().getGameBanks().get(0)
+				.getSoldiers();
+		int heldAfter = target.getResourceManager().getGameBanks().get(0)
+				.getDevelopmentCards().getSoldier();
+		assertTrue(playedBefore + 1 == playedAfter);
+		assertTrue(heldAfter + 1 == heldBefore);
+	}
+	
+	@Test
+	public void testPlayRoadBuilding() {
+		
+	}
+	
+	@Test
+	public void testPlayMonopoly() {
+		
+	}
+	
+	@Test
+	public void testPlayYearOfPlenty() {
+		
+	}
 }
