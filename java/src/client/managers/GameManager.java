@@ -52,39 +52,40 @@ public class GameManager {
 	 * @post Will initialize the game model
 	 */
 	public void initializeGame(String jsonData) {
-		// create a json object
-		Gson model = new GsonBuilder().create();
+            try{
+                // create a json object
+                Gson model = new GsonBuilder().create();
 
-		// initialize the client object model
-		game = model.fromJson(jsonData, Game.class);
+                // initialize the client object model
+                game = model.fromJson(jsonData, Game.class);
 
                 Map map = game.getMap();
-                
+
                 HexLocation robberLocation = map.getRobber();
-		
+
                 if(mapManager==null){
                     mapManager = new MapManager();
                     mapManager.setHexList(map.getHexes());                    
                 }
-                
+
                 for(Hex hex : mapManager.getHexList()){
                     if(hex.getLocation().equals(robberLocation)){
-                        hex.setHasRobber(true);
-                    }else{
-                        hex.setHasRobber(false);
-                    }
+                            hex.setHasRobber(true);
+                        }else{
+                            hex.setHasRobber(false);
+                        }
                 }
-                
+
                 if(locationManager==null){
                     locationManager = new LocationManager();
                     createUnsettledAreas(mapManager.getHexList());
                     locationManager.setPorts(map.getPorts());
                 }
-                
+
                 for(VertexObject settlement : map.getSettlements()){
-                    
+
                     Location settlementLocation = null;
-                     
+
                     for(Location location : locationManager.getUnsettledLocations()){
                         if(location.getNormalizedLocation().equals(settlement.getDirection())){                            
                             location.setIsCity(false);
@@ -92,20 +93,28 @@ public class GameManager {
                             settlementLocation = location;
                             break;
                         }
-                        
+
                     }
-                    
+
                     if(settlementLocation!=null){
                         if(!locationManager.settleLocation(settlementLocation.getNormalizedLocation(), settlement.getOwner(), false)){
-                            System.out.println("Unable to settle location from initializeGame");
+                            throw new Exception("Unable to settle location from initializeGame.");
                         }
                     }
-                    
+
+                }
+
+                for(VertexObject city : map.getCities()){
+                    for(Location location : locationManager.getSettledLocations()){
+                        if(location.getNormalizedLocation().equals(city.getDirection())){
+                            locationManager.upgradeToCity(city.getDirection());
+                        }
+                    }
                 }
 
                 for(EdgeValue road : map.getRoads()){
                     Edge roadLocation = null;
-                    
+
                     for(Edge edge : locationManager.getUnsettledEdges()){
                         if(edge.getEdgeLocation().equals(road.getLocation())){
                             edge.getWhoCanBuild().add(road.getOwner());
@@ -113,36 +122,38 @@ public class GameManager {
                             break;
                         }
                     }
-                    
+
                     if(roadLocation!=null){
                         if(!locationManager.settleEdge(roadLocation.getEdgeLocation(), road.getOwner())){
-                            System.out.println("Unable to settle edge from initializeGame");
+                            throw new Exception("Unable to settle edge from initializeGame.");
                         }
+                    }
+
+
+                    // Resource Manager
+                    List<Bank> gameBanks = new ArrayList<>();
+                    for (int i = 0; i < game.getPlayers().size(); i++) {
+                            Player p = game.getPlayers().get(i);
+                            boolean hasLargestArmy = (p.getPlayerID() == game.getTurnTracker().getLargestArmyHolder());
+                            boolean hasLongestRoad = (p.getPlayerID() == game.getTurnTracker().getLongestRoadHolder());
+                            gameBanks.add(new Bank(p, hasLargestArmy, hasLongestRoad));
+                    }
+
+                    DevCardList mainBankDevCards = new DevCardList(game.getPlayers());
+                    boolean hasLargestArmy = (mainBankIndex == game.getTurnTracker().getLargestArmyHolder());
+                    boolean hasLongestRoad = (mainBankIndex == game.getTurnTracker().getLongestRoadHolder());
+                    gameBanks.add(new Bank(game.getBank(), mainBankDevCards, hasLargestArmy, hasLongestRoad));
+                    if(resourceManager==null){
+                        resourceManager = new ResourceManager();
+                    }
+                    resourceManager.setGameBanks(gameBanks);
+
                 }
-                
-                                
-                
 
-
-		// Resource Manager
-		List<Bank> gameBanks = new ArrayList<>();
-		for (int i = 0; i < game.getPlayers().size(); i++) {
-			Player p = game.getPlayers().get(i);
-			boolean hasLargestArmy = (p.getPlayerID() == game.getTurnTracker().getLargestArmyHolder());
-			boolean hasLongestRoad = (p.getPlayerID() == game.getTurnTracker().getLongestRoadHolder());
-			gameBanks.add(new Bank(p, hasLargestArmy, hasLongestRoad));
-		}
-
-		DevCardList mainBankDevCards = new DevCardList(game.getPlayers());
-		boolean hasLargestArmy = (mainBankIndex == game.getTurnTracker().getLargestArmyHolder());
-		boolean hasLongestRoad = (mainBankIndex == game.getTurnTracker().getLongestRoadHolder());
-		gameBanks.add(new Bank(game.getBank(), mainBankDevCards, hasLargestArmy, hasLongestRoad));
-		if(resourceManager==null){
-                    resourceManager = new ResourceManager();
-                }
-                resourceManager.setGameBanks(gameBanks);
-
+            }catch(Exception e){
+                System.out.println(e);            
             }
+            
         }
 	/* canDo Methods */
 
