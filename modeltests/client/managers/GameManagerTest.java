@@ -15,6 +15,7 @@ import client.managers.GameManager;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
@@ -835,41 +836,36 @@ public class GameManagerTest {
 		Game game = instance.getGame();
 
 		// CurrentPlayer is Sam. Sam has enough resources for a DevCard
-		game.getTurnTracker().setCurrentPlayerIndex(0);
-		DevCardList prevDevCards = instance.getResourceManager().getGameBanks()
-				.get(0).getDevelopmentCards();
+		game.getTurnTracker().setCurrentTurn(0);
 		ResourceList prevResources = instance.getResourceManager()
 				.getGameBanks().get(0).getResourcesCards();
 
-		String previousStatus = (prevDevCards.toString() + "\n"
-				+ prevResources.toString() + "\n");
+		String previousResourceString = (prevResources.toString());
 
 		instance.buyDevCard();
 		DevCardList newDevCards = instance.getResourceManager().getGameBanks()
-				.get(0).getDevelopmentCards();
+				.get(0).getUnusableDevCards();
 		ResourceList newResources = instance.getResourceManager()
 				.getGameBanks().get(0).getResourcesCards();
-
-		String newStatus = (prevDevCards.toString() + "\n"
-				+ newDevCards.toString() + "\n" + newResources.toString() + "\n");
-
-		System.out.println(previousStatus + newStatus);
 		
-		assert(prevDevCards.totalCardsRemaining() == newDevCards
-						.totalCardsRemaining() - 1);
-		assert(prevResources.equals(newResources));
+		assert(newDevCards.totalCardsRemaining() == 1);
+		
+		newResources.addOre(1);
+		newResources.addWheat(1);
+		newResources.addSheep(1);
+		assert(newResources.toString().equals(previousResourceString));
 
 	}
 
-    @Test
-    public void testPlayMonument() {
-    	GameManager target = new GameManager();
-    	target.initializeGame(jsonDataIn);
-    	DevCardList cards = new DevCArrayList(1,1,1,1,1);
-    	ArrayList<Bank> banks = target.getResourceManager().getGameBanks();
-    	banks.get(0).setDevelopmentCards(cards);
-    	target.getResourceManager().setGameBanks(banks);
-    	
-    	
-    }
+//    @Test
+//    public void testPlayMonument() {
+//    	GameManager target = new GameManager();
+//    	target.initializeGame(jsonDataIn);
+//    	DevCardList cards = new DevCardList(1,1,1,1,1);
+//    	List<Bank> banks = target.getResourceManager().getGameBanks();
+//    	banks.get(0).setDevelopmentCards(cards);
+//    	target.getResourceManager().setGameBanks(banks);
+//    	
+//    	
+//    }
 }
