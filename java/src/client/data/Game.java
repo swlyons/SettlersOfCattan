@@ -1,5 +1,6 @@
 package client.data;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Game {
@@ -16,8 +17,8 @@ public class Game {
     private int version;
     private int winner;
 
-    public Game(List<Player> players, String title) {
-        this.players = players;
+    public Game(String title) {
+        this.players = new ArrayList<Player>();
         this.title = title;
     }
 

@@ -185,12 +185,12 @@ public class GameManager {
 	 *      lobby
 	 * @post Game is added to the list of games on server
 	 */
-	public void createGame(List<Player> players, boolean randomTiles,
+	public void createGame(boolean randomTiles,
 			boolean randomNumbers, boolean randomPorts, String name) {
 		locationManager = new LocationManager();
 		mapManager = new MapManager();
 		resourceManager = new ResourceManager();
-		game = new Game(players, name);
+		game = new Game(name);
 
 		List<Hex> hexes = new ArrayList<Hex>();
 
@@ -339,7 +339,7 @@ public class GameManager {
 		locationManager.setUnsettledLocations(unsettledLocations);
 		locationManager.setUnsettledEdges(unsettledEdges);
 	}
-
+/*
 	public void joinGame(int playerUserID, String name, String color) {
 		// TODO: interact better with the GUI to handle login
 		if (!gameHasFourPlayers()) {
@@ -348,16 +348,12 @@ public class GameManager {
 			this.game.getPlayers().add(p);
 		}
 	}
-
-	/**
-	 * @author Curt
-	 * @pre none
-	 * @post returns boolean value for whether game has 4 players or not
-	 */
-	public boolean gameHasFourPlayers() {
+*/
+/*
+  	public boolean gameHasFourPlayers() {
 		return game.getPlayers().size() == 4;
 	}
-
+*/
 	/**
 	 * @author Curt
 	 * @pre gameId matches an existing game. It's the start of a player's turn
