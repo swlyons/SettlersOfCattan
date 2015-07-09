@@ -137,7 +137,7 @@ public class MapComponent extends JComponent
 		VERTEX_POINTS.put(VertexDirection.NE,
 						  new Point2D.Double(HEX_IMAGE_WIDTH / 4,
 											 -HEX_IMAGE_HEIGHT / 2));
-		VERTEX_POINTS.put(VertexDirection.W,
+		VERTEX_POINTS.put(VertexDirection.E,
 						  new Point2D.Double(HEX_IMAGE_WIDTH / 2, 0));
 		VERTEX_POINTS.put(VertexDirection.SE,
 						  new Point2D.Double(HEX_IMAGE_WIDTH / 4,
