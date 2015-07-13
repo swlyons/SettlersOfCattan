@@ -81,6 +81,11 @@ public class LoginController extends Controller implements ILoginController {
 			getLoginView().closeModal();
 			loginAction.execute();
 		}
+		else {
+			messageView.setTitle("Error");
+			messageView.setMessage("Sign in failed!");
+			messageView.showModal();
+		}
 	}
 
 	@Override
@@ -95,6 +100,17 @@ public class LoginController extends Controller implements ILoginController {
 		if (sucessful) {
 			getLoginView().closeModal();
 			loginAction.execute();
+		}
+		else {
+			messageView.setTitle("Error");
+			if (userManager.validatePasswordsMatch(password, passConf)) {
+				messageView.setMessage("Invalid username or password!");
+			}
+			else {
+				messageView.setMessage("Passwords don't match!");
+			}
+			
+			messageView.showModal();
 		}
 	}
 
