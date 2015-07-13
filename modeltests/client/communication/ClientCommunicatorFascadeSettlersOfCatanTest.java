@@ -393,10 +393,10 @@ public class ClientCommunicatorFascadeSettlersOfCatanTest {
         String expResult = "Sam's turn just ended";
         instance.login(new User("Sam", "sam"));
         instance.joinGame(new JoinGameRequest(0, "red"));
-        Game result = instance.finishMove(new FinishMove(0));
+        String result = instance.finishMove(new FinishMove(0));
         
         //Sam should've ended his turn
-        assertEquals(expResult, result.getLog().getLines().get(2).getMessage());
+        assertEquals(expResult, result);
         
         System.out.print("...PASSED");
         System.out.println();

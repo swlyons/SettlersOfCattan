@@ -14,7 +14,7 @@ public class UserManagerTest {
 		String goodPassword = "password";
 		String badPassword = "";
 		
-		UserManager target = new UserManager(true); //Set up manager with testing proxy
+		UserManager target = new UserManager(); //Set up manager with testing proxy
 		assertTrue(target.authenticateUser(goodUsername, goodPassword));
 		assertFalse(target.authenticateUser(badUsername, goodPassword));
 		assertFalse(target.authenticateUser(goodUsername, badPassword));
@@ -30,7 +30,7 @@ public class UserManagerTest {
 		String goodConfirmationPassword = "helloWarld_-";
 		String badConfirmationPassword = "";
 		
-		UserManager target = new UserManager(true); //Set up manager with testing proxy
+		UserManager target = new UserManager(); //Set up manager with testing proxy
 		assertTrue(target.createUser(newUsername, newPassword, goodConfirmationPassword));
 		assertFalse(target.createUser(newUsername, newPassword, badConfirmationPassword));
 		assertFalse(target.createUser(usedUsername, newPassword, goodConfirmationPassword));
