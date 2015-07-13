@@ -107,7 +107,7 @@ public class UserManager {
      * @pre
      * @post returns if password is exactly the same as passwordValidate
      */
-    private boolean validatePasswordsMatch(String password, String passwordValidate) {
+    public boolean validatePasswordsMatch(String password, String passwordValidate) {
         boolean isValid = true;
         if (password == null || passwordValidate == null) {
             isValid = false;

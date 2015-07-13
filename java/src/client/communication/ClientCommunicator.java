@@ -52,6 +52,15 @@ public class ClientCommunicator {
         }
         return singleton;
     }
+    
+    private GameManager gm;
+    
+    public GameManager getGameManager() {
+        if(gm == null){
+            gm = new GameManager();
+        }
+    	return gm;
+    }
 
     // Constructors
     /**
@@ -261,11 +270,7 @@ public class ClientCommunicator {
 
     private Gson model;
     private Map<Integer, String> cookies;
-    private GameManager gm;
-    
-    public GameManager getGameManager() {
-    	return gm;
-    }
+
 
    
 

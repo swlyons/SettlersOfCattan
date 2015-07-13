@@ -6,6 +6,9 @@ import shared.definitions.*;
 import shared.locations.*;
 import client.base.*;
 import client.data.*;
+import client.managers.GameManager;
+import client.communication.ClientCommunicator;
+import client.communication.ClientCommunicatorFascadeSettlersOfCatan;
 
 
 /**
@@ -104,7 +107,7 @@ public class MapController extends Controller implements IMapController {
 	}
 
 	public boolean canPlaceRoad(EdgeLocation edgeLoc) {
-		
+		GameManager gm = ClientCommunicator.getSingleton().getGameManager();
 		return true;
 	}
 
