@@ -119,6 +119,9 @@ public class ClientCommunicator {
             connection.setRequestMethod(HTTP_GET);
             //set cookie
             if (playerID > -1) {
+                for(Map.Entry<Integer, String> cook : cookies.entrySet()){
+                    playerID = cook.getKey();
+                }                
                 connection.setRequestProperty("Cookie", cookies.get(playerID));
             }
             connection.connect();
@@ -173,6 +176,9 @@ public class ClientCommunicator {
 
             //set cookie by player id
             if (playerID > -1) {
+                for(Map.Entry<Integer, String> cook : cookies.entrySet()){
+                    playerID = cook.getKey();
+                }
                 connection.setRequestProperty("Cookie", cookies.get(playerID));
             }
             connection.setDoOutput(true);

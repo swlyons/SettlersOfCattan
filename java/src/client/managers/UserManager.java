@@ -1,5 +1,7 @@
 package client.managers;
 
+import client.ClientException;
+import client.communication.ClientCommunicatorFascadeSettlersOfCatan;
 import client.data.User;
 import client.proxy.IServer;
 import client.proxy.MockServer;
@@ -7,17 +9,7 @@ import client.proxy.ServerProxy;
 
 public class UserManager {
 
-	private IServer server = ServerProxy.getSingleton();
-	
-    public UserManager() {
-
-    }
-    
-    public UserManager(boolean testing) {
-    	if (testing) {
-    		server = new MockServer();
-    	}
-    }
+	private ClientCommunicatorFascadeSettlersOfCatan server = ClientCommunicatorFascadeSettlersOfCatan.getSingleton();
 
     /**
      *
@@ -27,24 +19,20 @@ public class UserManager {
      * @post returns if the user was successfully created or not
      */
     public boolean createUser(String username, String password, String passwordValidate) {
-        boolean created = true;
-
         //may want to throw different exceptions instead of returning booleans
         if (!validateUsername(username) || !validatePassword(password)) {
-            created = false;
+            return false;
         } else if (!validatePasswordsMatch(password, passwordValidate)) {
-            created = false;
+            return false;
         } else {
-            User request = new User(username, password);
-            String cookie = server.Register(request);
-            if (cookie == null) {
-                created = false;
-            } else if (cookie.length() == 0 || cookie.contains("Failed")) {
-                created = false;
-            }
-            //TODO: once we have a better concept of how a cookie works and what is valid, we should improve this logic.
+			try {
+	            User credentials = new User(username, password);
+	            boolean success = server.register(credentials);
+	            return success;
+			} catch (ClientException e) {
+				return false;
+			}
         }
-        return created;
     }
 
     /**
@@ -56,20 +44,17 @@ public class UserManager {
      * database
      */
     public boolean authenticateUser(String username, String password) {
-        boolean authenticated = true;
         if (!validateUsername(username) || !validatePassword(password)) {
-            authenticated = false;
+            return false;
         } else {
-            User request = new User(username, password);
-            String cookie = server.login(request);
-            if (cookie == null) {
-                authenticated = false;
-            } else if (cookie.length() == 0 || cookie.contains("Failed")) {
-                authenticated = false;
-            }
-            //TODO: once we have a better concept of how a cookie works and what is valid, we should improve this logic.
+        	try {
+	            User credentials = new User(username, password);
+	            boolean success = server.login(credentials);
+	            return success;
+			} catch (ClientException e) {
+				return false;
+			}
         }
-        return authenticated;
     }
 
     /**
