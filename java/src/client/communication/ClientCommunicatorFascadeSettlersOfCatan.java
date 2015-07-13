@@ -128,8 +128,8 @@ public class ClientCommunicatorFascadeSettlersOfCatan {
     public Game robPlayer(RobPlayer robPlayer) throws ClientException {
         return (Game) ClientCommunicator.getSingleton().doPost(ROB_PLAYER_MOVES, robPlayer, 0).getResponseBody();
     } 
-    public Game finishMove(FinishMove finishMove) throws ClientException {
-        return (Game) ClientCommunicator.getSingleton().doPost(FINISH_TURN_MOVES, finishMove, 0).getResponseBody();
+    public String finishMove(FinishMove finishMove) throws ClientException {
+        return ClientCommunicator.getSingleton().doPost(FINISH_TURN_MOVES, finishMove, 0).getResponseBody().toString();
     } 
     public Game buyDevCard(BuyDevCard buyDevCard) throws ClientException {
         return (Game) ClientCommunicator.getSingleton().doPost(BUY_DEV_CARD_MOVES, buyDevCard, 0).getResponseBody();
@@ -173,7 +173,7 @@ public class ClientCommunicatorFascadeSettlersOfCatan {
     private static final String SEND_CHAT_MOVES = "moves/sendChat";
     private static final String ROLL_MOVES = "moves/rollNumber";
     private static final String ROB_PLAYER_MOVES = "moves/robPlayer";
-    private static final String FINISH_TURN_MOVES = "moves/rollNumber";
+    private static final String FINISH_TURN_MOVES = "moves/finishTurn";
     private static final String BUY_DEV_CARD_MOVES = "moves/buyDevCard";
     private static final String YEAR_OF_PLENTY_MOVES = "moves/Year_of_Plenty";
     private static final String ROAD_BUILDING_MOVES = "moves/Road_Building";

@@ -762,4 +762,5 @@ public class GameManager {
 	public MapManager getMapManager() {
 		return mapManager;
 	}
+
 }
