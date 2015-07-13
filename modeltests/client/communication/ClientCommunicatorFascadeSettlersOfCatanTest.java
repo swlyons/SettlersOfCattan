@@ -39,6 +39,9 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 import java.util.UUID;
 
 import static org.junit.Assert.*;
@@ -402,7 +405,11 @@ public class ClientCommunicatorFascadeSettlersOfCatanTest {
         String expResult = "Sam's turn just ended";
         instance.login(new User("Sam", "sam"));
         instance.joinGame(new JoinGameRequest(0, "red"));
-        Game result = instance.finishMove(new FinishMove(0));
+        String resultStr = instance.finishMove(new FinishMove(0));
+		Gson model = new GsonBuilder().create();
+
+		// initialize the client object model
+		Game result = model.fromJson(resultStr, Game.class);
         
         //Sam should've ended his turn
         assertEquals(expResult, result.getLog().getLines().get(2).getMessage());
