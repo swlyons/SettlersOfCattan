@@ -9,6 +9,7 @@ import client.proxy.LoadGameRequest;
 import client.proxy.JoinGameRequest;
 import client.proxy.CreateGameRequest;
 import client.proxy.SaveGameRequest;
+import client.communication.ClientCommunicator;
 import client.data.Game;
 import client.data.User;
 import client.proxy.BuildCity;
@@ -20,13 +21,17 @@ import client.proxy.Road_Building;
 import client.proxy.RollNumber;
 import client.proxy.SendChat;
 import client.proxy.Year_Of_Plenty;
+
 import java.util.ArrayList;
+
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
 import java.util.UUID;
+
 import static org.junit.Assert.*;
 import shared.definitions.ResourceType;
 import shared.locations.EdgeDirection;
@@ -43,7 +48,7 @@ public class ClientCommunicatorFascadeSettlersOfCatanTest {
 
     public ClientCommunicatorFascadeSettlersOfCatanTest() {
     }
-
+    
     @BeforeClass
     public static void setUpClass() {
     }

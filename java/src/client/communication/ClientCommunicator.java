@@ -7,11 +7,14 @@ package client.communication;
 
 import client.ClientException;
 import client.data.Game;
+import client.managers.GameManager;
 import client.proxy.BuyDevCard;
 import client.proxy.Command;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -22,6 +25,7 @@ import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+
 import org.apache.commons.io.IOUtils;
 
 /**
@@ -257,6 +261,11 @@ public class ClientCommunicator {
 
     private Gson model;
     private Map<Integer, String> cookies;
+    private GameManager gm;
+    
+    public GameManager getGameManager() {
+    	return gm;
+    }
 
    
 
