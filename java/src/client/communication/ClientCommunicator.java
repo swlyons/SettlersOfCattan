@@ -260,6 +260,9 @@ public class ClientCommunicator {
     private GameManager gm;
     
     public GameManager getGameManager() {
+        if(gm == null){
+            gm = new GameManager();
+        }
     	return gm;
     }
 
