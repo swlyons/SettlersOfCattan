@@ -1,6 +1,7 @@
 package client.login;
 
 import client.base.*;
+import client.managers.UserManager;
 import client.misc.*;
 
 import java.net.*;
@@ -70,23 +71,31 @@ public class LoginController extends Controller implements ILoginController {
 
 	@Override
 	public void signIn() {
-		
-		// TODO: log in user
-		
+		UserManager userManager = new UserManager();
+		String username = getLoginView().getLoginUsername();
+		String password = getLoginView().getLoginPassword();
+		boolean sucessful = userManager.authenticateUser(username, password);
 
 		// If log in succeeded
-		getLoginView().closeModal();
-		loginAction.execute();
+		if (sucessful) {
+			getLoginView().closeModal();
+			loginAction.execute();
+		}
 	}
 
 	@Override
 	public void register() {
-		
-		// TODO: register new user (which, if successful, also logs them in)
+		UserManager userManager = new UserManager();
+		String username = getLoginView().getRegisterUsername();
+		String password = getLoginView().getRegisterPassword();
+		String passConf = getLoginView().getRegisterPasswordRepeat();
+		boolean sucessful = userManager.createUser(username, password, passConf);
 		
 		// If register succeeded
-		getLoginView().closeModal();
-		loginAction.execute();
+		if (sucessful) {
+			getLoginView().closeModal();
+			loginAction.execute();
+		}
 	}
 
 }
