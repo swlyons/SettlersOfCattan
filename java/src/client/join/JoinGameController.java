@@ -4,6 +4,9 @@ import shared.definitions.CatanColor;
 import client.base.*;
 import client.data.*;
 import client.misc.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Random;
 
 
 /**
@@ -15,7 +18,8 @@ public class JoinGameController extends Controller implements IJoinGameControlle
 	private ISelectColorView selectColorView;
 	private IMessageView messageView;
 	private IAction joinAction;
-	
+	private ArrayList<GameInfo> games = new ArrayList<>();
+        int currentGameId = 0;
 	/**
 	 * JoinGameController constructor
 	 * 
@@ -107,8 +111,39 @@ public class JoinGameController extends Controller implements IJoinGameControlle
 
 	@Override
 	public void createNewGame() {
-		
+		//add player to list of existing game
+                PlayerInfo player = new PlayerInfo();
+                player.setName("");
+                player.setPlayerIndex(0);
+                Random rand = new Random();
+                //need a random number for the player index (unique)
+                player.setId(rand.nextInt());
+                
+                //set GameInfo for new Game
+                GameInfo game = new GameInfo();
+                game.addPlayer(player);
+                game.setTitle(getNewGameView().getTitle());
+                game.setId(currentGameId);
+                
+                //clear all the New Game View options
+                getNewGameView().setTitle("");
+                getNewGameView().setRandomlyPlaceHexes(false);
+                getNewGameView().setRandomlyPlaceNumbers(false);
+                getNewGameView().setUseRandomPorts(false);
+                
+                //add game to list of games
+                games.add(currentGameId, game);
+                
+                
+                //update the list of games in the JoinGame View 
+                GameInfo[] newGames = new GameInfo[games.size()];
+                newGames = games.toArray(newGames);
+                getJoinGameView().setGames(newGames, player);
+                
 		getNewGameView().closeModal();
+                
+                //increment the game id
+                currentGameId++;
 	}
 
 	@Override

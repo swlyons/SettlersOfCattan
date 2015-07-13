@@ -236,7 +236,11 @@ public class ClientCommunicator {
         }
         return result;
     }
-
+    
+     public Map<Integer, String> getCookies() {
+        return cookies;
+    }
+     
     // Auxiliary Constants, Attributes, and Methods
     private static String SERVER_HOST = "localhost";
     private static int SERVER_PORT = 8081;
@@ -247,6 +251,8 @@ public class ClientCommunicator {
 
     private Gson model;
     private Map<Integer, String> cookies;
+
+   
 
     // Singleton Instance
     private static ClientCommunicator singleton = null;

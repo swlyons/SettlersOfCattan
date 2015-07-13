@@ -93,7 +93,7 @@ public class Catan extends JFrame
 					public void execute()
 					{
 						joinController.start();
-					}
+                                        }
 				});
 				loginView.setController(loginController);
 				loginView.setController(loginController);
