@@ -2,8 +2,12 @@ package client.join;
 
 import shared.definitions.CatanColor;
 import client.base.*;
+import client.communication.ClientCommunicator;
+import client.communication.ClientCommunicatorFascadeSettlersOfCatan;
+import client.communication.CookieModel;
 import client.data.*;
 import client.misc.*;
+import com.google.gson.GsonBuilder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
@@ -19,6 +23,7 @@ public class JoinGameController extends Controller implements IJoinGameControlle
 	private IMessageView messageView;
 	private IAction joinAction;
 	private ArrayList<GameInfo> games = new ArrayList<>();
+        
         int currentGameId = 0;
 	/**
 	 * JoinGameController constructor
@@ -113,7 +118,14 @@ public class JoinGameController extends Controller implements IJoinGameControlle
 	public void createNewGame() {
 		//add player to list of existing game
                 PlayerInfo player = new PlayerInfo();
-                player.setName("");
+                ClientCommunicatorFascadeSettlersOfCatan client = new ClientCommunicatorFascadeSettlersOfCatan();
+                String cookie = "";
+                
+                for(java.util.Map.Entry<Integer, String> cookieValue : client.getCookies().entrySet()){
+                    cookie = cookieValue.getValue();
+                }
+                System.out.println(cookie);
+                //player.setName(new GsonBuilder().create().fromJson(cookie.split("=")[1], CookieModel.class).getName());
                 player.setPlayerIndex(0);
                 Random rand = new Random();
                 //need a random number for the player index (unique)

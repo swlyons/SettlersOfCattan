@@ -32,6 +32,7 @@ import client.proxy.SendChat;
 import client.proxy.Soldier;
 import client.proxy.Year_Of_Plenty;
 import java.util.ArrayList;
+import java.util.Map;
 
 /**
  *
@@ -190,5 +191,7 @@ public class ClientCommunicatorFascadeSettlersOfCatan {
     
     //not implemented for this phase
     //private static final String LOG_LEVEL_UTIL = "util/changeLogLevel";
-
+    public Map<Integer, String> getCookies() {
+        return ClientCommunicator.getSingleton().getCookies();
+    }
 }
