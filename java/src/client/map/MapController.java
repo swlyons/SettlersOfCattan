@@ -17,6 +17,7 @@ import client.communication.ClientCommunicatorFascadeSettlersOfCatan;
 public class MapController extends Controller implements IMapController {
 	
 	private IRobView robView;
+        private boolean isFree = false;
 	
 	public MapController(IMapView view, IRobView robView) {
 		
@@ -164,25 +165,47 @@ public class MapController extends Controller implements IMapController {
 	public void placeRoad(EdgeLocation edgeLoc) {
 		GameManager gm = ClientCommunicator.getSingleton().getGameManager();
                 Integer currentPlayer = gm.getGame().getTurnTracker().getCurrentTurn();
-                if(gm.getLocationManager().settleEdge(edgeLoc, currentPlayer)){
-                    CatanColor color = CatanColor.valueOf(gm.getGame().getPlayers().get(currentPlayer).getColor());                                        
-                    getView().placeRoad(edgeLoc, color);
+                if(isFree){
+                    if(gm.placeFreeRoad(edgeLoc)){
+                        CatanColor color = CatanColor.valueOf(gm.getGame().getPlayers().get(currentPlayer).getColor());                                        
+                        getView().placeRoad(edgeLoc, color);
+                    }
+                }else{
+                    if(gm.buildRoad(edgeLoc)){
+                        CatanColor color = CatanColor.valueOf(gm.getGame().getPlayers().get(currentPlayer).getColor());                                        
+                        getView().placeRoad(edgeLoc, color);
+                    }
                 }
+
 	}
 
 	public void placeSettlement(VertexLocation vertLoc) {
 		GameManager gm = ClientCommunicator.getSingleton().getGameManager();
                 Integer currentPlayer = gm.getGame().getTurnTracker().getCurrentTurn();
-                if(gm.getLocationManager().settleLocation(vertLoc, currentPlayer, false)){
-                    CatanColor color = CatanColor.valueOf(gm.getGame().getPlayers().get(currentPlayer).getColor());                                        
-                    getView().placeSettlement(vertLoc, color);
-                }		
-	}
+                if(isFree){
+                    if(gm.getLocationManager().getSettledLocations().size()<4){
+                        gm.placeFirstSettlement(vertLoc);
+                        CatanColor color = CatanColor.valueOf(gm.getGame().getPlayers().get(currentPlayer).getColor());                                        
+                        getView().placeSettlement(vertLoc, color);                                        
+                    }else{
+                        if(gm.getLocationManager().getSettledLocations().size()<8){
+                            gm.placeSecondSettlement(vertLoc);
+                            CatanColor color = CatanColor.valueOf(gm.getGame().getPlayers().get(currentPlayer).getColor());                                        
+                            getView().placeSettlement(vertLoc, color);                                                                
+                        }
+                    }                                        
+                }else{
+                    if(gm.buildStructure(PieceType.SETTLEMENT, vertLoc)){
+                        CatanColor color = CatanColor.valueOf(gm.getGame().getPlayers().get(currentPlayer).getColor());                                        
+                      getView().placeSettlement(vertLoc, color);                                                                
+                    }
+                }
+    	}
 
 	public void placeCity(VertexLocation vertLoc) {
 		GameManager gm = ClientCommunicator.getSingleton().getGameManager();
                 Integer currentPlayer = gm.getGame().getTurnTracker().getCurrentTurn();
-                if(gm.getLocationManager().upgradeToCity(vertLoc)){
+                if(gm.buildStructure(PieceType.CITY, vertLoc)){
                     CatanColor color = CatanColor.valueOf(gm.getGame().getPlayers().get(currentPlayer).getColor());
                     getView().placeCity(vertLoc, color);
                 }
@@ -216,12 +239,11 @@ public class MapController extends Controller implements IMapController {
         
 	public void startMove(PieceType pieceType, boolean isFree, boolean allowDisconnected) {	
                 GameManager gm = ClientCommunicator.getSingleton().getGameManager();
+                this.isFree = isFree;
                 Integer currentPlayer = gm.getGame().getTurnTracker().getCurrentTurn();
                 switch(pieceType){
                     case ROAD:
-                        if(isFree){
-                            
-                        }
+                        
                         break;
                     case SETTLEMENT:
                         break;
