@@ -163,9 +163,8 @@ public class ClientCommunicator {
                     }
                 }
             } else {
-                throw new ClientException(String.format(
-                        "doGet failed: %s (http code %d)", commandName,
-                        connection.getResponseCode()));
+                 String content = "Failed"; //br.readLine();
+                    result.setResponseBody(content);
             }
         } catch (IOException e) {
             throw new ClientException(String.format("doGet failed: %s",
@@ -255,7 +254,11 @@ public class ClientCommunicator {
         }
         return result;
     }
-
+    
+     public Map<Integer, String> getCookies() {
+        return cookies;
+    }
+     
     // Auxiliary Constants, Attributes, and Methods
     private static String SERVER_HOST = "localhost";
     private static int SERVER_PORT = 8081;
@@ -267,6 +270,8 @@ public class ClientCommunicator {
     private Gson model;
     private Map<Integer, String> cookies;
 
+
+   
 
     // Singleton Instance
     private static ClientCommunicator singleton = null;
