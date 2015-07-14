@@ -98,10 +98,15 @@ public class LoginController extends Controller implements ILoginController {
 		
 		// If register succeeded
 		if (sucessful) {
-			getLoginView().closeModal();
-			loginAction.execute();
-		}
-		else {
+                        if(userManager.authenticateUser(username, password)){
+                            getLoginView().closeModal();
+                            loginAction.execute();
+                        }else{
+                            messageView.setTitle("Error");
+                            messageView.setMessage("Sign in failed!");
+                            messageView.showModal();                        
+                        }
+		} else {
 			messageView.setTitle("Error");
 			if (userManager.validatePasswordsMatch(password, passConf)) {
 				messageView.setMessage("Invalid username or password!");
