@@ -45,11 +45,21 @@ public class JoinGameViewPoller extends TimerTask {
             activeGames = ClientCommunicatorFascadeSettlersOfCatan.getSingleton().listGames();
             GameInfo[] games = new GameInfo[activeGames.size()];
             activeGames.toArray(games);
-
+            for (GameInfo game : activeGames) {
+                for (int i = 0; i < game.getPlayers().size(); i++) {
+                    if (game.getPlayers().get(i).getId() == -1) {
+                        game.getPlayers().remove(i);
+                        i--;
+                    }
+                }
+            }
             PlayerInfo playerInfo = new PlayerInfo();
             playerInfo.setId(ClientCommunicator.getSingleton().getPlayerId());
             playerInfo.setName(ClientCommunicator.getSingleton().getName());
-
+            
+            GameInfo[] allGames = new GameInfo[activeGames.size()];
+            activeGames.toArray(allGames);
+            
             getJoinGameController().getJoinGameView().setGames(games, playerInfo);
         } catch (ClientException ex) {
             Logger.getLogger(Poller.class.getName()).log(Level.SEVERE, null, ex);
