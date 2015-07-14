@@ -30,7 +30,15 @@ public class JoinGameController extends Controller implements IJoinGameControlle
     private ISelectColorView selectColorView;
     private IMessageView messageView;
     private IAction joinAction;
+    private IPlayerWaitingView playerWaitingView;
 
+    public IPlayerWaitingView getPlayerWaitingView() {
+        return playerWaitingView;
+    }
+
+    public void setPlayerWatingView(IPlayerWaitingView playerWaitingView) {
+        this.playerWaitingView = playerWaitingView;
+    }
     /**
      * JoinGameController constructor
      *
@@ -191,6 +199,17 @@ public class JoinGameController extends Controller implements IJoinGameControlle
             if (ClientCommunicatorFascadeSettlersOfCatan.getSingleton().joinGame(request)) {
 
                 // If join succeeded
+                //add list of players
+                
+                ArrayList<GameInfo> gamesOnServer = ClientCommunicatorFascadeSettlersOfCatan.getSingleton().listGames();
+                for(GameInfo game : gamesOnServer){
+                    if(game.getId() == gameId)
+                    {
+                        getPlayerWaitingView().setPlayers((PlayerInfo[]) game.getPlayers().toArray());
+                        break;
+                    }
+                }
+                
                 getSelectColorView().closeModal();
                 getJoinGameView().closeModal();
                 joinAction.execute();
