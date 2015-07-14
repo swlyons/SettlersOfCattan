@@ -108,22 +108,57 @@ public class MapController extends Controller implements IMapController {
 
 	public boolean canPlaceRoad(EdgeLocation edgeLoc) {
 		GameManager gm = ClientCommunicator.getSingleton().getGameManager();
-		return true;
+                Integer currentPlayer = gm.getGame().getTurnTracker().getCurrentTurn();
+                boolean canPlaceRoad = false;                
+                for(Edge edge : gm.getLocationManager().getUnsettledEdges()){
+                    if(edge.getEdgeLocation().equals(edgeLoc)){
+                        if(edge.getWhoCanBuild().contains(currentPlayer)){
+                            canPlaceRoad = true;
+                        }
+                    }
+                }                                
+		return canPlaceRoad;
 	}
 
 	public boolean canPlaceSettlement(VertexLocation vertLoc) {
-		
-		return true;
+		GameManager gm = ClientCommunicator.getSingleton().getGameManager();
+                Integer currentPlayer = gm.getGame().getTurnTracker().getCurrentTurn();
+                boolean canPlaceSettlement = false;                
+                for(Location lc : gm.getLocationManager().getUnsettledLocations()){
+                    if(lc.getNormalizedLocation().equals(vertLoc)){
+                        if(lc.getWhoCanBuild().contains(currentPlayer)){
+                            canPlaceSettlement = true;
+                        }
+                    }                    
+                }                
+		return canPlaceSettlement;
 	}
 
 	public boolean canPlaceCity(VertexLocation vertLoc) {
-		
-		return true;
+                GameManager gm = ClientCommunicator.getSingleton().getGameManager();
+                Integer currentPlayer = gm.getGame().getTurnTracker().getCurrentTurn();
+                boolean canPlaceCity = false;                
+                for(Location lc : gm.getLocationManager().getSettledLocations()){
+                    if(lc.getNormalizedLocation().equals(vertLoc)){
+                        if(!lc.getIsCity()){
+                            canPlaceCity = true;
+                        }
+                    }                    
+                }                                
+		return canPlaceCity;
 	}
 
 	public boolean canPlaceRobber(HexLocation hexLoc) {
-		
-		return true;
+		GameManager gm = ClientCommunicator.getSingleton().getGameManager();
+                boolean canPlaceRobber = false;
+                for(Hex hex : gm.getMapManager().getHexList()){
+                    if(hex.getLocation().equals(hexLoc)){
+                        if(!hex.getHasRobber()){
+                            canPlaceRobber = true;
+                        }
+                    }
+                }
+		return canPlaceRobber;
 	}
 
 	public void placeRoad(EdgeLocation edgeLoc) {
