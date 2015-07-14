@@ -224,7 +224,6 @@ public class JoinGameController extends Controller implements IJoinGameControlle
                         PlayerInfo[] players = new PlayerInfo[activePlayers.size()];
                         activePlayers.toArray(players);
                         getPlayerWaitingView().setPlayers(players);
-                        System.out.println("Here");
                         break;
                     }
                 }
