@@ -29,11 +29,12 @@ public class PlayerWaitingController extends Controller implements IPlayerWaitin
     public void addAI() {
         AddAIRequest add = new AddAIRequest(getView().getSelectedAI());
         try {
-            if (ClientCommunicatorFascadeSettlersOfCatan.getSingleton().addAIToGame(add)) {
-                System.out.println("AddedAI");
-            } else {
-                System.out.println("FailedToAddAi");
-            }
+            ClientCommunicatorFascadeSettlersOfCatan.getSingleton().addAIToGame(add);
+//            if (ClientCommunicatorFascadeSettlersOfCatan.getSingleton().addAIToGame(add)) {
+//                System.out.println("AddedAI");
+//            } else {
+//                System.out.println("FailedToAddAi");
+//            }
         } catch (Exception e) {
             System.out.println("Couldn't AddAi");
         }

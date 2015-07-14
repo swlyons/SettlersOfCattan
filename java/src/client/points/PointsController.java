@@ -28,7 +28,7 @@ public class PointsController extends Controller implements IPointsController {
 		
 		setFinishedView(finishedView);
 		
-		initFromModel();
+//		initFromModel();
 	}
 	
 	public IPointsView getPointsView() {
@@ -44,8 +44,8 @@ public class PointsController extends Controller implements IPointsController {
 	}
 
 	private void initFromModel() {
+		System.out.println("Yay");
 		Game game = ClientCommunicator.getSingleton().getGameManager().getGame();
-		
 		int points = 0;
 		
                 GameManager gm = ClientCommunicator.getSingleton().getGameManager();
