@@ -19,7 +19,7 @@ public class GameHistoryController extends Controller implements IGameHistoryCon
 		
 		super(view);
 		
-		initFromModel();
+//		initFromModel();
 	}
 	
 	@Override

@@ -7,6 +7,7 @@ package client.communication;
 
 import client.ClientException;
 import client.data.Game;
+import client.data.GameInfo;
 import client.managers.GameManager;
 import client.proxy.BuyDevCard;
 import client.proxy.Command;
@@ -132,8 +133,8 @@ public class ClientCommunicator {
             connection.setRequestMethod(HTTP_GET);
             //set cookie
             if (playerID > -1) {
-                for(Map.Entry<Integer, String> cook : cookies.entrySet()){
-                    playerID = cook.getKey();
+                if(playerIdThisOne!=-1){
+                    playerID = playerIdThisOne;
                 }                
                 connection.setRequestProperty("Cookie", cookies.get(playerID));
             }
@@ -146,7 +147,12 @@ public class ClientCommunicator {
                     BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
                     String content = br.readLine();
                     //only games/list
-                    if (commandName.equals("games/list") || commandName.equals("game/commands")) {
+                    if (commandName.equals("games/list")) {
+//                    if (commandName.equals("games/list") || commandName.equals("game/commands")) {
+                        Type listType = new TypeToken<ArrayList<GameInfo>>() {
+                        }.getType();
+                        result.setResponseBody(model.fromJson(content, listType));
+                    } else if (commandName.equals("game/commands")){
                         Type listType = new TypeToken<ArrayList<Game>>() {
                         }.getType();
                         result.setResponseBody(model.fromJson(content, listType));
@@ -188,8 +194,8 @@ public class ClientCommunicator {
 
             //set cookie by player id
             if (playerID > -1) {
-                for(Map.Entry<Integer, String> cook : cookies.entrySet()){
-                    playerID = cook.getKey();
+                if(playerIdThisOne!=-1){
+                    playerID = playerIdThisOne;
                 }
                 System.out.println("PlayerID: " + playerID);
                 connection.setRequestProperty("Cookie", cookies.get(playerID));
@@ -221,8 +227,9 @@ public class ClientCommunicator {
 
                             String userCookie = connection.getHeaderField("Set-Cookie").split(";")[0];
                             String decodedCookie = URLDecoder.decode(userCookie.split("=")[1], "UTF-8");
-                            int id = model.fromJson(decodedCookie, CookieModel.class).getPlayerID();
-                            cookies.put(id, userCookie + ((cookies.get(id) != null) ? "; " + cookies.get(id) : ""));
+                            playerIdThisOne = model.fromJson(decodedCookie, CookieModel.class).getPlayerID();
+                            name = model.fromJson(decodedCookie, CookieModel.class).getName();
+                            cookies.put(playerIdThisOne, userCookie + ((cookies.get(playerIdThisOne) != null) ? "; " + cookies.get(playerIdThisOne) : ""));
                         }
                     } else if (commandName.equals("games/join")) {
                         result.setResponseBody(content);
@@ -231,6 +238,10 @@ public class ClientCommunicator {
                             //cookies.put(playerID, "");
                             cookies.put(playerID, ((cookies.get(playerID) != null) ? cookies.get(playerID) + "; " : "") + gameCookie);
                         }
+                    } else if(commandName.equals("games/create")){
+                        result.setResponseBody(model.fromJson(content, GameInfo.class));
+                    } else if(commandName.equals("game/addAI")){
+                        result.setResponseBody(content);
                     } else {
                         if (commandName.equals("games/save") || commandName.equals("games/load")) {
                             result.setResponseBody(content);
@@ -271,12 +282,15 @@ public class ClientCommunicator {
     private Gson model;
     private Map<Integer, String> cookies;
 
+    private Integer playerIdThisOne = -1;
+    private String name = "";
+    
     public Integer getPlayerId(){
-        Integer id = -1;
-        for(Map.Entry<Integer, String> cook : cookies.entrySet()){
-                    id = cook.getKey();
-                }
-        return id;
+        return playerIdThisOne;
+    }
+    
+    public String getName(){
+        return name;
     }
 
    

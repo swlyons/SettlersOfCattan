@@ -11,6 +11,7 @@ import client.proxy.CreateGameRequest;
 import client.proxy.SaveGameRequest;
 import client.communication.ClientCommunicator;
 import client.data.Game;
+import client.data.GameInfo;
 import client.data.User;
 import client.proxy.BuildCity;
 import client.proxy.BuyDevCard;
@@ -130,7 +131,7 @@ public class ClientCommunicatorFascadeSettlersOfCatanTest {
         // test games for Sam
         ClientCommunicatorFascadeSettlersOfCatan instance = new ClientCommunicatorFascadeSettlersOfCatan();
         String expResult = "Sam";
-        ArrayList<Game> result = instance.listGames();
+        ArrayList<GameInfo> result = instance.listGames();
 
         //1st player should be Sam
         assertEquals(expResult, result.get(0).getPlayers().get(0).getName());
@@ -154,7 +155,7 @@ public class ClientCommunicatorFascadeSettlersOfCatanTest {
         ClientCommunicatorFascadeSettlersOfCatan instance = new ClientCommunicatorFascadeSettlersOfCatan();
         String expResult = "Dubbs";
         CreateGameRequest createGameRequest = new CreateGameRequest(true, false, true, "Dubbs");
-        Game result = instance.createGame(createGameRequest);
+        GameInfo result = instance.createGame(createGameRequest);
         assertEquals(expResult, result.getTitle());
 
         System.out.print("...PASSED");
