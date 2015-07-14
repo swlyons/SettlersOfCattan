@@ -229,7 +229,7 @@ public class ClientCommunicatorFascadeSettlersOfCatanTest {
         instance.login(new User("Sam", "sam"));
         instance.joinGame(new JoinGameRequest(0, "red"));
         
-        Game result = instance.getGameModel("");
+        GameInfo result = instance.getGameModel("");
         assertEquals(expResult, result.getPlayers().get(0).getName());
         
         //test with query param
@@ -257,7 +257,7 @@ public class ClientCommunicatorFascadeSettlersOfCatanTest {
         //must login and join a game first
         instance.login(new User("Sam", "sam"));
         instance.joinGame(new JoinGameRequest(0, "red"));
-        Game result = instance.resetGame();
+        GameInfo result = instance.resetGame();
 
         assertEquals(expResult,result.getBank().getTotalResources());
       
@@ -302,7 +302,7 @@ public class ClientCommunicatorFascadeSettlersOfCatanTest {
         commands.add(new BuyDevCard(0));
         commands.add(buildCity);
         
-        Game result = instance.executeGameCommands(commands);
+        GameInfo result = instance.executeGameCommands(commands);
         
         assert((result.getLog().getLines().get(0).getMessage()).contains(expResult));
         
@@ -378,11 +378,7 @@ public class ClientCommunicatorFascadeSettlersOfCatanTest {
         int expResult = 9;
         instance.login(new User("Sam", "sam"));
         instance.joinGame(new JoinGameRequest(0, "red"));
-        String resultStr = instance.finishMove(new FinishMove(0));
-		Gson model = new GsonBuilder().create();
-
-        // initialize the client object model
-        Game result = model.fromJson(resultStr, Game.class);
+        GameInfo result = instance.finishMove(new FinishMove(0));
         
         //since 3 before it should be 4 now (since I rolled the dice)
         assert(expResult >= result.getVersion());
@@ -402,13 +398,8 @@ public class ClientCommunicatorFascadeSettlersOfCatanTest {
         instance.login(new User("Sam", "sam"));
         instance.joinGame(new JoinGameRequest(0, "red"));
 
-        String resultStr = instance.finishMove(new FinishMove(0));
-		Gson model = new GsonBuilder().create();
+        GameInfo result = instance.finishMove(new FinishMove(0));
 
-        // initialize the client object model
-        Game result = model.fromJson(resultStr, Game.class);
-
-        
         //Sam should've ended his turn
         assertEquals(expResult, result);
         
@@ -426,7 +417,7 @@ public class ClientCommunicatorFascadeSettlersOfCatanTest {
         int expResult = 111;
         instance.login(new User("Sam", "sam"));
         instance.joinGame(new JoinGameRequest(0, "red"));
-        Game result = instance.buyDevCard(new BuyDevCard(0));
+        GameInfo result = instance.buyDevCard(new BuyDevCard(0));
         
         //should have decrease by one
         assertEquals(expResult, result.getBank().getTotalResources());
@@ -472,7 +463,7 @@ public class ClientCommunicatorFascadeSettlersOfCatanTest {
         Game expResult = null;
         instance.login(new User("Sam", "sam"));
         instance.joinGame(new JoinGameRequest(0, "red"));
-        Game result = instance.roadBuilding(roadBuilding);
+        GameInfo result = instance.roadBuilding(roadBuilding);
         assertEquals(expResult, result.getTitle());
         
         System.out.print("...PASSED");
@@ -493,7 +484,7 @@ public class ClientCommunicatorFascadeSettlersOfCatanTest {
         Game expResult = null;
         instance.login(new User("Sam", "sam"));
         instance.joinGame(new JoinGameRequest(0, "red"));
-        Game result = instance.monopoly(monopoly);
+        GameInfo result = instance.monopoly(monopoly);
         assertEquals(expResult, result.getTitle());
        
         System.out.print("...PASSED");

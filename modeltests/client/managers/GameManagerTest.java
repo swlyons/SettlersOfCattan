@@ -5,7 +5,9 @@
  */
 package client.managers;
 
+import client.communication.CookieModel;
 import client.data.*;
+import com.google.gson.GsonBuilder;
 
 import shared.locations.*;
 import shared.definitions.*;
@@ -26,10 +28,10 @@ import static org.junit.Assert.*;
  */
 
 public class GameManagerTest {
-	private String jsonDataIn = "";
+	private GameInfo jsonDataIn = null;
 
 	public GameManagerTest() {
-		jsonDataIn = "{\"deck\":\n" + "{\"yearOfPlenty\":\n"
+		String jsonString = "{\"deck\":\n" + "{\"yearOfPlenty\":\n"
 				+ "2,\"monopoly\":\n" + "2,\"soldier\":\n"
 				+ "10,\"roadBuilding\":\n" + "1,\"monument\":\n"
 				+ "4},\"map\":\n" + "{\"hexGrid\":\n" + "{\"hexes\":\n"
@@ -782,6 +784,7 @@ public class GameManagerTest {
 				+ "7,\"ore\":\n" + "2},\"turnTracker\":\n" + "{\"status\":\n"
 				+ "\"Playing\",\"currentTurn\":\n" + "0},\"largestArmy\":\n"
 				+ "2,\"longestRoad\":\n" + "0,\"winner\":\n" + "-1}";
+                jsonDataIn = new GsonBuilder().create().fromJson(jsonString, GameInfo.class);
 	}
 
 	@BeforeClass

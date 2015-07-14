@@ -46,14 +46,14 @@ public class DevCardList {
 		}
 	}
 
-	public DevCardList(List<Player> players) {
+	public DevCardList(List<PlayerInfo> players) {
 		this.monopoly = 2;
 		this.monument = 5;
 		this.roadBuilding = 2;
 		this.soldier = 14;
 		this.yearOfPlenty = 2;
 		
-		for(Player p : players){
+		for(PlayerInfo p : players){
 			this.monopoly -= p.getOldDevCards().getMonopoly();
 			this.monument -= p.getOldDevCards().getMonument();
 			this.monument -= p.getMonuments();
