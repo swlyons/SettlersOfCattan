@@ -39,16 +39,14 @@ public class PlayerWaitingController extends Controller implements IPlayerWaitin
 	@Override
 	public void addAI() {
                 AddAIRequest add = new AddAIRequest(getView().getSelectedAI());
-                System.out.println(add);
                 try{
-                    String responseBody = ClientCommunicatorFascadeSettlersOfCatan.getSingleton().addAIToGame(add);
-                    GameManager gm = ClientCommunicator.getSingleton().getGameManager();
-                    gm.initializeGame(responseBody);
-                    if(gm.getGame().getPlayers().size()==4){
-                        getView().closeModal();
+                    if(ClientCommunicatorFascadeSettlersOfCatan.getSingleton().addAIToGame(add)){
+                        System.out.println("AddedAI");
+                    }else{
+                        System.out.println("FailedToAddAi");
                     }
                 } catch (Exception e){
-                
+                        System.out.println("Couldn't AddAi");
                 }
                 
         }

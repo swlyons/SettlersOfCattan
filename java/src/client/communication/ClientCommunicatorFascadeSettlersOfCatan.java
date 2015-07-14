@@ -75,8 +75,8 @@ public class ClientCommunicatorFascadeSettlersOfCatan {
         return (ArrayList<GameInfo>) ClientCommunicator.getSingleton().doGet(LIST_GAMES, "", -1).getResponseBody();
     }
 
-    public Game createGame(CreateGameRequest createGameRequest) throws ClientException {
-        return (Game) ClientCommunicator.getSingleton().doPost(CREATE_GAME, createGameRequest, -1).getResponseBody();
+    public GameInfo createGame(CreateGameRequest createGameRequest) throws ClientException {
+        return (GameInfo) ClientCommunicator.getSingleton().doPost(CREATE_GAME, createGameRequest, -1).getResponseBody();
     }
 
     public boolean joinGame(JoinGameRequest joinGameRequest) throws ClientException {
@@ -103,8 +103,8 @@ public class ClientCommunicatorFascadeSettlersOfCatan {
     public Game executeGameCommands(ArrayList<Command> commands) throws ClientException {
         return (Game) ClientCommunicator.getSingleton().doPost(COMMANDS_GAME, commands, 0).getResponseBody();
     }
-    public String addAIToGame(AddAIRequest addAIRequest) throws ClientException {
-        return ClientCommunicator.getSingleton().doPost(ADD_AI_GAME, addAIRequest, 0).getResponseBody().toString();
+    public boolean addAIToGame(AddAIRequest addAIRequest) throws ClientException {
+        return ClientCommunicator.getSingleton().doPost(ADD_AI_GAME, addAIRequest, 0).getResponseBody().equals("Success");
     }
     public ArrayList<String> listAITypesInGame() throws ClientException {
         return (ArrayList<String>) ClientCommunicator.getSingleton().doGet(LIST_AI_GAME, "", 0).getResponseBody();

@@ -110,8 +110,12 @@ public class JoinGameView extends OverlayView implements IJoinGameView {
                 if (game.getPlayers().contains(localPlayer)) {
                     joinButton = new JButton("Re-Join");
                 } else if (game.getPlayers().size() >= 4) {
-                    joinButton = new JButton("Full");
-                    joinButton.setEnabled(false);
+//                    if(game.getPlayers().get(3).getId()==-1){
+//                        joinButton = new JButton("Join");
+//                    }else{
+                        joinButton = new JButton("Full");
+                        joinButton.setEnabled(false);
+//                    }
                 } else {
                     joinButton = new JButton("Join");
                 }
