@@ -191,6 +191,7 @@ public class ClientCommunicator {
                 for(Map.Entry<Integer, String> cook : cookies.entrySet()){
                     playerID = cook.getKey();
                 }
+                System.out.println("PlayerID: " + playerID);
                 connection.setRequestProperty("Cookie", cookies.get(playerID));
             }
             connection.setDoOutput(true);

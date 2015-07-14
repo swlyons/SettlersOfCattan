@@ -194,4 +194,5 @@ public class ClientCommunicatorFascadeSettlersOfCatan {
     public Map<Integer, String> getCookies() {
         return ClientCommunicator.getSingleton().getCookies();
     }
+    
 }
