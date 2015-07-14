@@ -182,7 +182,7 @@ public class MapController extends Controller implements IMapController {
 	public void placeCity(VertexLocation vertLoc) {
 		GameManager gm = ClientCommunicator.getSingleton().getGameManager();
                 Integer currentPlayer = gm.getGame().getTurnTracker().getCurrentTurn();
-                if(gm.getLocationManager().settleLocation(vertLoc, currentPlayer, false)){
+                if(gm.getLocationManager().upgradeToCity(vertLoc)){
                     CatanColor color = CatanColor.valueOf(gm.getGame().getPlayers().get(currentPlayer).getColor());
                     getView().placeCity(vertLoc, color);
                 }
