@@ -1,6 +1,5 @@
 package client.join;
 
-import client.ClientException;
 import shared.definitions.CatanColor;
 import client.base.*;
 import client.communication.ClientCommunicator;
@@ -9,10 +8,8 @@ import client.data.*;
 import client.misc.*;
 import client.proxy.CreateGameRequest;
 import client.proxy.JoinGameRequest;
-import client.proxy.Poller;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.Timer;
 
 /**
  * Implementation for the join game controller
@@ -26,6 +23,9 @@ public class JoinGameController extends Controller implements IJoinGameControlle
     private IPlayerWaitingView playerWaitingView;
     private PlayerWaitingViewPoller playerWaitingViewPoller;
     private JoinGameViewPoller joinGameViewPoller;
+    private java.util.Timer playerWaitingTimer = new java.util.Timer();
+    private java.util.Timer joinGameTimer = new java.util.Timer();
+    
     /**
      * JoinGameController constructor
      *
@@ -53,6 +53,14 @@ public class JoinGameController extends Controller implements IJoinGameControlle
         return (IJoinGameView) super.getView();
     }
 
+    public Timer getPlayerWaitingTimer() {
+        return playerWaitingTimer;
+    }
+
+    public void setPlayerWaitingTimer(Timer playerWaitingTimer) {
+        this.playerWaitingTimer = playerWaitingTimer;
+    }
+   
     /**
      * Returns the action to be executed when the user joins a game
      *
@@ -78,7 +86,7 @@ public class JoinGameController extends Controller implements IJoinGameControlle
     public void setJoinGameViewPoller(JoinGameViewPoller joinGameViewPoller) {
         this.joinGameViewPoller = joinGameViewPoller;
     }
-    
+
     /**
      * Sets the action to be executed when the user joins a game
      *
@@ -137,8 +145,7 @@ public class JoinGameController extends Controller implements IJoinGameControlle
 
     @Override
     public void start() {
-        java.util.Timer timer = new java.util.Timer();
-        timer.schedule(new JoinGameViewPoller(this), 0, 5000);
+        joinGameTimer.schedule(new JoinGameViewPoller(this), 0, 5000);
     }
 
     @Override
@@ -208,10 +215,9 @@ public class JoinGameController extends Controller implements IJoinGameControlle
         JoinGameRequest request = new JoinGameRequest(gameId, color.name().toLowerCase());
         try {
             if (ClientCommunicatorFascadeSettlersOfCatan.getSingleton().joinGame(request)) {
-                
-                 //start the View Poller (runs every second)
-                java.util.Timer timer = new java.util.Timer();
-                timer.schedule(new PlayerWaitingViewPoller(this), 0, 5000);
+
+                //start the View Poller (runs every 5 seconds)
+                playerWaitingTimer.schedule(new PlayerWaitingViewPoller(this, playerWaitingTimer, joinGameTimer), 0, 5000);
 
             } else {
                 ArrayList<GameInfo> gamesOnServer = ClientCommunicatorFascadeSettlersOfCatan.getSingleton().listGames();

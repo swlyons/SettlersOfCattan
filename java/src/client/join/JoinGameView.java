@@ -28,6 +28,8 @@ public class JoinGameView extends OverlayView implements IJoinGameView {
     private JLabel currentPlayer;
     private JLabel join;
 
+    private JLabel playerNames;
+    
     private JButton createButton;
     private JButton tempJoinButton;
 
@@ -35,13 +37,16 @@ public class JoinGameView extends OverlayView implements IJoinGameView {
     private JPanel gamePanel;
     private JPanel buttonPanel;
 
+    private Font labelFont;
+
     private GameInfo[] games;
     private PlayerInfo localPlayer;
 
     public JoinGameView() {
         this.initialize();
     }
-
+    
+    
     private void initialize() {
         this.initializeView();
     }
@@ -52,7 +57,7 @@ public class JoinGameView extends OverlayView implements IJoinGameView {
         this.setBorder(BorderFactory.createLineBorder(Color.black, BORDER_WIDTH));
 
         label = new JLabel("Welcome to the game hub");
-        Font labelFont = label.getFont();
+        labelFont = label.getFont();
         labelFont = labelFont.deriveFont(labelFont.getStyle(), LABEL_TEXT_SIZE);
         label.setFont(labelFont);
         subLabel = new JLabel("Join an existing game, or create your own");
@@ -102,9 +107,9 @@ public class JoinGameView extends OverlayView implements IJoinGameView {
                         players = players + game.getPlayers().get(j).getName();
                     }
                 }
-                JLabel tmp3 = new JLabel(players);
-                tmp3.setFont(labelFont);
-                gamePanel.add(tmp3);
+                playerNames= new JLabel(players);
+                playerNames.setFont(labelFont);
+                gamePanel.add(playerNames);
                 JButton joinButton;
 
                 if (game.getPlayers().contains(localPlayer)) {
@@ -113,8 +118,8 @@ public class JoinGameView extends OverlayView implements IJoinGameView {
 //                    if(game.getPlayers().get(3).getId()==-1){
 //                        joinButton = new JButton("Join");
 //                    }else{
-                        joinButton = new JButton("Full");
-                        joinButton.setEnabled(false);
+                    joinButton = new JButton("Full");
+                    joinButton.setEnabled(false);
 //                    }
                 } else {
                     joinButton = new JButton("Join");
@@ -167,6 +172,7 @@ public class JoinGameView extends OverlayView implements IJoinGameView {
                 getController().startJoinGame(null);
             } else {
                 try {
+                    //System.out.println(e.getActionCommand());
                     int gameId = Integer.parseInt(e.getActionCommand());
                     GameInfo game = null;
                     for (GameInfo g : games) {

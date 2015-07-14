@@ -12,6 +12,7 @@ import client.data.GameInfo;
 import client.data.PlayerInfo;
 import client.proxy.Poller;
 import java.util.ArrayList;
+import java.util.Timer;
 import java.util.TimerTask;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -23,12 +24,15 @@ import java.util.logging.Logger;
 public class PlayerWaitingViewPoller extends TimerTask {
 
     private JoinGameController joinGameController;
-
+    private Timer playerWaitingTimer;
+    private Timer joinGameTimer;
     public PlayerWaitingViewPoller() {
     }
 
-    public PlayerWaitingViewPoller(JoinGameController joinGameController) {
+    public PlayerWaitingViewPoller(JoinGameController joinGameController, Timer playerWaitingTimer, Timer joinGameTimer) {
         this.joinGameController = joinGameController;
+        this.playerWaitingTimer = playerWaitingTimer;
+        this.joinGameTimer = joinGameTimer;
     }
 
     public JoinGameController getJoinGameController() {
@@ -42,6 +46,7 @@ public class PlayerWaitingViewPoller extends TimerTask {
     public void run() {
         ArrayList<PlayerInfo> activePlayers = new ArrayList();
         ArrayList<GameInfo> activeGames = new ArrayList();
+        int winner = -1;
         try {
             activeGames = ClientCommunicatorFascadeSettlersOfCatan.getSingleton().listGames();
             for (GameInfo game : activeGames) {
@@ -51,6 +56,7 @@ public class PlayerWaitingViewPoller extends TimerTask {
                             activePlayers.add(player);
                         }
                     }
+                    winner = game.getWinner();
                     PlayerInfo[] players = new PlayerInfo[activePlayers.size()];
                     activePlayers.toArray(players);
                     getJoinGameController().getPlayerWaitingView().setPlayers(players);
@@ -63,8 +69,20 @@ public class PlayerWaitingViewPoller extends TimerTask {
             if (getJoinGameController().getJoinGameView().isModalShowing()) {
                 getJoinGameController().getJoinGameView().closeModal();
             }
-            
+
             getJoinGameController().getJoinAction().execute();
+
+            //the game is over (no need to update anymore)
+            if (winner > -1) {
+                joinGameTimer.cancel();
+                joinGameTimer.purge();
+                playerWaitingTimer.cancel();
+                playerWaitingTimer.purge();
+            }
+            //make the map accessible
+            if (activePlayers.size() == 4) {
+                getJoinGameController().getJoinGameView().closeModal();
+            }
         } catch (ClientException ex) {
             Logger.getLogger(Poller.class.getName()).log(Level.SEVERE, null, ex);
         }
