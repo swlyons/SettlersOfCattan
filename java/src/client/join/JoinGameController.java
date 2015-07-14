@@ -98,9 +98,19 @@ public class JoinGameController extends Controller implements IJoinGameControlle
 
 	@Override
 	public void start() {
-		
+            try{
+                ArrayList<GameInfo> gamesOnServer = ClientCommunicatorFascadeSettlersOfCatan.getSingleton().listGames();
+                PlayerInfo playerInfo = new PlayerInfo();
+                playerInfo.setId(ClientCommunicator.getSingleton().getPlayerId());
+                playerInfo.setName(ClientCommunicator.getSingleton().getName());                
+                GameInfo[] allGames = new GameInfo[gamesOnServer.size()];
+                gamesOnServer.toArray(allGames);
+                getJoinGameView().setGames(allGames, playerInfo);
+            } catch(Exception e){}
+            finally{
 		getJoinGameView().showModal();
-	}
+            }
+        }
 
 	@Override
 	public void startCreateNewGame() {
