@@ -6,6 +6,8 @@ import client.communication.ClientCommunicator;
 import client.communication.ClientCommunicatorFascadeSettlersOfCatan;
 import client.communication.CookieModel;
 import client.data.*;
+import client.proxy.CreateGameRequest;
+import client.proxy.JoinGameRequest;
 import client.misc.*;
 import com.google.gson.GsonBuilder;
 import java.util.ArrayList;
@@ -22,9 +24,7 @@ public class JoinGameController extends Controller implements IJoinGameControlle
 	private ISelectColorView selectColorView;
 	private IMessageView messageView;
 	private IAction joinAction;
-	private ArrayList<GameInfo> games = new ArrayList<>();
         
-        int currentGameId = 0;
 	/**
 	 * JoinGameController constructor
 	 * 
@@ -103,6 +103,14 @@ public class JoinGameController extends Controller implements IJoinGameControlle
                 PlayerInfo playerInfo = new PlayerInfo();
                 playerInfo.setId(ClientCommunicator.getSingleton().getPlayerId());
                 playerInfo.setName(ClientCommunicator.getSingleton().getName());                
+                for(GameInfo gameInfo : gamesOnServer){
+                    for(int i=0; i<gameInfo.getPlayers().size();i++){
+                        if(gameInfo.getPlayers().get(i).getId()==-1){
+                            gameInfo.getPlayers().remove(i);
+                            i--;
+                        }
+                    }
+                }
                 GameInfo[] allGames = new GameInfo[gamesOnServer.size()];
                 gamesOnServer.toArray(allGames);
                 getJoinGameView().setGames(allGames, playerInfo);
@@ -126,67 +134,77 @@ public class JoinGameController extends Controller implements IJoinGameControlle
 
 	@Override
 	public void createNewGame() {
-		//add player to list of existing game
-                PlayerInfo player = new PlayerInfo();
-                ClientCommunicatorFascadeSettlersOfCatan client = new ClientCommunicatorFascadeSettlersOfCatan();
-                String cookie = "";
+                CreateGameRequest gameRequest = new CreateGameRequest(getNewGameView().getRandomlyPlaceHexes(),getNewGameView().getRandomlyPlaceNumbers(),getNewGameView().getUseRandomPorts(),getNewGameView().getTitle());
                 
-                for(java.util.Map.Entry<Integer, String> cookieValue : client.getCookies().entrySet()){
-                    cookie = cookieValue.getValue();
+                try{
+                    GameInfo gameInfo = ClientCommunicatorFascadeSettlersOfCatan.getSingleton().createGame(gameRequest);
+                    JoinGameRequest joinRequest = new JoinGameRequest(gameInfo.getId(),CatanColor.WHITE.toString().toLowerCase());
+                    ClientCommunicatorFascadeSettlersOfCatan.getSingleton().joinGame(joinRequest);
+                    ArrayList<GameInfo> gamesOnServer = ClientCommunicatorFascadeSettlersOfCatan.getSingleton().listGames();
+                    for(GameInfo gameInfo2 : gamesOnServer){
+                        for(int i=0; i<gameInfo2.getPlayers().size();i++){
+                            if(gameInfo2.getPlayers().get(i).getId()==-1){
+                                gameInfo2.getPlayers().remove(i);
+                                i--;
+                            }
+                        }
+                    }
+                    PlayerInfo playerInfo = new PlayerInfo();
+                    playerInfo.setId(ClientCommunicator.getSingleton().getPlayerId());
+                    playerInfo.setName(ClientCommunicator.getSingleton().getName());                
+                    GameInfo[] allGames = new GameInfo[gamesOnServer.size()];
+                    gamesOnServer.toArray(allGames);
+                    getJoinGameView().setGames(allGames, playerInfo);                    
+                }catch(Exception e){
+                } finally {                
+                    getNewGameView().closeModal();
                 }
-                System.out.println("Cookie: " + client.getCookies());
-                //player.setName(new GsonBuilder().create().fromJson(cookie.split("=")[1], CookieModel.class).getName());
-                player.setPlayerIndex(0);
-                Random rand = new Random();
-                //need a random number for the player index (unique)
-                player.setId(rand.nextInt());
-                
-                //set GameInfo for new Game
-                GameInfo game = new GameInfo();
-                game.addPlayer(player);
-                game.setTitle(getNewGameView().getTitle());
-                game.setId(currentGameId);
-                
-                //clear all the New Game View options
-                getNewGameView().setTitle("");
-                getNewGameView().setRandomlyPlaceHexes(false);
-                getNewGameView().setRandomlyPlaceNumbers(false);
-                getNewGameView().setUseRandomPorts(false);
-                
-                //add game to list of games
-                games.add(currentGameId, game);
-                
-                
-                //update the list of games in the JoinGame View 
-                GameInfo[] newGames = new GameInfo[games.size()];
-                newGames = games.toArray(newGames);
-                getJoinGameView().setGames(newGames, player);
-                
-		getNewGameView().closeModal();
-                
-                //increment the game id
-                currentGameId++;
 	}
 
+        private Integer gameId = -1;
 	@Override
 	public void startJoinGame(GameInfo game) {
-
+                gameId = game.getId();
 		getSelectColorView().showModal();
 	}
 
 	@Override
 	public void cancelJoinGame() {
-	
-		getJoinGameView().closeModal();
+                getSelectColorView().closeModal();
+		getJoinGameView().showModal();
 	}
 
 	@Override
 	public void joinGame(CatanColor color) {
-		
+                JoinGameRequest request = new JoinGameRequest(gameId,color.toString().toLowerCase());
+                try{
+                if(ClientCommunicatorFascadeSettlersOfCatan.getSingleton().joinGame(request)){
+            
 		// If join succeeded
 		getSelectColorView().closeModal();
 		getJoinGameView().closeModal();
 		joinAction.execute();
+                }else{
+                    ArrayList<GameInfo> gamesOnServer = ClientCommunicatorFascadeSettlersOfCatan.getSingleton().listGames();
+                    PlayerInfo playerInfo = new PlayerInfo();
+                    playerInfo.setId(ClientCommunicator.getSingleton().getPlayerId());
+                    playerInfo.setName(ClientCommunicator.getSingleton().getName());                
+                    GameInfo[] allGames = new GameInfo[gamesOnServer.size()];
+                    gamesOnServer.toArray(allGames);
+                    getJoinGameView().setGames(allGames, playerInfo);
+                }
+                }catch(Exception e){
+                    getSelectColorView().closeModal();
+                    try{
+                        ArrayList<GameInfo> gamesOnServer = ClientCommunicatorFascadeSettlersOfCatan.getSingleton().listGames();
+                        PlayerInfo playerInfo = new PlayerInfo();
+                        playerInfo.setId(ClientCommunicator.getSingleton().getPlayerId());
+                        playerInfo.setName(ClientCommunicator.getSingleton().getName());                
+                        GameInfo[] allGames = new GameInfo[gamesOnServer.size()];
+                        gamesOnServer.toArray(allGames);
+                        getJoinGameView().setGames(allGames, playerInfo);
+                    } catch(Exception e2){}
+                }
 	}
 
 }

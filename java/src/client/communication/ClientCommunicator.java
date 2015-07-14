@@ -237,6 +237,10 @@ public class ClientCommunicator {
                             //cookies.put(playerID, "");
                             cookies.put(playerID, ((cookies.get(playerID) != null) ? cookies.get(playerID) + "; " : "") + gameCookie);
                         }
+                    } else if(commandName.equals("games/create")){
+                        result.setResponseBody(model.fromJson(content, GameInfo.class));
+                    } else if(commandName.equals("game/addAI")){
+                        result.setResponseBody(content);
                     } else {
                         if (commandName.equals("games/save") || commandName.equals("games/load")) {
                             result.setResponseBody(content);

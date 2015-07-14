@@ -53,7 +53,7 @@ public class GameInfo
 	
 	public List<PlayerInfo> getPlayers()
 	{
-		return Collections.unmodifiableList(players);
+		return players;
 	}
 }
 
