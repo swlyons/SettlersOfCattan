@@ -124,7 +124,7 @@ public class JoinGameController extends Controller implements IJoinGameControlle
                 for(java.util.Map.Entry<Integer, String> cookieValue : client.getCookies().entrySet()){
                     cookie = cookieValue.getValue();
                 }
-                System.out.println("Cookie: " + cookie);
+                System.out.println("Cookie: " + client.getCookies());
                 //player.setName(new GsonBuilder().create().fromJson(cookie.split("=")[1], CookieModel.class).getName());
                 player.setPlayerIndex(0);
                 Random rand = new Random();

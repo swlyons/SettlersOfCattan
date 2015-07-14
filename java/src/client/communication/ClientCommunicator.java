@@ -163,9 +163,8 @@ public class ClientCommunicator {
                     }
                 }
             } else {
-                throw new ClientException(String.format(
-                        "doGet failed: %s (http code %d)", commandName,
-                        connection.getResponseCode()));
+                 String content = "Failed"; //br.readLine();
+                    result.setResponseBody(content);
             }
         } catch (IOException e) {
             throw new ClientException(String.format("doGet failed: %s",
