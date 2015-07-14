@@ -1,6 +1,11 @@
 package client.points;
 
+import java.util.Map;
+
 import client.base.*;
+import client.communication.ClientCommunicator;
+import client.data.Game;
+import client.data.Player;
 
 
 /**
@@ -38,8 +43,18 @@ public class PointsController extends Controller implements IPointsController {
 	}
 
 	private void initFromModel() {
+		Game game = ClientCommunicator.getSingleton().getGameManager().getGame();
+		
+		int points = 0;
+		
+		int playerID = ClientCommunicator.getSingleton().getPlayerId();
+		if (playerID >= 0) {
+			points = game.getPlayers().get(playerID).getVictoryPoints();
+			getPointsView().setPoints(points);
+		}
+		
 		//<temp>		
-		getPointsView().setPoints(5);
+		//getPointsView().setPoints(points);
 		//</temp>
 	}
 	

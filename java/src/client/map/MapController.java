@@ -17,6 +17,7 @@ import client.communication.ClientCommunicatorFascadeSettlersOfCatan;
 public class MapController extends Controller implements IMapController {
 	
 	private IRobView robView;
+        private boolean isFree = false;
 	
 	public MapController(IMapView view, IRobView robView) {
 		
@@ -162,30 +163,86 @@ public class MapController extends Controller implements IMapController {
 	}
 
 	public void placeRoad(EdgeLocation edgeLoc) {
-		
-		getView().placeRoad(edgeLoc, CatanColor.ORANGE);
+		GameManager gm = ClientCommunicator.getSingleton().getGameManager();
+                Integer currentPlayer = gm.getGame().getTurnTracker().getCurrentTurn();
+                if(isFree){
+                    if(gm.placeFreeRoad(edgeLoc)){
+                        CatanColor color = CatanColor.valueOf(gm.getGame().getPlayers().get(currentPlayer).getColor());                                        
+                        getView().placeRoad(edgeLoc, color);
+                    }
+                }else{
+                    if(gm.buildRoad(edgeLoc)){
+                        CatanColor color = CatanColor.valueOf(gm.getGame().getPlayers().get(currentPlayer).getColor());                                        
+                        getView().placeRoad(edgeLoc, color);
+                    }
+                }
+
 	}
 
 	public void placeSettlement(VertexLocation vertLoc) {
-		
-		getView().placeSettlement(vertLoc, CatanColor.ORANGE);
-	}
+		GameManager gm = ClientCommunicator.getSingleton().getGameManager();
+                Integer currentPlayer = gm.getGame().getTurnTracker().getCurrentTurn();
+                if(isFree){
+                    if(gm.getLocationManager().getSettledLocations().size()<4){
+                        gm.placeFirstSettlement(vertLoc);
+                        CatanColor color = CatanColor.valueOf(gm.getGame().getPlayers().get(currentPlayer).getColor());                                        
+                        getView().placeSettlement(vertLoc, color);                                        
+                    }else{
+                        if(gm.getLocationManager().getSettledLocations().size()<8){
+                            gm.placeSecondSettlement(vertLoc);
+                            CatanColor color = CatanColor.valueOf(gm.getGame().getPlayers().get(currentPlayer).getColor());                                        
+                            getView().placeSettlement(vertLoc, color);                                                                
+                        }
+                    }                                        
+                }else{
+                    if(gm.buildStructure(PieceType.SETTLEMENT, vertLoc)){
+                        CatanColor color = CatanColor.valueOf(gm.getGame().getPlayers().get(currentPlayer).getColor());                                        
+                      getView().placeSettlement(vertLoc, color);                                                                
+                    }
+                }
+    	}
 
 	public void placeCity(VertexLocation vertLoc) {
-		
-		getView().placeCity(vertLoc, CatanColor.ORANGE);
+		GameManager gm = ClientCommunicator.getSingleton().getGameManager();
+                Integer currentPlayer = gm.getGame().getTurnTracker().getCurrentTurn();
+                if(gm.buildStructure(PieceType.CITY, vertLoc)){
+                    CatanColor color = CatanColor.valueOf(gm.getGame().getPlayers().get(currentPlayer).getColor());
+                    getView().placeCity(vertLoc, color);
+                }
 	}
 
 	public void placeRobber(HexLocation hexLoc) {
-		
-		getView().placeRobber(hexLoc);
-		
-		getRobView().showModal();
+		GameManager gm = ClientCommunicator.getSingleton().getGameManager();
+		if(gm.getMapManager().moveRobber(hexLoc)){
+                    getView().placeRobber(hexLoc);		
+                    getRobView().showModal();
+                }
 	}
 	
+        /*
+	 * This method is called when the user requests to place a piece on the map
+	 * (road, city, or settlement)
+	 * 
+	 * @param pieceType
+	 *            The type of piece to be placed
+	 * @param isFree
+	 *            true if the piece should not cost the player resources, false
+	 *            otherwise. Set to true during initial setup and when a road
+	 *            building card is played.
+	 * @param allowDisconnected
+	 *            true if the piece can be disconnected, false otherwise. Set to
+	 *            true only during initial setup.
+	 
+	void startMove(PieceType pieceType, boolean isFree,
+				   boolean allowDisconnected);
+        */
+        
 	public void startMove(PieceType pieceType, boolean isFree, boolean allowDisconnected) {	
-		
-		getView().startDrop(pieceType, CatanColor.ORANGE, true);
+                GameManager gm = ClientCommunicator.getSingleton().getGameManager();
+                this.isFree = isFree;
+                Integer currentPlayer = gm.getGame().getTurnTracker().getCurrentTurn();
+                CatanColor color = CatanColor.valueOf(gm.getGame().getPlayers().get(currentPlayer).getColor());
+                getView().startDrop(pieceType, color, true);
 	}
 	
 	public void cancelMove() {

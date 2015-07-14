@@ -123,8 +123,8 @@ public class ClientCommunicatorFascadeSettlersOfCatan {
     public Game sendChat(SendChat sendChat) throws ClientException {
         return (Game) ClientCommunicator.getSingleton().doPost(SEND_CHAT_MOVES, sendChat, 0).getResponseBody();
     } 
-    public Game rollNumber(RollNumber rollNumber) throws ClientException {
-        return (Game) ClientCommunicator.getSingleton().doPost(ROLL_MOVES, rollNumber, 0).getResponseBody();
+    public String rollNumber(RollNumber rollNumber) throws ClientException {
+        return ClientCommunicator.getSingleton().doPost(ROLL_MOVES, rollNumber, 0).getResponseBody().toString();
     } 
     public Game robPlayer(RobPlayer robPlayer) throws ClientException {
         return (Game) ClientCommunicator.getSingleton().doPost(ROB_PLAYER_MOVES, robPlayer, 0).getResponseBody();
