@@ -24,6 +24,7 @@ public class JoinGameViewPoller extends TimerTask {
 
     private JoinGameController joinGameController;
 
+   
     public JoinGameViewPoller() {
     }
 
@@ -61,10 +62,12 @@ public class JoinGameViewPoller extends TimerTask {
             activeGames.toArray(allGames);
             
             getJoinGameController().getJoinGameView().setGames(games, playerInfo);
+            
         } catch (ClientException ex) {
             Logger.getLogger(Poller.class.getName()).log(Level.SEVERE, null, ex);
         }
         if (!getJoinGameController().getSelectColorView().isModalShowing() && !getJoinGameController().getPlayerWaitingView().isModalShowing() && !getJoinGameController().getNewGameView().isModalShowing()) {
+            
             getJoinGameController().getJoinGameView().showModal();
         }
     }
