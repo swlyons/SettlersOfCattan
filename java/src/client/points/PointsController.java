@@ -6,6 +6,7 @@ import client.base.*;
 import client.communication.ClientCommunicator;
 import client.data.Game;
 import client.data.Player;
+import client.managers.GameManager;
 
 
 /**
@@ -47,15 +48,18 @@ public class PointsController extends Controller implements IPointsController {
 		
 		int points = 0;
 		
-		int playerID = ClientCommunicator.getSingleton().getPlayerId();
-		if (playerID >= 0) {
-			points = game.getPlayers().get(playerID).getVictoryPoints();
-			getPointsView().setPoints(points);
-		}
-		
-		//<temp>		
-		//getPointsView().setPoints(points);
-		//</temp>
+                GameManager gm = ClientCommunicator.getSingleton().getGameManager();
+                Integer playerId = ClientCommunicator.getSingleton().getPlayerId();
+                Integer playerIndex = 4;
+                for(int i=0;i<gm.getGame().getPlayers().size();i++){
+                    if(gm.getGame().getPlayers().get(i).getPlayerID()==playerId){
+                        playerIndex=i;
+                        break;
+                    }
+                }
+                
+                points = game.getPlayers().get(playerIndex).getVictoryPoints();
+                getPointsView().setPoints(points);		
 	}
 	
 }
