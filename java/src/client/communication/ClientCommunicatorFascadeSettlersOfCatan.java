@@ -12,6 +12,7 @@ import client.proxy.SaveGameRequest;
 import client.ClientException;
 import client.data.Game;
 import client.data.User;
+import client.data.GameInfo;
 import client.proxy.AcceptTrade;
 import client.proxy.AddAIRequest;
 import client.proxy.BuildCity;
@@ -70,8 +71,8 @@ public class ClientCommunicatorFascadeSettlersOfCatan {
     private static final String LOGIN_USER = "user/login";
     private static final String REGISTER_USER = "user/register";
 
-    public ArrayList listGames() throws ClientException {
-        return (ArrayList) ClientCommunicator.getSingleton().doGet(LIST_GAMES, "", -1).getResponseBody();
+    public ArrayList<GameInfo> listGames() throws ClientException {
+        return (ArrayList<GameInfo>) ClientCommunicator.getSingleton().doGet(LIST_GAMES, "", -1).getResponseBody();
     }
 
     public Game createGame(CreateGameRequest createGameRequest) throws ClientException {
