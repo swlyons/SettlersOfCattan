@@ -4,4 +4,4 @@
 *.project
 *.classpath
 /nbproject/private/
-java/dist/*
+java/dist/*.jar

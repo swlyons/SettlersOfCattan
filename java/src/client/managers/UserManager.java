@@ -28,6 +28,9 @@ public class UserManager {
 			try {
 	            User credentials = new User(username, password);
 	            boolean success = server.register(credentials);
+	            if (success) {
+	            	success = server.login(credentials);
+	            }
 	            return success;
 			} catch (ClientException e) {
 				return false;
