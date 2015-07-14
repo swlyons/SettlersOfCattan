@@ -47,14 +47,14 @@ public class PointsController extends Controller implements IPointsController {
 		
 		int points = 0;
 		
-		Map<Integer, String> cookies = ClientCommunicator.getSingleton().getCookies();
-		for(Map.Entry<Integer, String> cook : cookies.entrySet()){
-            int playerID = cook.getKey();
-            points = game.getPlayers().get(playerID).getVictoryPoints();
-        }
+		int playerID = ClientCommunicator.getSingleton().getPlayerId();
+		if (playerID >= 0) {
+			points = game.getPlayers().get(playerID).getVictoryPoints();
+			getPointsView().setPoints(points);
+		}
 		
 		//<temp>		
-		getPointsView().setPoints(points);
+		//getPointsView().setPoints(points);
 		//</temp>
 	}
 	
