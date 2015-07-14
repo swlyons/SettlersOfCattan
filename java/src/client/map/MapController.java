@@ -241,18 +241,8 @@ public class MapController extends Controller implements IMapController {
                 GameManager gm = ClientCommunicator.getSingleton().getGameManager();
                 this.isFree = isFree;
                 Integer currentPlayer = gm.getGame().getTurnTracker().getCurrentTurn();
-                switch(pieceType){
-                    case ROAD:
-                        
-                        break;
-                    case SETTLEMENT:
-                        break;
-                    case CITY:
-                        break;
-                    default:
-                        break;
-                }
-		getView().startDrop(pieceType, CatanColor.ORANGE, true);
+                CatanColor color = CatanColor.valueOf(gm.getGame().getPlayers().get(currentPlayer).getColor());
+                getView().startDrop(pieceType, color, true);
 	}
 	
 	public void cancelMove() {
