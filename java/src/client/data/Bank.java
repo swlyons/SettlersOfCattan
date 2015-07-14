@@ -37,8 +37,8 @@ public class Bank {
 		this.monuments = 0;
     }
 
-    public Bank(Player p, boolean hasLargestArmy, boolean hasLongestRoad) {
-	    this.ownerID = p.getPlayerID();
+    public Bank(PlayerInfo p, boolean hasLargestArmy, boolean hasLongestRoad) {
+	    this.ownerID = p.getId();
 	    this.hasLongestRoad = hasLongestRoad;
 	    this.hasLargestArmy = hasLargestArmy;
 	    this.resourcesCards = p.getResources();

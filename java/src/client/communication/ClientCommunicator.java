@@ -164,7 +164,7 @@ public class ClientCommunicator {
                         if (content.equals("\"true\"")) {
                             result.setResponseBody(new Game(content));
                         } else {
-                            result.setResponseBody(model.fromJson(content, Game.class));
+                            result.setResponseBody(model.fromJson(content, GameInfo.class));
                         }
                     }
                 }
@@ -245,7 +245,7 @@ public class ClientCommunicator {
                         if (commandName.equals("games/save") || commandName.equals("games/load")) {
                             result.setResponseBody(content);
                         }
-                        result.setResponseBody(model.fromJson(content, Game.class));
+                        result.setResponseBody(model.fromJson(content, GameInfo.class));
                     }
                 }
             } else {

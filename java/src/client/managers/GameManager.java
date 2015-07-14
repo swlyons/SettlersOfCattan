@@ -12,6 +12,8 @@ import client.data.ResourceList;
 import client.data.Map;
 import client.data.VertexObject;
 import client.data.EdgeValue;
+import client.data.GameInfo;
+import client.data.PlayerInfo;
 
 import com.google.gson.Gson;
 
@@ -51,13 +53,13 @@ public class GameManager {
 	 * @pre model is accurate
 	 * @post Will initialize the game model
 	 */
-	public void initializeGame(String jsonData) {
+	public void initializeGame(GameInfo game) {
 		try {
 			// create a json object
-			Gson model = new GsonBuilder().create();
+			//Gson model = new GsonBuilder().create();
 
 			// initialize the client object model
-			game = model.fromJson(jsonData, Game.class);
+			//game = model.fromJson(jsonData, Game.class);
 
 			if (game.getTurnTracker().getLargestArmy() == -1) {
 				game.getTurnTracker().setLargestArmy(4);
@@ -148,10 +150,10 @@ public class GameManager {
 			// Resource Manager
 			List<Bank> gameBanks = new ArrayList<>();
 			for (int i = 0; i < game.getPlayers().size(); i++) {
-				Player p = game.getPlayers().get(i);
-				boolean hasLargestArmy = (p.getPlayerID() == game
+				PlayerInfo p = game.getPlayers().get(i);
+				boolean hasLargestArmy = (p.getId() == game
 						.getTurnTracker().getLargestArmy());
-				boolean hasLongestRoad = (p.getPlayerID() == game
+				boolean hasLongestRoad = (p.getId() == game
 						.getTurnTracker().getLongestRoad());
 				gameBanks.add(new Bank(p, hasLargestArmy, hasLongestRoad));
 			}
