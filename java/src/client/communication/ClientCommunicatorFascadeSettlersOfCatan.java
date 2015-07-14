@@ -102,8 +102,8 @@ public class ClientCommunicatorFascadeSettlersOfCatan {
     public Game executeGameCommands(ArrayList<Command> commands) throws ClientException {
         return (Game) ClientCommunicator.getSingleton().doPost(COMMANDS_GAME, commands, 0).getResponseBody();
     }
-    public Game addAIToGame(AddAIRequest addAIRequest) throws ClientException {
-        return (Game) ClientCommunicator.getSingleton().doPost(ADD_AI_GAME, addAIRequest, 0).getResponseBody();
+    public String addAIToGame(AddAIRequest addAIRequest) throws ClientException {
+        return ClientCommunicator.getSingleton().doPost(ADD_AI_GAME, addAIRequest, 0).getResponseBody().toString();
     }
     public ArrayList<String> listAITypesInGame() throws ClientException {
         return (ArrayList<String>) ClientCommunicator.getSingleton().doGet(LIST_AI_GAME, "", 0).getResponseBody();
