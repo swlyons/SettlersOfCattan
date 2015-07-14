@@ -377,7 +377,11 @@ public class ClientCommunicatorFascadeSettlersOfCatanTest {
         int expResult = 9;
         instance.login(new User("Sam", "sam"));
         instance.joinGame(new JoinGameRequest(0, "red"));
-        Game result = instance.rollNumber(rollNumber);
+        String resultStr = instance.finishMove(new FinishMove(0));
+		Gson model = new GsonBuilder().create();
+
+        // initialize the client object model
+        Game result = model.fromJson(resultStr, Game.class);
         
         //since 3 before it should be 4 now (since I rolled the dice)
         assert(expResult >= result.getVersion());
