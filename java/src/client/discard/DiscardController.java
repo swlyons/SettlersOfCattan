@@ -16,18 +16,8 @@ public class DiscardController extends Controller implements IDiscardController 
 
 	private IWaitView waitView;
 	
-	/**
-	 * DiscardController constructor
-	 * 
-	 * @param view View displayed to let the user select cards to discard
-	 * @param waitView View displayed to notify the user that they are waiting for other players to discard
-	 */
-	public DiscardController(IDiscardView view, IWaitView waitView) {
-		
-		super(view);
-		this.waitView = waitView;
-                
-		resources = new ResourceList();
+        
+        public void initFromModel(){
                 GameManager gm = ClientCommunicator.getSingleton().getGameManager();
                 Integer playerId = ClientCommunicator.getSingleton().getPlayerId();
                 Integer playerIndex = 4;
@@ -44,27 +34,27 @@ public class DiscardController extends Controller implements IDiscardController 
                 for(ResourceType resource : ResourceType.values()){
                     moreThanZero = false;
                     switch(resource){
-                    case ResourceType.brick:
+                    case brick:
                         if(0<resources2.getBrick()){
                             moreThanZero = true;
                         }
                         break;
-                    case ResourceType.ore:
+                    case ore:
                         if(0<resources2.getOre()){
                             moreThanZero = true;
                         }
                         break;
-                    case ResourceType.sheep:
+                    case sheep:
                         if(0<resources2.getSheep()){
                             moreThanZero = true;
                         }
                         break;
-                    case ResourceType.wheat:
+                    case wheat:
                         if(0<resources2.getWheat()){
                             moreThanZero = true;
                         }
                         break;
-                    case ResourceType.wood:
+                    case wood:
                         if(0<resources2.getWood()){
                             moreThanZero = true;
                         }
@@ -74,6 +64,20 @@ public class DiscardController extends Controller implements IDiscardController 
                     }
                     getDiscardView().setResourceAmountChangeEnabled(resource, moreThanZero, false);
                 }                
+
+        }
+	/**
+	 * DiscardController constructor
+	 * 
+	 * @param view View displayed to let the user select cards to discard
+	 * @param waitView View displayed to notify the user that they are waiting for other players to discard
+	 */
+	public DiscardController(IDiscardView view, IWaitView waitView) {
+		
+		super(view);
+		this.waitView = waitView;
+                
+		resources = new ResourceList();
 	}
 
 	public IDiscardView getDiscardView() {
@@ -84,38 +88,47 @@ public class DiscardController extends Controller implements IDiscardController 
 	public IWaitView getWaitView() {
 		return waitView;
 	}
-        
+                
         private ResourceList resources;
 
 	@Override
 	public void increaseAmount(ResourceType resource) {
             resources.add(resource, 1);
+            GameManager gm = ClientCommunicator.getSingleton().getGameManager();
+            Integer playerId = ClientCommunicator.getSingleton().getPlayerId();
+            Integer playerIndex = 4;
+            for(int i=0;i<gm.getGame().getPlayers().size();i++){
+                if(gm.getGame().getPlayers().get(i).getPlayerID()==playerId){
+                    playerIndex=i;
+                    break;
+                }
+            }
             ResourceList resources2 = gm.getResourceManager().getGameBanks().get(playerIndex).getResourcesCards();
                     
             boolean moreThanZero;
             moreThanZero = false;
             switch(resource){
-            case ResourceType.brick:
+            case brick:
                 if(0<resources2.getBrick()-resources.getBrick()){
                     moreThanZero = true;
                 }
                 break;
-            case ResourceType.ore:
+            case ore:
                 if(0<resources2.getOre()-resources.getOre()){
                     moreThanZero = true;
                 }
                 break;
-            case ResourceType.sheep:
+            case sheep:
                 if(0<resources2.getSheep()-resources.getSheep()){
                     moreThanZero = true;
                 }
                 break;
-            case ResourceType.wheat:
+            case wheat:
                 if(0<resources2.getWheat()-resources.getWheat()){
                     moreThanZero = true;
                 }
                 break;
-            case ResourceType.wood:
+            case wood:
                 if(0<resources2.getWood()-resources.getWood()){
                     moreThanZero = true;
                 }
@@ -131,31 +144,31 @@ public class DiscardController extends Controller implements IDiscardController 
 	public void decreaseAmount(ResourceType resource) {
             boolean decreaseAble = true;
             switch(resource){
-                case ResourceType.brick:
+                case brick:
                     resources.removeBrick(1);
                     if(resources.getBrick()==0){
                         decreaseAble = false;
                     }
                     break;
-                case ResourceType.ore:
+                case ore:
                     resources.removeOre(1);
                     if(resources.getBrick()==0){
                         decreaseAble = false;
                     }
                     break;
-                case ResourceType.sheep:
+                case sheep:
                     resources.removeSheep(1);
                     if(resources.getBrick()==0){
                         decreaseAble = false;
                     }
                     break;
-                case ResourceType.wheat:
+                case wheat:
                     resources.removeWheat(1);
                     if(resources.getBrick()==0){
                         decreaseAble = false;
                     }
                     break;
-                case ResourceType.wood:
+                case wood:
                     resources.removeWood(1);
                     if(resources.getBrick()==0){
                         decreaseAble = false;
