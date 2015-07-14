@@ -12,23 +12,14 @@ import client.proxy.SaveGameRequest;
 import client.communication.ClientCommunicator;
 import client.data.Game;
 import client.data.User;
-import client.proxy.AcceptTrade;
 import client.proxy.BuildCity;
-import client.proxy.BuildRoad;
-import client.proxy.BuildSettlement;
 import client.proxy.BuyDevCard;
 import client.proxy.Command;
-import client.proxy.DiscardCards;
 import client.proxy.FinishMove;
-import client.proxy.MaritimeTrade;
 import client.proxy.Monopoly;
-import client.proxy.Monument;
-import client.proxy.OfferTrade;
 import client.proxy.Road_Building;
-import client.proxy.RobPlayer;
 import client.proxy.RollNumber;
 import client.proxy.SendChat;
-import client.proxy.Soldier;
 import client.proxy.Year_Of_Plenty;
 
 import java.util.ArrayList;
@@ -405,14 +396,16 @@ public class ClientCommunicatorFascadeSettlersOfCatanTest {
         String expResult = "Sam's turn just ended";
         instance.login(new User("Sam", "sam"));
         instance.joinGame(new JoinGameRequest(0, "red"));
+
         String resultStr = instance.finishMove(new FinishMove(0));
 		Gson model = new GsonBuilder().create();
 
-		// initialize the client object model
-		Game result = model.fromJson(resultStr, Game.class);
+        // initialize the client object model
+        Game result = model.fromJson(resultStr, Game.class);
+
         
         //Sam should've ended his turn
-        assertEquals(expResult, result.getLog().getLines().get(2).getMessage());
+        assertEquals(expResult, result);
         
         System.out.print("...PASSED");
         System.out.println();
