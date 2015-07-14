@@ -4,13 +4,12 @@ import java.awt.*;
 import java.awt.event.*;
 
 import javax.swing.*;
-import javax.swing.border.Border;
 
 import java.util.*;
 
-import shared.definitions.PieceType;
 import client.base.*;
 import client.data.*;
+import shared.definitions.CatanColor;
 
 
 /**
@@ -120,7 +119,7 @@ public class RobView extends OverlayView implements IRobView {
 				victimButton.setContentAreaFilled(false);
 				victimButton.setOpaque(true);
 				victimButton.setAlignmentY(0);
-				victimButton.setBackground(victims[i].getColor().getJavaColor());
+				victimButton.setBackground((CatanColor.valueOf(victims[i].getColor().toUpperCase())).getJavaColor());
 				
 				buttonPanel.add(victimButton);
 				victimButtons.add(victimButton);

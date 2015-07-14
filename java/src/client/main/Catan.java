@@ -66,11 +66,12 @@ public class Catan extends JFrame
 				NewGameView newGameView = new NewGameView();
 				SelectColorView selectColorView = new SelectColorView();
 				MessageView joinMessageView = new MessageView();
+                                
 				final JoinGameController joinController = new JoinGameController(
 																				 joinView,
 																				 newGameView,
 																				 selectColorView,
-																				 joinMessageView);
+																				 joinMessageView, playerWaitingView);
 				joinController.setJoinAction(new IAction() {
 					@Override
 					public void execute()

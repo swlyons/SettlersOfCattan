@@ -374,7 +374,7 @@ public class DomesticTradeOverlay extends OverlayView implements IDomesticTradeO
 				toggle.putClientProperty( "JButton.segmentPosition", "last" );
 			else
 				toggle.putClientProperty( "JButton.segmentPosition", "middle" );
-			toggle.setForeground(value[i].getColor().getJavaColor());
+			toggle.setForeground((CatanColor.valueOf(value[i].getColor().toUpperCase())).getJavaColor());
 	        toggleButtonGroup.add(toggle);
 	        this.playerSelectionPanel.add(toggle);
 	        this.playerButtons.add(toggle);

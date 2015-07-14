@@ -33,7 +33,7 @@ public class GameHistoryController extends Controller implements IGameHistoryCon
 		List<LogEntry> entries = new ArrayList<LogEntry>();
 		
 		//for each line...
-		for(int lineIndex = 0; lineIndex < game.getLog().getLines().size(); lineIndex++) {
+		/*for(int lineIndex = 0; lineIndex < game.getLog().getLines().size(); lineIndex++) {
 			MessageLine line = game.getLog().getLines().get(lineIndex);
 			String message = line.getMessage();
 			String source = line.getSource();
@@ -49,7 +49,7 @@ public class GameHistoryController extends Controller implements IGameHistoryCon
 			
 			//create the line
 			entries.add(new LogEntry(color, message));
-		}
+		}*/
 		
 		getView().setEntries(entries);
 	}

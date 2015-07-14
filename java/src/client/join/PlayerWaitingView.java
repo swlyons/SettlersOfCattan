@@ -9,6 +9,7 @@ import javax.swing.*;
 import client.base.*;
 import client.data.*;
 import client.utils.*;
+import shared.definitions.CatanColor;
 
 
 /**
@@ -114,6 +115,7 @@ public class PlayerWaitingView extends OverlayView implements IPlayerWaitingView
 	@Override
 	public void setPlayers(PlayerInfo[] value) {
 		//set header label indicating how many players are still needed
+            System.out.println("Here");
 		String labelText = "";
 		if(value.length == NUMBER_OF_PLAYERS){
 			labelText = "This game is ready to go!";
@@ -135,7 +137,8 @@ public class PlayerWaitingView extends OverlayView implements IPlayerWaitingView
 			JPanel playerPanel = new JPanel();
 			playerPanel.setLayout(new FlowLayout(FlowLayout.LEFT)); //left justify the text in the panel
 			playerPanel.setPreferredSize(new Dimension(200,50));
-			playerPanel.setBackground(value[i].getColor().getJavaColor()); //set the background color of the player
+                        //System.out.println("Color: " + value[i].getColor());
+                        playerPanel.setBackground((CatanColor.valueOf(value[i].getColor().toUpperCase())).getJavaColor()); //set the background color of the player
 			JLabel playerLabel = new JLabel(builtString, SwingConstants.LEFT); //justify the text left
 			FontUtils.setFont(playerLabel, LABEL_TEXT_SIZE);
 			playerPanel.add(playerLabel);
