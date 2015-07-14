@@ -174,6 +174,12 @@ public class JoinGameController extends Controller implements IJoinGameControlle
             GameInfo[] allGames = new GameInfo[gamesOnServer.size()];
             gamesOnServer.toArray(allGames);
             getJoinGameView().setGames(allGames, playerInfo);
+            
+            //if successful clear out old options
+            getNewGameView().setRandomlyPlaceHexes(false);
+            getNewGameView().setRandomlyPlaceNumbers(false);
+            getNewGameView().setUseRandomPorts(false);
+            getNewGameView().setTitle("");
         } catch (Exception e) {
         } finally {
             getNewGameView().closeModal();
