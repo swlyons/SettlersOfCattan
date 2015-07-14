@@ -270,6 +270,13 @@ public class ClientCommunicator {
     private Gson model;
     private Map<Integer, String> cookies;
 
+    public Integer getPlayerId(){
+        Integer id = -1;
+        for(Map.Entry<Integer, String> cook : cookies.entrySet()){
+                    id = cook.getKey();
+                }
+        return id;
+    }
 
    
 
