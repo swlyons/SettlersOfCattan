@@ -3,7 +3,11 @@ package client.discard;
 import shared.definitions.*;
 import client.base.*;
 import client.misc.*;
-
+import client.data.ResourceList;
+import client.proxy.DiscardCards;
+import client.communication.ClientCommunicatorFascadeSettlersOfCatan;
+import client.communication.ClientCommunicator;
+import client.managers.GameManager;
 
 /**
  * Discard controller implementation
@@ -12,6 +16,56 @@ public class DiscardController extends Controller implements IDiscardController 
 
 	private IWaitView waitView;
 	
+        
+        public void initFromModel(){
+                GameManager gm = ClientCommunicator.getSingleton().getGameManager();
+                Integer playerId = ClientCommunicator.getSingleton().getPlayerId();
+                Integer playerIndex = 4;
+                for(int i=0;i<gm.getGame().getPlayers().size();i++){
+                    if(gm.getGame().getPlayers().get(i).getPlayerID()==playerId){
+                        playerIndex=i;
+                        break;
+                    }
+                }
+                
+                ResourceList resources2 = gm.getResourceManager().getGameBanks().get(playerIndex).getResourcesCards();
+                    
+                boolean moreThanZero;
+                for(ResourceType resource : ResourceType.values()){
+                    moreThanZero = false;
+                    switch(resource){
+                    case brick:
+                        if(0<resources2.getBrick()){
+                            moreThanZero = true;
+                        }
+                        break;
+                    case ore:
+                        if(0<resources2.getOre()){
+                            moreThanZero = true;
+                        }
+                        break;
+                    case sheep:
+                        if(0<resources2.getSheep()){
+                            moreThanZero = true;
+                        }
+                        break;
+                    case wheat:
+                        if(0<resources2.getWheat()){
+                            moreThanZero = true;
+                        }
+                        break;
+                    case wood:
+                        if(0<resources2.getWood()){
+                            moreThanZero = true;
+                        }
+                        break;    
+                        default:
+                            break;
+                    }
+                    getDiscardView().setResourceAmountChangeEnabled(resource, moreThanZero, false);
+                }                
+
+        }
 	/**
 	 * DiscardController constructor
 	 * 
@@ -21,33 +75,134 @@ public class DiscardController extends Controller implements IDiscardController 
 	public DiscardController(IDiscardView view, IWaitView waitView) {
 		
 		super(view);
-		
 		this.waitView = waitView;
+                
+		resources = new ResourceList();
 	}
 
 	public IDiscardView getDiscardView() {
+                
 		return (IDiscardView)super.getView();
 	}
 	
 	public IWaitView getWaitView() {
 		return waitView;
 	}
+                
+        private ResourceList resources;
 
 	@Override
 	public void increaseAmount(ResourceType resource) {
-		
+            resources.add(resource, 1);
+            GameManager gm = ClientCommunicator.getSingleton().getGameManager();
+            Integer playerId = ClientCommunicator.getSingleton().getPlayerId();
+            Integer playerIndex = 4;
+            for(int i=0;i<gm.getGame().getPlayers().size();i++){
+                if(gm.getGame().getPlayers().get(i).getPlayerID()==playerId){
+                    playerIndex=i;
+                    break;
+                }
+            }
+            ResourceList resources2 = gm.getResourceManager().getGameBanks().get(playerIndex).getResourcesCards();
+                    
+            boolean moreThanZero;
+            moreThanZero = false;
+            switch(resource){
+            case brick:
+                if(0<resources2.getBrick()-resources.getBrick()){
+                    moreThanZero = true;
+                }
+                break;
+            case ore:
+                if(0<resources2.getOre()-resources.getOre()){
+                    moreThanZero = true;
+                }
+                break;
+            case sheep:
+                if(0<resources2.getSheep()-resources.getSheep()){
+                    moreThanZero = true;
+                }
+                break;
+            case wheat:
+                if(0<resources2.getWheat()-resources.getWheat()){
+                    moreThanZero = true;
+                }
+                break;
+            case wood:
+                if(0<resources2.getWood()-resources.getWood()){
+                    moreThanZero = true;
+                }
+                break;    
+                default:
+                    break;
+            }
+            getDiscardView().setResourceAmountChangeEnabled(resource, moreThanZero, false);
+                
 	}
 
 	@Override
 	public void decreaseAmount(ResourceType resource) {
-		
+            boolean decreaseAble = true;
+            switch(resource){
+                case brick:
+                    resources.removeBrick(1);
+                    if(resources.getBrick()==0){
+                        decreaseAble = false;
+                    }
+                    break;
+                case ore:
+                    resources.removeOre(1);
+                    if(resources.getBrick()==0){
+                        decreaseAble = false;
+                    }
+                    break;
+                case sheep:
+                    resources.removeSheep(1);
+                    if(resources.getBrick()==0){
+                        decreaseAble = false;
+                    }
+                    break;
+                case wheat:
+                    resources.removeWheat(1);
+                    if(resources.getBrick()==0){
+                        decreaseAble = false;
+                    }
+                    break;
+                case wood:
+                    resources.removeWood(1);
+                    if(resources.getBrick()==0){
+                        decreaseAble = false;
+                    }
+                    break;    
+                    default:
+                        break;
+                }
+                
+                    getDiscardView().setResourceAmountChangeEnabled(resource, true, decreaseAble);
 	}
 
 	@Override
 	public void discard() {
-		
-		getDiscardView().closeModal();
-	}
+		GameManager gm = ClientCommunicator.getSingleton().getGameManager();
+                Integer playerId = ClientCommunicator.getSingleton().getPlayerId();
+                Integer playerIndex = 4;
+                for(int i=0;i<gm.getGame().getPlayers().size();i++){
+                    if(gm.getGame().getPlayers().get(i).getPlayerID()==playerId){
+                        playerIndex=i;
+                        break;
+                    }
+                }                
+                gm.getResourceManager().playerDiscardsHalfCards(playerIndex, resources);
+                DiscardCards cards = new DiscardCards();
+                cards.setDiscardedCards(resources);
+                try{
+                    ClientCommunicatorFascadeSettlersOfCatan.getSingleton().discardCards(cards);
+                }catch(Exception e){}
+                finally{
+                    resources = new ResourceList();
+                    getDiscardView().closeModal();
+            }
+        }
 
 }
 
