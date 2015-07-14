@@ -197,7 +197,6 @@ public class ClientCommunicator {
                 if(playerIdThisOne!=-1){
                     playerID = playerIdThisOne;
                 }
-                System.out.println("PlayerID: " + playerID);
                 connection.setRequestProperty("Cookie", cookies.get(playerID));
             }
             connection.setDoOutput(true);
@@ -211,8 +210,8 @@ public class ClientCommunicator {
 
             result.setResponseCode(connection.getResponseCode());
             result.setResponseLength(connection.getContentLength());
-            if(commandName.equals("moves/Monopoly"))
-                System.out.println(data);
+            //if(commandName.equals("moves/Monopoly"))
+                //System.out.println(data);
             //System.out.println(cookies.get(playerID))
             //get the content
             if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {

@@ -32,13 +32,6 @@ public class JoinGameController extends Controller implements IJoinGameControlle
     private IAction joinAction;
     private IPlayerWaitingView playerWaitingView;
 
-    public IPlayerWaitingView getPlayerWaitingView() {
-        return playerWaitingView;
-    }
-
-    public void setPlayerWatingView(IPlayerWaitingView playerWaitingView) {
-        this.playerWaitingView = playerWaitingView;
-    }
     /**
      * JoinGameController constructor
      *
@@ -49,13 +42,14 @@ public class JoinGameController extends Controller implements IJoinGameControlle
      * occur while the user is joining a game)
      */
     public JoinGameController(IJoinGameView view, INewGameView newGameView,
-            ISelectColorView selectColorView, IMessageView messageView) {
+            ISelectColorView selectColorView, IMessageView messageView, IPlayerWaitingView playerWaitingView) {
 
         super(view);
 
         setNewGameView(newGameView);
         setSelectColorView(selectColorView);
         setMessageView(messageView);
+        setPlayerWaitingView(playerWaitingView);
     }
 
     public IJoinGameView getJoinGameView() {
@@ -111,6 +105,14 @@ public class JoinGameController extends Controller implements IJoinGameControlle
     public void setMessageView(IMessageView messageView) {
 
         this.messageView = messageView;
+    }
+
+    public IPlayerWaitingView getPlayerWaitingView() {
+        return playerWaitingView;
+    }
+
+    public void setPlayerWaitingView(IPlayerWaitingView playerWaitingView) {
+        this.playerWaitingView = playerWaitingView;
     }
 
     @Override
@@ -194,18 +196,29 @@ public class JoinGameController extends Controller implements IJoinGameControlle
 
     @Override
     public void joinGame(CatanColor color) {
-        JoinGameRequest request = new JoinGameRequest(gameId, color.toString().toLowerCase());
+
+        JoinGameRequest request = new JoinGameRequest(gameId, color.name().toLowerCase());
         try {
             if (ClientCommunicatorFascadeSettlersOfCatan.getSingleton().joinGame(request)) {
 
                 // If join succeeded
-                //add list of players
+                //add player to the list of players in the game
                 
                 ArrayList<GameInfo> gamesOnServer = ClientCommunicatorFascadeSettlersOfCatan.getSingleton().listGames();
-                for(GameInfo game : gamesOnServer){
-                    if(game.getId() == gameId)
-                    {
-                        getPlayerWaitingView().setPlayers((PlayerInfo[]) game.getPlayers().toArray());
+                
+                ArrayList<PlayerInfo> activePlayers = new ArrayList();
+                for (GameInfo game : gamesOnServer) {
+                    if (game.getId() == gameId) {
+                        
+                        for (PlayerInfo player : game.getPlayers()) {
+                            if (player.getId() != -1) {
+                                activePlayers.add(player);
+                            }
+                        }
+                        PlayerInfo[] players = new PlayerInfo[activePlayers.size()];
+                        activePlayers.toArray(players);
+                        getPlayerWaitingView().setPlayers(players);
+                        System.out.println("Here");
                         break;
                     }
                 }
@@ -223,6 +236,7 @@ public class JoinGameController extends Controller implements IJoinGameControlle
                 getJoinGameView().setGames(allGames, playerInfo);
             }
         } catch (Exception e) {
+           e.printStackTrace();
             getSelectColorView().closeModal();
             try {
                 ArrayList<GameInfo> gamesOnServer = ClientCommunicatorFascadeSettlersOfCatan.getSingleton().listGames();
