@@ -236,26 +236,24 @@ public class JoinGameController extends Controller implements IJoinGameControlle
                 }
             }
         }
-        if (numberOfPlayers != 0) {
+//        if (numberOfPlayers != 0) {
             getSelectColorView().showModal();
-        } else {
-            getJoinGameView().closeModal();
-            //automatically join the person to the game
-            JoinGameRequest request = new JoinGameRequest(gameId, color);
-            try {
-                if (ClientCommunicatorFascadeSettlersOfCatan.getSingleton().joinGame(request)) {
-                    //if successful in re-joining game
-                    PlayerInfo[] players = new PlayerInfo[activePlayers.size()];
-                    activePlayers.toArray(players);
-                    getPlayerWaitingView().setPlayers(players);
-                    
-                    
-                }
-            } catch (ClientException ex) {
-                Logger.getLogger(JoinGameController.class.getName()).log(Level.SEVERE, null, ex);
-            }
-
-        }
+//        } else {
+//            getJoinGameView().closeModal();
+//            //automatically join the person to the game
+//            JoinGameRequest request = new JoinGameRequest(gameId, color);
+//            try {
+//                if (ClientCommunicatorFascadeSettlersOfCatan.getSingleton().joinGame(request)) {
+//                    //if successful in re-joining game
+//                    PlayerInfo[] players = new PlayerInfo[activePlayers.size()];
+//                    activePlayers.toArray(players);
+//                    getPlayerWaitingView().setPlayers(players);
+//                }
+//            } catch (ClientException ex) {
+//                Logger.getLogger(JoinGameController.class.getName()).log(Level.SEVERE, null, ex);
+//            }
+//
+//        }
     }
 
     @Override
@@ -266,7 +264,7 @@ public class JoinGameController extends Controller implements IJoinGameControlle
 
     @Override
     public void joinGame(CatanColor color) {
-
+        
         JoinGameRequest request = new JoinGameRequest(gameId, color.name().toLowerCase());
         try {
             if (ClientCommunicatorFascadeSettlersOfCatan.getSingleton().joinGame(request)) {

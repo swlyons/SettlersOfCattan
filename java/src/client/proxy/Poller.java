@@ -19,47 +19,23 @@ import java.util.logging.Logger;
  *
  */
 public class Poller extends TimerTask {
-    private int version = 0;
+    private int version = -1;
     public Poller() {
-
     }
 
     public void run() {
-        int currentGameID = -1;
-        String gameID = "";
-
-        for (Map.Entry<Integer, String> entry : ClientCommunicatorFascadeSettlersOfCatan.getSingleton().getCookies().entrySet()) {
-            //System.out.println(entry.getValue());
-            gameID = entry.getValue().split("catan.game=")[1];
-        }
-
-        currentGameID = Integer.parseInt(gameID);
-        
-        //get the current game version
-        ArrayList<GameInfo> games = null;
-        try {
-            games = ClientCommunicatorFascadeSettlersOfCatan.getSingleton().listGames();
-            for (GameInfo game : games) {
-                if (currentGameID == game.getId()) {
-                    //version = game.getVersion();
-                    break;
-                }
-            }
-        } catch (ClientException ex) {
-            Logger.getLogger(Poller.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
         // get the model version
         try {
             GameInfo game = ClientCommunicatorFascadeSettlersOfCatan.getSingleton().getGameModel(version + "");
             //only update if it is a newer version
             
             if (version < game.getVersion()) {
-                version++;
                 System.out.println("Poller: Old Version is " + version + " New Version is " + game.getVersion());
+                version=game.getVersion();
                 GameManager manager = ClientCommunicator.getSingleton().getGameManager();
                 manager.initializeGame(game);
                 
+//                ClientCommunicator.getSingleton().setGameManager(manager);
             }
         } catch (ClientException ex) {
             Logger.getLogger(Poller.class.getName()).log(Level.SEVERE, null, ex);
