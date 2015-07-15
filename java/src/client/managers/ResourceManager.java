@@ -230,11 +230,12 @@ public class ResourceManager {
 	 * @post the player/bank specified by the bankIndex will have bought another
 	 *       development card
 	 */
-	public void devCardBought(int destinationIndex) {
+	public DevCardType devCardBought(int destinationIndex) {
 		Bank mainBank = gameBanks.get(mainBankIndex);
 
 		DevCardType type = mainBank.getDevelopmentCards().selectRandomDevCard();
 		transferDevelopmentCard(destinationIndex, type);
+		return type;
 	}
 
 	/**
