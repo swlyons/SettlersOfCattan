@@ -6,6 +6,9 @@ import client.base.*;
 import client.communication.ClientCommunicator;
 import client.communication.ClientCommunicatorFascadeSettlersOfCatan;
 import client.data.*;
+import client.map.MapController;
+import client.map.MapView;
+import client.map.RobView;
 import client.misc.*;
 import client.proxy.CreateGameRequest;
 import client.proxy.JoinGameRequest;
@@ -213,25 +216,45 @@ public class JoinGameController extends Controller implements IJoinGameControlle
         GameInfo[] games = new GameInfo[activeGames.size()];
         activeGames.toArray(games);
         int activePlayer = ClientCommunicator.getSingleton().getPlayerId();
+        ArrayList<PlayerInfo> activePlayers = new ArrayList<>();
+        String color = "";
         //diable the necessary player colors
         for (GameInfo activeGame : activeGames) {
             if (activeGame.getId() == gameId) {
                 //current player should be able to choose another color
+
                 for (PlayerInfo player : activeGame.getPlayers()) {
                     if (player.getId() != -1) {
                         numberOfPlayers--;
+                        activePlayers.add(player);
                         if (activePlayer != player.getId()) {
                             getSelectColorView().setColorEnabled(CatanColor.valueOf(player.getColor().toUpperCase()), false);
+                        } else {
+                            color = player.getColor().toLowerCase();
                         }
                     }
                 }
             }
         }
-        if(numberOfPlayers != 0){
+        if (numberOfPlayers != 0) {
             getSelectColorView().showModal();
-        }
-        else{
+        } else {
             getJoinGameView().closeModal();
+            //automatically join the person to the game
+            JoinGameRequest request = new JoinGameRequest(gameId, color);
+            try {
+                if (ClientCommunicatorFascadeSettlersOfCatan.getSingleton().joinGame(request)) {
+                    //if successful in re-joining game
+                    PlayerInfo[] players = new PlayerInfo[activePlayers.size()];
+                    activePlayers.toArray(players);
+                    getPlayerWaitingView().setPlayers(players);
+                    
+                    
+                }
+            } catch (ClientException ex) {
+                Logger.getLogger(JoinGameController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
         }
     }
 

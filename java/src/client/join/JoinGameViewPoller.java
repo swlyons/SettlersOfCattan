@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.TimerTask;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import shared.definitions.CatanColor;
 
 /**
  *
@@ -94,21 +93,7 @@ public class JoinGameViewPoller extends TimerTask {
             Logger.getLogger(Poller.class.getName()).log(Level.SEVERE, null, ex);
         }
         if (!getJoinGameController().getSelectColorView().isModalShowing() && !getJoinGameController().getPlayerWaitingView().isModalShowing() && !getJoinGameController().getNewGameView().isModalShowing()) {
-            //add logic to only run this when something changes
-            GameInfo[] games = getJoinGameController().getJoinGameView().getGames();
-            int oldGamePlayers = 0;
-            int oldGameSize = games.length;
-            int newGamePlayers = 0;
-            int newGameSize = activeGames.size();
-
-            for (GameInfo game : games) {
-                oldGamePlayers += game.getPlayers().size();
-            }
-
-            for (GameInfo game : activeGames) {
-                newGamePlayers += game.getPlayers().size();
-            }
-
+            //only update when necessary
             if (update) {
                 getJoinGameController().getJoinGameView().showModal();
             }
