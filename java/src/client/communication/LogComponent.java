@@ -92,7 +92,7 @@ public class LogComponent extends JComponent {
             List<String> lines = wrapText(fontContext, entry.getMessage(), width);
             int rectHeight = TOP_MARGIN + BOTTOM_MARGIN + lines.size()
                     * fontMetrics.getHeight();
-
+            
             g2.setColor(entry.getColor().getJavaColor());
             g2.fillRect(0, y, this.getWidth(), rectHeight);
 

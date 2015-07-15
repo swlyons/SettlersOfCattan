@@ -20,6 +20,7 @@ import java.util.logging.Logger;
  */
 public class Poller extends TimerTask {
     private int version = 0;
+    private boolean firstTime = true;
     public Poller() {
 
     }
@@ -27,15 +28,17 @@ public class Poller extends TimerTask {
     public void run() {
         // get the model version
         try {
+            
             GameInfo game = ClientCommunicatorFascadeSettlersOfCatan.getSingleton().getGameModel(version + "");
             //only update if it is a newer version
-            if (version < game.getVersion()) {
+            if (version < game.getVersion() ||  (game.getVersion() == 0 && firstTime)) {
                 
                 GameManager manager = ClientCommunicator.getSingleton().getGameManager();
                 manager.initializeGame(game, version+"");
                 
                 //update the version
                 version = game.getVersion();
+                firstTime = false;
             }
         } catch (ClientException ex) {
             Logger.getLogger(Poller.class.getName()).log(Level.SEVERE, null, ex);
