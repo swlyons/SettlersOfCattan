@@ -3,6 +3,8 @@ package client.resources;
 import java.util.*;
 
 import client.base.*;
+import client.communication.ClientCommunicator;
+import client.managers.GameManager;
 
 
 /**
@@ -35,6 +37,45 @@ public class ResourceBarController extends Controller implements IResourceBarCon
 		elementActions.put(element, action);
 	}
 
+	public boolean canBuildRoad() {
+		GameManager gm = ClientCommunicator.getSingleton().getGameManager();
+		Integer playerId = ClientCommunicator.getSingleton().getPlayerId();
+		boolean canBuild = gm.canBuildRoad() && gm.getGame().getTurnTracker().getCurrentTurn() == gm.getPlayerIndex(playerId);
+		getView().setElementEnabled(ResourceBarElement.ROAD, canBuild);
+		return canBuild;
+	}
+	
+	public boolean canBuildSettlement() {
+		GameManager gm = ClientCommunicator.getSingleton().getGameManager();
+		Integer playerId = ClientCommunicator.getSingleton().getPlayerId();
+		boolean canBuild = gm.canBuildSettlement() && gm.getGame().getTurnTracker().getCurrentTurn() == gm.getPlayerIndex(playerId);
+		getView().setElementEnabled(ResourceBarElement.SETTLEMENT, canBuild);
+		return canBuild;
+	}
+	
+	public boolean canBuildCity() {
+		GameManager gm = ClientCommunicator.getSingleton().getGameManager();
+		Integer playerId = ClientCommunicator.getSingleton().getPlayerId();
+		boolean canBuild = gm.canBuildCity() && gm.getGame().getTurnTracker().getCurrentTurn() == gm.getPlayerIndex(playerId);
+		getView().setElementEnabled(ResourceBarElement.CITY, canBuild);
+		return canBuild;
+	}
+	
+	public boolean canBuyCard() {
+		GameManager gm = ClientCommunicator.getSingleton().getGameManager();
+		Integer playerId = ClientCommunicator.getSingleton().getPlayerId();
+		boolean canBuild = gm.canBuyCard() && gm.getGame().getTurnTracker().getCurrentTurn() == gm.getPlayerIndex(playerId);
+		getView().setElementEnabled(ResourceBarElement.BUY_CARD, canBuild);
+		return canBuild;
+	}
+	
+	public boolean canPlayCard() {
+		GameManager gm = ClientCommunicator.getSingleton().getGameManager();
+		Integer playerId = ClientCommunicator.getSingleton().getPlayerId();
+		boolean canBuild = gm.canPlayCard() && gm.getGame().getTurnTracker().getCurrentTurn() == gm.getPlayerIndex(playerId);
+		return canBuild;
+	}
+	
 	@Override
 	public void buildRoad() {
 		executeElementAction(ResourceBarElement.ROAD);

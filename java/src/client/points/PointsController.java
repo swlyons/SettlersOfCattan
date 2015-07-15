@@ -4,7 +4,7 @@ import java.util.Map;
 
 import client.base.*;
 import client.communication.ClientCommunicator;
-import client.data.Game;
+import client.data.GameInfo;
 import client.data.Player;
 import client.managers.GameManager;
 
@@ -45,14 +45,14 @@ public class PointsController extends Controller implements IPointsController {
 
 	private void initFromModel() {
 		System.out.println("Yay");
-		Game game = ClientCommunicator.getSingleton().getGameManager().getGame();
+		GameInfo game = ClientCommunicator.getSingleton().getGameManager().getGame();
 		int points = 0;
 		
                 GameManager gm = ClientCommunicator.getSingleton().getGameManager();
                 Integer playerId = ClientCommunicator.getSingleton().getPlayerId();
                 Integer playerIndex = 4;
                 for(int i=0;i<gm.getGame().getPlayers().size();i++){
-                    if(gm.getGame().getPlayers().get(i).getPlayerID()==playerId){
+                    if(gm.getGame().getPlayers().get(i).getId()==playerId){
                         playerIndex=i;
                         break;
                     }

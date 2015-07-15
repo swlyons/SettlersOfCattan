@@ -4,7 +4,7 @@ import java.util.*;
 import java.util.List;
 
 import client.base.*;
-import client.data.Game;
+import client.data.GameInfo;
 import client.data.MessageLine;
 import client.data.Player;
 import shared.definitions.*;
@@ -29,7 +29,7 @@ public class GameHistoryController extends Controller implements IGameHistoryCon
 	}
 	
 	private void initFromModel() {
-		Game game = ClientCommunicator.getSingleton().getGameManager().getGame();
+		GameInfo game = ClientCommunicator.getSingleton().getGameManager().getGame();
 		List<LogEntry> entries = new ArrayList<LogEntry>();
 		
 		//for each line...
