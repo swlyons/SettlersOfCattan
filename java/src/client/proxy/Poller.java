@@ -51,10 +51,10 @@ public class Poller extends TimerTask {
             GameInfo game = ClientCommunicatorFascadeSettlersOfCatan.getSingleton().getGameModel(version + "");
             //only update if it is a newer version
             System.out.println("Poller: Old Version is " + version + " New Version is " + game.getVersion());
-            if (version < game.getVersion()) {
+            //if (version < game.getVersion()) {
                 GameManager manager = new GameManager();
                 manager.initializeGame(game);
-            }
+           // }
         } catch (ClientException ex) {
             Logger.getLogger(Poller.class.getName()).log(Level.SEVERE, null, ex);
         }

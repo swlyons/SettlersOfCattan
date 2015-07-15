@@ -32,5 +32,7 @@ public interface IPlayerWaitingView extends IOverlayView
 	 * @return The type of AI selected by the user
 	 */
 	String getSelectedAI();
+        
+        PlayerInfo[] getPlayers();
 }
 

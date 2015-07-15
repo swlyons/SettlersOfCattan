@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.TimerTask;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import shared.definitions.CatanColor;
 
 /**
  *
@@ -23,8 +24,9 @@ import java.util.logging.Logger;
 public class JoinGameViewPoller extends TimerTask {
 
     private JoinGameController joinGameController;
+    private boolean firstTime = true;
+    private boolean update = false;
 
-   
     public JoinGameViewPoller() {
     }
 
@@ -46,6 +48,7 @@ public class JoinGameViewPoller extends TimerTask {
             activeGames = ClientCommunicatorFascadeSettlersOfCatan.getSingleton().listGames();
             GameInfo[] games = new GameInfo[activeGames.size()];
             activeGames.toArray(games);
+
             for (GameInfo game : activeGames) {
                 for (int i = 0; i < game.getPlayers().size(); i++) {
                     if (game.getPlayers().get(i).getId() == -1) {
@@ -57,18 +60,58 @@ public class JoinGameViewPoller extends TimerTask {
             PlayerInfo playerInfo = new PlayerInfo();
             playerInfo.setId(ClientCommunicator.getSingleton().getPlayerId());
             playerInfo.setName(ClientCommunicator.getSingleton().getName());
-            
-            GameInfo[] allGames = new GameInfo[activeGames.size()];
-            activeGames.toArray(allGames);
-            
-            getJoinGameController().getJoinGameView().setGames(games, playerInfo);
-            
+
+            //determine if we need to update
+            if (!firstTime) {
+                GameInfo[] oldGames = getJoinGameController().getJoinGameView().getGames();
+                int oldGamePlayers = 0;
+                int oldGameSize = oldGames.length;
+                int newGamePlayers = 0;
+                int newGameSize = activeGames.size();
+
+                for (GameInfo game : oldGames) {
+                    oldGamePlayers += game.getPlayers().size();
+                }
+
+                for (GameInfo game : activeGames) {
+                    newGamePlayers += game.getPlayers().size();
+                }
+
+                if ((newGameSize != oldGameSize) || (oldGamePlayers != newGamePlayers)) {
+                    update = true;
+                } else {
+                    update = false;
+                }
+            }
+            else{
+                update = true;
+                firstTime = false;
+            }
+
+            getJoinGameController().getJoinGameView().setGames(games, playerInfo, update);
+
         } catch (ClientException ex) {
             Logger.getLogger(Poller.class.getName()).log(Level.SEVERE, null, ex);
         }
         if (!getJoinGameController().getSelectColorView().isModalShowing() && !getJoinGameController().getPlayerWaitingView().isModalShowing() && !getJoinGameController().getNewGameView().isModalShowing()) {
-            
-            getJoinGameController().getJoinGameView().showModal();
+            //add logic to only run this when something changes
+            GameInfo[] games = getJoinGameController().getJoinGameView().getGames();
+            int oldGamePlayers = 0;
+            int oldGameSize = games.length;
+            int newGamePlayers = 0;
+            int newGameSize = activeGames.size();
+
+            for (GameInfo game : games) {
+                oldGamePlayers += game.getPlayers().size();
+            }
+
+            for (GameInfo game : activeGames) {
+                newGamePlayers += game.getPlayers().size();
+            }
+
+            if (update) {
+                getJoinGameController().getJoinGameView().showModal();
+            }
         }
     }
 
