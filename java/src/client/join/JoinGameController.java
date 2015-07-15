@@ -248,8 +248,6 @@ public class JoinGameController extends Controller implements IJoinGameControlle
                     PlayerInfo[] players = new PlayerInfo[activePlayers.size()];
                     activePlayers.toArray(players);
                     getPlayerWaitingView().setPlayers(players);
-                    
-                    
                 }
             } catch (ClientException ex) {
                 Logger.getLogger(JoinGameController.class.getName()).log(Level.SEVERE, null, ex);
@@ -266,7 +264,6 @@ public class JoinGameController extends Controller implements IJoinGameControlle
 
     @Override
     public void joinGame(CatanColor color) {
-
         JoinGameRequest request = new JoinGameRequest(gameId, color.name().toLowerCase());
         try {
             if (ClientCommunicatorFascadeSettlersOfCatan.getSingleton().joinGame(request)) {
