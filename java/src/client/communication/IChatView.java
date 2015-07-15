@@ -17,5 +17,7 @@ public interface IChatView extends IView
 	 *            The chat messages to display
 	 */
 	void setEntries(List<LogEntry> entries);
+        
+        List<LogEntry> getEntries();
 }
 

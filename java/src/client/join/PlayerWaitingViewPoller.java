@@ -16,7 +16,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import shared.definitions.CatanColor;
 
 /**
  *
@@ -76,7 +75,7 @@ public class PlayerWaitingViewPoller extends TimerTask {
                     else{
                         update = true;
                     }
-                    if (firstTime || update) {
+                    if (firstTime || update || (activePlayers.size() == 4)) {
                         getJoinGameController().getPlayerWaitingView().setPlayers(players);
                         firstTime = false;
                     }
@@ -96,8 +95,6 @@ public class PlayerWaitingViewPoller extends TimerTask {
 
             //the game is over (no need to update anymore)
             if (winner > 0) {
-                System.out.println("The winner: " + winner);
-                System.out.println("Here Game Over");
                 joinGameTimer.cancel();
                 joinGameTimer.purge();
                 playerWaitingTimer.cancel();
@@ -110,7 +107,7 @@ public class PlayerWaitingViewPoller extends TimerTask {
                 playerWaitingTimer.cancel();
                 playerWaitingTimer.purge();
                 getJoinGameController().getJoinGameView().closeModal();
-            }
+           }
         } catch (ClientException ex) {
             Logger.getLogger(Poller.class.getName()).log(Level.SEVERE, null, ex);
         }

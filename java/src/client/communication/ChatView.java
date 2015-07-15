@@ -73,10 +73,16 @@ public class ChatView extends PanelView implements IChatView {
     public IChatController getController() {
         return (IChatController) super.getController();
     }
+    
+    @Override
+    public List<LogEntry> getEntries(){
+        return chatPanel.getEntries();
+    }
 
     @Override
     public void setEntries(final List<LogEntry> entries) {
         chatPanel.setEntries(entries);
+        
     }
     
     /**
