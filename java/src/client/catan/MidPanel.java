@@ -2,8 +2,10 @@ package client.catan;
 
 import java.awt.*;
 import javax.swing.*;
+import java.util.Timer;
 
 import client.map.*;
+import client.map.MapPoller;
 
 @SuppressWarnings("serial")
 public class MidPanel extends JPanel
@@ -14,7 +16,7 @@ public class MidPanel extends JPanel
 	private RobView robView;
 	private MapController mapController;
 	private GameStatePanel gameStatePanel;
-	
+	private Timer timer;
 	public MidPanel()
 	{
 		
@@ -33,8 +35,10 @@ public class MidPanel extends JPanel
 		this.add(tradePanel, BorderLayout.NORTH);
 		this.add(mapView, BorderLayout.CENTER);
 		this.add(gameStatePanel, BorderLayout.SOUTH);
-		
-		this.setPreferredSize(new Dimension(800, 700));
+		                
+		this.setPreferredSize(new Dimension(800, 700));                
+                timer = new Timer();
+                timer.schedule(new MapPoller(mapController), 0, 3000);
 	}
 	
 	public GameStatePanel getGameStatePanel()

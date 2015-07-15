@@ -186,7 +186,6 @@ public class JoinGameView extends OverlayView implements IJoinGameView {
                             break;
                         }
                     }
-
                     getController().startJoinGame(game);
                 } catch (NumberFormatException ex) {
                     ex.printStackTrace();
