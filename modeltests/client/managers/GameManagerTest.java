@@ -5,7 +5,6 @@
  */
 package client.managers;
 
-import client.communication.CookieModel;
 import client.data.*;
 import com.google.gson.GsonBuilder;
 
@@ -808,7 +807,7 @@ public class GameManagerTest {
 		GameManager instance = new GameManager();
 		instance.initializeGame(jsonDataIn);
 
-		Game game = instance.getGame();
+		GameInfo game = instance.getGame();
 
 		// CurrentPlayer is Sam. Sam has enough resources for a DevCard
 		game.getTurnTracker().setCurrentTurn(0);

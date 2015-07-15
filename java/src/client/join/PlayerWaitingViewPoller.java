@@ -105,7 +105,6 @@ public class PlayerWaitingViewPoller extends TimerTask {
             }
             //make the map accessible
             if (activePlayers.size() == 4) {
-                System.out.println("Here 4 Players");
                 joinGameTimer.cancel();
                 joinGameTimer.purge();
                 playerWaitingTimer.cancel();

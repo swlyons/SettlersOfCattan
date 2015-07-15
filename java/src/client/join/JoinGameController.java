@@ -203,6 +203,7 @@ public class JoinGameController extends Controller implements IJoinGameControlle
     @Override
     public void startJoinGame(GameInfo game) {
         gameId = game.getId();
+        int numberOfPlayers = 4;
         ArrayList<GameInfo> activeGames = new ArrayList<>();
         try {
             activeGames = ClientCommunicatorFascadeSettlersOfCatan.getSingleton().listGames();
@@ -218,6 +219,7 @@ public class JoinGameController extends Controller implements IJoinGameControlle
                 //current player should be able to choose another color
                 for (PlayerInfo player : activeGame.getPlayers()) {
                     if (player.getId() != -1) {
+                        numberOfPlayers--;
                         if (activePlayer != player.getId()) {
                             getSelectColorView().setColorEnabled(CatanColor.valueOf(player.getColor().toUpperCase()), false);
                         }
@@ -225,7 +227,12 @@ public class JoinGameController extends Controller implements IJoinGameControlle
                 }
             }
         }
-        getSelectColorView().showModal();
+        if(numberOfPlayers != 0){
+            getSelectColorView().showModal();
+        }
+        else{
+            getJoinGameView().closeModal();
+        }
     }
 
     @Override
