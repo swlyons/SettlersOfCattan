@@ -3,7 +3,6 @@ package client.managers;
 import client.data.Bank;
 import client.data.DevCardList;
 import client.data.Edge;
-import client.data.Game;
 import client.data.Hex;
 import client.data.Location;
 import client.data.Player;
@@ -38,7 +37,7 @@ public class GameManager {
 	private MapManager mapManager;
 	private ResourceManager resourceManager;
 	private Random randomness;
-	private Game game;
+	private GameInfo game;
 	private final int mainBankIndex = 4;
 
 	public GameManager() {
@@ -54,6 +53,7 @@ public class GameManager {
 	 */
 	public void initializeGame(GameInfo game) {
 		try {
+                    this.game = game;
 			// create a json object
 			//Gson model = new GsonBuilder().create();
 
@@ -203,7 +203,7 @@ public class GameManager {
 		locationManager = new LocationManager();
 		mapManager = new MapManager();
 		resourceManager = new ResourceManager();
-		game = new Game(name);
+		game = new GameInfo(name);
 
 		List<Hex> hexes = new ArrayList<Hex>();
 
@@ -688,7 +688,7 @@ public class GameManager {
 
 	public void useMonument() {
 		int currentPlayer = game.getTurnTracker().getCurrentTurn();
-		Player p = game.getPlayers().get(currentPlayer);
+		PlayerInfo p = game.getPlayers().get(currentPlayer);
 		p.setVictoryPoints(p.getVictoryPoints() + 1);
 		resourceManager.monumentUsed(currentPlayer);
 	}
@@ -744,11 +744,11 @@ public class GameManager {
 		// TODO: interact with GUI to disable for non-current player
 	}
 
-	public Game getGame() {
+	public GameInfo getGame() {
 		return game;
 	}
 
-	public void setGame(Game game) {
+	public void setGame(GameInfo game) {
 		this.game = game;
 	}
 

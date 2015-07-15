@@ -22,7 +22,7 @@ public class DiscardController extends Controller implements IDiscardController 
                 Integer playerId = ClientCommunicator.getSingleton().getPlayerId();
                 Integer playerIndex = 4;
                 for(int i=0;i<gm.getGame().getPlayers().size();i++){
-                    if(gm.getGame().getPlayers().get(i).getPlayerID()==playerId){
+                    if(gm.getGame().getPlayers().get(i).getId()==playerId){
                         playerIndex=i;
                         break;
                     }
@@ -98,7 +98,7 @@ public class DiscardController extends Controller implements IDiscardController 
             Integer playerId = ClientCommunicator.getSingleton().getPlayerId();
             Integer playerIndex = 4;
             for(int i=0;i<gm.getGame().getPlayers().size();i++){
-                if(gm.getGame().getPlayers().get(i).getPlayerID()==playerId){
+                if(gm.getGame().getPlayers().get(i).getId()==playerId){
                     playerIndex=i;
                     break;
                 }
@@ -187,7 +187,7 @@ public class DiscardController extends Controller implements IDiscardController 
                 Integer playerId = ClientCommunicator.getSingleton().getPlayerId();
                 Integer playerIndex = 4;
                 for(int i=0;i<gm.getGame().getPlayers().size();i++){
-                    if(gm.getGame().getPlayers().get(i).getPlayerID()==playerId){
+                    if(gm.getGame().getPlayers().get(i).getId()==playerId){
                         playerIndex=i;
                         break;
                     }

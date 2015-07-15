@@ -2,8 +2,10 @@ package client.domestic;
 
 import shared.definitions.*;
 import client.base.*;
+import client.communication.ClientCommunicator;
+import client.managers.GameManager;
+import client.data.PlayerInfo;
 import client.misc.*;
-
 
 /**
  * Domestic trade controller implementation
@@ -14,6 +16,8 @@ public class DomesticTradeController extends Controller implements IDomesticTrad
 	private IWaitView waitOverlay;
 	private IAcceptTradeOverlay acceptOverlay;
 
+        private boolean addedPlayers;
+        
 	/**
 	 * DomesticTradeController constructor
 	 * 
@@ -26,7 +30,7 @@ public class DomesticTradeController extends Controller implements IDomesticTrad
 									IWaitView waitOverlay, IAcceptTradeOverlay acceptOverlay) {
 
 		super(tradeView);
-		
+		addedPlayers=false;
 		setTradeOverlay(tradeOverlay);
 		setWaitOverlay(waitOverlay);
 		setAcceptOverlay(acceptOverlay);
@@ -61,11 +65,44 @@ public class DomesticTradeController extends Controller implements IDomesticTrad
 		this.acceptOverlay = acceptOverlay;
 	}
 
+        
+        public void initFromModel(){
+            GameManager gm = ClientCommunicator.getSingleton().getGameManager();
+            Integer playerId = ClientCommunicator.getSingleton().getPlayerId();
+            Integer playerIndex = 4;
+            for(int i=0;i<gm.getGame().getPlayers().size();i++){
+                if(gm.getGame().getPlayers().get(i).getId()==playerId){
+                    playerIndex=i;
+                    break;
+                }
+            }
+            
+            if(playerIndex==gm.getGame().getTurnTracker().getCurrentTurn()){
+
+            }else{
+                getTradeOverlay().setStateMessage("not your turn");
+            }
+            
+            getTradeOverlay().setTradeEnabled(false);
+        }
+                
 	@Override
 	public void startTrade() {
-
+                if(!addedPlayers){
+                    PlayerInfo[] players = new PlayerInfo[4];
+                    GameManager gm = ClientCommunicator.getSingleton().getGameManager();
+                    for(int i=0;i<4;i++){
+                        PlayerInfo player = new PlayerInfo();
+                        player.setName(gm.getGame().getPlayers().get(i).getName());
+                        player.setColor(gm.getGame().getPlayers().get(i).getColor());
+                        players[i] = player;                        
+                    }
+                    getTradeOverlay().setPlayers(players);
+                    addedPlayers = true;
+                }
 		getTradeOverlay().showModal();
-	}
+                initFromModel();
+        }
 
 	@Override
 	public void decreaseResourceAmount(ResourceType resource) {
