@@ -55,6 +55,7 @@ public class ClientCommunicator {
     }
     
     private GameManager gm;
+    private boolean joinedGame = false;
     
     public GameManager getGameManager() {
         if(gm == null){
@@ -63,6 +64,18 @@ public class ClientCommunicator {
     	return gm;
     }
 
+    public void setGameManager(GameManager gameManager) {
+        gm = gameManager;
+    }
+    
+    public boolean getJoinedGame(){
+        return joinedGame;
+    }
+    
+    public void setJoinedGame(boolean joinedGame){
+        this.joinedGame=joinedGame;
+    }
+    
     // Constructors
     /**
      * Default Constructor. Used only to create the singleton.
