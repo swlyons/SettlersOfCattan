@@ -42,7 +42,6 @@ public class MapController extends Controller implements IMapController {
 	}
 
 	protected void initFromModel() {
-                System.out.println("Here Map Manager");
 		GameManager gm = ClientCommunicator.getSingleton().getGameManager();
 
 		if (gm.getMapManager() != null) {

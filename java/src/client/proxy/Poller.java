@@ -32,7 +32,7 @@ public class Poller extends TimerTask {
             if (version < game.getVersion()) {
                 
                 GameManager manager = ClientCommunicator.getSingleton().getGameManager();
-                manager.initializeGame(game);
+                manager.initializeGame(game, version+"");
                 
                 //update the version
                 version = game.getVersion();

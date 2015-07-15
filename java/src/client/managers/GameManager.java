@@ -1,6 +1,7 @@
 package client.managers;
 
 import client.communication.ClientCommunicator;
+import client.communication.ClientCommunicatorFascadeSettlersOfCatan;
 import client.data.Bank;
 import client.data.DevCardList;
 import client.data.Edge;
@@ -53,9 +54,13 @@ public class GameManager {
 	 * @pre model is accurate
 	 * @post Will initialize the game model
 	 */
-	public void initializeGame(GameInfo game) {
+	public void initializeGame(GameInfo game, String version) {
 		try {
+                        //our game
 			this.game = game;
+                        
+                        //server's game
+                        GameInfo serverGame = ClientCommunicatorFascadeSettlersOfCatan.getSingleton().getGameModel(version);
 			// create a json object
 			// Gson model = new GsonBuilder().create();
 
@@ -158,6 +163,9 @@ public class GameManager {
 				resourceManager = new ResourceManager();
 			}
 			resourceManager.setGameBanks(gameBanks);
+                        
+                        //update the chat lines whenever something is added or removed (probabley not necessary)
+                        System.out.println("GAME MANAGER: Update the Chat Output for everyone");
 
 		} catch (Exception e) {
 			System.out.println(e);
