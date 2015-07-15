@@ -107,7 +107,7 @@ public class PlayerWaitingViewPoller extends TimerTask {
                 playerWaitingTimer.cancel();
                 playerWaitingTimer.purge();
                 getJoinGameController().getJoinGameView().closeModal();
-                System.out.println("There are four players");
+//                System.out.println("There are four players");
                 ClientCommunicator.getSingleton().setJoinedGame(true);
 
            }

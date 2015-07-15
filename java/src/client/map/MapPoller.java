@@ -34,7 +34,7 @@ public class MapPoller extends TimerTask{
             }catch (Exception e){
             }
         }
-        System.out.println("meow");
+//        System.out.println("meow");
     }
     
 }
