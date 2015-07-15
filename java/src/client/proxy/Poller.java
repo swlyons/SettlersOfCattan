@@ -19,9 +19,8 @@ import java.util.logging.Logger;
  *
  */
 public class Poller extends TimerTask {
-    private int version = 0;
+    private int version = -1;
     public Poller() {
-
     }
 
     public void run() {
@@ -30,12 +29,12 @@ public class Poller extends TimerTask {
             GameInfo game = ClientCommunicatorFascadeSettlersOfCatan.getSingleton().getGameModel(version + "");
             //only update if it is a newer version
             if (version < game.getVersion()) {
-                
+                System.out.println("Poller: Old Version is " + version + " New Version is " + game.getVersion());
+                version=game.getVersion();
                 GameManager manager = ClientCommunicator.getSingleton().getGameManager();
                 manager.initializeGame(game, version+"");
                 
-                //update the version
-                version = game.getVersion();
+//                ClientCommunicator.getSingleton().setGameManager(manager);
             }
         } catch (ClientException ex) {
             Logger.getLogger(Poller.class.getName()).log(Level.SEVERE, null, ex);

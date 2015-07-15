@@ -11,7 +11,7 @@ import java.util.*;
 import java.lang.reflect.*;
 import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
-
+import client.communication.ClientCommunicator;
 /**
  * Implementation for the login controller
  */
@@ -66,7 +66,7 @@ public class LoginController extends Controller implements ILoginController {
 
     @Override
     public void start() {
-
+        ClientCommunicator.getSingleton().setJoinedGame(false);
         getLoginView().showModal();
     }
 
