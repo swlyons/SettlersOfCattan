@@ -67,7 +67,7 @@ public class JoinGameViewPoller extends TimerTask {
             Logger.getLogger(Poller.class.getName()).log(Level.SEVERE, null, ex);
         }
         if (!getJoinGameController().getSelectColorView().isModalShowing() && !getJoinGameController().getPlayerWaitingView().isModalShowing() && !getJoinGameController().getNewGameView().isModalShowing()) {
-            
+            //add logic to only run this when something changes
             getJoinGameController().getJoinGameView().showModal();
         }
     }

@@ -69,7 +69,7 @@ public class PlayerWaitingViewPoller extends TimerTask {
             if (getJoinGameController().getJoinGameView().isModalShowing()) {
                 getJoinGameController().getJoinGameView().closeModal();
             }
-
+            System.out.println("Here");
             getJoinGameController().getJoinAction().execute();
 
             //the game is over (no need to update anymore)
@@ -81,6 +81,10 @@ public class PlayerWaitingViewPoller extends TimerTask {
             }
             //make the map accessible
             if (activePlayers.size() == 4) {
+                joinGameTimer.cancel();
+                joinGameTimer.purge();
+                playerWaitingTimer.cancel();
+                playerWaitingTimer.purge();
                 getJoinGameController().getJoinGameView().closeModal();
             }
         } catch (ClientException ex) {
