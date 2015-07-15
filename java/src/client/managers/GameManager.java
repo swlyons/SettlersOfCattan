@@ -48,7 +48,6 @@ public class GameManager {
 
 	/**
 	 * @author ddennis
-	 * @param jsonData
 	 *            = JSON string of information to initialize the client model
 	 * @pre model is accurate
 	 * @post Will initialize the game model
