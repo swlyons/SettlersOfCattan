@@ -27,6 +27,8 @@ public class PlayerWaitingViewPoller extends TimerTask {
     private JoinGameController joinGameController;
     private Timer playerWaitingTimer;
     private Timer joinGameTimer;
+    private boolean firstTime = true;
+    private boolean update = false;
 
     public PlayerWaitingViewPoller() {
     }
@@ -57,16 +59,27 @@ public class PlayerWaitingViewPoller extends TimerTask {
                     for (PlayerInfo player : game.getPlayers()) {
                         if (player.getId() != -1) {
                             activePlayers.add(player);
-                            //current player should be able to choose another color
-                            if (activePlayer != player.getId()) {
-                                getJoinGameController().getSelectColorView().setColorEnabled(CatanColor.valueOf(player.getColor().toUpperCase()), false);
-                            }
                         }
                     }
                     winner = game.getWinner();
                     PlayerInfo[] players = new PlayerInfo[activePlayers.size()];
                     activePlayers.toArray(players);
-                    getJoinGameController().getPlayerWaitingView().setPlayers(players);
+                    // only update if there is a new player added or removed
+                    if(!firstTime){
+                        if(activePlayers.size() != getJoinGameController().getPlayerWaitingView().getPlayers().length){
+                            update = true;
+                        }
+                        else{
+                            update = false;
+                        }
+                    }
+                    else{
+                        update = true;
+                    }
+                    if (firstTime || update) {
+                        getJoinGameController().getPlayerWaitingView().setPlayers(players);
+                        firstTime = false;
+                    }
                     break;
                 }
             }
@@ -76,11 +89,15 @@ public class PlayerWaitingViewPoller extends TimerTask {
             if (getJoinGameController().getJoinGameView().isModalShowing()) {
                 getJoinGameController().getJoinGameView().closeModal();
             }
-            System.out.println("Here");
-            getJoinGameController().getJoinAction().execute();
+
+            if (update) {
+                getJoinGameController().getJoinAction().execute();
+            }
 
             //the game is over (no need to update anymore)
-            if (winner > -1) {
+            if (winner > 0) {
+                System.out.println("The winner: " + winner);
+                System.out.println("Here Game Over");
                 joinGameTimer.cancel();
                 joinGameTimer.purge();
                 playerWaitingTimer.cancel();
@@ -88,6 +105,7 @@ public class PlayerWaitingViewPoller extends TimerTask {
             }
             //make the map accessible
             if (activePlayers.size() == 4) {
+                System.out.println("Here 4 Players");
                 joinGameTimer.cancel();
                 joinGameTimer.purge();
                 playerWaitingTimer.cancel();

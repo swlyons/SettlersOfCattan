@@ -148,7 +148,7 @@ public class JoinGameController extends Controller implements IJoinGameControlle
 
     @Override
     public void start() {
-        joinGameTimer.schedule(new JoinGameViewPoller(this), 0, 5000);
+        joinGameTimer.schedule(new JoinGameViewPoller(this), 0, 1000);
     }
 
     @Override
@@ -185,7 +185,7 @@ public class JoinGameController extends Controller implements IJoinGameControlle
             playerInfo.setName(ClientCommunicator.getSingleton().getName());
             GameInfo[] allGames = new GameInfo[gamesOnServer.size()];
             gamesOnServer.toArray(allGames);
-            getJoinGameView().setGames(allGames, playerInfo);
+            getJoinGameView().setGames(allGames, playerInfo, true);
 
             //if successful clear out old options
             getNewGameView().setRandomlyPlaceHexes(false);
@@ -240,9 +240,8 @@ public class JoinGameController extends Controller implements IJoinGameControlle
         JoinGameRequest request = new JoinGameRequest(gameId, color.name().toLowerCase());
         try {
             if (ClientCommunicatorFascadeSettlersOfCatan.getSingleton().joinGame(request)) {
-
-                //start the View Poller (runs every 5 seconds)
-                playerWaitingTimer.schedule(new PlayerWaitingViewPoller(this, playerWaitingTimer, joinGameTimer), 0, 5000);
+                //start the View Poller (runs every 1 seconds)
+                playerWaitingTimer.schedule(new PlayerWaitingViewPoller(this, playerWaitingTimer, joinGameTimer), 0, 1000);
 
             } else {
                 ArrayList<GameInfo> gamesOnServer = ClientCommunicatorFascadeSettlersOfCatan.getSingleton().listGames();
@@ -251,7 +250,7 @@ public class JoinGameController extends Controller implements IJoinGameControlle
                 playerInfo.setName(ClientCommunicator.getSingleton().getName());
                 GameInfo[] allGames = new GameInfo[gamesOnServer.size()];
                 gamesOnServer.toArray(allGames);
-                getJoinGameView().setGames(allGames, playerInfo);
+                getJoinGameView().setGames(allGames, playerInfo, true);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -263,7 +262,7 @@ public class JoinGameController extends Controller implements IJoinGameControlle
                 playerInfo.setName(ClientCommunicator.getSingleton().getName());
                 GameInfo[] allGames = new GameInfo[gamesOnServer.size()];
                 gamesOnServer.toArray(allGames);
-                getJoinGameView().setGames(allGames, playerInfo);
+                getJoinGameView().setGames(allGames, playerInfo, true);
             } catch (Exception e2) {
             }
         }

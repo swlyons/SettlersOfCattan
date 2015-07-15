@@ -31,7 +31,9 @@ public class PlayerWaitingView extends OverlayView implements IPlayerWaitingView
     private JPanel center;
     private SpinnerListModel aiModel;
     private JSpinner aiChoices;
-
+    
+    private PlayerInfo[] players;
+    
     public PlayerWaitingView() {
 
         this.setOpaque(true);
@@ -114,6 +116,7 @@ public class PlayerWaitingView extends OverlayView implements IPlayerWaitingView
 
     @Override
     public void setPlayers(PlayerInfo[] value) {
+        players = value;
         //set header label indicating how many players are still needed
         String labelText = "";
         if (value.length == NUMBER_OF_PLAYERS) {
@@ -152,6 +155,11 @@ public class PlayerWaitingView extends OverlayView implements IPlayerWaitingView
         }
     }
 
+    @Override
+    public PlayerInfo[] getPlayers() {
+        return players;
+    }
+    
     @Override
     public void setAIChoices(String[] value) {
 

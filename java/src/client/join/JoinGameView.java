@@ -29,7 +29,7 @@ public class JoinGameView extends OverlayView implements IJoinGameView {
     private JLabel join;
 
     private JLabel playerNames;
-    
+
     private JButton createButton;
     private JButton tempJoinButton;
 
@@ -45,8 +45,7 @@ public class JoinGameView extends OverlayView implements IJoinGameView {
     public JoinGameView() {
         this.initialize();
     }
-    
-    
+
     private void initialize() {
         this.initializeView();
     }
@@ -107,7 +106,7 @@ public class JoinGameView extends OverlayView implements IJoinGameView {
                         players = players + game.getPlayers().get(j).getName();
                     }
                 }
-                playerNames= new JLabel(players);
+                playerNames = new JLabel(players);
                 playerNames.setFont(labelFont);
                 gamePanel.add(playerNames);
                 JButton joinButton;
@@ -156,13 +155,19 @@ public class JoinGameView extends OverlayView implements IJoinGameView {
     }
 
     @Override
-    public void setGames(GameInfo[] games, PlayerInfo localPlayer) {
+    public void setGames(GameInfo[] games, PlayerInfo localPlayer, boolean update) {
         this.games = games;
         this.localPlayer = localPlayer;
-        this.removeAll();
-        this.initialize();
+        if (update) {
+            this.removeAll();
+            this.initialize();
+        }
     }
-    
+
+    public GameInfo[] getGames() {
+        return games;
+    }
+
     private ActionListener actionListener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -181,6 +186,7 @@ public class JoinGameView extends OverlayView implements IJoinGameView {
                             break;
                         }
                     }
+
                     getController().startJoinGame(game);
                 } catch (NumberFormatException ex) {
                     ex.printStackTrace();
