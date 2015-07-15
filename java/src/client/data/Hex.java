@@ -1,6 +1,8 @@
 package client.data;
 
 import java.util.ArrayList;
+
+import shared.definitions.HexType;
 import shared.definitions.ResourceType;
 import shared.locations.EdgeLocation;
 import shared.locations.HexLocation;
@@ -12,6 +14,7 @@ public class Hex {
     private ArrayList<EdgeLocation> edgeLocations;
     private int rollValue;
     private ResourceType resource;
+    private HexType type;
     private boolean hasRobber;
     private int number;
     
@@ -62,6 +65,14 @@ public class Hex {
         this.resource = resource;
     }
 
+    public HexType getType() {
+		return type;
+	}
+
+	public void setType(HexType type) {
+		this.type = type;
+	}
+
     public int getNumber() {
         return number;
     }
@@ -74,6 +85,7 @@ public class Hex {
     public String toString() {
         return "{" + "location : " + location + ", resource : " + resource + ", number : " + number + '}';
     }
+
     
     
 }

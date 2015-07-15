@@ -47,7 +47,7 @@ public class RollController extends Controller implements IRollController {
 		GameManager gm = ClientCommunicator.getSingleton().getGameManager();
 		RollNumber rn = new RollNumber(gm.getGame().getTurnTracker().getCurrentTurn());
 		Random r = new Random();
-		int twoD6 = r.nextInt(6) + 1;
+		int twoD6 = r.nextInt(6) + r.nextInt(6) + 2;
 		rn.setNumber(twoD6);
 
 		try {
