@@ -123,7 +123,7 @@ public class PlayerWaitingView extends OverlayView implements IPlayerWaitingView
             labelText = "This game is ready to go!";
             //start the poller (now that everyone has joined the game)
             java.util.Timer timer = new java.util.Timer();
-            timer.schedule(new Poller(), 0, 5000);
+            timer.schedule(new Poller(), 0, 1000);
             addAiButton.setEnabled(false);
         } else {
             labelText = ("Waiting for Players: Need " + (NUMBER_OF_PLAYERS - value.length) + " more");

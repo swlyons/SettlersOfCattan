@@ -359,7 +359,7 @@ public class ClientCommunicatorFascadeSettlersOfCatanTest {
         chat.setContent(expResult);
         instance.login(new User("Sam", "sam"));
         instance.joinGame(new JoinGameRequest(0, "red"));
-        Game result = instance.sendChat(chat);
+        GameInfo result = instance.sendChat(chat);
         assertEquals(expResult, result.getChat().getLines().get(0).getMessage());
         
         System.out.print("...PASSED");
