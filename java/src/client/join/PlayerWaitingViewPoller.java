@@ -16,6 +16,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import shared.definitions.CatanColor;
 
 /**
  *
@@ -26,6 +27,7 @@ public class PlayerWaitingViewPoller extends TimerTask {
     private JoinGameController joinGameController;
     private Timer playerWaitingTimer;
     private Timer joinGameTimer;
+
     public PlayerWaitingViewPoller() {
     }
 
@@ -49,11 +51,16 @@ public class PlayerWaitingViewPoller extends TimerTask {
         int winner = -1;
         try {
             activeGames = ClientCommunicatorFascadeSettlersOfCatan.getSingleton().listGames();
+            int activePlayer = ClientCommunicator.getSingleton().getPlayerId();
             for (GameInfo game : activeGames) {
                 if (game.getId() == getJoinGameController().getGameId()) {
                     for (PlayerInfo player : game.getPlayers()) {
                         if (player.getId() != -1) {
                             activePlayers.add(player);
+                            //current player should be able to choose another color
+                            if (activePlayer != player.getId()) {
+                                getJoinGameController().getSelectColorView().setColorEnabled(CatanColor.valueOf(player.getColor().toUpperCase()), false);
+                            }
                         }
                     }
                     winner = game.getWinner();

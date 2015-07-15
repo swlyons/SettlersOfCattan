@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.TimerTask;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import shared.definitions.CatanColor;
 
 /**
  *
@@ -24,7 +25,6 @@ public class JoinGameViewPoller extends TimerTask {
 
     private JoinGameController joinGameController;
 
-   
     public JoinGameViewPoller() {
     }
 
@@ -46,6 +46,7 @@ public class JoinGameViewPoller extends TimerTask {
             activeGames = ClientCommunicatorFascadeSettlersOfCatan.getSingleton().listGames();
             GameInfo[] games = new GameInfo[activeGames.size()];
             activeGames.toArray(games);
+            
             for (GameInfo game : activeGames) {
                 for (int i = 0; i < game.getPlayers().size(); i++) {
                     if (game.getPlayers().get(i).getId() == -1) {
@@ -57,12 +58,9 @@ public class JoinGameViewPoller extends TimerTask {
             PlayerInfo playerInfo = new PlayerInfo();
             playerInfo.setId(ClientCommunicator.getSingleton().getPlayerId());
             playerInfo.setName(ClientCommunicator.getSingleton().getName());
-            
-            GameInfo[] allGames = new GameInfo[activeGames.size()];
-            activeGames.toArray(allGames);
-            
+
             getJoinGameController().getJoinGameView().setGames(games, playerInfo);
-            
+
         } catch (ClientException ex) {
             Logger.getLogger(Poller.class.getName()).log(Level.SEVERE, null, ex);
         }

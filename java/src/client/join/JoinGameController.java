@@ -1,5 +1,6 @@
 package client.join;
 
+import client.ClientException;
 import shared.definitions.CatanColor;
 import client.base.*;
 import client.communication.ClientCommunicator;
@@ -10,6 +11,8 @@ import client.proxy.CreateGameRequest;
 import client.proxy.JoinGameRequest;
 import java.util.ArrayList;
 import java.util.Timer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Implementation for the join game controller
@@ -25,7 +28,7 @@ public class JoinGameController extends Controller implements IJoinGameControlle
     private JoinGameViewPoller joinGameViewPoller;
     private java.util.Timer playerWaitingTimer = new java.util.Timer();
     private java.util.Timer joinGameTimer = new java.util.Timer();
-    
+
     /**
      * JoinGameController constructor
      *
@@ -60,7 +63,7 @@ public class JoinGameController extends Controller implements IJoinGameControlle
     public void setPlayerWaitingTimer(Timer playerWaitingTimer) {
         this.playerWaitingTimer = playerWaitingTimer;
     }
-   
+
     /**
      * Returns the action to be executed when the user joins a game
      *
@@ -200,6 +203,28 @@ public class JoinGameController extends Controller implements IJoinGameControlle
     @Override
     public void startJoinGame(GameInfo game) {
         gameId = game.getId();
+        ArrayList<GameInfo> activeGames = new ArrayList<>();
+        try {
+            activeGames = ClientCommunicatorFascadeSettlersOfCatan.getSingleton().listGames();
+        } catch (ClientException ex) {
+            Logger.getLogger(JoinGameController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        GameInfo[] games = new GameInfo[activeGames.size()];
+        activeGames.toArray(games);
+        int activePlayer = ClientCommunicator.getSingleton().getPlayerId();
+        //diable the necessary player colors
+        for (GameInfo activeGame : activeGames) {
+            if (activeGame.getId() == gameId) {
+                //current player should be able to choose another color
+                for (PlayerInfo player : activeGame.getPlayers()) {
+                    if (player.getId() != -1) {
+                        if (activePlayer != player.getId()) {
+                            getSelectColorView().setColorEnabled(CatanColor.valueOf(player.getColor().toUpperCase()), false);
+                        }
+                    }
+                }
+            }
+        }
         getSelectColorView().showModal();
     }
 
@@ -211,7 +236,7 @@ public class JoinGameController extends Controller implements IJoinGameControlle
 
     @Override
     public void joinGame(CatanColor color) {
-        
+
         JoinGameRequest request = new JoinGameRequest(gameId, color.name().toLowerCase());
         try {
             if (ClientCommunicatorFascadeSettlersOfCatan.getSingleton().joinGame(request)) {
