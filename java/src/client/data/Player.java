@@ -1,5 +1,7 @@
 package client.data;
 
+import shared.definitions.CatanColor;
+
 public class Player {
 
 	private String name;
