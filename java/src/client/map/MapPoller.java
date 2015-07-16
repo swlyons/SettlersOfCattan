@@ -25,6 +25,7 @@ import client.roll.RollController;
 import client.turntracker.TurnTrackerView;
 import java.util.ArrayList;
 import shared.definitions.CatanColor;
+import shared.definitions.PieceType;
 
 /**
  *
@@ -60,13 +61,16 @@ public class MapPoller extends TimerTask {
                 GameStatePanel gameStatePanel = catanPanel.getMidPanel().getGameStatePanel();
                 PointsController pointsController = catanPanel.getRightPanel().getPointsController();
                 ResourceBarController resourceBarController = catanPanel.getRightPanel().getResourceController();
-                
+                MapView mapView = (MapView) catanPanel.getMidPanel().getMapController().getView();
+
                 GameManager gm = ClientCommunicator.getSingleton().getGameManager();
-                
+
                 GameInfo gameInformation = ClientCommunicatorFascadeSettlersOfCatan.getSingleton()
                         .getGameModel(version + "");
                 version = gameInformation.getVersion();
-
+                String status = gameInformation.getTurnTracker().getStatus();
+                
+                
                 GameManager gameManager = ClientCommunicator.getSingleton().getGameManager();
                 gameManager.initializeGame(gameInformation);
 
@@ -81,37 +85,56 @@ public class MapPoller extends TimerTask {
                         }
                     }
                 }
+                /* Begin MapView Update */
                 // If they haven't initialized before or it isn't the client's
                 // turn
                 if (!firstInitialization || gameInformation.getTurnTracker().getCurrentTurn() != playerIndex) {
 
-                    catanPanel.getMidPanel().getMapController().initFromModel();
+                    mapView.getController().initFromModel();
                     
-                    if (gameInformation.getTurnTracker().getCurrentTurn() != playerIndex) // This boolean toggles on after your turn, so when the
-                    // turn track comes around again, you get exactly one
-                    // update on each of your turns. This way, your client
-                    // will switch to a "It is your turn" state.
-                    {
-                        firstInitialization = false;
-                    } else {
-                        firstInitialization = true;
-                        if (gm.getLocationManager().getSettledLocations().size() < 4) {
-                            // We are on the first round.
-                            //mapController.getView().startDrop(PieceType.SETTLEMENT, CatanColor.valueOf(playerColor), false);
-                            //mapController.startMove(PieceType.SETTLEMENT, true, true);
-                            //mapController.getView().startDrop(PieceType.ROAD, CatanColor.valueOf(playerColor), false);
-                            //mapController.startMove(PieceType.ROAD, false, true);
-                        } else if (gm.getLocationManager().getSettledLocations().size() < 8) {
-                            // We are on the second round.
-                            //mapController.getView().startDrop(PieceType.SETTLEMENT, CatanColor.valueOf(playerColor), false);
-                            //mapController.startMove(PieceType.SETTLEMENT, true, true);
-                            //mapController.getView().startDrop(PieceType.ROAD, CatanColor.valueOf(playerColor), false);
-                            //mapController.startMove(PieceType.ROAD, false, true);
-                        }
+                    /*if (gameInformation.getTurnTracker().getCurrentTurn() != playerIndex) // This boolean toggles on after your turn, so when the
+                     // turn track comes around again, you get exactly one
+                     // update on each of your turns. This way, your client
+                     // will switch to a "It is your turn" state.
+                     {
+                     firstInitialization = false;
+                     } else {
+                     firstInitialization = true;
+                     if (gm.getLocationManager().getSettledLocations().size() < 4) {
+                     // We are on the first round.
+                     if (gameInformation.getTurnTracker().getCurrentTurn() == playerIndex) {
+                                
+                                
+                     // mapView.startDrop(PieceType.SETTLEMENT, CatanColor.valueOf(playerColor), false);
+                     // mapView.getController().startMove(PieceType.SETTLEMENT, true, true);
+
+                     //mapView.startDrop(PieceType.ROAD, CatanColor.valueOf(playerColor), false);
+                     //mapView.getController().startMove(PieceType.ROAD, false, true);
+                     }
+                     } else if (gm.getLocationManager().getSettledLocations().size() < 8) {
+                     // We are on the second round.
+                     //mapController.getView().startDrop(PieceType.SETTLEMENT, CatanColor.valueOf(playerColor), false);
+                     //mapController.startMove(PieceType.SETTLEMENT, true, true);
+                     //mapController.getView().startDrop(PieceType.ROAD, CatanColor.valueOf(playerColor), false);
+                     //mapController.startMove(PieceType.ROAD, false, true);
+                     }
+                     }*/
+                    // TODO: use this to TEST the overlay for the first two rounds (till we get the logic right)
+                    if (gameInformation.getTurnTracker().getCurrentTurn() == playerIndex) {
+                            
+                            if(status.equals("FirstRound") && firstTime){
+                                //mapView.startDrop(PieceType.SETTLEMENT, CatanColor.valueOf(playerColor), false);
+                                mapView.getController().startMove(PieceType.SETTLEMENT, false, true);
+                                firstTime = false;
+                            }
+                            /*if(status.equals("SecondRound") && firstTime){
+                                mapView.startDrop(PieceType.SETTLEMENT, CatanColor.valueOf(playerColor), false);
+                                mapView.getController().startMove(PieceType.SETTLEMENT, false, true);
+                                firstTime = false;
+                            }    */ 
                     }
-
                 }
-
+                /* End Map View Update */
                 /* Begin Chat View Update */
                 int oldChatSize = chatView.getEntries().size();
                 int newChatSize = gameInformation.getChat().getLines().size();
@@ -133,7 +156,7 @@ public class MapPoller extends TimerTask {
                     chatView.setEntries(newChatEntries);
                 }
                 /* End Chat View Update */
-                
+
                 /* Begin Game History View Update */
                 int oldHistorySize = historyView.getEntries().size();
                 int newHistorySize = gameInformation.getLog().getLines().size();
@@ -155,10 +178,10 @@ public class MapPoller extends TimerTask {
                     historyView.setEntries(newHistoryEntries);
                 }
                 /* End Game History View Update */
-                
+
                 /* Begin Roll Update */
                 //may need to add more so that this knows when to trigger (more than just it being your turn)
-                if (playerIndex == gameInformation.getTurnTracker().getCurrentTurn()) {
+                if (playerIndex == gameInformation.getTurnTracker().getCurrentTurn() && status.equals("Rolling")) {
                     if (firstTime) {
                         firstTime = false;
                         rollController.getResultView().showModal();
@@ -169,27 +192,26 @@ public class MapPoller extends TimerTask {
                 /* End Roll Update */
 
                 /* Begin Turn Tracker Update */
-                String status = gameInformation.getTurnTracker().getStatus();
-
                 //TODO: need to figure out which statuses need to be disable or enabled
                 boolean enable = false;
-                if(status.equals("Playing") && playerIndex == gameInformation.getTurnTracker().getCurrentTurn()){
+                if (status.equals("Playing") && playerIndex == gameInformation.getTurnTracker().getCurrentTurn()) {
                     enable = true;
                     //set the button color
                     for (PlayerInfo player : gameInformation.getPlayers()) {
-                            if (player.getPlayerIndex() == playerIndex) {
-                                //TODO: figure out how to change the actual button's color
-                                gameStatePanel.getButton().setBackground(CatanColor.valueOf(player.getColor().toUpperCase()).getJavaColor());
-                                break;
-                            }
+                        if (player.getPlayerIndex() == playerIndex) {
+                            //TODO: figure out how to change the actual button's color
+                            gameStatePanel.getButton().setBackground(CatanColor.valueOf(player.getColor().toUpperCase()).getJavaColor());
+                            break;
                         }
-                    
+                    }
+
                     status = "Finish Turn";
+                } else {
+                    if(!status.contains("Round")){
+                        status = "Waiting For Other Players";
+                    }
                 }
-                else{
-                    status = "Waiting For Other Players";
-                }
-                
+
                 turnTrackerView.updateGameState(status, enable);
                 //always update the local player's color
 
@@ -219,11 +241,9 @@ public class MapPoller extends TimerTask {
                         highlight = true;
                     }
                     turnTrackerView.updatePlayer(currentPlayerIndex, player.getVictoryPoints(), highlight, largestArmy, longestRoad);
-                    
+
                     /* Begin Points Controller Update */
-                   
-                    
-                    if(player.getVictoryPoints() == MAX_POINTS){
+                    if (player.getVictoryPoints() == MAX_POINTS) {
                         pointsController.getFinishedView().setWinner(player.getName(), (player.getPlayerIndex() == playerIndex));
                         pointsController.getFinishedView().showModal();
                     }
@@ -231,30 +251,28 @@ public class MapPoller extends TimerTask {
 
                 }
                 /* End Turn Tracker Update */
-                
+
                 /* Begin Resource Bar Update */
-                for(PlayerInfo player : gameInformation.getPlayers()){
-                    if(player.getPlayerIndex() == playerIndex){
+                for (PlayerInfo player : gameInformation.getPlayers()) {
+                    if (player.getPlayerIndex() == playerIndex) {
                         int sumCards = player.getRoads() + player.getCities() + player.getSettlements() + player.getSoldiers();
                         //TODO: add logic to only update when they are different
-                           resourceBarController.getView().setElementAmount(ResourceBarElement.BRICK, player.getResources().getBrick());
-                            resourceBarController.getView().setElementAmount(ResourceBarElement.ORE, player.getResources().getOre());
-                            resourceBarController.getView().setElementAmount(ResourceBarElement.SHEEP, player.getResources().getSheep());
-                            resourceBarController.getView().setElementAmount(ResourceBarElement.WHEAT, player.getResources().getWheat());
-                            resourceBarController.getView().setElementAmount(ResourceBarElement.WOOD, player.getResources().getWood());
-                            resourceBarController.getView().setElementAmount(ResourceBarElement.ROAD, player.getRoads());
-                            resourceBarController.getView().setElementAmount(ResourceBarElement.CITY, player.getCities());
-                            resourceBarController.getView().setElementAmount(ResourceBarElement.SETTLEMENT, player.getSettlements());
-                            resourceBarController.getView().setElementAmount(ResourceBarElement.SOLDIERS, player.getSoldiers());
-                            
-                            /* TODO: Figure out what to do with these (not sure what they are)
-                            resourceBarController.getView().setElementAmount(ResourceBarElement.BUY_CARD, player.getSoldiers());
-                            resourceBarController.getView().setElementAmount(ResourceBarElement.PLAY_CARD, player.getSoldiers());*/
+                        resourceBarController.getView().setElementAmount(ResourceBarElement.BRICK, player.getResources().getBrick());
+                        resourceBarController.getView().setElementAmount(ResourceBarElement.ORE, player.getResources().getOre());
+                        resourceBarController.getView().setElementAmount(ResourceBarElement.SHEEP, player.getResources().getSheep());
+                        resourceBarController.getView().setElementAmount(ResourceBarElement.WHEAT, player.getResources().getWheat());
+                        resourceBarController.getView().setElementAmount(ResourceBarElement.WOOD, player.getResources().getWood());
+                        resourceBarController.getView().setElementAmount(ResourceBarElement.ROAD, player.getRoads());
+                        resourceBarController.getView().setElementAmount(ResourceBarElement.CITY, player.getCities());
+                        resourceBarController.getView().setElementAmount(ResourceBarElement.SETTLEMENT, player.getSettlements());
+                        resourceBarController.getView().setElementAmount(ResourceBarElement.SOLDIERS, player.getSoldiers());
 
+                        /* TODO: Figure out what to do with these (not sure what they are)
+                         resourceBarController.getView().setElementAmount(ResourceBarElement.BUY_CARD, player.getSoldiers());
+                         resourceBarController.getView().setElementAmount(ResourceBarElement.PLAY_CARD, player.getSoldiers());*/
                     }
                 }
                 /* End Resource Bar Update */
-                
 
             } catch (Exception e) {
             }
