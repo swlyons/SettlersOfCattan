@@ -66,16 +66,16 @@ public class MapController extends Controller implements IMapController {
 
 		for (Edge e : gm.getLocationManager().getSettledEdges()) {
 			getView().placeRoad(e.getEdgeLocation(),
-					CatanColor.valueOf(gm.getGame().getPlayers().get(e.getOwnerId()).getColor()));
+					CatanColor.valueOf(gm.getGame().getPlayers().get(e.getOwnerId()).getColor().toUpperCase()));
 		}
 
 		for (Location l : gm.getLocationManager().getSettledLocations()) {
 			if (l.getIsCity()) {
 				getView().placeCity(l.getNormalizedLocation(),
-						CatanColor.valueOf(gm.getGame().getPlayers().get(l.getOwnerID()).getColor()));
+						CatanColor.valueOf(gm.getGame().getPlayers().get(l.getOwnerID()).getColor().toUpperCase()));
 			} else {
 				getView().placeSettlement(l.getNormalizedLocation(),
-						CatanColor.valueOf(gm.getGame().getPlayers().get(l.getOwnerID()).getColor()));
+						CatanColor.valueOf(gm.getGame().getPlayers().get(l.getOwnerID()).getColor().toUpperCase()));
 			}
 		}
 
