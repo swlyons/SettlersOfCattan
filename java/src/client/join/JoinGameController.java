@@ -222,7 +222,7 @@ public class JoinGameController extends Controller implements IJoinGameControlle
                 for (PlayerInfo player : activeGame.getPlayers()) {
                     if (player.getId() != -1) {
                        
-                        if (activePlayer != player.getPlayerID()) {
+                        if (activePlayer != player.getId()) {
                             getSelectColorView().setColorEnabled(CatanColor.valueOf(player.getColor().toUpperCase()), false);
                         }
                     }
