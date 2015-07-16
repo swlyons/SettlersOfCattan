@@ -54,13 +54,13 @@ public class GameManager {
 	 * @pre model is accurate
 	 * @post Will initialize the game model
 	 */
-	public void initializeGame(GameInfo game, String version) {
+	public void initializeGame(GameInfo game) {
 		try {
-                        //our game
+            //our game
 			this.game = game;
                         
-                        //server's game
-                        GameInfo serverGame = ClientCommunicatorFascadeSettlersOfCatan.getSingleton().getGameModel(version);
+            //server's game
+            //GameInfo serverGame = ClientCommunicatorFascadeSettlersOfCatan.getSingleton().getGameModel(version);
 			// create a json object
 			// Gson model = new GsonBuilder().create();
 
@@ -80,8 +80,8 @@ public class GameManager {
 
 			if (mapManager == null) {
 				mapManager = new MapManager();
-				mapManager.setHexList(map.getHexes());
 			}
+			mapManager.setHexList(map.getHexes());
 
 			for (Hex hex : mapManager.getHexList()) {
 				if (hex.getLocation().equals(robberLocation)) {

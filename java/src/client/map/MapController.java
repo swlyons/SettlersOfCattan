@@ -25,7 +25,7 @@ public class MapController extends Controller implements IMapController {
 
 		setRobView(robView);
 
-		initFromModel();
+		//initFromModel();
 	}
 
 	public IMapView getView() {
@@ -42,31 +42,29 @@ public class MapController extends Controller implements IMapController {
 	}
 
 	protected void initFromModel() {
+		
 		GameManager gm = ClientCommunicator.getSingleton().getGameManager();
-
-		if (gm.getMapManager() != null) {
-			for (Hex h : gm.getMapManager().getHexList()) {
-				getView().addHex(h.getLocation(), h.getType());
-				getView().addNumber(h.getLocation(), h.getNumber());
-			}
-
-			for (Edge e : gm.getLocationManager().getSettledEdges()) {
-				getView().placeRoad(e.getEdgeLocation(),
-						CatanColor.valueOf(gm.getGame().getPlayers().get(e.getOwnerId()).getColor()));
-			}
-
-			for (Location l : gm.getLocationManager().getSettledLocations()) {
-				if (l.getIsCity()) {
-					getView().placeCity(l.getNormalizedLocation(),
-							CatanColor.valueOf(gm.getGame().getPlayers().get(l.getOwnerID()).getColor()));
-				} else {
-					getView().placeSettlement(l.getNormalizedLocation(),
-							CatanColor.valueOf(gm.getGame().getPlayers().get(l.getOwnerID()).getColor()));
-				}
-			}
-
-			getView().placeRobber(gm.getMapManager().getRobberLocation());
+		for (Hex h : gm.getMapManager().getHexList()) {
+			getView().addHex(h.getLocation(), h.getType());
+			getView().addNumber(h.getLocation(), h.getNumber());
 		}
+
+		for (Edge e : gm.getLocationManager().getSettledEdges()) {
+			getView().placeRoad(e.getEdgeLocation(),
+					CatanColor.valueOf(gm.getGame().getPlayers().get(e.getOwnerId()).getColor()));
+		}
+
+		for (Location l : gm.getLocationManager().getSettledLocations()) {
+			if (l.getIsCity()) {
+				getView().placeCity(l.getNormalizedLocation(),
+						CatanColor.valueOf(gm.getGame().getPlayers().get(l.getOwnerID()).getColor()));
+			} else {
+				getView().placeSettlement(l.getNormalizedLocation(),
+						CatanColor.valueOf(gm.getGame().getPlayers().get(l.getOwnerID()).getColor()));
+			}
+		}
+
+		getView().placeRobber(gm.getMapManager().getRobberLocation());
 	}
 
 	public boolean canPlaceRoad(EdgeLocation edgeLoc) {
