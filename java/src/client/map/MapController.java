@@ -42,8 +42,10 @@ public class MapController extends Controller implements IMapController {
 	}
 
 	protected void initFromModel() {
+                
+                
 		GameManager gm = ClientCommunicator.getSingleton().getGameManager();
-
+                
 		for (int i = 0; i < gm.getMapManager().getHexList().size(); i++) {
 			Hex h = gm.getMapManager().getHexList().get(i);
 			if (h.getResource() == ResourceType.wood)
@@ -79,7 +81,6 @@ public class MapController extends Controller implements IMapController {
 		}
 
 		getView().placeRobber(gm.getMapManager().getRobberLocation());
-
 		// <temp>
 
 		// Random rand = new Random();

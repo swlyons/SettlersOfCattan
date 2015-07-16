@@ -11,6 +11,7 @@ import client.managers.GameManager;
 import client.communication.ClientCommunicator;
 import client.communication.ClientCommunicatorFascadeSettlersOfCatan;
 import client.map.MapController;
+import shared.definitions.CatanColor;
 import shared.definitions.PieceType;
 
 /**
@@ -23,28 +24,37 @@ public class MapPoller extends TimerTask {
 	private int version;
 	private boolean firstInitialization;
 	private int playerIndex;
+        private String playerColor;
 
 	public MapPoller(MapController mapController) {
 		super();
 		this.mapController = mapController;
 		this.firstInitialization = false;
 		playerIndex = -1;
+                playerColor = "";
 		version = -1;
 	}
 
 	public void run() {
 		if (ClientCommunicator.getSingleton().getJoinedGame()) {
 			try {
+                                
 				GameInfo gameInformation = ClientCommunicatorFascadeSettlersOfCatan.getSingleton()
-						.getGameModel(version + "");
-				version = gameInformation.getVersion();
-				ClientCommunicator.getSingleton().getGameManager().initializeGame(gameInformation);
+						.getGameModel(version+ "");
+                                version = gameInformation.getVersion();
+
+                                GameManager gameManager = ClientCommunicator.getSingleton().getGameManager();
+                                gameManager.initializeGame(gameInformation);
+                                
+                                 
 				if (playerIndex == -1) {
-					GameManager gm = ClientCommunicator.getSingleton().getGameManager();
+                                        
+					
 					Integer playerId = ClientCommunicator.getSingleton().getPlayerId();
-					for (int i = 0; i < gm.getGame().getPlayers().size(); i++) {
-						if (gm.getGame().getPlayers().get(i).getId() == playerId) {
-							playerIndex = i;
+                                        for (int i = 0; i < gameManager.getGame().getPlayers().size(); i++) {
+                                               if (gameManager.getGame().getPlayers().get(i).getPlayerID() == playerId) {
+                                                        playerIndex = gameManager.getGame().getPlayers().get(i).getPlayerIndex();
+                                                        playerColor = gameManager.getGame().getPlayers().get(i).getColor().toUpperCase();
 							break;
 						}
 					}
@@ -52,11 +62,11 @@ public class MapPoller extends TimerTask {
 				// If they haven't initialized before or it isn't the client's
 				// turn
 				if (!firstInitialization || gameInformation.getTurnTracker().getCurrentTurn() != playerIndex) {
+                                        
 					mapController.initFromModel();
 					GameManager gm = ClientCommunicator.getSingleton().getGameManager();
-
-					System.out.println(gameInformation.getTurnTracker().getCurrentTurn() + " ->? " + playerIndex);
-					if (gameInformation.getTurnTracker().getCurrentTurn() != playerIndex)
+                                  
+                                        if (gameInformation.getTurnTracker().getCurrentTurn() != playerIndex)
 						// This boolean toggles on after your turn, so when the
 						// turn track comes around again, you get exactly one
 						// update on each of your turns. This way, your client
@@ -66,11 +76,15 @@ public class MapPoller extends TimerTask {
 						firstInitialization = true;
 						if (gm.getLocationManager().getSettledLocations().size() < 4) {
 							// We are on the first round.
+                                                        mapController.getView().startDrop(PieceType.SETTLEMENT, CatanColor.valueOf(playerColor), false);
 							mapController.startMove(PieceType.SETTLEMENT, true, true);
+                                                        mapController.getView().startDrop(PieceType.ROAD, CatanColor.valueOf(playerColor), false);
 							mapController.startMove(PieceType.ROAD, false, true);
 						} else if (gm.getLocationManager().getSettledLocations().size() < 8) {
 							// We are on the second round.
+							mapController.getView().startDrop(PieceType.SETTLEMENT, CatanColor.valueOf(playerColor), false);
 							mapController.startMove(PieceType.SETTLEMENT, true, true);
+                                                        mapController.getView().startDrop(PieceType.ROAD, CatanColor.valueOf(playerColor), false);
 							mapController.startMove(PieceType.ROAD, false, true);
 						}
 					}

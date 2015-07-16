@@ -44,6 +44,7 @@ public class JoinGameViewPoller extends TimerTask {
         ArrayList<GameInfo> activeGames = new ArrayList();
         try {
             activeGames = ClientCommunicatorFascadeSettlersOfCatan.getSingleton().listGames();
+           //
         } catch (ClientException ex) {
             Logger.getLogger(JoinGameViewPoller.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -54,7 +55,7 @@ public class JoinGameViewPoller extends TimerTask {
                 for (int i = 0; i < game.getPlayers().size(); i++) {
                     if (game.getPlayers().get(i).getId() == -1) {
                         game.getPlayers().remove(i);
-                        i--;
+                        i--;    
                     }
                 }
             }
@@ -64,6 +65,7 @@ public class JoinGameViewPoller extends TimerTask {
 
             //determine if we need to update
             if (!firstTime) {
+                 
                 GameInfo[] oldGames = getJoinGameController().getJoinGameView().getGames();
                 int oldGamePlayers = 0;
                 int oldGameSize = oldGames.length;
@@ -79,6 +81,7 @@ public class JoinGameViewPoller extends TimerTask {
                 }
 
                 if ((newGameSize != oldGameSize) || (oldGamePlayers != newGamePlayers)) {
+                    
                     update = true;
                 } else {
                     update = false;
@@ -86,6 +89,7 @@ public class JoinGameViewPoller extends TimerTask {
             }
             else{
                 update = true;
+                
                 firstTime = false;
             }
 
@@ -93,7 +97,7 @@ public class JoinGameViewPoller extends TimerTask {
         if (!getJoinGameController().getSelectColorView().isModalShowing() && !getJoinGameController().getPlayerWaitingView().isModalShowing() && !getJoinGameController().getNewGameView().isModalShowing()) {
             //only update when necessary
             if (update) {
-                getJoinGameController().getJoinGameView().showModal();
+               getJoinGameController().getJoinGameView().showModal();
             }
         }
     }

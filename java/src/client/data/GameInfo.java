@@ -121,4 +121,9 @@ public class GameInfo {
     public void addPlayer(PlayerInfo newPlayer) {
         players.add(newPlayer);
     }
+    
+    @Override
+    public String toString() {
+        return "{" + "title : " + title + ", id : " + id + ", bank : " + bank + ", chat : " + chat + ", log : " + log + ", map : " + map + ", players : " + players + ", tradeOffer : " + tradeOffer + ", turnTracker : " + turnTracker + ", version : " + version + ", winner : " + winner + '}';
+    }
 }
