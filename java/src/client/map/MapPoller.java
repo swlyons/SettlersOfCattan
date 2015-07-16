@@ -177,6 +177,7 @@ public class MapPoller extends TimerTask {
                     if (player.getPlayerID() == ClientCommunicator.getSingleton().getPlayerId()) {
 
                         turnTrackerView.setLocalPlayerColor(CatanColor.valueOf(player.getColor().toUpperCase()));
+                        pointsController.getPointsView().setPoints(player.getVictoryPoints());
                     }
                     //decide the awards
                     if (gameInformation.getTurnTracker().getLargestArmy() == currentPlayerIndex) {
@@ -192,7 +193,8 @@ public class MapPoller extends TimerTask {
                     turnTrackerView.updatePlayer(currentPlayerIndex, player.getVictoryPoints(), highlight, largestArmy, longestRoad);
                     
                     /* Begin Points Controller Update */
-                    pointsController.getPointsView().setPoints(player.getVictoryPoints());
+                   
+                    
                     if(player.getVictoryPoints() == MAX_POINTS){
                         pointsController.getFinishedView().setWinner(player.getName(), (player.getPlayerIndex() == playerIndex));
                         pointsController.getFinishedView().showModal();
