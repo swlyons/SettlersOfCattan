@@ -51,7 +51,7 @@ public class RollController extends Controller implements IRollController {
 		rn.setNumber(twoD6);
 
 		try {
-			gm.initializeGame(ClientCommunicatorFascadeSettlersOfCatan.getSingleton().rollNumber(rn), "");
+			gm.initializeGame(ClientCommunicatorFascadeSettlersOfCatan.getSingleton().rollNumber(rn));
 			getResultView().setRollValue(twoD6);
 			getRollView().closeModal();
 			getResultView().showModal();

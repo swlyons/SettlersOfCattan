@@ -82,7 +82,7 @@ public class GameManager {
 				mapManager = new MapManager();
 			}
 			mapManager.setHexList(map.getHexes());
-
+			
 			for (Hex hex : mapManager.getHexList()) {
 				if (hex.getLocation().equals(robberLocation)) {
 					hex.setHasRobber(true);
