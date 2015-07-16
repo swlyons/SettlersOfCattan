@@ -43,10 +43,8 @@ public class MapController extends Controller implements IMapController {
 
         @Override
 	public void initFromModel() {
-                
-                
 		GameManager gm = ClientCommunicator.getSingleton().getGameManager();
-                
+		
 		for (int i = 0; i < gm.getMapManager().getHexList().size(); i++) {
 			Hex h = gm.getMapManager().getHexList().get(i);
 			if (h.getResource() == ResourceType.wood)
@@ -82,79 +80,51 @@ public class MapController extends Controller implements IMapController {
 		}
 
 		getView().placeRobber(gm.getMapManager().getRobberLocation());
-		// <temp>
+		
+		// Water tiles are hard coded, sine they never change, ever.
+		getView().addHex(new HexLocation(0, 3), HexType.water);
+		getView().addHex(new HexLocation(1, 2), HexType.water);
+		getView().addHex(new HexLocation(2, 1), HexType.water);
+		getView().addHex(new HexLocation(3, 0), HexType.water);
+		getView().addHex(new HexLocation(3, -1), HexType.water);
+		getView().addHex(new HexLocation(3, -2), HexType.water);
+		getView().addHex(new HexLocation(3, -3), HexType.water);
+		getView().addHex(new HexLocation(2, -3), HexType.water);
+		getView().addHex(new HexLocation(1, -3), HexType.water);
+		getView().addHex(new HexLocation(0, -3), HexType.water);
+		getView().addHex(new HexLocation(-1, -2), HexType.water);
+		getView().addHex(new HexLocation(-2, -1), HexType.water);
+		getView().addHex(new HexLocation(-3, 0), HexType.water);
+		getView().addHex(new HexLocation(-3, 1), HexType.water);
+		getView().addHex(new HexLocation(-3, 2), HexType.water);
+		getView().addHex(new HexLocation(-3, 3), HexType.water);
+		getView().addHex(new HexLocation(-2, 3), HexType.water);
+		getView().addHex(new HexLocation(-1, 3), HexType.water);
+		
+		for (Port p : gm.getGame().getMap().getPorts()) {
+			HexLocation location = p.getLocation();
+			PortType type = PortType.THREE;
+			if (p.getResource() != null) {
+				type = PortType.valueOf(p.getResource().toString().toUpperCase());
+			}
 
-		// Random rand = new Random();
-		//
-		// for (int x = 0; x <= 3; ++x) {
-		//
-		// int maxY = 3 - x;
-		// for (int y = -3; y <= maxY; ++y) {
-		// int r = rand.nextInt(HexType.values().length);
-		// HexType hexType = HexType.values()[r];
-		// HexLocation hexLoc = new HexLocation(x, y);
-		// getView().addHex(hexLoc, hexType);
-		// getView().placeRoad(new EdgeLocation(hexLoc, EdgeDirection.NW),
-		// CatanColor.RED);
-		// getView().placeRoad(new EdgeLocation(hexLoc, EdgeDirection.SW),
-		// CatanColor.BLUE);
-		// getView().placeRoad(new EdgeLocation(hexLoc, EdgeDirection.S),
-		// CatanColor.ORANGE);
-		// getView().placeSettlement(new VertexLocation(hexLoc,
-		// VertexDirection.NW), CatanColor.GREEN);
-		// getView().placeCity(new VertexLocation(hexLoc, VertexDirection.NE),
-		// CatanColor.PURPLE);
-		// }
-		//
-		// if (x != 0) {
-		// int minY = x - 3;
-		// for (int y = minY; y <= 3; ++y) {
-		// int r = rand.nextInt(HexType.values().length);
-		// HexType hexType = HexType.values()[r];
-		// HexLocation hexLoc = new HexLocation(-x, y);
-		// getView().addHex(hexLoc, hexType);
-		// getView().placeRoad(new EdgeLocation(hexLoc, EdgeDirection.NW),
-		// CatanColor.RED);
-		// getView().placeRoad(new EdgeLocation(hexLoc, EdgeDirection.SW),
-		// CatanColor.BLUE);
-		// getView().placeRoad(new EdgeLocation(hexLoc, EdgeDirection.S),
-		// CatanColor.ORANGE);
-		// getView().placeSettlement(new VertexLocation(hexLoc,
-		// VertexDirection.NW), CatanColor.GREEN);
-		// getView().placeCity(new VertexLocation(hexLoc, VertexDirection.NE),
-		// CatanColor.PURPLE);
-		// }
-		// }
-		// }
-		//
-		// PortType portType = PortType.BRICK;
-		// getView().addPort(new EdgeLocation(new HexLocation(0, 3),
-		// EdgeDirection.N), portType);
-		// getView().addPort(new EdgeLocation(new HexLocation(0, -3),
-		// EdgeDirection.S), portType);
-		// getView().addPort(new EdgeLocation(new HexLocation(-3, 3),
-		// EdgeDirection.NE), portType);
-		// getView().addPort(new EdgeLocation(new HexLocation(-3, 0),
-		// EdgeDirection.SE), portType);
-		// getView().addPort(new EdgeLocation(new HexLocation(3, -3),
-		// EdgeDirection.SW), portType);
-		// getView().addPort(new EdgeLocation(new HexLocation(3, 0),
-		// EdgeDirection.NW), portType);
-		//
-		// getView().placeRobber(new HexLocation(0, 0));
-		//
-		// getView().addNumber(new HexLocation(-2, 0), 2);
-		// getView().addNumber(new HexLocation(-2, 1), 3);
-		// getView().addNumber(new HexLocation(-2, 2), 4);
-		// getView().addNumber(new HexLocation(-1, 0), 5);
-		// getView().addNumber(new HexLocation(-1, 1), 6);
-		// getView().addNumber(new HexLocation(1, -1), 8);
-		// getView().addNumber(new HexLocation(1, 0), 9);
-		// getView().addNumber(new HexLocation(2, -2), 10);
-		// getView().addNumber(new HexLocation(2, -1), 11);
-		// getView().addNumber(new HexLocation(2, 0), 12);
+			// Fancy logic determines edge direction by location
+			EdgeDirection direction = EdgeDirection.N;
+			if (location.getX() > 1) {
+				if (location.getY() > -2)
+					direction = EdgeDirection.NW;
+				else
+					direction = EdgeDirection.SW;
+			} else if (location.getX() < -1) {
+				if (location.getY() > 1)
+					direction = EdgeDirection.NE;
+				else
+					direction = EdgeDirection.SE;
+			} else if (location.getY() < 0)
+				direction = EdgeDirection.S;
 
-		// </temp>
+			getView().addPort(new EdgeLocation(location, direction), type);
+		}
 	}
 
 	public boolean canPlaceRoad(EdgeLocation edgeLoc) {
