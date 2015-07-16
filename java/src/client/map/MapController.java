@@ -41,7 +41,8 @@ public class MapController extends Controller implements IMapController {
 		this.robView = robView;
 	}
 
-	protected void initFromModel() {
+        @Override
+	public void initFromModel() {
                 
                 
 		GameManager gm = ClientCommunicator.getSingleton().getGameManager();

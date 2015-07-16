@@ -7,9 +7,6 @@ import client.data.MessageLine;
 import client.data.MessageList;
 import client.data.PlayerInfo;
 import client.proxy.SendChat;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import shared.definitions.CatanColor;
@@ -32,23 +29,24 @@ public class ChatController extends Controller implements IChatController {
     @Override
     public void sendMessage(String message) {
         //clear all the existing entries (may not be necessary)
-        getView().getEntries();
         GameInfo game = (GameInfo) ClientCommunicator.getSingleton().getGameManager().getGame();
 
-        MessageList entries = game.getChat();
         CatanColor color = null;
         int index = -1;
-        //List<LogEntry> logEntries = new ArrayList<>();
-        for (MessageLine entry : entries.getLines()) {
+        int playerId = ClientCommunicator.getSingleton().getPlayerId();
 
-            for (PlayerInfo player : game.getPlayers()) {
-                if (player.getName().equals(entry.getSource())) {
-                    color = CatanColor.valueOf(player.getColor().toUpperCase());
-                    index = player.getPlayerIndex();
-                }
+        for (PlayerInfo player : game.getPlayers()) {
+            if (player.getPlayerID() == playerId) {
+                color = CatanColor.valueOf(player.getColor().toUpperCase());
+                index = player.getPlayerIndex();
+                break;
             }
         }
-        //add the new message to the GUI
+
+        //add the new message to the GUI (replace default if exists)
+        if (getView().getEntries().size() == 1 && getView().getEntries().get(0).getMessage().equals("No messages")) {
+            getView().getEntries().clear();
+        }
         getView().getEntries().add(new LogEntry(color, message));
         getView().setEntries(getView().getEntries());
 

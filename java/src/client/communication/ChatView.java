@@ -82,7 +82,6 @@ public class ChatView extends PanelView implements IChatView {
     @Override
     public void setEntries(final List<LogEntry> entries) {
         chatPanel.setEntries(entries);
-        
     }
     
     /**

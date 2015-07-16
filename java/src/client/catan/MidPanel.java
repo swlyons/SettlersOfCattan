@@ -5,7 +5,6 @@ import javax.swing.*;
 import java.util.Timer;
 
 import client.map.*;
-import client.map.MapPoller;
 
 @SuppressWarnings("serial")
 public class MidPanel extends JPanel
@@ -37,8 +36,7 @@ public class MidPanel extends JPanel
 		this.add(gameStatePanel, BorderLayout.SOUTH);
 		                
 		this.setPreferredSize(new Dimension(800, 700));                
-                timer = new Timer();
-                timer.schedule(new MapPoller(mapController), 0, 3000);
+                
 
 	}
 	

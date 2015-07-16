@@ -10,10 +10,12 @@ import javax.swing.JPanel;
 import shared.definitions.ResourceType;
 import client.discard.DiscardController;
 import client.discard.DiscardView;
+import client.map.MapPoller;
 import client.misc.WaitView;
 import client.roll.RollController;
 import client.roll.RollResultView;
 import client.roll.RollView;
+import java.util.Timer;
 
 @SuppressWarnings("serial")
 public class CatanPanel extends JPanel
@@ -21,6 +23,39 @@ public class CatanPanel extends JPanel
 	private TitlePanel titlePanel;
 	private LeftPanel leftPanel;
 	private MidPanel midPanel;
+        private Timer timer;
+
+    public TitlePanel getTitlePanel() {
+        return titlePanel;
+    }
+
+    public void setTitlePanel(TitlePanel titlePanel) {
+        this.titlePanel = titlePanel;
+    }
+
+    public LeftPanel getLeftPanel() {
+        return leftPanel;
+    }
+
+    public void setLeftPanel(LeftPanel leftPanel) {
+        this.leftPanel = leftPanel;
+    }
+
+    public MidPanel getMidPanel() {
+        return midPanel;
+    }
+
+    public void setMidPanel(MidPanel midPanel) {
+        this.midPanel = midPanel;
+    }
+
+    public RightPanel getRightPanel() {
+        return rightPanel;
+    }
+
+    public void setRightPanel(RightPanel rightPanel) {
+        this.rightPanel = rightPanel;
+    }
 	private RightPanel rightPanel;
 	
 	private DiscardView discardView;
@@ -112,9 +147,12 @@ public class CatanPanel extends JPanel
 					discardWaitView.showModal();
 					state = 2;
 				}
+   
 			}
 		});
 		this.add(testButton, BorderLayout.SOUTH);
+                timer = new Timer();
+                timer.schedule(new MapPoller(this), 0, 3000);
 	}
 	
 }
