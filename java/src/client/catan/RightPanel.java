@@ -107,6 +107,15 @@ public class RightPanel extends JPanel
 			}
 		};
 	}
+
+    public PointsController getPointsController() {
+        return pointsController;
+    }
+
+    public void setPointsController(PointsController pointsController) {
+        this.pointsController = pointsController;
+    }
+        
 	
 }
 
