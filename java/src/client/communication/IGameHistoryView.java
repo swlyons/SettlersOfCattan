@@ -17,5 +17,7 @@ public interface IGameHistoryView extends IView
 	 *            The history messages to display
 	 */
 	void setEntries(List<LogEntry> entries);
+        
+        List<LogEntry> getEntries();
 }
 

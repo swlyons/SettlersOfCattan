@@ -13,6 +13,7 @@ import client.data.GameInfo;
 import client.managers.GameManager;
 import client.communication.ClientCommunicator;
 import client.communication.ClientCommunicatorFascadeSettlersOfCatan;
+import client.communication.GameHistoryView;
 import client.communication.LogEntry;
 import client.data.MessageLine;
 import client.data.PlayerInfo;
@@ -50,6 +51,7 @@ public class MapPoller extends TimerTask {
         if (ClientCommunicator.getSingleton().getJoinedGame()) {
             try {
                 ChatView chatView = catanPanel.getLeftPanel().getChatView();
+                GameHistoryView historyView = catanPanel.getLeftPanel().getHistoryView();
                 TurnTrackerView turnTrackerView = catanPanel.getLeftPanel().getTurnView();
                 RollController rollController = catanPanel.getRollController();
                 GameStatePanel gameStatePanel = catanPanel.getMidPanel().getGameStatePanel();
@@ -127,7 +129,29 @@ public class MapPoller extends TimerTask {
                     chatView.setEntries(newChatEntries);
                 }
                 /* End Chat View Update */
+                
+                /* Begin Game History View Update */
+                int oldHistorySize = historyView.getEntries().size();
+                int newHistorySize = gameInformation.getLog().getLines().size();
+                CatanColor colorHistory = CatanColor.WHITE;
 
+                if (oldHistorySize != newHistorySize || (newHistorySize == 0)) {
+                    ArrayList<LogEntry> newHistoryEntries = new ArrayList<>();
+                    for (MessageLine messageLine : gameInformation.getLog().getLines()) {
+                        //get the color
+                        for (PlayerInfo player : gameInformation.getPlayers()) {
+                            if (player.getName().equals(messageLine.getSource())) {
+                                color = CatanColor.valueOf(player.getColor().toUpperCase());
+                                break;
+                            }
+                        }
+                        LogEntry logEntry = new LogEntry(color, messageLine.getMessage());
+                        newHistoryEntries.add(logEntry);
+                    }
+                    historyView.setEntries(newHistoryEntries);
+                }
+                /* End Game History View Update */
+                
                 /* Begin Roll Update */
                 //may need to add more so that this knows when to trigger (more than just it being your turn)
                 if (playerIndex == gameInformation.getTurnTracker().getCurrentTurn()) {
