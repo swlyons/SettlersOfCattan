@@ -65,7 +65,6 @@ public class MapPoller extends TimerTask {
                                         
 					mapController.initFromModel();
 					GameManager gm = ClientCommunicator.getSingleton().getGameManager();
-                                  
                                         if (gameInformation.getTurnTracker().getCurrentTurn() != playerIndex)
 						// This boolean toggles on after your turn, so when the
 						// turn track comes around again, you get exactly one
