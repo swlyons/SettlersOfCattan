@@ -46,8 +46,6 @@ public class MapController extends Controller implements IMapController {
 
 		for (int i = 0; i < gm.getMapManager().getHexList().size(); i++) {
 			Hex h = gm.getMapManager().getHexList().get(i);
-			// for (Hex h : gm.getMapManager().getHexList()) {
-			System.out.println("Hello tacos");
 			if (h.getResource() == ResourceType.wood)
 				getView().addHex(h.getLocation(), HexType.wood);
 			else if (h.getResource() == ResourceType.brick)
@@ -255,7 +253,7 @@ public class MapController extends Controller implements IMapController {
 		GameManager gm = ClientCommunicator.getSingleton().getGameManager();
 		this.isFree = isFree;
 		Integer currentPlayer = gm.getGame().getTurnTracker().getCurrentTurn();
-		CatanColor color = CatanColor.valueOf(gm.getGame().getPlayers().get(currentPlayer).getColor());
+		CatanColor color = CatanColor.valueOf(gm.getGame().getPlayers().get(currentPlayer).getColor().toUpperCase());
 		getView().startDrop(pieceType, color, true);
 	}
 
