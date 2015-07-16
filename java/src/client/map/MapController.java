@@ -226,7 +226,7 @@ public class MapController extends Controller implements IMapController {
 		this.isFree = isFree;
 		Integer currentPlayer = gm.getGame().getTurnTracker().getCurrentTurn();
 		CatanColor color = CatanColor.valueOf(gm.getGame().getPlayers().get(currentPlayer).getColor().toUpperCase());
-		getView().startDrop(pieceType, color, true);
+		getView().startDrop(pieceType, color, !allowDisconnected);
 	}
 
 	public void cancelMove() {
