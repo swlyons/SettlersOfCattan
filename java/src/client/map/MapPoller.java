@@ -6,7 +6,7 @@
 package client.map;
 
 import client.catan.CatanPanel;
-import client.communication.ChatController;
+import client.catan.GameStatePanel;
 import client.communication.ChatView;
 import java.util.TimerTask;
 import client.data.GameInfo;
@@ -16,11 +16,10 @@ import client.communication.ClientCommunicatorFascadeSettlersOfCatan;
 import client.communication.LogEntry;
 import client.data.MessageLine;
 import client.data.PlayerInfo;
-import client.map.MapController;
+import client.roll.RollController;
 import client.turntracker.TurnTrackerView;
 import java.util.ArrayList;
 import shared.definitions.CatanColor;
-import shared.definitions.PieceType;
 
 /**
  *
@@ -30,7 +29,8 @@ public class MapPoller extends TimerTask {
 
     private CatanPanel catanPanel;
     private int version;
-    private boolean firstInitialization;;
+    private boolean firstInitialization;
+    private boolean firstTime;
     private int playerIndex;
     private String playerColor;
 
@@ -38,6 +38,7 @@ public class MapPoller extends TimerTask {
         super();
         this.catanPanel = catanPanel;
         this.firstInitialization = false;
+        this.firstTime = true;
         playerIndex = -1;
         playerColor = "";
         version = -1;
@@ -48,7 +49,11 @@ public class MapPoller extends TimerTask {
             try {
                 ChatView chatView = catanPanel.getLeftPanel().getChatView();
                 TurnTrackerView turnTrackerView = catanPanel.getLeftPanel().getTurnView();
-
+                RollController rollController = catanPanel.getRollController();
+                GameStatePanel gameStatePanel = catanPanel.getMidPanel().getGameStatePanel();
+                
+                GameManager gm = ClientCommunicator.getSingleton().getGameManager();
+                
                 GameInfo gameInformation = ClientCommunicatorFascadeSettlersOfCatan.getSingleton()
                         .getGameModel(version + "");
                 version = gameInformation.getVersion();
@@ -72,7 +77,7 @@ public class MapPoller extends TimerTask {
                 if (!firstInitialization || gameInformation.getTurnTracker().getCurrentTurn() != playerIndex) {
 
                     catanPanel.getMidPanel().getMapController().initFromModel();
-                    GameManager gm = ClientCommunicator.getSingleton().getGameManager();
+                    
                     if (gameInformation.getTurnTracker().getCurrentTurn() != playerIndex) // This boolean toggles on after your turn, so when the
                     // turn track comes around again, you get exactly one
                     // update on each of your turns. This way, your client
@@ -120,27 +125,54 @@ public class MapPoller extends TimerTask {
                 }
                 /* End Chat View Update */
 
+                /* Begin Roll Update */
+                //may need to add more so that this knows when to trigger (more than just it being your turn)
+                if (playerIndex == gameInformation.getTurnTracker().getCurrentTurn()) {
+                    if (firstTime) {
+                        firstTime = false;
+                        rollController.getResultView().showModal();
+                        rollController.getRollView().showModal();
+                    }
+
+                }
+                /* End Roll Update */
+
                 /* Begin Turn Tracker Update */
-               
-                System.out.println("Turn Tracker Update");
                 String status = gameInformation.getTurnTracker().getStatus();
 
                 //TODO: need to figure out which statuses need to be disable or enabled
-                turnTrackerView.updateGameState(status, false);
+                boolean enable = false;
+                if(status.equals("Playing") && playerIndex == gameInformation.getTurnTracker().getCurrentTurn()){
+                    enable = true;
+                    //set the button color
+                    for (PlayerInfo player : gameInformation.getPlayers()) {
+                            if (player.getPlayerIndex() == playerIndex) {
+                                //TODO: figure out how to change the actual button's color
+                                gameStatePanel.getButton().setBackground(CatanColor.valueOf(player.getColor().toUpperCase()).getJavaColor());
+                                break;
+                            }
+                        }
+                    
+                    status = "Finish Turn";
+                }
+                else{
+                    status = "Waiting For Other Players";
+                }
+                
+                turnTrackerView.updateGameState(status, enable);
                 //always update the local player's color
-                
-                
+
                 for (PlayerInfo player : gameInformation.getPlayers()) {
                     boolean longestRoad = false;
                     boolean largestArmy = false;
                     boolean highlight = false;
                     int currentPlayerIndex = player.getPlayerIndex();
-                    
+
                     turnTrackerView.initializePlayer(currentPlayerIndex, player.getName(), CatanColor.valueOf(player.getColor().toUpperCase()));
-                    
+
                     //only update local player color for local player
-                    if(player.getPlayerID() == ClientCommunicator.getSingleton().getPlayerId()){
-                        
+                    if (player.getPlayerID() == ClientCommunicator.getSingleton().getPlayerId()) {
+
                         turnTrackerView.setLocalPlayerColor(CatanColor.valueOf(player.getColor().toUpperCase()));
                     }
                     //decide the awards
@@ -155,7 +187,7 @@ public class MapPoller extends TimerTask {
                         highlight = true;
                     }
                     turnTrackerView.updatePlayer(currentPlayerIndex, player.getVictoryPoints(), highlight, largestArmy, longestRoad);
-                    
+
                 }
                 /* End Turn Tracker Update */
 
