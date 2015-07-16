@@ -10,7 +10,6 @@ import client.communication.ClientCommunicator;
 import client.communication.ClientCommunicatorFascadeSettlersOfCatan;
 import client.data.GameInfo;
 import client.data.PlayerInfo;
-import client.proxy.Poller;
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -50,8 +49,12 @@ public class PlayerWaitingViewPoller extends TimerTask {
         ArrayList<PlayerInfo> activePlayers = new ArrayList();
         ArrayList<GameInfo> activeGames = new ArrayList();
         int winner = -1;
+
         try {
             activeGames = ClientCommunicatorFascadeSettlersOfCatan.getSingleton().listGames();
+        } catch (ClientException ex) {
+            Logger.getLogger(PlayerWaitingViewPoller.class.getName()).log(Level.SEVERE, null, ex);
+        }
             int activePlayer = ClientCommunicator.getSingleton().getPlayerId();
             for (GameInfo game : activeGames) {
                 if (game.getId() == getJoinGameController().getGameId()) {
@@ -111,8 +114,6 @@ public class PlayerWaitingViewPoller extends TimerTask {
                 ClientCommunicator.getSingleton().setJoinedGame(true);
 
            }
-        } catch (ClientException ex) {
-            Logger.getLogger(Poller.class.getName()).log(Level.SEVERE, null, ex);
-        }
+       
     }
 }

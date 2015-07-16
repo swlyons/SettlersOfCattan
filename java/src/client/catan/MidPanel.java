@@ -39,6 +39,8 @@ public class MidPanel extends JPanel
 		this.setPreferredSize(new Dimension(800, 700));                
                 timer = new Timer();
                 timer.schedule(new MapPoller(mapController), 0, 3000);
+                
+               
 	}
 	
 	public GameStatePanel getGameStatePanel()

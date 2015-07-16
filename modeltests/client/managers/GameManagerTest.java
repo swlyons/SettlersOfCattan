@@ -805,7 +805,7 @@ public class GameManagerTest {
 	@Test
 	public void testCanBuyDevCard() {
 		GameManager instance = new GameManager();
-		instance.initializeGame(jsonDataIn, "");
+		instance.initializeGame(jsonDataIn);
 
 		GameInfo game = instance.getGame();
 
@@ -843,7 +843,7 @@ public class GameManagerTest {
 	@Test
 	public void testPlayMonument() {
 		GameManager target = new GameManager();
-		target.initializeGame(jsonDataIn, "");
+		target.initializeGame(jsonDataIn);
 		DevCardList cards = new DevCardList(1, 1, 1, 1, 1);
 		List<Bank> banks = target.getResourceManager().getGameBanks();
 		banks.get(0).setDevelopmentCards(cards);
@@ -865,7 +865,7 @@ public class GameManagerTest {
 	@Test
 	public void testPlaySoldier() {
 		GameManager target = new GameManager();
-		target.initializeGame(jsonDataIn, "");
+		target.initializeGame(jsonDataIn);
 		DevCardList cards = new DevCardList(1, 1, 1, 1, 1);
 		List<Bank> banks = target.getResourceManager().getGameBanks();
 		banks.get(0).setDevelopmentCards(cards);
@@ -887,7 +887,7 @@ public class GameManagerTest {
 	@Test
 	public void testPlayRoadBuilding() {
 		GameManager target = new GameManager();
-		target.initializeGame(jsonDataIn, "");
+		target.initializeGame(jsonDataIn);
 		DevCardList cards = new DevCardList(1, 1, 1, 1, 1);
 		List<Bank> banks = target.getResourceManager().getGameBanks();
 		banks.get(0).setDevelopmentCards(cards);
@@ -915,7 +915,7 @@ public class GameManagerTest {
 	@Test
 	public void testPlayYearOfPlenty() {
 		GameManager target = new GameManager();
-		target.initializeGame(jsonDataIn, "");
+		target.initializeGame(jsonDataIn);
 		DevCardList cards = new DevCardList(1, 1, 1, 1, 1);
 		List<Bank> banks = target.getResourceManager().getGameBanks();
 		banks.get(0).setDevelopmentCards(cards);
@@ -940,7 +940,7 @@ public class GameManagerTest {
 	@Test
 	public void testPlayMonopoly() {
 		GameManager target = new GameManager();
-		target.initializeGame(jsonDataIn, "");
+		target.initializeGame(jsonDataIn);
 		DevCardList cards = new DevCardList(1, 1, 1, 1, 1);
 		List<Bank> banks = target.getResourceManager().getGameBanks();
 		banks.get(0).setDevelopmentCards(cards);

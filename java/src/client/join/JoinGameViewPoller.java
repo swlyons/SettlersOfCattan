@@ -10,7 +10,6 @@ import client.communication.ClientCommunicator;
 import client.communication.ClientCommunicatorFascadeSettlersOfCatan;
 import client.data.GameInfo;
 import client.data.PlayerInfo;
-import client.proxy.Poller;
 import java.util.ArrayList;
 import java.util.TimerTask;
 import java.util.logging.Level;
@@ -45,6 +44,9 @@ public class JoinGameViewPoller extends TimerTask {
         ArrayList<GameInfo> activeGames = new ArrayList();
         try {
             activeGames = ClientCommunicatorFascadeSettlersOfCatan.getSingleton().listGames();
+        } catch (ClientException ex) {
+            Logger.getLogger(JoinGameViewPoller.class.getName()).log(Level.SEVERE, null, ex);
+        }
             GameInfo[] games = new GameInfo[activeGames.size()];
             activeGames.toArray(games);
 
@@ -87,11 +89,7 @@ public class JoinGameViewPoller extends TimerTask {
                 firstTime = false;
             }
 
-            getJoinGameController().getJoinGameView().setGames(games, playerInfo, update);
-
-        } catch (ClientException ex) {
-            Logger.getLogger(Poller.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        getJoinGameController().getJoinGameView().setGames(games, playerInfo, update);
         if (!getJoinGameController().getSelectColorView().isModalShowing() && !getJoinGameController().getPlayerWaitingView().isModalShowing() && !getJoinGameController().getNewGameView().isModalShowing()) {
             //only update when necessary
             if (update) {
