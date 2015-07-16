@@ -199,6 +199,11 @@ public class MapView extends PanelView implements IMapView
 			overlay.cancelDrop();
 			overlay.closeModal();
 		}
+
+            @Override
+            public void initFromModel() {
+                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            }
 	};
 	
 	private static class MapOverlay extends OverlayView
