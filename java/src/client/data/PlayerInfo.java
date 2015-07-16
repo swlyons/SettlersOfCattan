@@ -27,10 +27,12 @@ public class PlayerInfo {
     private int id;
     private boolean discarded;
     private boolean playedDevCard;
-
+    private int playerID;
+    
     public PlayerInfo() {
         setId(-1);
         setPlayerIndex(-1);
+        setPlayerID(-1);
         setName("");
         setColor(CatanColor.WHITE.name().toLowerCase());
         this.cities = 4;
@@ -44,8 +46,18 @@ public class PlayerInfo {
         this.oldDevCards = new DevCardList();
         this.newDevCards = new DevCardList();
         this.soldiers = 0;
+        
     }
 
+    public int getPlayerID() {
+        return playerID;
+    }
+
+    public void setPlayerID(int playerID) {
+        this.playerID = playerID;
+    }
+    
+    
     public int getCities() {
         return cities;
     }
@@ -187,4 +199,12 @@ public class PlayerInfo {
 
         return this.id == other.id;
     }
+    @Override
+	public String toString() {
+		return "{" + "name : " + name + ", color : " + color + ", cities : " + cities + ", settlements : " + settlements
+				+ ", roads : " + roads + ", victoryPoints : " + victoryPoints + ", resources : " + resources
+				+ ", playerIndex : " + playerIndex + ", id : " + id + ", playerID : " + playerID + ", discarded : " + discarded
+				+ ", playedDevCard : " + playedDevCard + ", monuments : " + monuments + ", oldDevCards : " + oldDevCards
+				+ ", newDevCards : " + newDevCards + ", soldiers : " + soldiers + '}';
+	}
 }

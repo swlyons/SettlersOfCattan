@@ -8,7 +8,6 @@ import javax.swing.*;
 
 import client.base.*;
 import client.data.*;
-import client.proxy.Poller;
 import client.utils.*;
 import shared.definitions.CatanColor;
 
@@ -121,9 +120,6 @@ public class PlayerWaitingView extends OverlayView implements IPlayerWaitingView
         String labelText = "";
         if (value.length == NUMBER_OF_PLAYERS) {
             labelText = "This game is ready to go!";
-            //start the poller (now that everyone has joined the game)
-//            java.util.Timer timer = new java.util.Timer();
-//            timer.schedule(new Poller(), 0, 5000);
             addAiButton.setEnabled(false);
         } else {
             labelText = ("Waiting for Players: Need " + (NUMBER_OF_PLAYERS - value.length) + " more");

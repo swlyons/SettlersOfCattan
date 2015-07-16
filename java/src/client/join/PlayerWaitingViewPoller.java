@@ -10,7 +10,6 @@ import client.communication.ClientCommunicator;
 import client.communication.ClientCommunicatorFascadeSettlersOfCatan;
 import client.data.GameInfo;
 import client.data.PlayerInfo;
-import client.proxy.Poller;
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -28,7 +27,8 @@ public class PlayerWaitingViewPoller extends TimerTask {
     private Timer joinGameTimer;
     private boolean firstTime = true;
     private boolean update = false;
-
+    private final int MAX_PLAYERS = 4;
+    
     public PlayerWaitingViewPoller() {
     }
 
@@ -50,9 +50,12 @@ public class PlayerWaitingViewPoller extends TimerTask {
         ArrayList<PlayerInfo> activePlayers = new ArrayList();
         ArrayList<GameInfo> activeGames = new ArrayList();
         int winner = -1;
+
         try {
             activeGames = ClientCommunicatorFascadeSettlersOfCatan.getSingleton().listGames();
-            int activePlayer = ClientCommunicator.getSingleton().getPlayerId();
+        } catch (ClientException ex) {
+            Logger.getLogger(PlayerWaitingViewPoller.class.getName()).log(Level.SEVERE, null, ex);
+        }
             for (GameInfo game : activeGames) {
                 if (game.getId() == getJoinGameController().getGameId()) {
                     for (PlayerInfo player : game.getPlayers()) {
@@ -75,7 +78,7 @@ public class PlayerWaitingViewPoller extends TimerTask {
                     else{
                         update = true;
                     }
-                    if (firstTime || update || (activePlayers.size() == 4)) {
+                    if (firstTime || update || (activePlayers.size() == MAX_PLAYERS)) {
                         getJoinGameController().getPlayerWaitingView().setPlayers(players);
                         firstTime = false;
                     }
@@ -101,18 +104,15 @@ public class PlayerWaitingViewPoller extends TimerTask {
                 playerWaitingTimer.purge();
             }
             //make the map accessible
-            if (activePlayers.size() == 4) {
+            if (activePlayers.size() == MAX_PLAYERS) {
                 joinGameTimer.cancel();
                 joinGameTimer.purge();
                 playerWaitingTimer.cancel();
                 playerWaitingTimer.purge();
                 getJoinGameController().getJoinGameView().closeModal();
-//                System.out.println("There are four players");
                 ClientCommunicator.getSingleton().setJoinedGame(true);
 
            }
-        } catch (ClientException ex) {
-            Logger.getLogger(Poller.class.getName()).log(Level.SEVERE, null, ex);
-        }
+       
     }
 }

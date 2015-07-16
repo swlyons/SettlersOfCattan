@@ -3,14 +3,6 @@ package client.login;
 import client.base.*;
 import client.managers.UserManager;
 import client.misc.*;
-import client.proxy.Poller;
-
-import java.net.*;
-import java.io.*;
-import java.util.*;
-import java.lang.reflect.*;
-import com.google.gson.*;
-import com.google.gson.reflect.TypeToken;
 import client.communication.ClientCommunicator;
 /**
  * Implementation for the login controller

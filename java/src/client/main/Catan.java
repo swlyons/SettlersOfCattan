@@ -7,7 +7,6 @@ import client.login.*;
 import client.join.*;
 import client.misc.*;
 import client.base.*;
-import client.proxy.Poller;
 
 /**
  * Main entry point for the Catan program

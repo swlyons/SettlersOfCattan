@@ -33,35 +33,33 @@ public class ChatController extends Controller implements IChatController {
     public void sendMessage(String message) {
         //clear all the existing entries (may not be necessary)
         getView().getEntries();
-
         GameInfo game = (GameInfo) ClientCommunicator.getSingleton().getGameManager().getGame();
-        if (game != null) {
-            MessageList entries = game.getChat();
-            CatanColor color = null;
-            int index = -1;
-            //List<LogEntry> logEntries = new ArrayList<>();
-            for (MessageLine entry : entries.getLines()) {
 
-                for (PlayerInfo player : game.getPlayers()) {
-                    if (player.getName().equals(entry.getSource())) {
-                        color = CatanColor.valueOf(player.getColor().toUpperCase());
-                        index = player.getPlayerIndex();
-                    }
+        MessageList entries = game.getChat();
+        CatanColor color = null;
+        int index = -1;
+        //List<LogEntry> logEntries = new ArrayList<>();
+        for (MessageLine entry : entries.getLines()) {
+
+            for (PlayerInfo player : game.getPlayers()) {
+                if (player.getName().equals(entry.getSource())) {
+                    color = CatanColor.valueOf(player.getColor().toUpperCase());
+                    index = player.getPlayerIndex();
                 }
             }
-            //add the new message to the GUI
-            getView().getEntries().add(new LogEntry(color, message));
-            getView().setEntries(getView().getEntries());
+        }
+        //add the new message to the GUI
+        getView().getEntries().add(new LogEntry(color, message));
+        getView().setEntries(getView().getEntries());
 
-            //add the new messages to the server
-            SendChat request = new SendChat(index);
-            request.setContent(message);
+        //add the new messages to the server
+        SendChat request = new SendChat(index);
+        request.setContent(message);
 
-            try {
-                ClientCommunicatorFascadeSettlersOfCatan.getSingleton().sendChat(request);
-            } catch (ClientException ex) {
-                Logger.getLogger(ChatController.class.getName()).log(Level.SEVERE, null, ex);
-            }
+        try {
+            ClientCommunicatorFascadeSettlersOfCatan.getSingleton().sendChat(request);
+        } catch (ClientException ex) {
+            Logger.getLogger(ChatController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 

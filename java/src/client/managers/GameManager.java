@@ -1,13 +1,10 @@
 package client.managers;
 
-import client.communication.ClientCommunicator;
-import client.communication.ClientCommunicatorFascadeSettlersOfCatan;
 import client.data.Bank;
 import client.data.DevCardList;
 import client.data.Edge;
 import client.data.Hex;
 import client.data.Location;
-import client.data.Player;
 import client.data.Port;
 import client.data.ResourceList;
 import client.data.Map;
@@ -16,7 +13,6 @@ import client.data.EdgeValue;
 import client.data.GameInfo;
 import client.data.PlayerInfo;
 
-import com.google.gson.Gson;
 
 import java.util.List;
 import java.util.ArrayList;
@@ -30,794 +26,769 @@ import shared.locations.VertexLocation;
 import shared.locations.EdgeLocation;
 import shared.locations.HexLocation;
 
-import com.google.gson.GsonBuilder;
 import shared.locations.EdgeDirection;
 import shared.locations.VertexDirection;
 
 public class GameManager {
 
-	private LocationManager locationManager;
-	private MapManager mapManager;
-	private ResourceManager resourceManager;
-	private Random randomness;
-	private GameInfo game;
-	private final int mainBankIndex = 4;
+    private LocationManager locationManager;
+    private MapManager mapManager;
+    private ResourceManager resourceManager;
+    private Random randomness;
+    private GameInfo game;
+    private final int mainBankIndex = 4;
 
-	public GameManager() {
-		randomness = new Random();
-		randomness.setSeed(new Date().getTime());
-	}
+    public GameManager() {
+        randomness = new Random();
+        randomness.setSeed(new Date().getTime());
+    }
 
-	/**
-	 * @author ddennis = JSON string of information to initialize the client
-	 *         model
-	 * @pre model is accurate
-	 * @post Will initialize the game model
-	 */
-	public void initializeGame(GameInfo game) {
-		try {
+    /**
+     * @author ddennis = JSON string of information to initialize the client
+     * model
+     * @param game
+     * @pre model is accurate
+     * @post Will initialize the game model
+     */
+    public void initializeGame(GameInfo game) {
+        try {
             //our game
-			this.game = game;
-                        
-            //server's game
-            //GameInfo serverGame = ClientCommunicatorFascadeSettlersOfCatan.getSingleton().getGameModel(version);
-			// create a json object
-			// Gson model = new GsonBuilder().create();
+            setGame(game);
 
-			// initialize the client object model
-			// game = model.fromJson(jsonData, Game.class);
+            if (game.getTurnTracker().getLargestArmy() == -1) {
+                game.getTurnTracker().setLargestArmy(4);
+            }
+            if (game.getTurnTracker().getLongestRoad() == -1) {
+                game.getTurnTracker().setLongestRoad(4);
+            }
+    
+            Map map = game.getMap();
 
-			if (game.getTurnTracker().getLargestArmy() == -1) {
-				game.getTurnTracker().setLargestArmy(4);
-			}
-			if (game.getTurnTracker().getLongestRoad() == -1) {
-				game.getTurnTracker().setLongestRoad(4);
-			}
+            HexLocation robberLocation = map.getRobber();
 
-			Map map = game.getMap();
+            if (mapManager == null) {
+                mapManager = new MapManager();
+            }
 
-			HexLocation robberLocation = map.getRobber();
+           
+            List<Hex> hexList = mapManager.getHexList();
+            for (Hex hex : hexList) {
+                if (hex.getLocation().equals(robberLocation)) {
+                    hex.setHasRobber(true);
+                } else {
+                    hex.setHasRobber(false);
+                }
+            }
+            mapManager.setHexList(map.getHexes());
+            if (locationManager == null) {
+                locationManager = new LocationManager();
+                createUnsettledAreas(hexList);
+                locationManager.setPorts(map.getPorts());
+            }
 
-			if (mapManager == null) {
-				mapManager = new MapManager();
-			}
-			mapManager.setHexList(map.getHexes());
-			
-			for (Hex hex : mapManager.getHexList()) {
-				if (hex.getLocation().equals(robberLocation)) {
-					hex.setHasRobber(true);
-				} else {
-					hex.setHasRobber(false);
-				}
-			}
+            for (VertexObject settlement : map.getSettlements()) {
 
-			if (locationManager == null) {
-				locationManager = new LocationManager();
-				createUnsettledAreas(mapManager.getHexList());
-				locationManager.setPorts(map.getPorts());
-			}
+                Location settlementLocation = null;
 
-			for (VertexObject settlement : map.getSettlements()) {
+                for (Location location : locationManager.getUnsettledLocations()) {
+                    if (location.getNormalizedLocation().equals(settlement.getDirection())) {
+                        location.setIsCity(false);
+                        location.getWhoCanBuild().add(settlement.getOwner());
+                        settlementLocation = location;
+                        break;
+                    }
 
-				Location settlementLocation = null;
+                }
 
-				for (Location location : locationManager.getUnsettledLocations()) {
-					if (location.getNormalizedLocation().equals(settlement.getDirection())) {
-						location.setIsCity(false);
-						location.getWhoCanBuild().add(settlement.getOwner());
-						settlementLocation = location;
-						break;
-					}
+                if (settlementLocation != null) {
+                    if (!locationManager.settleLocation(settlementLocation.getNormalizedLocation(),
+                            settlement.getOwner(), false)) {
+                        throw new Exception("Unable to settle location from initializeGame.");
+                    }
+                }
 
-				}
+            }
 
-				if (settlementLocation != null) {
-					if (!locationManager.settleLocation(settlementLocation.getNormalizedLocation(),
-							settlement.getOwner(), false)) {
-						throw new Exception("Unable to settle location from initializeGame.");
-					}
-				}
+            for (VertexObject city : map.getCities()) {
+                for (Location location : locationManager.getSettledLocations()) {
+                    if (location.getNormalizedLocation().equals(city.getDirection())) {
+                        locationManager.upgradeToCity(city.getDirection());
+                    }
+                }
+            }
 
-			}
+            for (EdgeValue road : map.getRoads()) {
+                Edge roadLocation = null;
 
-			for (VertexObject city : map.getCities()) {
-				for (Location location : locationManager.getSettledLocations()) {
-					if (location.getNormalizedLocation().equals(city.getDirection())) {
-						locationManager.upgradeToCity(city.getDirection());
-					}
-				}
-			}
+                for (Edge edge : locationManager.getUnsettledEdges()) {
+                    if (edge.getEdgeLocation().equals(road.getLocation())) {
+                        edge.getWhoCanBuild().add(road.getOwner());
+                        roadLocation = edge;
+                        break;
+                    }
+                }
 
-			for (EdgeValue road : map.getRoads()) {
-				Edge roadLocation = null;
+                if (roadLocation != null) {
+                    if (!locationManager.settleEdge(roadLocation.getEdgeLocation(), road.getOwner())) {
+                        throw new Exception("Unable to settle edge from initializeGame.");
+                    }
+                }
+            }
 
-				for (Edge edge : locationManager.getUnsettledEdges()) {
-					if (edge.getEdgeLocation().equals(road.getLocation())) {
-						edge.getWhoCanBuild().add(road.getOwner());
-						roadLocation = edge;
-						break;
-					}
-				}
+            // Resource Manager
+            List<Bank> gameBanks = new ArrayList<>();
+            for (int i = 0; i < game.getPlayers().size(); i++) {
+                PlayerInfo p = game.getPlayers().get(i);
+                boolean hasLargestArmy = (p.getPlayerID() == game.getTurnTracker().getLargestArmy());
+                boolean hasLongestRoad = (p.getPlayerID() == game.getTurnTracker().getLongestRoad());
+                gameBanks.add(new Bank(p, hasLargestArmy, hasLongestRoad));
+            }
 
-				if (roadLocation != null) {
-					if (!locationManager.settleEdge(roadLocation.getEdgeLocation(), road.getOwner())) {
-						throw new Exception("Unable to settle edge from initializeGame.");
-					}
-				}
-			}
+            DevCardList mainBankDevCards = new DevCardList(game.getPlayers());
+            boolean hasLargestArmy = (mainBankIndex == game.getTurnTracker().getLargestArmy());
+            boolean hasLongestRoad = (mainBankIndex == game.getTurnTracker().getLongestRoad());
+            gameBanks.add(new Bank(game.getBank(), mainBankDevCards, hasLargestArmy, hasLongestRoad));
+            if (resourceManager == null) {
+                resourceManager = new ResourceManager();
+            }
+            resourceManager.setGameBanks(gameBanks);
 
-			// Resource Manager
-			List<Bank> gameBanks = new ArrayList<>();
-			for (int i = 0; i < game.getPlayers().size(); i++) {
-				PlayerInfo p = game.getPlayers().get(i);
-				boolean hasLargestArmy = (p.getId() == game.getTurnTracker().getLargestArmy());
-				boolean hasLongestRoad = (p.getId() == game.getTurnTracker().getLongestRoad());
-				gameBanks.add(new Bank(p, hasLargestArmy, hasLongestRoad));
-			}
+        } catch (Exception e) {
+            System.out.println(e);
+        }
 
-			DevCardList mainBankDevCards = new DevCardList(game.getPlayers());
-			boolean hasLargestArmy = (mainBankIndex == game.getTurnTracker().getLargestArmy());
-			boolean hasLongestRoad = (mainBankIndex == game.getTurnTracker().getLongestRoad());
-			gameBanks.add(new Bank(game.getBank(), mainBankDevCards, hasLargestArmy, hasLongestRoad));
-			if (resourceManager == null) {
-				resourceManager = new ResourceManager();
-			}
-			resourceManager.setGameBanks(gameBanks);
-                        
-                        //update the chat lines whenever something is added or removed (probabley not necessary)
-                        System.out.println("GAME MANAGER: Update the Chat Output for everyone");
+    }
 
-		} catch (Exception e) {
-			System.out.println(e);
-		}
+    /* canDo Methods */
+    /**
+     * @author Curt = unique ID of a game in the server's games list
+     * @pre gameID matches an existing game
+     * @post Game will be terminated. Players will be evicted from game if still
+     * inside.
+     */
+    public void endGame() {
+        // TODO: interact with the GUI to boot everyone from the game
+        game = null;
+        locationManager = null;
+        resourceManager = null;
+        mapManager = null;
+    }
 
-	}
+    /**
+     * @author Curt
+     * @pre The server is running. Method triggered by a request from a
+     * successfully logged in user. There are exactly 4 players in the lobby
+     * @post Game is added to the list of games on server
+     */
+    public void createGame(boolean randomTiles, boolean randomNumbers, boolean randomPorts, String name) {
+        locationManager = new LocationManager();
+        mapManager = new MapManager();
+        resourceManager = new ResourceManager();
+        game = new GameInfo(name);
 
-	/* canDo Methods */
+        List<Hex> hexes = new ArrayList<Hex>();
 
-	/**
-	 * @author Curt = unique ID of a game in the server's games list
-	 * @pre gameID matches an existing game
-	 * @post Game will be terminated. Players will be evicted from game if still
-	 *       inside.
-	 */
-	public void endGame() {
-		// TODO: interact with the GUI to boot everyone from the game
-		game = null;
-		locationManager = null;
-		resourceManager = null;
-		mapManager = null;
-	}
+        Hex robberHex = new Hex(new HexLocation(0, -2), 0, null);
+        robberHex.setHasRobber(true);
 
-	/**
-	 * @author Curt
-	 * @pre The server is running. Method triggered by a request from a
-	 *      successfully logged in user. There are exactly 4 players in the
-	 *      lobby
-	 * @post Game is added to the list of games on server
-	 */
-	public void createGame(boolean randomTiles, boolean randomNumbers, boolean randomPorts, String name) {
-		locationManager = new LocationManager();
-		mapManager = new MapManager();
-		resourceManager = new ResourceManager();
-		game = new GameInfo(name);
+        hexes.add(new Hex(new HexLocation(2, 0), 11, ResourceType.wood));
+        hexes.add(new Hex(new HexLocation(2, 1), 12, ResourceType.sheep));
+        hexes.add(new Hex(new HexLocation(2, 2), 9, ResourceType.wheat));
 
-		List<Hex> hexes = new ArrayList<Hex>();
+        hexes.add(new Hex(new HexLocation(1, -2), 4, ResourceType.brick));
+        hexes.add(new Hex(new HexLocation(1, -1), 6, ResourceType.ore));
+        hexes.add(new Hex(new HexLocation(1, 0), 5, ResourceType.brick));
+        hexes.add(new Hex(new HexLocation(1, 1), 10, ResourceType.sheep));
 
-		Hex robberHex = new Hex(new HexLocation(0, -2), 0, null);
-		robberHex.setHasRobber(true);
+        hexes.add(robberHex);
+        hexes.add(new Hex(new HexLocation(0, -1), 3, ResourceType.wood));
+        hexes.add(new Hex(new HexLocation(0, 0), 11, ResourceType.wheat));
+        hexes.add(new Hex(new HexLocation(0, 1), 4, ResourceType.wood));
+        hexes.add(new Hex(new HexLocation(0, 2), 8, ResourceType.wheat));
 
-		hexes.add(new Hex(new HexLocation(2, 0), 11, ResourceType.wood));
-		hexes.add(new Hex(new HexLocation(2, 1), 12, ResourceType.sheep));
-		hexes.add(new Hex(new HexLocation(2, 2), 9, ResourceType.wheat));
+        hexes.add(new Hex(new HexLocation(-1, -1), 8, ResourceType.brick));
+        hexes.add(new Hex(new HexLocation(-1, 0), 10, ResourceType.sheep));
+        hexes.add(new Hex(new HexLocation(-1, 1), 9, ResourceType.sheep));
+        hexes.add(new Hex(new HexLocation(-1, 2), 3, ResourceType.ore));
 
-		hexes.add(new Hex(new HexLocation(1, -2), 4, ResourceType.brick));
-		hexes.add(new Hex(new HexLocation(1, -1), 6, ResourceType.ore));
-		hexes.add(new Hex(new HexLocation(1, 0), 5, ResourceType.brick));
-		hexes.add(new Hex(new HexLocation(1, 1), 10, ResourceType.sheep));
+        hexes.add(new Hex(new HexLocation(-2, -2), 5, ResourceType.ore));
+        hexes.add(new Hex(new HexLocation(-2, -1), 2, ResourceType.wheat));
+        hexes.add(new Hex(new HexLocation(-2, 0), 6, ResourceType.wood));
 
-		hexes.add(robberHex);
-		hexes.add(new Hex(new HexLocation(0, -1), 3, ResourceType.wood));
-		hexes.add(new Hex(new HexLocation(0, 0), 11, ResourceType.wheat));
-		hexes.add(new Hex(new HexLocation(0, 1), 4, ResourceType.wood));
-		hexes.add(new Hex(new HexLocation(0, 2), 8, ResourceType.wheat));
+        List<Port> ports = new ArrayList<Port>();
 
-		hexes.add(new Hex(new HexLocation(-1, -1), 8, ResourceType.brick));
-		hexes.add(new Hex(new HexLocation(-1, 0), 10, ResourceType.sheep));
-		hexes.add(new Hex(new HexLocation(-1, 1), 9, ResourceType.sheep));
-		hexes.add(new Hex(new HexLocation(-1, 2), 3, ResourceType.ore));
+        ports.add(new Port(2, ResourceType.brick, new HexLocation(-2, 3)));
+        ports.add(new Port(2, ResourceType.ore, new HexLocation(1, -3)));
+        ports.add(new Port(2, ResourceType.sheep, new HexLocation(3, -1)));
+        ports.add(new Port(2, ResourceType.wheat, new HexLocation(-1, -2)));
+        ports.add(new Port(2, ResourceType.wood, new HexLocation(-3, 2)));
 
-		hexes.add(new Hex(new HexLocation(-2, -2), 5, ResourceType.ore));
-		hexes.add(new Hex(new HexLocation(-2, -1), 2, ResourceType.wheat));
-		hexes.add(new Hex(new HexLocation(-2, 0), 6, ResourceType.wood));
+        ports.add(new Port(3, null, new HexLocation(-3, 0)));
+        ports.add(new Port(3, null, new HexLocation(0, 3)));
+        ports.add(new Port(3, null, new HexLocation(2, 1)));
+        ports.add(new Port(3, null, new HexLocation(3, -3)));
 
-		List<Port> ports = new ArrayList<Port>();
+        if (randomTiles) {
+            for (int i = 0; i < hexes.size(); i++) {
+                int getRandomHex = randomness.nextInt(19);
+                HexLocation originalHexLocation = hexes.get(i).getLocation();
+                hexes.get(i).setLocation(hexes.get(getRandomHex).getLocation());
+                hexes.get(getRandomHex).setLocation(originalHexLocation);
+            }
+        }
 
-		ports.add(new Port(2, ResourceType.brick, new HexLocation(-2, 3)));
-		ports.add(new Port(2, ResourceType.ore, new HexLocation(1, -3)));
-		ports.add(new Port(2, ResourceType.sheep, new HexLocation(3, -1)));
-		ports.add(new Port(2, ResourceType.wheat, new HexLocation(-1, -2)));
-		ports.add(new Port(2, ResourceType.wood, new HexLocation(-3, 2)));
+        if (randomNumbers) {
+            for (int i = 0; i < hexes.size(); i++) {
+                if (hexes.get(i).getHasRobber()) {
+                    continue;
+                }
 
-		ports.add(new Port(3, null, new HexLocation(-3, 0)));
-		ports.add(new Port(3, null, new HexLocation(0, 3)));
-		ports.add(new Port(3, null, new HexLocation(2, 1)));
-		ports.add(new Port(3, null, new HexLocation(3, -3)));
+                int getRandomHex = randomness.nextInt(19);
 
-		if (randomTiles) {
-			for (int i = 0; i < hexes.size(); i++) {
-				int getRandomHex = randomness.nextInt(19);
-				HexLocation originalHexLocation = hexes.get(i).getLocation();
-				hexes.get(i).setLocation(hexes.get(getRandomHex).getLocation());
-				hexes.get(getRandomHex).setLocation(originalHexLocation);
-			}
-		}
+                while (hexes.get(getRandomHex).getHasRobber()) {
+                    getRandomHex = randomness.nextInt(19);
+                }
 
-		if (randomNumbers) {
-			for (int i = 0; i < hexes.size(); i++) {
-				if (hexes.get(i).getHasRobber()) {
-					continue;
-				}
+                int originalNumber = hexes.get(i).getRollValue();
+                hexes.get(i).setRollValue(hexes.get(getRandomHex).getRollValue());
+                hexes.get(getRandomHex).setRollValue(originalNumber);
 
-				int getRandomHex = randomness.nextInt(19);
+            }
 
-				while (hexes.get(getRandomHex).getHasRobber()) {
-					getRandomHex = randomness.nextInt(19);
-				}
+        }
 
-				int originalNumber = hexes.get(i).getRollValue();
-				hexes.get(i).setRollValue(hexes.get(getRandomHex).getRollValue());
-				hexes.get(getRandomHex).setRollValue(originalNumber);
+        if (randomPorts) {
+            for (int i = 0; i < ports.size(); i++) {
+                int getRandomHex = randomness.nextInt(9);
+                HexLocation originalHexLocation = ports.get(i).getLocation();
+                ports.get(i).setLocation(ports.get(getRandomHex).getLocation());
+                ports.get(getRandomHex).setLocation(originalHexLocation);
+            }
+        }
 
-			}
+        createUnsettledAreas(hexes);
 
-		}
+        mapManager.setHexList(hexes);
+        locationManager.setPorts(ports);
 
-		if (randomPorts) {
-			for (int i = 0; i < ports.size(); i++) {
-				int getRandomHex = randomness.nextInt(9);
-				HexLocation originalHexLocation = ports.get(i).getLocation();
-				ports.get(i).setLocation(ports.get(getRandomHex).getLocation());
-				ports.get(getRandomHex).setLocation(originalHexLocation);
-			}
-		}
+    }
 
-		createUnsettledAreas(hexes);
+    public void createUnsettledAreas(List<Hex> hexes) {
+        List<Location> unsettledLocations = new ArrayList<Location>();
+        List<Edge> unsettledEdges = new ArrayList<Edge>();
+        for (Hex hex : hexes) {
+            unsettledLocations.add(new Location(new VertexLocation(hex.getLocation(), VertexDirection.NE)));
+            unsettledLocations.add(new Location(new VertexLocation(hex.getLocation(), VertexDirection.NW)));
+            unsettledEdges.add(new Edge(new EdgeLocation(hex.getLocation(), EdgeDirection.NW)));
+            unsettledEdges.add(new Edge(new EdgeLocation(hex.getLocation(), EdgeDirection.N)));
+            unsettledEdges.add(new Edge(new EdgeLocation(hex.getLocation(), EdgeDirection.N)));
+        }
 
-		mapManager.setHexList(hexes);
-		locationManager.setPorts(ports);
+        unsettledLocations.add(new Location(new VertexLocation(new HexLocation(2, 1), VertexDirection.NE)));
+        unsettledLocations.add(new Location(new VertexLocation(new HexLocation(2, 1), VertexDirection.NW)));
+        unsettledLocations.add(new Location(new VertexLocation(new HexLocation(1, 2), VertexDirection.NE)));
+        unsettledLocations.add(new Location(new VertexLocation(new HexLocation(1, 2), VertexDirection.NW)));
+        unsettledLocations.add(new Location(new VertexLocation(new HexLocation(0, 3), VertexDirection.NE)));
+        unsettledLocations.add(new Location(new VertexLocation(new HexLocation(0, 3), VertexDirection.NW)));
+        unsettledLocations.add(new Location(new VertexLocation(new HexLocation(-1, 3), VertexDirection.NE)));
+        unsettledLocations.add(new Location(new VertexLocation(new HexLocation(-1, 3), VertexDirection.NW)));
+        unsettledLocations.add(new Location(new VertexLocation(new HexLocation(-2, 3), VertexDirection.NE)));
+        unsettledLocations.add(new Location(new VertexLocation(new HexLocation(-2, 3), VertexDirection.NW)));
 
-	}
+        unsettledEdges.add(new Edge(new EdgeLocation(new HexLocation(2, 1), EdgeDirection.N)));
+        unsettledEdges.add(new Edge(new EdgeLocation(new HexLocation(2, 1), EdgeDirection.NW)));
+        unsettledEdges.add(new Edge(new EdgeLocation(new HexLocation(1, 2), EdgeDirection.N)));
+        unsettledEdges.add(new Edge(new EdgeLocation(new HexLocation(1, 2), EdgeDirection.NW)));
+        unsettledEdges.add(new Edge(new EdgeLocation(new HexLocation(0, 3), EdgeDirection.N)));
+        unsettledEdges.add(new Edge(new EdgeLocation(new HexLocation(-1, 3), EdgeDirection.N)));
+        unsettledEdges.add(new Edge(new EdgeLocation(new HexLocation(-1, 3), EdgeDirection.NE)));
+        unsettledEdges.add(new Edge(new EdgeLocation(new HexLocation(-2, 3), EdgeDirection.N)));
+        unsettledEdges.add(new Edge(new EdgeLocation(new HexLocation(-2, 3), EdgeDirection.NE)));
 
-	public void createUnsettledAreas(List<Hex> hexes) {
-		List<Location> unsettledLocations = new ArrayList<Location>();
-		List<Edge> unsettledEdges = new ArrayList<Edge>();
-		for (Hex hex : hexes) {
-			unsettledLocations.add(new Location(new VertexLocation(hex.getLocation(), VertexDirection.NE)));
-			unsettledLocations.add(new Location(new VertexLocation(hex.getLocation(), VertexDirection.NW)));
-			unsettledEdges.add(new Edge(new EdgeLocation(hex.getLocation(), EdgeDirection.NW)));
-			unsettledEdges.add(new Edge(new EdgeLocation(hex.getLocation(), EdgeDirection.N)));
-			unsettledEdges.add(new Edge(new EdgeLocation(hex.getLocation(), EdgeDirection.N)));
-		}
+        locationManager.setUnsettledLocations(unsettledLocations);
+        locationManager.setUnsettledEdges(unsettledEdges);
+    }
 
-		unsettledLocations.add(new Location(new VertexLocation(new HexLocation(2, 1), VertexDirection.NE)));
-		unsettledLocations.add(new Location(new VertexLocation(new HexLocation(2, 1), VertexDirection.NW)));
-		unsettledLocations.add(new Location(new VertexLocation(new HexLocation(1, 2), VertexDirection.NE)));
-		unsettledLocations.add(new Location(new VertexLocation(new HexLocation(1, 2), VertexDirection.NW)));
-		unsettledLocations.add(new Location(new VertexLocation(new HexLocation(0, 3), VertexDirection.NE)));
-		unsettledLocations.add(new Location(new VertexLocation(new HexLocation(0, 3), VertexDirection.NW)));
-		unsettledLocations.add(new Location(new VertexLocation(new HexLocation(-1, 3), VertexDirection.NE)));
-		unsettledLocations.add(new Location(new VertexLocation(new HexLocation(-1, 3), VertexDirection.NW)));
-		unsettledLocations.add(new Location(new VertexLocation(new HexLocation(-2, 3), VertexDirection.NE)));
-		unsettledLocations.add(new Location(new VertexLocation(new HexLocation(-2, 3), VertexDirection.NW)));
+    /*
+     * public void joinGame(int playerUserID, String name, String color) { //
+     * TODO: interact better with the GUI to handle login if
+     * (!gameHasFourPlayers()) { Player p = new Player(playerUserID, name,
+     * color); p.setPlayerIndex(this.game.getPlayers().size());
+     * this.game.getPlayers().add(p); } }
+     */
+    /*
+     * public boolean gameHasFourPlayers() { return game.getPlayers().size() ==
+     * 4; }
+     */
+    /**
+     * @author Curt
+     * @pre gameId matches an existing game. It's the start of a player's turn
+     * @post diceRollEvents from the MapManager are triggered.
+     */
+    public void rollDice(int dieRoll) {
 
-		unsettledEdges.add(new Edge(new EdgeLocation(new HexLocation(2, 1), EdgeDirection.N)));
-		unsettledEdges.add(new Edge(new EdgeLocation(new HexLocation(2, 1), EdgeDirection.NW)));
-		unsettledEdges.add(new Edge(new EdgeLocation(new HexLocation(1, 2), EdgeDirection.N)));
-		unsettledEdges.add(new Edge(new EdgeLocation(new HexLocation(1, 2), EdgeDirection.NW)));
-		unsettledEdges.add(new Edge(new EdgeLocation(new HexLocation(0, 3), EdgeDirection.N)));
-		unsettledEdges.add(new Edge(new EdgeLocation(new HexLocation(-1, 3), EdgeDirection.N)));
-		unsettledEdges.add(new Edge(new EdgeLocation(new HexLocation(-1, 3), EdgeDirection.NE)));
-		unsettledEdges.add(new Edge(new EdgeLocation(new HexLocation(-2, 3), EdgeDirection.N)));
-		unsettledEdges.add(new Edge(new EdgeLocation(new HexLocation(-2, 3), EdgeDirection.NE)));
+        // int dieRoll = randomness.nextInt(6) + randomness.nextInt(6) + 2;
+        List<Hex> hexesProducingResources = mapManager.getTerrainResourceHexes(dieRoll);
+        ResourceList gameBank = resourceManager.getGameBanks().get(mainBankIndex).getResourcesCards();
 
-		locationManager.setUnsettledLocations(unsettledLocations);
-		locationManager.setUnsettledEdges(unsettledEdges);
-	}
+        for (ResourceType resourceType : ResourceType.values()) {
+            List<Hex> hexesProducingAParticularResource = new ArrayList<>();
 
-	/*
-	 * public void joinGame(int playerUserID, String name, String color) { //
-	 * TODO: interact better with the GUI to handle login if
-	 * (!gameHasFourPlayers()) { Player p = new Player(playerUserID, name,
-	 * color); p.setPlayerIndex(this.game.getPlayers().size());
-	 * this.game.getPlayers().add(p); } }
-	 */
-	/*
-	 * public boolean gameHasFourPlayers() { return game.getPlayers().size() ==
-	 * 4; }
-	 */
-	/**
-	 * @author Curt
-	 * @pre gameId matches an existing game. It's the start of a player's turn
-	 * @post diceRollEvents from the MapManager are triggered.
-	 */
-	public void rollDice(int dieRoll) {
+            for (Hex particularHex : hexesProducingResources) {
+                if (resourceType == particularHex.getResource()) {
+                    hexesProducingAParticularResource.add(particularHex);
+                }
+            }
 
-		// int dieRoll = randomness.nextInt(6) + randomness.nextInt(6) + 2;
-		List<Hex> hexesProducingResources = mapManager.getTerrainResourceHexes(dieRoll);
-		ResourceList gameBank = resourceManager.getGameBanks().get(mainBankIndex).getResourcesCards();
+            if (hexesProducingAParticularResource.isEmpty()) {
+                continue;
+            }
 
-		for (ResourceType resourceType : ResourceType.values()) {
-			List<Hex> hexesProducingAParticularResource = new ArrayList<>();
+            // If a player shows up, add one resource to them
+            List<Integer> playersEarningResources = new ArrayList<>();
 
-			for (Hex particularHex : hexesProducingResources) {
-				if (resourceType == particularHex.getResource()) {
-					hexesProducingAParticularResource.add(particularHex);
-				}
-			}
+            for (Hex hexProducingResources : hexesProducingAParticularResource) {
+                playersEarningResources
+                        .addAll(locationManager.awardTerrainResource(hexProducingResources.getLocation()));
+            }
 
-			if (hexesProducingAParticularResource.isEmpty()) {
-				continue;
-			}
+            int amountAvailable = 0;
+            switch (resourceType) {
+                case ore:
+                    amountAvailable = gameBank.getOre();
+                    break;
+                case wood:
+                    amountAvailable = gameBank.getWood();
+                    break;
+                case brick:
+                    amountAvailable = gameBank.getBrick();
+                    break;
+                case sheep:
+                    amountAvailable = gameBank.getSheep();
+                    break;
+                case wheat:
+                    amountAvailable = gameBank.getWheat();
+                    break;
+                default:
+                    break;
+            }
 
-			// If a player shows up, add one resource to them
-			List<Integer> playersEarningResources = new ArrayList<>();
+            if (amountAvailable >= playersEarningResources.size()) {
+                ResourceList resource = new ResourceList(resourceType);
+                for (Integer earningPlayer : playersEarningResources) {
+                    resourceManager.transferResourceCard(mainBankIndex, earningPlayer, resource);
+                }
+            }
 
-			for (Hex hexProducingResources : hexesProducingAParticularResource) {
-				playersEarningResources
-						.addAll(locationManager.awardTerrainResource(hexProducingResources.getLocation()));
-			}
+        }
 
-			int amountAvailable = 0;
-			switch (resourceType) {
-			case ore:
-				amountAvailable = gameBank.getOre();
-				break;
-			case wood:
-				amountAvailable = gameBank.getWood();
-				break;
-			case brick:
-				amountAvailable = gameBank.getBrick();
-				break;
-			case sheep:
-				amountAvailable = gameBank.getSheep();
-				break;
-			case wheat:
-				amountAvailable = gameBank.getWheat();
-				break;
-			default:
-				break;
-			}
+    }
 
-			if (amountAvailable >= playersEarningResources.size()) {
-				ResourceList resource = new ResourceList(resourceType);
-				for (Integer earningPlayer : playersEarningResources) {
-					resourceManager.transferResourceCard(mainBankIndex, earningPlayer, resource);
-				}
-			}
-
-		}
-
-	}
-
-	public void diceIsSevenMoveRobber(HexLocation newLocationForRobber) {
+    public void diceIsSevenMoveRobber(HexLocation newLocationForRobber) {
 		// TODO: players needs to choose the cards they discard for the call to
-		// "playerDiscardsHalfCards()"
-		if (mapManager.moveRobber(newLocationForRobber)) {
-			for (int i = 0; i < 4; i++) {
-				int numberOfResourceCards = resourceManager.getGameBanks().get(i).getResourcesCards()
-						.getTotalResources();
-				if (numberOfResourceCards >= 7) {
-					resourceManager.playerDiscardsHalfCards(i, new ResourceList());
-				}
-			}
-		}
-	}
+        // "playerDiscardsHalfCards()"
+        if (mapManager.moveRobber(newLocationForRobber)) {
+            for (int i = 0; i < 4; i++) {
+                int numberOfResourceCards = resourceManager.getGameBanks().get(i).getResourcesCards()
+                        .getTotalResources();
+                if (numberOfResourceCards >= 7) {
+                    resourceManager.playerDiscardsHalfCards(i, new ResourceList());
+                }
+            }
+        }
+    }
 
-	public boolean placeFreeRoad(EdgeLocation edge) {
-		int currentPlayer = game.getTurnTracker().getCurrentTurn();
-		Bank playerBank = resourceManager.getGameBanks().get(currentPlayer);
-		if (playerBank.getRoads() > 0) {
-			playerBank.removeRoad();
-			locationManager.settleEdge(edge, currentPlayer);
-			return true;
-		} else {
-			return false;
-		}
-	}
+    public boolean placeFreeRoad(EdgeLocation edge) {
+        int currentPlayer = game.getTurnTracker().getCurrentTurn();
+        Bank playerBank = resourceManager.getGameBanks().get(currentPlayer);
+        if (playerBank.getRoads() > 0) {
+            playerBank.removeRoad();
+            locationManager.settleEdge(edge, currentPlayer);
+            return true;
+        } else {
+            return false;
+        }
+    }
 
-	/**
-	 * @author Curt
-	 * @param gameID
-	 *            = unique ID of a game in the server's games list
-	 * @param hex
-	 *            = hex used to find the normalized vertex location where
-	 *            settlement should be placed
-	 * @param vertex
-	 *            = vertex where the settlement should be placed
-	 * @pre gameID matches existing game. Hex and VertexLocations are valid
-	 *      location in this game's map. VertexLocation is settle-able.
-	 * @post
-	 */
-	public void placeFirstSettlement(VertexLocation v) {
-		int currentPlayer = game.getTurnTracker().getCurrentTurn();
-		Bank playerBank = resourceManager.getGameBanks().get(currentPlayer);
-		locationManager.settleLocation(v, currentPlayer, true);
-		playerBank.removeSettlement();
-	}
+    /**
+     * @author Curt
+     * @param gameID = unique ID of a game in the server's games list
+     * @param hex = hex used to find the normalized vertex location where
+     * settlement should be placed
+     * @param vertex = vertex where the settlement should be placed
+     * @pre gameID matches existing game. Hex and VertexLocations are valid
+     * location in this game's map. VertexLocation is settle-able.
+     * @post
+     */
+    public void placeFirstSettlement(VertexLocation v) {
+        int currentPlayer = game.getTurnTracker().getCurrentTurn();
+        Bank playerBank = resourceManager.getGameBanks().get(currentPlayer);
+        locationManager.settleLocation(v, currentPlayer, true);
+        playerBank.removeSettlement();
+    }
 
-	public void placeSecondSettlement(VertexLocation v) {
-		int currentPlayer = game.getTurnTracker().getCurrentTurn();
-		locationManager.settleLocation(v, currentPlayer, true);
-		List<HexLocation> neighbors = locationManager.getHexLocationsAroundVertexLocation(v);
-		ResourceList resourceList = new ResourceList(0, 0, 0, 0, 0);
-		for (Hex hex : mapManager.getHexList()) {
-			if (hex.equals(neighbors.get(0)) || hex.equals(neighbors.get(1)) || hex.equals(neighbors.get(2))) {
-				if (hex.getResource() != null) {
-					switch (hex.getResource()) {
-					case ore:
-						resourceList.setOre(resourceList.getOre() + 1);
-						break;
-					case wood:
-						resourceList.setWood(resourceList.getWood() + 1);
-						break;
-					case brick:
-						resourceList.setBrick(resourceList.getBrick() + 1);
-						break;
-					case sheep:
-						resourceList.setSheep(resourceList.getSheep() + 1);
-						break;
-					case wheat:
-						resourceList.setWheat(resourceList.getWheat() + 1);
-						break;
-					default:
-						break;
-					}
-				}
-			}
-		}
-		resourceManager.transferResourceCard(mainBankIndex, currentPlayer, resourceList);
-	}
+    public void placeSecondSettlement(VertexLocation v) {
+        int currentPlayer = game.getTurnTracker().getCurrentTurn();
+        locationManager.settleLocation(v, currentPlayer, true);
+        List<HexLocation> neighbors = locationManager.getHexLocationsAroundVertexLocation(v);
+        ResourceList resourceList = new ResourceList(0, 0, 0, 0, 0);
+        for (Hex hex : mapManager.getHexList()) {
+            if (hex.equals(neighbors.get(0)) || hex.equals(neighbors.get(1)) || hex.equals(neighbors.get(2))) {
+                if (hex.getResource() != null) {
+                    switch (hex.getResource()) {
+                        case ore:
+                            resourceList.setOre(resourceList.getOre() + 1);
+                            break;
+                        case wood:
+                            resourceList.setWood(resourceList.getWood() + 1);
+                            break;
+                        case brick:
+                            resourceList.setBrick(resourceList.getBrick() + 1);
+                            break;
+                        case sheep:
+                            resourceList.setSheep(resourceList.getSheep() + 1);
+                            break;
+                        case wheat:
+                            resourceList.setWheat(resourceList.getWheat() + 1);
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+        }
+        resourceManager.transferResourceCard(mainBankIndex, currentPlayer, resourceList);
+    }
 
-	public boolean canBuildRoad() {
-		ResourceList resList = resourceManager.getGameBanks().get(currentPlayer()).getResourcesCards();
-		Bank bank = resourceManager.getGameBanks().get(currentPlayer());
-		return resList.getWood() > 0 && resList.getBrick() > 0 && bank.getRoads() > 0;
-	}
-	
-	public boolean canPlaceRoad(EdgeLocation edgeLoc) {
-		boolean canPlaceRoad = false;
-		for (Edge edge : locationManager.getUnsettledEdges()) {
-			if (edge.getEdgeLocation().equals(edgeLoc)) {
-				if (edge.getWhoCanBuild().contains(currentPlayer())) {
-					canPlaceRoad = true;
-				}
-			}
-		}
-		return canPlaceRoad;		
-	}
-	
-	/**
-	 * @author Curt
-	 * @param gameID
-	 *            = unique ID of a game in the server's games list
-	 * @param object
-	 *            = structure type
-	 * @pre gameID matches an existing game. object matches a valid structure
-	 * @post Success = Structure built, player victory point incremented,
-	 *       structure count decremented.
-	 */
-	public boolean buildRoad(EdgeLocation edge) {
-		int currentPlayer = game.getTurnTracker().getCurrentTurn();
-		Bank playerBank = resourceManager.getGameBanks().get(currentPlayer);
-		ResourceList cost = new ResourceList(1, 0, 0, 0, 1);
-		if (playerBank.getRoads() > 0 && playerBank.getResourcesCards().hasCardsAvailable(cost)) {
-			resourceManager.transferResourceCard(currentPlayer, mainBankIndex, cost);
-			resourceManager.placedRoad(currentPlayer);
-			return locationManager.settleEdge(edge, currentPlayer);
-		} else {
-			return false;
-		}
-	}
-	
-	public boolean canBuildSettlement() {
-		ResourceList resList = resourceManager.getGameBanks().get(currentPlayer()).getResourcesCards();
-		Bank bank = resourceManager.getGameBanks().get(currentPlayer());
-		return resList.getBrick() > 0 && resList.getSheep() > 0 && resList.getWheat() > 0 && resList.getWood() > 0 && bank.getSettlements() > 0;
-	}
+    public boolean canBuildRoad() {
+        ResourceList resList = resourceManager.getGameBanks().get(currentPlayer()).getResourcesCards();
+        Bank bank = resourceManager.getGameBanks().get(currentPlayer());
+        return resList.getWood() > 0 && resList.getBrick() > 0 && bank.getRoads() > 0;
+    }
 
-	public boolean canPlaceSettlement(VertexLocation vertLoc) {
-		boolean canPlaceSettlement = false;
-		for (Location lc : locationManager.getUnsettledLocations()) {
-			if (lc.getNormalizedLocation().equals(vertLoc)) {
-				if (lc.getWhoCanBuild().contains(currentPlayer())) {
-					canPlaceSettlement = true;
-				}
-			}
-		}
-		return canPlaceSettlement;
-	
-	}
-	
-	public boolean canBuildCity() {
-		ResourceList resList = resourceManager.getGameBanks().get(currentPlayer()).getResourcesCards();
-		Bank bank = resourceManager.getGameBanks().get(currentPlayer());
-		return resList.getOre() > 2 && resList.getWheat() > 1 && bank.getCities() > 0 && bank.getSettlements() < 5;
-	}
+    public boolean canPlaceRoad(EdgeLocation edgeLoc) {
+        boolean canPlaceRoad = false;
+        for (Edge edge : locationManager.getUnsettledEdges()) {
+            if (edge.getEdgeLocation().equals(edgeLoc)) {
+                if (edge.getWhoCanBuild().contains(currentPlayer())) {
+                    canPlaceRoad = true;
+                }
+            }
+        }
+        return canPlaceRoad;
+    }
 
-	public boolean canPlaceCity(VertexLocation vertLoc) {
-		boolean canPlaceCity = false;
-		for (Location lc : locationManager.getSettledLocations()) {
-			if (lc.getNormalizedLocation().equals(vertLoc)) {
-				if (!lc.getIsCity() && lc.getOwnerID() == currentPlayer()) {
-					canPlaceCity = true;
-				}
-			}
-		}
-		return canPlaceCity;
+    /**
+     * @author Curt
+     * @param gameID = unique ID of a game in the server's games list
+     * @param object = structure type
+     * @pre gameID matches an existing game. object matches a valid structure
+     * @post Success = Structure built, player victory point incremented,
+     * structure count decremented.
+     */
+    public boolean buildRoad(EdgeLocation edge) {
+        int currentPlayer = game.getTurnTracker().getCurrentTurn();
+        Bank playerBank = resourceManager.getGameBanks().get(currentPlayer);
+        ResourceList cost = new ResourceList(1, 0, 0, 0, 1);
+        if (playerBank.getRoads() > 0 && playerBank.getResourcesCards().hasCardsAvailable(cost)) {
+            resourceManager.transferResourceCard(currentPlayer, mainBankIndex, cost);
+            resourceManager.placedRoad(currentPlayer);
+            return locationManager.settleEdge(edge, currentPlayer);
+        } else {
+            return false;
+        }
+    }
 
-	}
-	
-	public boolean buildStructure(PieceType type, VertexLocation v) {
-		int currentPlayer = game.getTurnTracker().getCurrentTurn();
-		Bank playerBank = resourceManager.getGameBanks().get(currentPlayer);
-		ResourceList cost = new ResourceList();
+    public boolean canBuildSettlement() {
+        ResourceList resList = resourceManager.getGameBanks().get(currentPlayer()).getResourcesCards();
+        Bank bank = resourceManager.getGameBanks().get(currentPlayer());
+        return resList.getBrick() > 0 && resList.getSheep() > 0 && resList.getWheat() > 0 && resList.getWood() > 0 && bank.getSettlements() > 0;
+    }
 
-		switch (type) {
-		case SETTLEMENT:
-			cost = new ResourceList(1, 0, 1, 1, 1);
-			if (playerBank.getResourcesCards().hasCardsAvailable(cost)) {
-				resourceManager.transferResourceCard(currentPlayer, mainBankIndex, cost);
-				resourceManager.placedSettlement(currentPlayer);
-				return locationManager.settleLocation(v, currentPlayer, false);
-			} else {
-				return false;
-			}
-		case CITY:
-			cost = new ResourceList(0, 3, 0, 2, 0);
-			if (playerBank.getResourcesCards().hasCardsAvailable(cost)) {
-				resourceManager.transferResourceCard(currentPlayer, mainBankIndex, cost);
-				resourceManager.placedCity(currentPlayer);
-				return locationManager.upgradeToCity(v);
-			} else {
-				return false;
-			}
-		default:
-			return false;
-		}
-	}
-	
-	public boolean canPlaceRobber(HexLocation hexLoc){
-		boolean canPlaceRobber = false;
-		for (Hex hex : mapManager.getHexList()) {
-			if (hex.getLocation().equals(hexLoc)) {
-				if (!hex.getHasRobber()) {
-					canPlaceRobber = true;
-				}
-			}
-		}
-		return canPlaceRobber;
-	}
-	
-	public boolean canBuyCard() {
-		ResourceList resList = resourceManager.getGameBanks().get(currentPlayer()).getResourcesCards();
-		return resList.getOre() > 0 && resList.getSheep() > 0 && resList.getWheat() > 0;
-	}
+    public boolean canPlaceSettlement(VertexLocation vertLoc) {
+        boolean canPlaceSettlement = false;
+        for (Location lc : locationManager.getUnsettledLocations()) {
+            if (lc.getNormalizedLocation().equals(vertLoc)) {
+                if (lc.getWhoCanBuild().contains(currentPlayer())) {
+                    canPlaceSettlement = true;
+                }
+            }
+        }
+        return canPlaceSettlement;
 
-	/**
-	 * @author Curt
-	 * @param gameID
-	 *            = unique ID of a game in the server's games list
-	 * @param card
-	 *            = requested card type
-	 * @pre gameId matches an existing game. Card is a valid cardType
-	 * @post Success = Cards will be transferred between current player bank and
-	 *       game bank.
-	 */
-	public DevCardType buyDevCard() {
-		int currentPlayer = game.getTurnTracker().getCurrentTurn();
-		ResourceList cost = new ResourceList(0, 1, 1, 1, 0);
+    }
 
-		resourceManager.transferResourceCard(currentPlayer, mainBankIndex, cost);
-		return resourceManager.devCardBought(currentPlayer);
-	}
+    public boolean canBuildCity() {
+        ResourceList resList = resourceManager.getGameBanks().get(currentPlayer()).getResourcesCards();
+        Bank bank = resourceManager.getGameBanks().get(currentPlayer());
+        return resList.getOre() > 2 && resList.getWheat() > 1 && bank.getCities() > 0 && bank.getSettlements() < 5;
+    }
 
-	public boolean tradeOffer(int senderID, int receiverID, ResourceList offer, ResourceList request) {
-		ResourceList senderResources = resourceManager.getGameBanks().get(senderID).getResourcesCards();
-		ResourceList receiverResources = resourceManager.getGameBanks().get(receiverID).getResourcesCards();
-		if (senderResources.hasCardsAvailable(offer) && receiverResources.hasCardsAvailable(request)) {
-			if (receiverID == mainBankIndex) {
-				tradeAccepted(senderID, receiverID, offer, request);
-				return true;
-			} else {
-				// TODO: prompt receiver for acceptance
-				return true;
-			}
-		} else {
-			return false;
-		}
-	}
+    public boolean canPlaceCity(VertexLocation vertLoc) {
+        boolean canPlaceCity = false;
+        for (Location lc : locationManager.getSettledLocations()) {
+            if (lc.getNormalizedLocation().equals(vertLoc)) {
+                if (!lc.getIsCity() && lc.getOwnerID() == currentPlayer()) {
+                    canPlaceCity = true;
+                }
+            }
+        }
+        return canPlaceCity;
 
-	/**
-	 * @author Curt
-	 * @param gameID
-	 *            = unique ID of a game in the server's games list
-	 * @param senderID
-	 *            = unique ID of the current player
-	 * @param receiverID
-	 *            = unique ID of the trade recipient (game's bankID if maritime
-	 *            trade)
-	 * @param offer
-	 *            = List of cards being offered by current player
-	 * @param request
-	 *            = List of cards requested from the trade recipient
-	 * @pre gameID is valid. Sender and receiver are valid. Sender has all cards
-	 *      in the offer available
-	 * @post Failure = Receiver doesn't have the requested cards; Success =
-	 *       cards are transferred between the two player's banks.
-	 */
-	public boolean tradeAccepted(int senderID, int receiverID, ResourceList offer, ResourceList request) {
-		ResourceList senderResources = resourceManager.getGameBanks().get(senderID).getResourcesCards();
-		ResourceList receiverResources = resourceManager.getGameBanks().get(receiverID).getResourcesCards();
-		if (senderResources.hasCardsAvailable(offer) && receiverResources.hasCardsAvailable(request)) {
-			resourceManager.transferResourceCard(senderID, receiverID, offer);
-			resourceManager.transferResourceCard(receiverID, senderID, request);
-			return true;
-		} else {
-			return false;
-		}
-	}
+    }
 
-	public boolean canPlayCard() {
-		DevCardList devList = resourceManager.getGameBanks().get(currentPlayer()).getDevelopmentCards();
-		return devList.totalCardsRemaining() > 0;		
-	}
-	
-	public boolean canUseMonopoly() {
-		DevCardList devList = resourceManager.getGameBanks().get(currentPlayer()).getDevelopmentCards();
-		return devList.getMonopoly() > 0;
-	}
-	
-	public void useMonopoly(ResourceType r) {
-		int currentPlayer = game.getTurnTracker().getCurrentTurn();
-		// TODO: use GUI to prompt user for Resource Type
-		for (int i = 0; i < 4; i++) {
-			if (i != currentPlayer) {
-				ResourceList playerResources = resourceManager.getGameBanks().get(i).getResourcesCards();
-				ResourceList allResource = new ResourceList();
-				switch (r) {
-				case brick:
-					allResource.setBrick(playerResources.getBrick());
-					break;
-				case ore:
-					allResource.setOre(playerResources.getOre());
-					break;
-				case wheat:
-					allResource.setWheat(playerResources.getWheat());
-					break;
-				case sheep:
-					allResource.setSheep(playerResources.getSheep());
-					break;
-				case wood:
-					allResource.setWood(playerResources.getWood());
-					break;
-				default:
-					return;
-				}
-				resourceManager.transferResourceCard(i, currentPlayer, allResource);
-			}
-		}
-		resourceManager.monopolyUsed(currentPlayer);
-	}
+    public boolean buildStructure(PieceType type, VertexLocation v) {
+        int currentPlayer = game.getTurnTracker().getCurrentTurn();
+        Bank playerBank = resourceManager.getGameBanks().get(currentPlayer);
+        ResourceList cost = new ResourceList();
 
-	public boolean canUseMonument() {
-		DevCardList devList = resourceManager.getGameBanks().get(currentPlayer()).getDevelopmentCards();
-		return devList.getMonument() > 0;
-	}
-	
-	public void useMonument() {
-		int currentPlayer = game.getTurnTracker().getCurrentTurn();
-		PlayerInfo p = game.getPlayers().get(currentPlayer);
-		p.setVictoryPoints(p.getVictoryPoints() + 1);
-		resourceManager.monumentUsed(currentPlayer);
-	}
+        switch (type) {
+            case SETTLEMENT:
+                cost = new ResourceList(1, 0, 1, 1, 1);
+                if (playerBank.getResourcesCards().hasCardsAvailable(cost)) {
+                    resourceManager.transferResourceCard(currentPlayer, mainBankIndex, cost);
+                    resourceManager.placedSettlement(currentPlayer);
+                    return locationManager.settleLocation(v, currentPlayer, false);
+                } else {
+                    return false;
+                }
+            case CITY:
+                cost = new ResourceList(0, 3, 0, 2, 0);
+                if (playerBank.getResourcesCards().hasCardsAvailable(cost)) {
+                    resourceManager.transferResourceCard(currentPlayer, mainBankIndex, cost);
+                    resourceManager.placedCity(currentPlayer);
+                    return locationManager.upgradeToCity(v);
+                } else {
+                    return false;
+                }
+            default:
+                return false;
+        }
+    }
 
-	public boolean canUseRoadBuilding() {
-		DevCardList devList = resourceManager.getGameBanks().get(currentPlayer()).getDevelopmentCards();
-		return devList.getRoadBuilding() > 0;
-	}
-	
-	public void useRoadBuilding(EdgeLocation road1, EdgeLocation road2) {
-		int currentPlayer = game.getTurnTracker().getCurrentTurn();
-		Bank b = resourceManager.getGameBanks().get(currentPlayer);
-		if (b.getRoads() > 0 && road1 != null) {
-			placeFreeRoad(road1);
-		}
+    public boolean canPlaceRobber(HexLocation hexLoc) {
+        boolean canPlaceRobber = false;
+        for (Hex hex : mapManager.getHexList()) {
+            if (hex.getLocation().equals(hexLoc)) {
+                if (!hex.getHasRobber()) {
+                    canPlaceRobber = true;
+                }
+            }
+        }
+        return canPlaceRobber;
+    }
 
-		if (b.getRoads() > 0 && road2 != null) {
-			placeFreeRoad(road2);
-		}
+    public boolean canBuyCard() {
+        ResourceList resList = resourceManager.getGameBanks().get(currentPlayer()).getResourcesCards();
+        return resList.getOre() > 0 && resList.getSheep() > 0 && resList.getWheat() > 0;
+    }
 
-		resourceManager.roadBuildingUsed(currentPlayer);
-	}
+    /**
+     * @author Curt
+     * @param gameID = unique ID of a game in the server's games list
+     * @param card = requested card type
+     * @pre gameId matches an existing game. Card is a valid cardType
+     * @post Success = Cards will be transferred between current player bank and
+     * game bank.
+     */
+    public DevCardType buyDevCard() {
+        int currentPlayer = game.getTurnTracker().getCurrentTurn();
+        ResourceList cost = new ResourceList(0, 1, 1, 1, 0);
 
-	public boolean canUseYearOfPlenty() {
-		DevCardList devList = resourceManager.getGameBanks().get(currentPlayer()).getDevelopmentCards();
-		return devList.getYearOfPlenty() > 0;
-	}
+        resourceManager.transferResourceCard(currentPlayer, mainBankIndex, cost);
+        return resourceManager.devCardBought(currentPlayer);
+    }
 
-	public boolean useYearOfPlenty(ResourceType type1, ResourceType type2) {
-		int currentPlayer = game.getTurnTracker().getCurrentTurn();
-		ResourceList r = new ResourceList();
-		r.add(type1, 1);
-		r.add(type2, 1);
-		ResourceList mainBankResources = resourceManager.getGameBanks().get(mainBankIndex).getResourcesCards();
-		if (mainBankResources.hasCardsAvailable(r)) {
-			resourceManager.transferResourceCard(mainBankIndex, currentPlayer, r);
-			resourceManager.yearOfPlentyUsed(currentPlayer);
-			return true;
-		} else {
-			return false;
-		}
-	}
+    public boolean tradeOffer(int senderID, int receiverID, ResourceList offer, ResourceList request) {
+        ResourceList senderResources = resourceManager.getGameBanks().get(senderID).getResourcesCards();
+        ResourceList receiverResources = resourceManager.getGameBanks().get(receiverID).getResourcesCards();
+        if (senderResources.hasCardsAvailable(offer) && receiverResources.hasCardsAvailable(request)) {
+            if (receiverID == mainBankIndex) {
+                tradeAccepted(senderID, receiverID, offer, request);
+                return true;
+            } else {
+                // TODO: prompt receiver for acceptance
+                return true;
+            }
+        } else {
+            return false;
+        }
+    }
 
-	public boolean canUseSoldier() {
-		DevCardList devList = resourceManager.getGameBanks().get(currentPlayer()).getDevelopmentCards();
-		return devList.getSoldier() > 0;
-	}
+    /**
+     * @author Curt
+     * @param gameID = unique ID of a game in the server's games list
+     * @param senderID = unique ID of the current player
+     * @param receiverID = unique ID of the trade recipient (game's bankID if
+     * maritime trade)
+     * @param offer = List of cards being offered by current player
+     * @param request = List of cards requested from the trade recipient
+     * @pre gameID is valid. Sender and receiver are valid. Sender has all cards
+     * in the offer available
+     * @post Failure = Receiver doesn't have the requested cards; Success =
+     * cards are transferred between the two player's banks.
+     */
+    public boolean tradeAccepted(int senderID, int receiverID, ResourceList offer, ResourceList request) {
+        ResourceList senderResources = resourceManager.getGameBanks().get(senderID).getResourcesCards();
+        ResourceList receiverResources = resourceManager.getGameBanks().get(receiverID).getResourcesCards();
+        if (senderResources.hasCardsAvailable(offer) && receiverResources.hasCardsAvailable(request)) {
+            resourceManager.transferResourceCard(senderID, receiverID, offer);
+            resourceManager.transferResourceCard(receiverID, senderID, request);
+            return true;
+        } else {
+            return false;
+        }
+    }
 
-	public void useSoldier(HexLocation h) {
-		int currentPlayer = game.getTurnTracker().getCurrentTurn();
-		diceIsSevenMoveRobber(h);
-		resourceManager.soldierUsed(currentPlayer);
-	}
+    public boolean canPlayCard() {
+        DevCardList devList = resourceManager.getGameBanks().get(currentPlayer()).getDevelopmentCards();
+        return devList.totalCardsRemaining() > 0;
+    }
 
-	/**
-	 * @author Curt
-	 * @param gameID
-	 *            = unique ID of a game in the server's games list
-	 * @pre gameID exists. Method only called after other turn-operations are
-	 *      all completed (No trades ongoing, cards being played, etc)
-	 * @post The current player pointer will move to the next player. All cards
-	 *       in all player's hands will be marked as usable.
-	 */
-	public void endTurn() {
-		resourceManager.makeCardsUsable();
-		// TODO: interact with GUI to disable for non-current player
-	}
+    public boolean canUseMonopoly() {
+        DevCardList devList = resourceManager.getGameBanks().get(currentPlayer()).getDevelopmentCards();
+        return devList.getMonopoly() > 0;
+    }
 
-	public GameInfo getGame() {
-		return game;
-	}
+    public void useMonopoly(ResourceType r) {
+        int currentPlayer = game.getTurnTracker().getCurrentTurn();
+        // TODO: use GUI to prompt user for Resource Type
+        for (int i = 0; i < 4; i++) {
+            if (i != currentPlayer) {
+                ResourceList playerResources = resourceManager.getGameBanks().get(i).getResourcesCards();
+                ResourceList allResource = new ResourceList();
+                switch (r) {
+                    case brick:
+                        allResource.setBrick(playerResources.getBrick());
+                        break;
+                    case ore:
+                        allResource.setOre(playerResources.getOre());
+                        break;
+                    case wheat:
+                        allResource.setWheat(playerResources.getWheat());
+                        break;
+                    case sheep:
+                        allResource.setSheep(playerResources.getSheep());
+                        break;
+                    case wood:
+                        allResource.setWood(playerResources.getWood());
+                        break;
+                    default:
+                        return;
+                }
+                resourceManager.transferResourceCard(i, currentPlayer, allResource);
+            }
+        }
+        resourceManager.monopolyUsed(currentPlayer);
+    }
 
-	public void setGame(GameInfo game) {
-		this.game = game;
-	}
+    public boolean canUseMonument() {
+        DevCardList devList = resourceManager.getGameBanks().get(currentPlayer()).getDevelopmentCards();
+        return devList.getMonument() > 0;
+    }
 
-	public ResourceManager getResourceManager() {
-		return resourceManager;
-	}
+    public void useMonument() {
+        int currentPlayer = game.getTurnTracker().getCurrentTurn();
+        PlayerInfo p = game.getPlayers().get(currentPlayer);
+        p.setVictoryPoints(p.getVictoryPoints() + 1);
+        resourceManager.monumentUsed(currentPlayer);
+    }
 
-	public LocationManager getLocationManager() {
-		return locationManager;
-	}
+    public boolean canUseRoadBuilding() {
+        DevCardList devList = resourceManager.getGameBanks().get(currentPlayer()).getDevelopmentCards();
+        return devList.getRoadBuilding() > 0;
+    }
 
-	public MapManager getMapManager() {
-		return mapManager;
-	}
-	
-	private int currentPlayer() {
-		return game.getTurnTracker().getCurrentTurn();
-	}
+    public void useRoadBuilding(EdgeLocation road1, EdgeLocation road2) {
+        int currentPlayer = game.getTurnTracker().getCurrentTurn();
+        Bank b = resourceManager.getGameBanks().get(currentPlayer);
+        if (b.getRoads() > 0 && road1 != null) {
+            placeFreeRoad(road1);
+        }
 
-	public int getPlayerIndex(int playerId) {
+        if (b.getRoads() > 0 && road2 != null) {
+            placeFreeRoad(road2);
+        }
+
+        resourceManager.roadBuildingUsed(currentPlayer);
+    }
+
+    public boolean canUseYearOfPlenty() {
+        DevCardList devList = resourceManager.getGameBanks().get(currentPlayer()).getDevelopmentCards();
+        return devList.getYearOfPlenty() > 0;
+    }
+
+    public boolean useYearOfPlenty(ResourceType type1, ResourceType type2) {
+        int currentPlayer = game.getTurnTracker().getCurrentTurn();
+        ResourceList r = new ResourceList();
+        r.add(type1, 1);
+        r.add(type2, 1);
+        ResourceList mainBankResources = resourceManager.getGameBanks().get(mainBankIndex).getResourcesCards();
+        if (mainBankResources.hasCardsAvailable(r)) {
+            resourceManager.transferResourceCard(mainBankIndex, currentPlayer, r);
+            resourceManager.yearOfPlentyUsed(currentPlayer);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public boolean canUseSoldier() {
+        DevCardList devList = resourceManager.getGameBanks().get(currentPlayer()).getDevelopmentCards();
+        return devList.getSoldier() > 0;
+    }
+
+    public void useSoldier(HexLocation h) {
+        int currentPlayer = game.getTurnTracker().getCurrentTurn();
+        diceIsSevenMoveRobber(h);
+        resourceManager.soldierUsed(currentPlayer);
+    }
+
+    /**
+     * @author Curt
+     * @param gameID = unique ID of a game in the server's games list
+     * @pre gameID exists. Method only called after other turn-operations are
+     * all completed (No trades ongoing, cards being played, etc)
+     * @post The current player pointer will move to the next player. All cards
+     * in all player's hands will be marked as usable.
+     */
+    public void endTurn() {
+        resourceManager.makeCardsUsable();
+        // TODO: interact with GUI to disable for non-current player
+    }
+
+    public GameInfo getGame() {
+        return game;
+    }
+
+    public void setGame(GameInfo game) {
+        this.game = game;
+    }
+
+    public ResourceManager getResourceManager() {
+        return resourceManager;
+    }
+
+    public LocationManager getLocationManager() {
+        return locationManager;
+    }
+
+    public MapManager getMapManager() {
+        return mapManager;
+    }
+
+    private int currentPlayer() {
+        return game.getTurnTracker().getCurrentTurn();
+    }
+
+    public int getPlayerIndex(int playerId) {
         Integer playerIndex = 4;
-        for(int i=0; i < game.getPlayers().size();i++){
-            if(game.getPlayers().get(i).getId()==playerId){
-                playerIndex=i;
+        for (int i = 0; i < game.getPlayers().size(); i++) {
+            if (game.getPlayers().get(i).getPlayerID() == playerId) {
+                playerIndex = i;
                 break;
             }
         }
         return playerIndex;
-	}
+    }
 }

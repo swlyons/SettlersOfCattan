@@ -6,9 +6,6 @@ import client.base.*;
 import client.communication.ClientCommunicator;
 import client.communication.ClientCommunicatorFascadeSettlersOfCatan;
 import client.data.*;
-import client.map.MapController;
-import client.map.MapView;
-import client.map.RobView;
 import client.misc.*;
 import client.proxy.CreateGameRequest;
 import client.proxy.JoinGameRequest;
@@ -184,8 +181,10 @@ public class JoinGameController extends Controller implements IJoinGameControlle
                 }
             }
             PlayerInfo playerInfo = new PlayerInfo();
-            playerInfo.setId(ClientCommunicator.getSingleton().getPlayerId());
+            playerInfo.setPlayerID(ClientCommunicator.getSingleton().getPlayerId());
             playerInfo.setName(ClientCommunicator.getSingleton().getName());
+            //first player gets index 0
+            //playerInfo.setPlayerIndex(0);
             GameInfo[] allGames = new GameInfo[gamesOnServer.size()];
             gamesOnServer.toArray(allGames);
             getJoinGameView().setGames(allGames, playerInfo, true);
@@ -206,7 +205,6 @@ public class JoinGameController extends Controller implements IJoinGameControlle
     @Override
     public void startJoinGame(GameInfo game) {
         gameId = game.getId();
-        int numberOfPlayers = 4;
         ArrayList<GameInfo> activeGames = new ArrayList<>();
         try {
             activeGames = ClientCommunicatorFascadeSettlersOfCatan.getSingleton().listGames();
@@ -216,44 +214,23 @@ public class JoinGameController extends Controller implements IJoinGameControlle
         GameInfo[] games = new GameInfo[activeGames.size()];
         activeGames.toArray(games);
         int activePlayer = ClientCommunicator.getSingleton().getPlayerId();
-        ArrayList<PlayerInfo> activePlayers = new ArrayList<>();
-        String color = "";
-        //diable the necessary player colors
+
+        //disable the necessary player colors
         for (GameInfo activeGame : activeGames) {
             if (activeGame.getId() == gameId) {
                 //current player should be able to choose another color
-
                 for (PlayerInfo player : activeGame.getPlayers()) {
                     if (player.getId() != -1) {
-                        numberOfPlayers--;
-                        activePlayers.add(player);
-                        if (activePlayer != player.getId()) {
+                       
+                        if (activePlayer != player.getPlayerID()) {
                             getSelectColorView().setColorEnabled(CatanColor.valueOf(player.getColor().toUpperCase()), false);
-                        } else {
-                            color = player.getColor().toLowerCase();
                         }
                     }
+                    
                 }
             }
         }
-//        if (numberOfPlayers != 0) {
-            getSelectColorView().showModal();
-//        } else {
-//            getJoinGameView().closeModal();
-//            //automatically join the person to the game
-//            JoinGameRequest request = new JoinGameRequest(gameId, color);
-//            try {
-//                if (ClientCommunicatorFascadeSettlersOfCatan.getSingleton().joinGame(request)) {
-//                    //if successful in re-joining game
-//                    PlayerInfo[] players = new PlayerInfo[activePlayers.size()];
-//                    activePlayers.toArray(players);
-//                    getPlayerWaitingView().setPlayers(players);
-//                }
-//            } catch (ClientException ex) {
-//                Logger.getLogger(JoinGameController.class.getName()).log(Level.SEVERE, null, ex);
-//            }
-//
-//        }
+        getSelectColorView().showModal();
     }
 
     @Override
@@ -264,7 +241,7 @@ public class JoinGameController extends Controller implements IJoinGameControlle
 
     @Override
     public void joinGame(CatanColor color) {
-        
+
         JoinGameRequest request = new JoinGameRequest(gameId, color.name().toLowerCase());
         try {
             if (ClientCommunicatorFascadeSettlersOfCatan.getSingleton().joinGame(request)) {
@@ -274,7 +251,7 @@ public class JoinGameController extends Controller implements IJoinGameControlle
             } else {
                 ArrayList<GameInfo> gamesOnServer = ClientCommunicatorFascadeSettlersOfCatan.getSingleton().listGames();
                 PlayerInfo playerInfo = new PlayerInfo();
-                playerInfo.setId(ClientCommunicator.getSingleton().getPlayerId());
+                playerInfo.setPlayerID(ClientCommunicator.getSingleton().getPlayerId());
                 playerInfo.setName(ClientCommunicator.getSingleton().getName());
                 GameInfo[] allGames = new GameInfo[gamesOnServer.size()];
                 gamesOnServer.toArray(allGames);
@@ -286,7 +263,7 @@ public class JoinGameController extends Controller implements IJoinGameControlle
             try {
                 ArrayList<GameInfo> gamesOnServer = ClientCommunicatorFascadeSettlersOfCatan.getSingleton().listGames();
                 PlayerInfo playerInfo = new PlayerInfo();
-                playerInfo.setId(ClientCommunicator.getSingleton().getPlayerId());
+                playerInfo.setPlayerID(ClientCommunicator.getSingleton().getPlayerId());
                 playerInfo.setName(ClientCommunicator.getSingleton().getName());
                 GameInfo[] allGames = new GameInfo[gamesOnServer.size()];
                 gamesOnServer.toArray(allGames);

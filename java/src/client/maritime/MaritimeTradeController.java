@@ -35,7 +35,7 @@ public class MaritimeTradeController extends Controller implements IMaritimeTrad
             Integer playerId = ClientCommunicator.getSingleton().getPlayerId();
             Integer playerIndex = 4;
             for(int i=0;i<gm.getGame().getPlayers().size();i++){
-                if(gm.getGame().getPlayers().get(i).getId()==playerId){
+                if(gm.getGame().getPlayers().get(i).getPlayerID()==playerId){
                     playerIndex=i;
                     break;
                 }
@@ -154,7 +154,7 @@ public class MaritimeTradeController extends Controller implements IMaritimeTrad
                     Integer playerId = ClientCommunicator.getSingleton().getPlayerId();
                     Integer playerIndex = 4;
                     for(int i=0;i<gm.getGame().getPlayers().size();i++){
-                        if(gm.getGame().getPlayers().get(i).getId()==playerId){
+                        if(gm.getGame().getPlayers().get(i).getPlayerID()==playerId){
                             playerIndex=i;
                             break;
                         }

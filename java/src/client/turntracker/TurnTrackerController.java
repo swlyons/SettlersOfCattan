@@ -27,7 +27,7 @@ public class TurnTrackerController extends Controller implements ITurnTrackerCon
 
 	@Override
 	public void endTurn() {
-		GameManager gm = ClientCommunicator.getSingleton().getGameManager();
+               GameManager gm = ClientCommunicator.getSingleton().getGameManager();
 		FinishMove fm = new FinishMove(gm.getGame().getTurnTracker().getCurrentTurn());
 		try {
 			gm.initializeGame(ClientCommunicatorFascadeSettlersOfCatan.getSingleton().finishMove(fm));
