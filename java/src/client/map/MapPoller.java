@@ -16,6 +16,7 @@ import client.communication.ClientCommunicatorFascadeSettlersOfCatan;
 import client.communication.LogEntry;
 import client.data.MessageLine;
 import client.data.PlayerInfo;
+import client.points.PointsController;
 import client.roll.RollController;
 import client.turntracker.TurnTrackerView;
 import java.util.ArrayList;
@@ -33,6 +34,7 @@ public class MapPoller extends TimerTask {
     private boolean firstTime;
     private int playerIndex;
     private String playerColor;
+    private final int MAX_POINTS = 10;
 
     public MapPoller(CatanPanel catanPanel) {
         super();
@@ -51,6 +53,7 @@ public class MapPoller extends TimerTask {
                 TurnTrackerView turnTrackerView = catanPanel.getLeftPanel().getTurnView();
                 RollController rollController = catanPanel.getRollController();
                 GameStatePanel gameStatePanel = catanPanel.getMidPanel().getGameStatePanel();
+                PointsController pointsController = catanPanel.getRightPanel().getPointsController();
                 
                 GameManager gm = ClientCommunicator.getSingleton().getGameManager();
                 
@@ -187,9 +190,19 @@ public class MapPoller extends TimerTask {
                         highlight = true;
                     }
                     turnTrackerView.updatePlayer(currentPlayerIndex, player.getVictoryPoints(), highlight, largestArmy, longestRoad);
+                    
+                    /* Begin Points Controller Update */
+                    pointsController.getPointsView().setPoints(player.getVictoryPoints());
+                    if(player.getVictoryPoints() == MAX_POINTS){
+                        pointsController.getFinishedView().setWinner(player.getName(), (player.getPlayerIndex() == playerIndex));
+                        pointsController.getFinishedView().showModal();
+                    }
+                    /* End  Points Controller Update */
 
                 }
                 /* End Turn Tracker Update */
+                
+                
 
             } catch (Exception e) {
             }
