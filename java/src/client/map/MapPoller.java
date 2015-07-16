@@ -17,6 +17,7 @@ import client.communication.LogEntry;
 import client.data.MessageLine;
 import client.data.PlayerInfo;
 import client.map.MapController;
+import client.turntracker.TurnTrackerView;
 import java.util.ArrayList;
 import shared.definitions.CatanColor;
 import shared.definitions.PieceType;
@@ -29,7 +30,7 @@ public class MapPoller extends TimerTask {
 
     private CatanPanel catanPanel;
     private int version;
-    private boolean firstInitialization;
+    private boolean firstInitialization;;
     private int playerIndex;
     private String playerColor;
 
@@ -45,6 +46,8 @@ public class MapPoller extends TimerTask {
     public void run() {
         if (ClientCommunicator.getSingleton().getJoinedGame()) {
             try {
+                ChatView chatView = catanPanel.getLeftPanel().getChatView();
+                TurnTrackerView turnTrackerView = catanPanel.getLeftPanel().getTurnView();
 
                 GameInfo gameInformation = ClientCommunicatorFascadeSettlersOfCatan.getSingleton()
                         .getGameModel(version + "");
@@ -94,19 +97,18 @@ public class MapPoller extends TimerTask {
                     }
 
                 }
-                
-                ChatView chatView = catanPanel.getLeftPanel().getChatView();
+
+                /* Begin Chat View Update */
                 int oldChatSize = chatView.getEntries().size();
                 int newChatSize = gameInformation.getChat().getLines().size();
                 CatanColor color = CatanColor.WHITE;
-                
-                if (oldChatSize  != newChatSize || (newChatSize == 0)) {
-                    System.out.println("Updating Chat Entries");
+
+                if (oldChatSize != newChatSize || (newChatSize == 0)) {
                     ArrayList<LogEntry> newChatEntries = new ArrayList<>();
                     for (MessageLine messageLine : gameInformation.getChat().getLines()) {
                         //get the color
-                        for(PlayerInfo player : gameInformation.getPlayers()){
-                            if(player.getName().equals(messageLine.getSource())){
+                        for (PlayerInfo player : gameInformation.getPlayers()) {
+                            if (player.getName().equals(messageLine.getSource())) {
                                 color = CatanColor.valueOf(player.getColor().toUpperCase());
                                 break;
                             }
@@ -116,7 +118,46 @@ public class MapPoller extends TimerTask {
                     }
                     chatView.setEntries(newChatEntries);
                 }
+                /* End Chat View Update */
+
+                /* Begin Turn Tracker Update */
                
+                System.out.println("Turn Tracker Update");
+                String status = gameInformation.getTurnTracker().getStatus();
+
+                //TODO: need to figure out which statuses need to be disable or enabled
+                turnTrackerView.updateGameState(status, false);
+                //always update the local player's color
+                
+                
+                for (PlayerInfo player : gameInformation.getPlayers()) {
+                    boolean longestRoad = false;
+                    boolean largestArmy = false;
+                    boolean highlight = false;
+                    int currentPlayerIndex = player.getPlayerIndex();
+                    
+                    turnTrackerView.initializePlayer(currentPlayerIndex, player.getName(), CatanColor.valueOf(player.getColor().toUpperCase()));
+                    
+                    //only update local player color for local player
+                    if(player.getPlayerID() == ClientCommunicator.getSingleton().getPlayerId()){
+                        
+                        turnTrackerView.setLocalPlayerColor(CatanColor.valueOf(player.getColor().toUpperCase()));
+                    }
+                    //decide the awards
+                    if (gameInformation.getTurnTracker().getLargestArmy() == currentPlayerIndex) {
+                        largestArmy = true;
+                    }
+                    if (gameInformation.getTurnTracker().getLongestRoad() == currentPlayerIndex) {
+                        longestRoad = true;
+                    }
+                    //decide who is current player
+                    if (gameInformation.getTurnTracker().getCurrentTurn() == currentPlayerIndex) {
+                        highlight = true;
+                    }
+                    turnTrackerView.updatePlayer(currentPlayerIndex, player.getVictoryPoints(), highlight, largestArmy, longestRoad);
+                    
+                }
+                /* End Turn Tracker Update */
 
             } catch (Exception e) {
             }
