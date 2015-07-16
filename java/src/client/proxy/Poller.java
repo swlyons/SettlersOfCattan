@@ -7,8 +7,6 @@ import java.util.TimerTask;
 
 import client.data.GameInfo;
 import client.managers.GameManager;
-import java.util.ArrayList;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
