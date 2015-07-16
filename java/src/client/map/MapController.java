@@ -25,7 +25,7 @@ public class MapController extends Controller implements IMapController {
 
 		setRobView(robView);
 
-		//initFromModel();
+		// initFromModel();
 	}
 
 	public IMapView getView() {
@@ -42,11 +42,27 @@ public class MapController extends Controller implements IMapController {
 	}
 
 	protected void initFromModel() {
-		
 		GameManager gm = ClientCommunicator.getSingleton().getGameManager();
-		for (Hex h : gm.getMapManager().getHexList()) {
-			getView().addHex(h.getLocation(), h.getType());
-			getView().addNumber(h.getLocation(), h.getNumber());
+
+		for (int i = 0; i < gm.getMapManager().getHexList().size(); i++) {
+			Hex h = gm.getMapManager().getHexList().get(i);
+			// for (Hex h : gm.getMapManager().getHexList()) {
+			System.out.println("Hello tacos");
+			if (h.getResource() == ResourceType.wood)
+				getView().addHex(h.getLocation(), HexType.wood);
+			else if (h.getResource() == ResourceType.brick)
+				getView().addHex(h.getLocation(), HexType.brick);
+			else if (h.getResource() == ResourceType.sheep)
+				getView().addHex(h.getLocation(), HexType.sheep);
+			else if (h.getResource() == ResourceType.ore)
+				getView().addHex(h.getLocation(), HexType.ore);
+			else if (h.getResource() == ResourceType.wheat)
+				getView().addHex(h.getLocation(), HexType.wheat);
+			else
+				getView().addHex(h.getLocation(), HexType.desert);
+
+			if ((h.getNumber() >= 2 && h.getNumber() <= 6) || (h.getNumber() >= 8 && h.getNumber() <= 12))
+				getView().addNumber(h.getLocation(), h.getNumber());
 		}
 
 		for (Edge e : gm.getLocationManager().getSettledEdges()) {
@@ -65,6 +81,80 @@ public class MapController extends Controller implements IMapController {
 		}
 
 		getView().placeRobber(gm.getMapManager().getRobberLocation());
+
+		// <temp>
+
+		// Random rand = new Random();
+		//
+		// for (int x = 0; x <= 3; ++x) {
+		//
+		// int maxY = 3 - x;
+		// for (int y = -3; y <= maxY; ++y) {
+		// int r = rand.nextInt(HexType.values().length);
+		// HexType hexType = HexType.values()[r];
+		// HexLocation hexLoc = new HexLocation(x, y);
+		// getView().addHex(hexLoc, hexType);
+		// getView().placeRoad(new EdgeLocation(hexLoc, EdgeDirection.NW),
+		// CatanColor.RED);
+		// getView().placeRoad(new EdgeLocation(hexLoc, EdgeDirection.SW),
+		// CatanColor.BLUE);
+		// getView().placeRoad(new EdgeLocation(hexLoc, EdgeDirection.S),
+		// CatanColor.ORANGE);
+		// getView().placeSettlement(new VertexLocation(hexLoc,
+		// VertexDirection.NW), CatanColor.GREEN);
+		// getView().placeCity(new VertexLocation(hexLoc, VertexDirection.NE),
+		// CatanColor.PURPLE);
+		// }
+		//
+		// if (x != 0) {
+		// int minY = x - 3;
+		// for (int y = minY; y <= 3; ++y) {
+		// int r = rand.nextInt(HexType.values().length);
+		// HexType hexType = HexType.values()[r];
+		// HexLocation hexLoc = new HexLocation(-x, y);
+		// getView().addHex(hexLoc, hexType);
+		// getView().placeRoad(new EdgeLocation(hexLoc, EdgeDirection.NW),
+		// CatanColor.RED);
+		// getView().placeRoad(new EdgeLocation(hexLoc, EdgeDirection.SW),
+		// CatanColor.BLUE);
+		// getView().placeRoad(new EdgeLocation(hexLoc, EdgeDirection.S),
+		// CatanColor.ORANGE);
+		// getView().placeSettlement(new VertexLocation(hexLoc,
+		// VertexDirection.NW), CatanColor.GREEN);
+		// getView().placeCity(new VertexLocation(hexLoc, VertexDirection.NE),
+		// CatanColor.PURPLE);
+		// }
+		// }
+		// }
+		//
+		// PortType portType = PortType.BRICK;
+		// getView().addPort(new EdgeLocation(new HexLocation(0, 3),
+		// EdgeDirection.N), portType);
+		// getView().addPort(new EdgeLocation(new HexLocation(0, -3),
+		// EdgeDirection.S), portType);
+		// getView().addPort(new EdgeLocation(new HexLocation(-3, 3),
+		// EdgeDirection.NE), portType);
+		// getView().addPort(new EdgeLocation(new HexLocation(-3, 0),
+		// EdgeDirection.SE), portType);
+		// getView().addPort(new EdgeLocation(new HexLocation(3, -3),
+		// EdgeDirection.SW), portType);
+		// getView().addPort(new EdgeLocation(new HexLocation(3, 0),
+		// EdgeDirection.NW), portType);
+		//
+		// getView().placeRobber(new HexLocation(0, 0));
+		//
+		// getView().addNumber(new HexLocation(-2, 0), 2);
+		// getView().addNumber(new HexLocation(-2, 1), 3);
+		// getView().addNumber(new HexLocation(-2, 2), 4);
+		// getView().addNumber(new HexLocation(-1, 0), 5);
+		// getView().addNumber(new HexLocation(-1, 1), 6);
+		// getView().addNumber(new HexLocation(1, -1), 8);
+		// getView().addNumber(new HexLocation(1, 0), 9);
+		// getView().addNumber(new HexLocation(2, -2), 10);
+		// getView().addNumber(new HexLocation(2, -1), 11);
+		// getView().addNumber(new HexLocation(2, 0), 12);
+
+		// </temp>
 	}
 
 	public boolean canPlaceRoad(EdgeLocation edgeLoc) {

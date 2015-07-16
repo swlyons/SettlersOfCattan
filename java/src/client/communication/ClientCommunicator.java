@@ -64,9 +64,6 @@ public class ClientCommunicator {
     	return gm;
     }
 
-    public void setGameManager(GameManager gameManager) {
-        gm = gameManager;
-    }
     
     public boolean getJoinedGame(){
         return joinedGame;

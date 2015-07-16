@@ -38,7 +38,6 @@ public class MapPoller extends TimerTask{
 	            GameInfo gameInformation = ClientCommunicatorFascadeSettlersOfCatan.getSingleton().getGameModel(version+"");
 	            version = gameInformation.getVersion();
 	            ClientCommunicator.getSingleton().getGameManager().initializeGame(gameInformation);
-	            System.out.println(version);
 	            if(playerIndex==-1){
 	            	GameManager gm = ClientCommunicator.getSingleton().getGameManager();
 	                Integer playerId = ClientCommunicator.getSingleton().getPlayerId();
@@ -52,7 +51,6 @@ public class MapPoller extends TimerTask{
 	            //If they haven't initialized before or it isn't the client's turn
 	            if (!firstInitialization) {
 	            	firstInitialization = true;
-	            	
 	            	mapController.initFromModel();
 	            }
 	            
