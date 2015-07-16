@@ -115,6 +115,14 @@ public class RightPanel extends JPanel
     public void setPointsController(PointsController pointsController) {
         this.pointsController = pointsController;
     }
+
+    public ResourceBarController getResourceController() {
+        return resourceController;
+    }
+
+    public void setResourceController(ResourceBarController resourceController) {
+        this.resourceController = resourceController;
+    }
         
 	
 }

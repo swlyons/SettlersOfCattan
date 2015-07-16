@@ -17,7 +17,10 @@ import client.communication.GameHistoryView;
 import client.communication.LogEntry;
 import client.data.MessageLine;
 import client.data.PlayerInfo;
+import client.data.ResourceList;
 import client.points.PointsController;
+import client.resources.ResourceBarController;
+import client.resources.ResourceBarElement;
 import client.roll.RollController;
 import client.turntracker.TurnTrackerView;
 import java.util.ArrayList;
@@ -56,6 +59,7 @@ public class MapPoller extends TimerTask {
                 RollController rollController = catanPanel.getRollController();
                 GameStatePanel gameStatePanel = catanPanel.getMidPanel().getGameStatePanel();
                 PointsController pointsController = catanPanel.getRightPanel().getPointsController();
+                ResourceBarController resourceBarController = catanPanel.getRightPanel().getResourceController();
                 
                 GameManager gm = ClientCommunicator.getSingleton().getGameManager();
                 
@@ -228,6 +232,28 @@ public class MapPoller extends TimerTask {
                 }
                 /* End Turn Tracker Update */
                 
+                /* Begin Resource Bar Update */
+                for(PlayerInfo player : gameInformation.getPlayers()){
+                    if(player.getPlayerIndex() == playerIndex){
+                        int sumCards = player.getRoads() + player.getCities() + player.getSettlements() + player.getSoldiers();
+                        //TODO: add logic to only update when they are different
+                           resourceBarController.getView().setElementAmount(ResourceBarElement.BRICK, player.getResources().getBrick());
+                            resourceBarController.getView().setElementAmount(ResourceBarElement.ORE, player.getResources().getOre());
+                            resourceBarController.getView().setElementAmount(ResourceBarElement.SHEEP, player.getResources().getSheep());
+                            resourceBarController.getView().setElementAmount(ResourceBarElement.WHEAT, player.getResources().getWheat());
+                            resourceBarController.getView().setElementAmount(ResourceBarElement.WOOD, player.getResources().getWood());
+                            resourceBarController.getView().setElementAmount(ResourceBarElement.ROAD, player.getRoads());
+                            resourceBarController.getView().setElementAmount(ResourceBarElement.CITY, player.getCities());
+                            resourceBarController.getView().setElementAmount(ResourceBarElement.SETTLEMENT, player.getSettlements());
+                            resourceBarController.getView().setElementAmount(ResourceBarElement.SOLDIERS, player.getSoldiers());
+                            
+                            /* TODO: Figure out what to do with these (not sure what they are)
+                            resourceBarController.getView().setElementAmount(ResourceBarElement.BUY_CARD, player.getSoldiers());
+                            resourceBarController.getView().setElementAmount(ResourceBarElement.PLAY_CARD, player.getSoldiers());*/
+
+                    }
+                }
+                /* End Resource Bar Update */
                 
 
             } catch (Exception e) {
