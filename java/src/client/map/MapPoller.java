@@ -89,7 +89,7 @@ public class MapPoller extends TimerTask {
                 
                 if(mapView.getController().isEndTurn()) {
                 	catanPanel.getLeftPanel().getTurnTrackerController().endTurn();
-                	firstTime = true;
+//                	firstTime = true;
                 	mapView.getController().setEndTurn(false);
                 }
                 /* Begin MapView Update */
@@ -121,7 +121,6 @@ public class MapPoller extends TimerTask {
                   */  
                 
                 if (!firstInitialization || gameInformation.getTurnTracker().getCurrentTurn() != playerIndex) {
-
                     mapView.getController().initFromModel();
                     
                     /*if (gameInformation.getTurnTracker().getCurrentTurn() != playerIndex) // This boolean toggles on after your turn, so when the

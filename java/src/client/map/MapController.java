@@ -82,6 +82,7 @@ public class MapController extends Controller implements IMapController {
 						CatanColor.valueOf(gm.getGame().getPlayers().get(l.getOwnerID()).getColor().toUpperCase()));
 			}
 		}
+                
 
 		getView().placeRobber(gm.getMapManager().getRobberLocation());
 
@@ -129,6 +130,7 @@ public class MapController extends Controller implements IMapController {
 
 			getView().addPort(new EdgeLocation(location, direction), type);
 		}
+
 	}
 
 	public boolean canPlaceRoad(EdgeLocation edgeLoc) {
