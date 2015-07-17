@@ -39,6 +39,10 @@ public class PlayerWaitingController extends Controller implements IPlayerWaitin
                 try{
                     if(ClientCommunicatorFascadeSettlersOfCatan.getSingleton().addAIToGame(add)){
                         System.out.println("AddedAI");
+                        /** DO NOT REMOVE
+                         * Added this to fix issue of multiple overlays added when AI player is added **/
+                        getView().closeModal();
+                        /**/
                     }else{
                         System.out.println("FailedToAddAi");
                     }

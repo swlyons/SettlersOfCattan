@@ -39,11 +39,11 @@ public class MapController extends Controller implements IMapController {
 		return (IMapView) super.getView();
 	}
 
-	private IRobView getRobView() {
+	public IRobView getRobView() {
 		return robView;
 	}
 
-	private void setRobView(IRobView robView) {
+	public void setRobView(IRobView robView) {
 		this.robView = robView;
 	}
 
@@ -211,7 +211,7 @@ public class MapController extends Controller implements IMapController {
 		settle.setY(vertLoc.getHexLoc().getY());
 		Integer currentPlayer = gm.getGame().getTurnTracker().getCurrentTurn();
 		BuildSettlement build = new BuildSettlement();
-
+                
 		if (isFree || gm.getLocationManager().getSettledLocations().size() < 8) {
 			isFree = false;
 			if (gm.getLocationManager().getSettledLocations().size() < 4) {

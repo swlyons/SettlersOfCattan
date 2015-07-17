@@ -61,7 +61,6 @@ public class RollController extends Controller implements IRollController {
                         number.setType("rollNumber");
 			ClientCommunicatorFascadeSettlersOfCatan.getSingleton().rollNumber(number);
 			getResultView().setRollValue(twoD6);
-			getRollView().closeModal();
 			getResultView().showModal();
 		} catch(Exception e) {
 			System.out.println("Had a hard time rolling");
