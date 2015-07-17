@@ -181,7 +181,10 @@ public class JoinGameController extends Controller implements IJoinGameControlle
                 }
             }
             PlayerInfo playerInfo = new PlayerInfo();
-            playerInfo.setPlayerID(ClientCommunicator.getSingleton().getPlayerId());
+            //had to add this to fix the rejoin (DO NOT REMOVE) ****************
+            playerInfo.setPlayerID(-1);
+            //******************************************************************
+            playerInfo.setId(ClientCommunicator.getSingleton().getPlayerId());
             playerInfo.setName(ClientCommunicator.getSingleton().getName());
             //first player gets index 0
             //playerInfo.setPlayerIndex(0);
@@ -221,12 +224,12 @@ public class JoinGameController extends Controller implements IJoinGameControlle
                 //current player should be able to choose another color
                 for (PlayerInfo player : activeGame.getPlayers()) {
                     if (player.getId() != -1) {
-                       
+
                         if (activePlayer != player.getId()) {
                             getSelectColorView().setColorEnabled(CatanColor.valueOf(player.getColor().toUpperCase()), false);
                         }
                     }
-                    
+
                 }
             }
         }

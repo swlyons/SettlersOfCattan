@@ -68,7 +68,7 @@ public class JoinGameViewPoller extends TimerTask {
         playerInfo.setName(ClientCommunicator.getSingleton().getName());
         //playerInfo.setPlayerID(ClientCommunicator.getSingleton().getPlayerId());
         
-        System.out.println(playerInfo);
+       //System.out.println("Join Game Poller Player ID: " + ClientCommunicator.getSingleton().getPlayerId());
         //determine if we need to update
         int newGamePlayers = 0;
         if (!firstTime) {
