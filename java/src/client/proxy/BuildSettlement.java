@@ -1,6 +1,6 @@
 package client.proxy;
 
-import shared.locations.VertexLocation;
+import client.data.SettlementLocation;
 
 /**
  * contains information about a settlement building action
@@ -10,14 +10,14 @@ import shared.locations.VertexLocation;
  */
 public class BuildSettlement extends Command {
 
-    private VertexLocation vertexLocation;
+    private SettlementLocation vertexLocation;
     private boolean free;
 
-    public VertexLocation getVertexLocation() {
+    public SettlementLocation getVertexLocation() {
         return vertexLocation;
     }
 
-    public void setVertexLocation(VertexLocation vertexLocation) {
+    public void setVertexLocation(SettlementLocation vertexLocation) {
         this.vertexLocation = vertexLocation;
     }
 

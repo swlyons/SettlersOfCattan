@@ -1,6 +1,6 @@
 package client.proxy;
 
-import shared.locations.VertexLocation;
+import client.data.SettlementLocation;
 
 /**
  * contains information about the action of building a city
@@ -10,16 +10,16 @@ import shared.locations.VertexLocation;
  */
 public class BuildCity extends Command {
 
-    private VertexLocation vertexLocation;
+    private SettlementLocation vertexLocation;
     
     public BuildCity(int playerIndex){
         super("buildCity", playerIndex);
     }
-    public VertexLocation getVertexLocation() {
+    public SettlementLocation getVertexLocation() {
         return vertexLocation;
     }
 
-    public void setVertexLocation(VertexLocation vertexLocation) {
+    public void setVertexLocation(SettlementLocation vertexLocation) {
         this.vertexLocation = vertexLocation;
     }
 
