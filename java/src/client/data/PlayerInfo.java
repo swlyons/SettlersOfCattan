@@ -48,7 +48,7 @@ public class PlayerInfo {
         this.soldiers = 0;
         
     }
-
+    
     public int getPlayerID() {
         return playerID;
     }

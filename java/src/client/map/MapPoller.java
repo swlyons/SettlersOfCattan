@@ -40,6 +40,7 @@ public class MapPoller extends TimerTask {
     private boolean firstInitialization;
     private boolean firstTime;
     private boolean seenTrade;
+    private boolean startedRobbing;
     private int playerIndex;
     private String playerColor;
     private final int MAX_POINTS = 10;
@@ -50,6 +51,7 @@ public class MapPoller extends TimerTask {
         this.firstInitialization = false;
         this.firstTime = true;
         this.seenTrade = false;
+        startedRobbing=false;
         playerIndex = -1;
         playerColor = "";
         version = -1;
@@ -254,10 +256,14 @@ public class MapPoller extends TimerTask {
 //                        }
 //                    }
 
+                    startedRobbing = false;
                     status = "Finish Turn";
                 } else {
                     if(status.equals("Robbing")){
-                    
+                        if(!startedRobbing){
+                            startedRobbing=true;
+                            catanPanel.getMidPanel().getMapController().startMove(PieceType.ROBBER, true, true);
+                        }
                     }else{
                         if(!status.contains("Round")){
                             status = "Waiting For Other Players";

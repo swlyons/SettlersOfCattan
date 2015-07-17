@@ -22,7 +22,9 @@ public class MapController extends Controller implements IMapController {
 	private IRobView robView;
 	private boolean isFree = false;
 	private boolean endTurn = false;
-
+        private HexLocation newRobberLocation = null;
+        
+        
 	public MapController(IMapView view, IRobView robView) {
 
 		super(view);
@@ -261,11 +263,30 @@ public class MapController extends Controller implements IMapController {
 	}
 
 	public void placeRobber(HexLocation hexLoc) {
+                newRobberLocation=hexLoc;
 		GameManager gm = ClientCommunicator.getSingleton().getGameManager();
 		if (gm.getMapManager().moveRobber(hexLoc)) {
-			getView().placeRobber(hexLoc);
-			getRobView().showModal();
+			getView().placeRobber(hexLoc);			
 		}
+                List<Location> settlements = gm.getLocationManager().getSettledLocations();
+                Set<Integer> playerIndexes = new HashSet<>();
+                for(Location settlement : settlements){
+                    List<HexLocation> neighbors = gm.getLocationManager().getHexLocationsAroundVertexLocation(settlement.getNormalizedLocation());
+                    for(HexLocation neighbor : neighbors){
+                        if(neighbor.equals(hexLoc)){
+                            playerIndexes.add(settlement.getOwnerID());
+                        }
+                    }
+                }
+                
+                List<RobPlayerInfo> victims = new ArrayList<RobPlayerInfo>();
+                for(Integer player : playerIndexes){
+                    victims.add(new RobPlayerInfo(gm.getGame().getPlayers().get(player),gm.getResourceManager().getGameBanks().get(player).getResourcesCards().getTotalResources()));
+                }
+                RobPlayerInfo[] victimsAreUs = new RobPlayerInfo[victims.size()];
+                victims.toArray(victimsAreUs);
+                getRobView().showModal();
+                getRobView().setPlayers(victimsAreUs);
 	}
 
 	/*
@@ -300,10 +321,7 @@ public class MapController extends Controller implements IMapController {
 	}
 
 	public void playSoldierCard() {
-		getRobView().showModal();
-		// I don't think this needs to do any more than this. This should just
-		// show the robView overlay, which then uses the "CanPlaceRobber" and
-		// "robPlayer" methods
+                startMove(PieceType.ROBBER, true, true);
 	}
 
 	public void playRoadBuildingCard() {
@@ -324,17 +342,18 @@ public class MapController extends Controller implements IMapController {
 		// The RobPlayer class doesn't request a resource, so the resource
 		// deciding must happen server side, or on the next poll request
 		int index = victim.getPlayerIndex();
-		RobPlayer rp = new RobPlayer(index);
-
-		GameManager gm = ClientCommunicator.getSingleton().getGameManager();
-		HexLocation loc = gm.getMapManager().getRobberLocation();
-		rp.setLocation(loc);
-
+                
+		RobPlayer rp = new RobPlayer();
+                rp.setType("robPlayer");
+		rp.setLocation(newRobberLocation);
+                rp.setVictimIndex(index);
 		try {
-			ClientCommunicatorFascadeSettlersOfCatan.getSingleton().robPlayer(rp);
+                    ClientCommunicatorFascadeSettlersOfCatan.getSingleton().robPlayer(rp);
 		} catch (Exception e) {
 
-		}
+		}finally{
+                    getRobView().closeModal();
+                }
 	}
 
 	public boolean isEndTurn() {
