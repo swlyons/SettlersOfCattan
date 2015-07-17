@@ -64,7 +64,7 @@ public class RollController extends Controller implements IRollController {
 			getRollView().closeModal();
 			getResultView().showModal();
 		} catch(Exception e) {
-			System.out.println("Couldn't end turn");
+			System.out.println("Had a hard time rolling");
 		}	
 	}
 

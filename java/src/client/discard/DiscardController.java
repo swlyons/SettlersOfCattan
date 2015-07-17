@@ -194,6 +194,8 @@ public class DiscardController extends Controller implements IDiscardController 
                 }                
                 gm.getResourceManager().playerDiscardsHalfCards(playerIndex, resources);
                 DiscardCards cards = new DiscardCards();
+                cards.setPlayerIndex(playerIndex);
+                cards.setType("discardCards");
                 cards.setDiscardedCards(resources);
                 try{
                     ClientCommunicatorFascadeSettlersOfCatan.getSingleton().discardCards(cards);
