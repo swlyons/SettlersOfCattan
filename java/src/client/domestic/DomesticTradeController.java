@@ -400,11 +400,11 @@ public class DomesticTradeController extends Controller implements IDomesticTrad
                         break;
                     }
                 }
-                gm.getResourceManager().getGameBanks().get(playerIndex).getResourcesCards().setBrick(0-offer.getBrick());
-                gm.getResourceManager().getGameBanks().get(playerIndex).getResourcesCards().setOre(0-offer.getOre());
-                gm.getResourceManager().getGameBanks().get(playerIndex).getResourcesCards().setSheep(0-offer.getSheep());
-                gm.getResourceManager().getGameBanks().get(playerIndex).getResourcesCards().setWheat(0-offer.getWheat());
-                gm.getResourceManager().getGameBanks().get(playerIndex).getResourcesCards().setWood(0-offer.getWood());
+//                gm.getResourceManager().getGameBanks().get(playerIndex).getResourcesCards().setBrick(0-offer.getBrick());
+//                gm.getResourceManager().getGameBanks().get(playerIndex).getResourcesCards().setOre(0-offer.getOre());
+//                gm.getResourceManager().getGameBanks().get(playerIndex).getResourcesCards().setSheep(0-offer.getSheep());
+//                gm.getResourceManager().getGameBanks().get(playerIndex).getResourcesCards().setWheat(0-offer.getWheat());
+//                gm.getResourceManager().getGameBanks().get(playerIndex).getResourcesCards().setWood(0-offer.getWood());
             }
             
             getWaitOverlay().closeModal();

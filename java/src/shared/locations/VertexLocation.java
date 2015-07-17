@@ -58,6 +58,7 @@ public class VertexLocation {
             return false;
         }
         VertexLocation other = (VertexLocation) obj;
+        other = other.getNormalizedLocation();
         if (direction != other.direction) {
             return false;
         }

@@ -54,9 +54,16 @@ public class GameManager {
      */
     public void initializeGame(GameInfo game) {
         try {
+            for(int i=0;i<game.getMap().getSettlements().size();i++){
+                int x = game.getMap().getSettlements().get(i).getLocation().getX();
+                int y = game.getMap().getSettlements().get(i).getLocation().getY();
+                VertexDirection dir = game.getMap().getSettlements().get(i).getLocation().getDirection();
+                game.getMap().getSettlements().get(i).setDirection(new VertexLocation(new HexLocation(x,y),dir));
+            }
+            
+            
             //our game
             setGame(game);
-
             if (game.getTurnTracker().getLargestArmy() == -1) {
                 game.getTurnTracker().setLargestArmy(4);
             }
@@ -65,7 +72,7 @@ public class GameManager {
             }
     
             Map map = game.getMap();
-
+            
             HexLocation robberLocation = map.getRobber();
 
             if (mapManager == null) {
@@ -88,11 +95,11 @@ public class GameManager {
                 locationManager.setPorts(map.getPorts());
             }
 
+            
             for (VertexObject settlement : map.getSettlements()) {
-
                 Location settlementLocation = null;
-
                 for (Location location : locationManager.getUnsettledLocations()) {
+            
                     if (location.getNormalizedLocation().equals(settlement.getDirection())) {
                         location.setIsCity(false);
                         location.getWhoCanBuild().add(settlement.getOwner());
