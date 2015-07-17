@@ -22,6 +22,22 @@ public class RobPlayerInfo extends PlayerInfo
 	{
 		super();
 	}
+        
+        public RobPlayerInfo(PlayerInfo playerInfo, Integer numCards){
+            this.numCards=numCards;
+            setName(playerInfo.getName());
+            setColor(playerInfo.getColor());
+            setCities(playerInfo.getCities());
+            setSettlements(playerInfo.getSettlements());
+            setRoads(playerInfo.getRoads());
+            setVictoryPoints(playerInfo.getVictoryPoints());
+            setResources(playerInfo.getResources());
+            setPlayerIndex(playerInfo.getPlayerIndex());
+            setId(playerInfo.getId());
+            setDiscarded(playerInfo.isDiscarded());
+            setPlayedDevCard(playerInfo.isPlayedDevCard());
+            setPlayerID(playerInfo.getPlayerID());        
+        }
 	
 	public int getNumCards()
 	{
@@ -32,6 +48,8 @@ public class RobPlayerInfo extends PlayerInfo
 	{
 		this.numCards = numCards;
 	}
+        
+
 	
 }
 
