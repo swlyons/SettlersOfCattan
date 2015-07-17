@@ -90,6 +90,7 @@ public class MapPoller extends TimerTask {
                 if(mapView.getController().isEndTurn()) {
                 	catanPanel.getLeftPanel().getTurnTrackerController().endTurn();
                 	firstTime = true;
+                	mapView.getController().setEndTurn(false);
                 }
                 /* Begin MapView Update */
                 // If they haven't initialized before or it isn't the client's
