@@ -22,7 +22,7 @@ public class MapController extends Controller implements IMapController {
 	private IRobView robView;
 	private boolean isFree = false;
 	private boolean endTurn = false;
-	
+
 	public MapController(IMapView view, IRobView robView) {
 
 		super(view);
@@ -82,7 +82,6 @@ public class MapController extends Controller implements IMapController {
 						CatanColor.valueOf(gm.getGame().getPlayers().get(l.getOwnerID()).getColor().toUpperCase()));
 			}
 		}
-                
 
 		getView().placeRobber(gm.getMapManager().getRobberLocation());
 
@@ -157,44 +156,62 @@ public class MapController extends Controller implements IMapController {
 		GameManager gm = ClientCommunicator.getSingleton().getGameManager();
 		Integer currentPlayer = gm.getGame().getTurnTracker().getCurrentTurn();
 		if (isFree || gm.getLocationManager().getSettledLocations().size() < 9) {
+			isFree = false;
 			if (gm.placeFreeRoad(edgeLoc)) {
-				CatanColor color = CatanColor.valueOf(gm.getGame().getPlayers().get(currentPlayer).getColor().toUpperCase());
+				CatanColor color = CatanColor
+						.valueOf(gm.getGame().getPlayers().get(currentPlayer).getColor().toUpperCase());
 				getView().placeRoad(edgeLoc, color);
 				BuildRoad br = new BuildRoad();
 				br.setFree(true);
 				br.setPlayerIndex(currentPlayer);
-                                XYEdgeLocation edgeSpot = new XYEdgeLocation();
-                                edgeSpot.setDirection(edgeLoc.getDir());
-                                edgeSpot.setX(edgeLoc.getHexLoc().getX());
-                                edgeSpot.setY(edgeLoc.getHexLoc().getY());
+				XYEdgeLocation edgeSpot = new XYEdgeLocation();
+				edgeSpot.setDirection(edgeLoc.getDir());
+				edgeSpot.setX(edgeLoc.getHexLoc().getX());
+				edgeSpot.setY(edgeLoc.getHexLoc().getY());
 				br.setRoadLocation(edgeSpot);
 				br.setType("buildRoad");
 				try {
 					ClientCommunicatorFascadeSettlersOfCatan.getSingleton().buildRoad(br);
-					setEndTurn(true);
+					if (gm.getLocationManager().getSettledLocations().size() < 9)
+						setEndTurn(true);
 				} catch (Exception e) {
 					System.out.println(e.getMessage());
 				}
 			}
 		} else {
 			if (gm.buildRoad(edgeLoc)) {
-				CatanColor color = CatanColor.valueOf(gm.getGame().getPlayers().get(currentPlayer).getColor().toUpperCase());
+				CatanColor color = CatanColor
+						.valueOf(gm.getGame().getPlayers().get(currentPlayer).getColor().toUpperCase());
 				getView().placeRoad(edgeLoc, color);
+				BuildRoad br = new BuildRoad();
+				br.setFree(false);
+				br.setPlayerIndex(currentPlayer);
+				XYEdgeLocation edgeSpot = new XYEdgeLocation();
+				edgeSpot.setDirection(edgeLoc.getDir());
+				edgeSpot.setX(edgeLoc.getHexLoc().getX());
+				edgeSpot.setY(edgeLoc.getHexLoc().getY());
+				br.setRoadLocation(edgeSpot);
+				br.setType("buildRoad");
+				try {
+					ClientCommunicatorFascadeSettlersOfCatan.getSingleton().buildRoad(br);
+				} catch (Exception e) {
+					System.out.println(e.getMessage());
+				}
 			}
 		}
-
 	}
 
 	public void placeSettlement(VertexLocation vertLoc) {
 		GameManager gm = ClientCommunicator.getSingleton().getGameManager();
-                SettlementLocation settle = new SettlementLocation();
-                settle.setDirection(vertLoc.getDir());
-                settle.setX(vertLoc.getHexLoc().getX());
-                settle.setY(vertLoc.getHexLoc().getY());
+		SettlementLocation settle = new SettlementLocation();
+		settle.setDirection(vertLoc.getDir());
+		settle.setX(vertLoc.getHexLoc().getX());
+		settle.setY(vertLoc.getHexLoc().getY());
 		Integer currentPlayer = gm.getGame().getTurnTracker().getCurrentTurn();
 		BuildSettlement build = new BuildSettlement();
 
 		if (isFree || gm.getLocationManager().getSettledLocations().size() < 8) {
+			isFree = false;
 			if (gm.getLocationManager().getSettledLocations().size() < 4) {
 				gm.placeFirstSettlement(vertLoc);
 			} else {
@@ -320,11 +337,9 @@ public class MapController extends Controller implements IMapController {
 		}
 	}
 
-
 	public boolean isEndTurn() {
 		return endTurn;
 	}
-	
 
 	public void setEndTurn(boolean endTurn) {
 		this.endTurn = endTurn;

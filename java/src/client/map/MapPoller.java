@@ -87,11 +87,6 @@ public class MapPoller extends TimerTask {
                     }
                 }
                 
-                if(mapView.getController().isEndTurn()) {
-                	catanPanel.getLeftPanel().getTurnTrackerController().endTurn();
-//                	firstTime = true;
-                	mapView.getController().setEndTurn(false);
-                }
                 /* Begin MapView Update */
                 // If they haven't initialized before or it isn't the client's
                 // turn
@@ -159,11 +154,13 @@ public class MapPoller extends TimerTask {
                                 mapView.getController().startMove(PieceType.SETTLEMENT, false, true);
                                	firstTime = false;
                             }
-                            if(status.equals("SecondRound") && firstTime){
-                                mapView.startDrop(PieceType.SETTLEMENT, CatanColor.valueOf(playerColor), false);
+                            else if(status.equals("SecondRound") && firstTime){
+//                                mapView.startDrop(PieceType.SETTLEMENT, CatanColor.valueOf(playerColor), false);
                                 mapView.getController().startMove(PieceType.SETTLEMENT, false, true);
                                 firstTime = false;
-                            }     
+                            } else {
+
+                            }
                     }
                 }
                 /* End Map View Update */
@@ -298,6 +295,11 @@ public class MapPoller extends TimerTask {
                         resourceBarController.getView().setElementAmount(ResourceBarElement.CITY, player.getCities());
                         resourceBarController.getView().setElementAmount(ResourceBarElement.SETTLEMENT, player.getSettlements());
                         resourceBarController.getView().setElementAmount(ResourceBarElement.SOLDIERS, player.getSoldiers());
+                        resourceBarController.canBuildCity();
+                        resourceBarController.canBuyCard();
+                        resourceBarController.canBuildSettlement();
+                        resourceBarController.canBuildRoad();
+                        resourceBarController.canPlayCard();
 
                         /* TODO: Figure out what to do with these (not sure what they are)
                          resourceBarController.getView().setElementAmount(ResourceBarElement.BUY_CARD, player.getSoldiers());
@@ -305,7 +307,12 @@ public class MapPoller extends TimerTask {
                     }
                 }
                 /* End Resource Bar Update */
-
+                
+                if(mapView.getController().isEndTurn()) {
+                	catanPanel.getLeftPanel().getTurnTrackerController().endTurn();
+                	mapView.getController().setEndTurn(false);
+                	firstTime = true;
+                }
             } catch (Exception e) {
             }
 
