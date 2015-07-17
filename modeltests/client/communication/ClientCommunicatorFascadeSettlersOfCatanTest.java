@@ -373,7 +373,7 @@ public class ClientCommunicatorFascadeSettlersOfCatanTest {
     @Test
     public void testRollNumber() throws Exception {
         System.out.println("rollNumber");
-        RollNumber rollNumber = new RollNumber(0);
+        RollNumber rollNumber = new RollNumber();
         rollNumber.setNumber(8);
         ClientCommunicatorFascadeSettlersOfCatan instance = new ClientCommunicatorFascadeSettlersOfCatan();
         int expResult = 9;
