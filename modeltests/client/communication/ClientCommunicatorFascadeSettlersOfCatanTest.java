@@ -12,6 +12,7 @@ import client.proxy.SaveGameRequest;
 import client.communication.ClientCommunicator;
 import client.data.Game;
 import client.data.GameInfo;
+import client.data.SettlementLocation;
 import client.data.User;
 import client.proxy.BuildCity;
 import client.proxy.BuyDevCard;
@@ -296,7 +297,7 @@ public class ClientCommunicatorFascadeSettlersOfCatanTest {
         instance.login(new User("Sam", "sam"));
         instance.joinGame(new JoinGameRequest(0, "red"));
         BuildCity buildCity = new BuildCity(0);
-        buildCity.setVertexLocation(new VertexLocation(new HexLocation(0,0), VertexDirection.NW));
+        buildCity.setVertexLocation(new SettlementLocation());
         
         ArrayList<Command> commands = new ArrayList<>();
         commands.add(new BuyDevCard(0));
