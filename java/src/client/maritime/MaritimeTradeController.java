@@ -81,41 +81,46 @@ public class MaritimeTradeController extends Controller implements IMaritimeTrad
                 if(hasTradeForThreePort){
                     tradeValue = 3;
                 }
-                
+                ArrayList<ResourceType> available = new ArrayList<ResourceType>();
                 for(ResourceType resourceType : ResourceType.values()){
                     if(resourceTypes.contains(resourceType)){
+                        available.add(resourceType);
                         continue;
                     }
                     switch(resourceType){
                             case brick:
                                 if(tradeValue<=allResourcesPlayerHas.getBrick()){
-                                    resourceTypes.add(resourceType);
+                                    available.add(resourceType);
                                 }
+                            break;
                             case ore:
                                 if(tradeValue<=allResourcesPlayerHas.getOre()){
-                                    resourceTypes.add(resourceType);
+                                    available.add(resourceType);
                                 }
+                            break;
                             case sheep:
                                 if(tradeValue<=allResourcesPlayerHas.getSheep()){
-                                    resourceTypes.add(resourceType);
+                                    available.add(resourceType);
                                 }
+                            break;
                             case wheat:
                                 if(tradeValue<=allResourcesPlayerHas.getWheat()){
-                                    resourceTypes.add(resourceType);
+                                    available.add(resourceType);
                                 }
+                            break;
                             case wood:
                                 if(tradeValue<=allResourcesPlayerHas.getWood()){
-                                    resourceTypes.add(resourceType);
+                                    available.add(resourceType);
                                 }
                             default:
                                 break;
                         }
                 }
                 
-                ResourceType[] resourcesEnabled = new ResourceType[resourceTypes.size()];
-                resourceTypes.toArray(resourcesEnabled);
+                ResourceType[] resourcesEnabled = new ResourceType[available.size()];
+                available.toArray(resourcesEnabled);
                 getTradeOverlay().showGiveOptions(resourcesEnabled);
-                if(resourceTypes.size()>0){
+                if(available.size()>0){
                     getTradeOverlay().setStateMessage("Choose what to give up");
                 }else{
                     getTradeOverlay().setStateMessage("You don't have enough resources");
@@ -218,13 +223,16 @@ public class MaritimeTradeController extends Controller implements IMaritimeTrad
                     gm.getResourceManager().transferResourceCard(4, playerIndex, getItem);
                     
                     MaritimeTrade trade = new MaritimeTrade();
-                    trade.setOutputResource(giveResource);
-                    trade.setInputResource(getResource);
+                    trade.setOutputResource(getResource);
+                    trade.setInputResource(giveResource);
+                    trade.setRatio(amount);
+                    trade.setPlayerIndex(playerIndex);
+                    trade.setType("maritimeTrade");                    
                     ClientCommunicatorFascadeSettlersOfCatan.getSingleton().maritimeTrade(trade);
 
                 }catch(Exception e){
-                
                 }finally{
+                    getTradeOverlay().reset();
                     getTradeOverlay().closeModal();
                 }
 	}
