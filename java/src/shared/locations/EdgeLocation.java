@@ -65,6 +65,7 @@ public class EdgeLocation
 		if(getClass() != obj.getClass())
 			return false;
 		EdgeLocation other = (EdgeLocation)obj;
+                other = other.getNormalizedLocation();
 		if(direction != other.direction)
 			return false;
 		if(location == null)
