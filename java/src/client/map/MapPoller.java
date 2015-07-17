@@ -62,15 +62,14 @@ public class MapPoller extends TimerTask {
                 PointsController pointsController = catanPanel.getRightPanel().getPointsController();
                 ResourceBarController resourceBarController = catanPanel.getRightPanel().getResourceController();
                 MapView mapView = (MapView) catanPanel.getMidPanel().getMapController().getView();
-
+                
                 GameManager gm = ClientCommunicator.getSingleton().getGameManager();
 
                 GameInfo gameInformation = ClientCommunicatorFascadeSettlersOfCatan.getSingleton()
                         .getGameModel(version + "");
                 version = gameInformation.getVersion();
                 String status = gameInformation.getTurnTracker().getStatus();
-                
-                
+
                 GameManager gameManager = ClientCommunicator.getSingleton().getGameManager();
                 gameManager.initializeGame(gameInformation);
 
@@ -91,7 +90,7 @@ public class MapPoller extends TimerTask {
                 if (!firstInitialization || gameInformation.getTurnTracker().getCurrentTurn() != playerIndex) {
 
                     mapView.getController().initFromModel();
-                    
+
                     /*if (gameInformation.getTurnTracker().getCurrentTurn() != playerIndex) // This boolean toggles on after your turn, so when the
                      // turn track comes around again, you get exactly one
                      // update on each of your turns. This way, your client
@@ -121,17 +120,18 @@ public class MapPoller extends TimerTask {
                      }*/
                     // TODO: use this to TEST the overlay for the first two rounds (till we get the logic right)
                     if (gameInformation.getTurnTracker().getCurrentTurn() == playerIndex) {
-                            
-                            if(status.equals("FirstRound") && firstTime){
+
+                        if (status.equals("FirstRound") && firstTime) {
                                 //mapView.startDrop(PieceType.SETTLEMENT, CatanColor.valueOf(playerColor), false);
-                                mapView.getController().startMove(PieceType.SETTLEMENT, false, true);
-                                firstTime = false;
-                            }
-                            /*if(status.equals("SecondRound") && firstTime){
-                                mapView.startDrop(PieceType.SETTLEMENT, CatanColor.valueOf(playerColor), false);
-                                mapView.getController().startMove(PieceType.SETTLEMENT, false, true);
-                                firstTime = false;
-                            }    */ 
+                            //mapView.getController().startMove(PieceType.SETTLEMENT, false, true);
+                            firstTime = false;
+                        }
+                        
+                        /*if(status.equals("SecondRound") && firstTime){
+                         mapView.startDrop(PieceType.SETTLEMENT, CatanColor.valueOf(playerColor), false);
+                         mapView.getController().startMove(PieceType.SETTLEMENT, false, true);
+                         firstTime = false;
+                         }    */
                     }
                 }
                 /* End Map View Update */
@@ -168,11 +168,11 @@ public class MapPoller extends TimerTask {
                         //get the color
                         for (PlayerInfo player : gameInformation.getPlayers()) {
                             if (player.getName().equals(messageLine.getSource())) {
-                                color = CatanColor.valueOf(player.getColor().toUpperCase());
+                                colorHistory = CatanColor.valueOf(player.getColor().toUpperCase());
                                 break;
                             }
                         }
-                        LogEntry logEntry = new LogEntry(color, messageLine.getMessage());
+                        LogEntry logEntry = new LogEntry(colorHistory, messageLine.getMessage());
                         newHistoryEntries.add(logEntry);
                     }
                     historyView.setEntries(newHistoryEntries);
@@ -207,7 +207,7 @@ public class MapPoller extends TimerTask {
 
                     status = "Finish Turn";
                 } else {
-                    if(!status.contains("Round")){
+                    if (!status.contains("Round")) {
                         status = "Waiting For Other Players";
                     }
                 }
