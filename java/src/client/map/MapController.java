@@ -183,6 +183,10 @@ public class MapController extends Controller implements IMapController {
 
 	public void placeSettlement(VertexLocation vertLoc) {
 		GameManager gm = ClientCommunicator.getSingleton().getGameManager();
+                SettlementLocation settle = new SettlementLocation();
+                settle.setDirection(vertLoc.getDir());
+                settle.setX(vertLoc.getHexLoc().getX());
+                settle.setY(vertLoc.getHexLoc().getY());
 		Integer currentPlayer = gm.getGame().getTurnTracker().getCurrentTurn();
 		BuildSettlement build = new BuildSettlement();
 
@@ -198,7 +202,7 @@ public class MapController extends Controller implements IMapController {
 			build.setFree(true);
 			build.setType("buildSettlement");
 			build.setPlayerIndex(currentPlayer);
-			build.setVertexLocation(vertLoc);
+			build.setVertexLocation(settle);
 			try {
 				ClientCommunicatorFascadeSettlersOfCatan.getSingleton().buildSettlement(build);
 				getView().placeSettlement(vertLoc, color);
@@ -213,7 +217,7 @@ public class MapController extends Controller implements IMapController {
 				build.setFree(true);
 				build.setType("buildSettlement");
 				build.setPlayerIndex(currentPlayer);
-				build.setVertexLocation(vertLoc);
+				build.setVertexLocation(settle);
 				try {
 					ClientCommunicatorFascadeSettlersOfCatan.getSingleton().buildSettlement(build);
 					getView().placeSettlement(vertLoc, color);
