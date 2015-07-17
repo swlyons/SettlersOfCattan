@@ -49,6 +49,8 @@ public class MidPanel extends JPanel
 	{
 		return mapController;
 	}
-	
+	public TradePanel getTradePanel(){
+            return tradePanel;
+        }
 }
 

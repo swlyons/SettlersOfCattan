@@ -7,6 +7,7 @@ package client.map;
 
 import client.catan.CatanPanel;
 import client.catan.GameStatePanel;
+import client.catan.TradePanel;
 import client.communication.ChatView;
 import java.util.TimerTask;
 import client.data.GameInfo;
@@ -18,6 +19,7 @@ import client.communication.LogEntry;
 import client.data.MessageLine;
 import client.data.PlayerInfo;
 import client.data.ResourceList;
+import client.domestic.DomesticTradeController;
 import client.points.PointsController;
 import client.resources.ResourceBarController;
 import client.resources.ResourceBarElement;
@@ -92,6 +94,31 @@ public class MapPoller extends TimerTask {
                 /* Begin MapView Update */
                 // If they haven't initialized before or it isn't the client's
                 // turn
+                /*
+                if(gameManager.getGame().getTradeOffer()!=null){
+                    if(gameManager.getGame().getTradeOffer().getRecevier()==playerIndex){
+                        DomesticTradeController domesticController = catanPanel.getMidPanel().getTradePanel().getDomesticController();
+                        boolean canAccept = true;
+                        
+                        ResourceList resourcesPlayerHas = gameManager.getResourceManager().getGameBanks().get(playerIndex).getResourcesCards();
+                        
+                        if(resourcesPlayerHas.getBrick()+gameManager.getGame().getTradeOffer().getOffer().getBrick()<0||
+                                resourcesPlayerHas.getOre()+gameManager.getGame().getTradeOffer().getOffer().getOre()<0||
+                                resourcesPlayerHas.getSheep()+gameManager.getGame().getTradeOffer().getOffer().getSheep()<0||
+                                resourcesPlayerHas.getWheat()+gameManager.getGame().getTradeOffer().getOffer().getWheat()<0||
+                                resourcesPlayerHas.getWood()+gameManager.getGame().getTradeOffer().getOffer().getWood()<0){
+                            canAccept = false;
+                        }
+                        
+                        domesticController.getAcceptOverlay().showModal();
+                        domesticController.getAcceptOverlay().setAcceptEnabled(canAccept);
+                    }
+                    
+                    
+                    if(gameManager.getGame().getTradeOffer().getSender()==playerIndex){}
+                }
+                  */  
+                
                 if (!firstInitialization || gameInformation.getTurnTracker().getCurrentTurn() != playerIndex) {
 
                     mapView.getController().initFromModel();
@@ -123,6 +150,7 @@ public class MapPoller extends TimerTask {
                      //mapController.startMove(PieceType.ROAD, false, true);
                      }
                      }*/
+                    
                     // TODO: use this to TEST the overlay for the first two rounds (till we get the logic right)
                     if (gameInformation.getTurnTracker().getCurrentTurn() == playerIndex) {
                             
