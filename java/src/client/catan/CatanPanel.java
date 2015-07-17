@@ -158,5 +158,9 @@ public class CatanPanel extends JPanel {
         this.rollController = rollController;
     }
     
+    public DiscardController getDiscardController(){
+        return discardController;
+    }
+    
 
 }

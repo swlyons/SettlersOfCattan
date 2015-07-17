@@ -19,6 +19,7 @@ import client.communication.LogEntry;
 import client.data.MessageLine;
 import client.data.PlayerInfo;
 import client.data.ResourceList;
+import client.discard.DiscardController;
 import client.domestic.DomesticTradeController;
 import client.points.PointsController;
 import client.resources.ResourceBarController;
@@ -105,10 +106,10 @@ public class MapPoller extends TimerTask {
                         }
                     }
                     
+                mapView.getController().initFromModel();
                 
                 if (!firstInitialization || gameInformation.getTurnTracker().getCurrentTurn() != playerIndex) {
                 
-                    mapView.getController().initFromModel();
                     
                     if(gameManager.getGame().getTradeOffer()!=null&&!catanPanel.getMidPanel().getTradePanel().getDomesticController().getWaitingForOffer()){
                         if(!seenTrade){
@@ -265,6 +266,11 @@ public class MapPoller extends TimerTask {
                             catanPanel.getMidPanel().getMapController().startMove(PieceType.ROBBER, true, true);
                         }
                     }else{
+                        if(status.equals("Discarding")){
+                            DiscardController dis = catanPanel.getDiscardController();
+                            dis.getDiscardView().showModal();
+                            dis.initFromModel();
+                        }
                         if(!status.contains("Round")){
                             status = "Waiting For Other Players";
                         }
