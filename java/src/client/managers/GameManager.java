@@ -9,6 +9,7 @@ import client.data.Port;
 import client.data.ResourceList;
 import client.data.Map;
 import client.data.VertexObject;
+import javafx.geometry.VerticalDirection;
 import client.data.EdgeValue;
 import client.data.GameInfo;
 import client.data.PlayerInfo;
@@ -18,6 +19,7 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.Date;
+import java.util.HashSet;
 
 import shared.definitions.DevCardType;
 import shared.definitions.PieceType;
@@ -276,14 +278,20 @@ public class GameManager {
     public void createUnsettledAreas(List<Hex> hexes) {
         List<Location> unsettledLocations = new ArrayList<Location>();
         List<Edge> unsettledEdges = new ArrayList<Edge>();
-        for (Hex hex : hexes) {
+        for (Hex hex : mapManager.getHexList()) {
             unsettledLocations.add(new Location(new VertexLocation(hex.getLocation(), VertexDirection.NE)));
             unsettledLocations.add(new Location(new VertexLocation(hex.getLocation(), VertexDirection.NW)));
             unsettledEdges.add(new Edge(new EdgeLocation(hex.getLocation(), EdgeDirection.NW)));
             unsettledEdges.add(new Edge(new EdgeLocation(hex.getLocation(), EdgeDirection.N)));
-            unsettledEdges.add(new Edge(new EdgeLocation(hex.getLocation(), EdgeDirection.N)));
+            unsettledEdges.add(new Edge(new EdgeLocation(hex.getLocation(), EdgeDirection.NE)));
         }
 
+        unsettledLocations.add(new Location(new VertexLocation(new HexLocation(-3, 1), VertexDirection.NE)));
+        unsettledLocations.add(new Location(new VertexLocation(new HexLocation(-3, 2), VertexDirection.NE)));
+        unsettledLocations.add(new Location(new VertexLocation(new HexLocation(-3, 3), VertexDirection.NE)));
+        unsettledLocations.add(new Location(new VertexLocation(new HexLocation(3, 0), VertexDirection.NW)));
+        unsettledLocations.add(new Location(new VertexLocation(new HexLocation(3, -1), VertexDirection.NW)));
+        unsettledLocations.add(new Location(new VertexLocation(new HexLocation(3, -2), VertexDirection.NW)));
         unsettledLocations.add(new Location(new VertexLocation(new HexLocation(2, 1), VertexDirection.NE)));
         unsettledLocations.add(new Location(new VertexLocation(new HexLocation(2, 1), VertexDirection.NW)));
         unsettledLocations.add(new Location(new VertexLocation(new HexLocation(1, 2), VertexDirection.NE)));
@@ -295,6 +303,12 @@ public class GameManager {
         unsettledLocations.add(new Location(new VertexLocation(new HexLocation(-2, 3), VertexDirection.NE)));
         unsettledLocations.add(new Location(new VertexLocation(new HexLocation(-2, 3), VertexDirection.NW)));
 
+        unsettledEdges.add(new Edge(new EdgeLocation(new HexLocation(-3, -3), EdgeDirection.NW)));
+        unsettledEdges.add(new Edge(new EdgeLocation(new HexLocation(-3, -2), EdgeDirection.NW)));
+        unsettledEdges.add(new Edge(new EdgeLocation(new HexLocation(-3, -1), EdgeDirection.NW)));
+        unsettledEdges.add(new Edge(new EdgeLocation(new HexLocation(3, -2), EdgeDirection.NW)));
+        unsettledEdges.add(new Edge(new EdgeLocation(new HexLocation(3, -1), EdgeDirection.NW)));
+        unsettledEdges.add(new Edge(new EdgeLocation(new HexLocation(3, 0), EdgeDirection.NW)));        
         unsettledEdges.add(new Edge(new EdgeLocation(new HexLocation(2, 1), EdgeDirection.N)));
         unsettledEdges.add(new Edge(new EdgeLocation(new HexLocation(2, 1), EdgeDirection.NW)));
         unsettledEdges.add(new Edge(new EdgeLocation(new HexLocation(1, 2), EdgeDirection.N)));
@@ -304,7 +318,16 @@ public class GameManager {
         unsettledEdges.add(new Edge(new EdgeLocation(new HexLocation(-1, 3), EdgeDirection.NE)));
         unsettledEdges.add(new Edge(new EdgeLocation(new HexLocation(-2, 3), EdgeDirection.N)));
         unsettledEdges.add(new Edge(new EdgeLocation(new HexLocation(-2, 3), EdgeDirection.NE)));
-
+        
+        for(Location l : unsettledLocations) {
+            HashSet<Integer> allPlayers = new HashSet<Integer>();
+            allPlayers.add(0);
+            allPlayers.add(1);
+            allPlayers.add(2);
+            allPlayers.add(3);
+            l.setWhoCanBuild(allPlayers);
+        }
+        
         locationManager.setUnsettledLocations(unsettledLocations);
         locationManager.setUnsettledEdges(unsettledEdges);
     }
@@ -467,15 +490,57 @@ public class GameManager {
     }
 
     public boolean canPlaceRoad(EdgeLocation edgeLoc) {
-        boolean canPlaceRoad = false;
-        for (Edge edge : locationManager.getUnsettledEdges()) {
-            if (edge.getEdgeLocation().equals(edgeLoc)) {
-                if (edge.getWhoCanBuild().contains(currentPlayer())) {
-                    canPlaceRoad = true;
+        boolean canPlaceRoad = false;        
+        if(locationManager.getSettledLocations().size() > 4 && locationManager.getSettledLocations().size() < 9) {
+        	ArrayList<Location> mySettledLocations = new ArrayList<Location>();
+        	for(Location l : locationManager.getSettledLocations()){
+        		if(l.getOwnerID() == currentPlayer()){
+        			mySettledLocations.add(l);
+        		}
+        	}
+        	
+        	boolean hasRoad = false;
+            VertexLocation v = mySettledLocations.get(0).getNormalizedLocation();
+            if(v.getDir() == VertexDirection.NW) {
+            	Edge e1 = new Edge(new EdgeLocation(v.getHexLoc(), EdgeDirection.N));
+            	Edge e2 = new Edge(new EdgeLocation(v.getHexLoc(), EdgeDirection.NW));
+            	Edge e3 = new Edge(new EdgeLocation(new HexLocation(v.getHexLoc().getX() -1, v.getHexLoc().getY()), EdgeDirection.NE));
+            	for(Edge e : locationManager.getSettledEdges()) {
+            		if(e.getEdgeLocation().equals(e1.getEdgeLocation()) || e.getEdgeLocation().equals(e2.getEdgeLocation()) || e.getEdgeLocation().equals(e3.getEdgeLocation()))
+            			hasRoad = true;
+            	}
+            	if(edgeLoc.equals(e1.getEdgeLocation()) || edgeLoc.equals(e2.getEdgeLocation()) || edgeLoc.equals(e3.getEdgeLocation())){
+            		if(hasRoad)
+            			return false;
+            		else
+            			return true;
+            	}
+            } else {
+            	Edge e1 = new Edge(new EdgeLocation(v.getHexLoc(), EdgeDirection.N));
+            	Edge e2 = new Edge(new EdgeLocation(v.getHexLoc(), EdgeDirection.NE));
+            	Edge e3 = new Edge(new EdgeLocation(new HexLocation(v.getHexLoc().getX() + 1, v.getHexLoc().getY() + 1), EdgeDirection.NW));
+            	for(Edge e : locationManager.getSettledEdges()) {
+            		if(e.getEdgeLocation().equals(e1.getEdgeLocation()) || e.getEdgeLocation().equals(e2.getEdgeLocation()) || e.getEdgeLocation().equals(e3.getEdgeLocation()))
+            			hasRoad = true;
+            	}            	
+            	if(edgeLoc.equals(e1.getEdgeLocation()) || edgeLoc.equals(e2.getEdgeLocation()) || edgeLoc.equals(e3.getEdgeLocation())){
+            		if(hasRoad)
+            			return false;
+            		else
+            			return true;
+            	}
+            }
+            return false;     	
+        } else {
+            for (Edge edge : locationManager.getUnsettledEdges()) {
+                if (edge.getEdgeLocation().equals(edgeLoc)) {
+                    if (edge.getWhoCanBuild().contains(currentPlayer())) {
+                        canPlaceRoad = true;
+                    }
                 }
             }
+            return canPlaceRoad;        	
         }
-        return canPlaceRoad;
     }
 
     /**
@@ -509,7 +574,7 @@ public class GameManager {
         boolean canPlaceSettlement = false;
         for (Location lc : locationManager.getUnsettledLocations()) {
             if (lc.getNormalizedLocation().equals(vertLoc)) {
-                if (lc.getWhoCanBuild().contains(currentPlayer())) {
+            	if (lc.getWhoCanBuild().contains(currentPlayer())) {
                     canPlaceSettlement = true;
                 }
             }
@@ -754,6 +819,11 @@ public class GameManager {
      */
     public void endTurn() {
         resourceManager.makeCardsUsable();
+        if(locationManager.getSettledLocations().size() == 8) {
+        	for(Location l : locationManager.getUnsettledLocations()){
+        		l.setWhoCanBuild(new HashSet<Integer>());
+        	}
+        }
         // TODO: interact with GUI to disable for non-current player
     }
 

@@ -14,8 +14,8 @@ public class TurnTracker {
 	}
 
 	public int getCurrentTurn() {
-            return currentTurn;
-        }
+		return currentTurn;
+	}
 
 	public void setCurrentTurn(int currentPlayerIndex) {
 		this.currentTurn = currentPlayerIndex;

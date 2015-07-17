@@ -14,7 +14,7 @@ public class LeftPanel extends JPanel {
 	private GameHistoryView historyView;
 	private GameHistoryController historyController;
 	private ChatView chatView;
-        private ChatController chatController;
+	private ChatController chatController;
 	private TurnTrackerView turnView;
 	private TurnTrackerController turnController;
 	
@@ -61,7 +61,10 @@ public class LeftPanel extends JPanel {
 	public TurnTrackerView getTurnView() {
 		return turnView;
 	}
-
+	
+	public TurnTrackerController getTurnTrackerController() {
+		return turnController;
+	}
 }
 
 
