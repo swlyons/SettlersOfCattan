@@ -261,15 +261,15 @@ public class DomesticTradeController extends Controller implements IDomesticTrad
             trade.setPlayerIndex(playerIndex);
             trade.setType("offerTrade");
             trade.setOffer(offer);
-            trade.setReciever(tradeWithIndex);
+            trade.setReceiver(tradeWithIndex);
 
             try{
                 ClientCommunicatorFascadeSettlersOfCatan.getSingleton().offerTrade(trade);
-                getTradeOverlay().closeModal();
                 getWaitOverlay().showModal();
                 getWaitOverlay().setMessage("Waiting for Trade to Go Through");
                 waitingForOffer=true;
             }catch (Exception e){
+                getTradeOverlay().reset();
                 getTradeOverlay().closeModal();
             }
 	}
@@ -361,6 +361,7 @@ public class DomesticTradeController extends Controller implements IDomesticTrad
             
             getTradeOverlay().setResourceAmount(resource, "0");
             getTradeOverlay().setResourceAmountChangeEnabled(resource, true, false);
+            calculateIfAbleToTrade();
         }
 
 	@Override
@@ -397,7 +398,8 @@ public class DomesticTradeController extends Controller implements IDomesticTrad
             }
             getTradeOverlay().setResourceAmount(resource, "0");
             getTradeOverlay().setResourceAmountChangeEnabled(resource, hasResource, false);
-	}
+            calculateIfAbleToTrade();
+        }
 
 	@Override
 	public void unsetResource(ResourceType resource) {
@@ -422,6 +424,7 @@ public class DomesticTradeController extends Controller implements IDomesticTrad
             }
             getTradeOverlay().setResourceAmount(resource, "");
             getTradeOverlay().setResourceAmountChangeEnabled(resource, false, false);
+            calculateIfAbleToTrade();
         }
 
 	@Override

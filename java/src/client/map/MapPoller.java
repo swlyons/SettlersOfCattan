@@ -39,6 +39,7 @@ public class MapPoller extends TimerTask {
     private int version;
     private boolean firstInitialization;
     private boolean firstTime;
+    private boolean seenTrade;
     private int playerIndex;
     private String playerColor;
     private final int MAX_POINTS = 10;
@@ -48,6 +49,7 @@ public class MapPoller extends TimerTask {
         this.catanPanel = catanPanel;
         this.firstInitialization = false;
         this.firstTime = true;
+        this.seenTrade = false;
         playerIndex = -1;
         playerColor = "";
         version = -1;
@@ -68,7 +70,7 @@ public class MapPoller extends TimerTask {
                 GameManager gm = ClientCommunicator.getSingleton().getGameManager();
 
                 GameInfo gameInformation = ClientCommunicatorFascadeSettlersOfCatan.getSingleton()
-                        .getGameModel(version + "");
+                        .getGameModel(version + "");                
                 version = gameInformation.getVersion();
                 String status = gameInformation.getTurnTracker().getStatus();
                 
@@ -91,37 +93,50 @@ public class MapPoller extends TimerTask {
                 // If they haven't initialized before or it isn't the client's
                 // turn
                 
-                if(catanPanel.getMidPanel().getTradePanel().getDomesticController().getWaitingForOffer()){
                     if(gameManager.getGame().getTradeOffer()==null){
-                        catanPanel.getMidPanel().getTradePanel().getDomesticController().setWaitingForOffer(false);
-                        catanPanel.getMidPanel().getTradePanel().getDomesticController().getWaitOverlay().closeModal();
+                        seenTrade=false;
+                        if(catanPanel.getMidPanel().getTradePanel().getDomesticController().getWaitingForOffer()){
+                                catanPanel.getMidPanel().getTradePanel().getDomesticController().setWaitingForOffer(false);
+                                catanPanel.getMidPanel().getTradePanel().getDomesticController().getWaitOverlay().closeModal();
+                                catanPanel.getMidPanel().getTradePanel().getDomesticController().getTradeOverlay().closeModal();
+                                catanPanel.getMidPanel().getTradePanel().getDomesticController().getTradeOverlay().reset();
+                        }
                     }
-                }
                     
                 
                 if (!firstInitialization || gameInformation.getTurnTracker().getCurrentTurn() != playerIndex) {
                 
                     mapView.getController().initFromModel();
                     
-                    if(gameManager.getGame().getTradeOffer()!=null){
-                        if(gameManager.getGame().getTradeOffer().getRecevier()==playerIndex){
-                            DomesticTradeController domesticController = catanPanel.getMidPanel().getTradePanel().getDomesticController();
-                            boolean canAccept = true;
+                    if(gameManager.getGame().getTradeOffer()!=null&&!catanPanel.getMidPanel().getTradePanel().getDomesticController().getWaitingForOffer()){
+                        if(!seenTrade){
+                            seenTrade=true;
+                            if(gameManager.getGame().getTradeOffer().getReceiver()==playerIndex){
+                                DomesticTradeController domesticController = catanPanel.getMidPanel().getTradePanel().getDomesticController();
+                                boolean canAccept = true;
 
-                            ResourceList resourcesPlayerHas = gameManager.getResourceManager().getGameBanks().get(playerIndex).getResourcesCards();
+                                ResourceList resourcesPlayerHas = gameManager.getResourceManager().getGameBanks().get(playerIndex).getResourcesCards();
 
-                            if(resourcesPlayerHas.getBrick()+gameManager.getGame().getTradeOffer().getOffer().getBrick()<0||
-                                    resourcesPlayerHas.getOre()+gameManager.getGame().getTradeOffer().getOffer().getOre()<0||
-                                    resourcesPlayerHas.getSheep()+gameManager.getGame().getTradeOffer().getOffer().getSheep()<0||
-                                    resourcesPlayerHas.getWheat()+gameManager.getGame().getTradeOffer().getOffer().getWheat()<0||
-                                    resourcesPlayerHas.getWood()+gameManager.getGame().getTradeOffer().getOffer().getWood()<0){
-                                canAccept = false;
+                                if(resourcesPlayerHas.getBrick()+gameManager.getGame().getTradeOffer().getOffer().getBrick()<0||
+                                        resourcesPlayerHas.getOre()+gameManager.getGame().getTradeOffer().getOffer().getOre()<0||
+                                        resourcesPlayerHas.getSheep()+gameManager.getGame().getTradeOffer().getOffer().getSheep()<0||
+                                        resourcesPlayerHas.getWheat()+gameManager.getGame().getTradeOffer().getOffer().getWheat()<0||
+                                        resourcesPlayerHas.getWood()+gameManager.getGame().getTradeOffer().getOffer().getWood()<0){
+                                    canAccept = false;
+                                }
+
+                                domesticController.getAcceptOverlay().showModal();
+                                domesticController.getAcceptOverlay().setAcceptEnabled(canAccept);
+                            }else{
+                                if(gameManager.getGame().getTradeOffer().getSender()==playerIndex){
+                                    catanPanel.getMidPanel().getTradePanel().getDomesticController().setWaitingForOffer(true);
+                                    catanPanel.getMidPanel().getTradePanel().getDomesticController().startTrade();
+                                    catanPanel.getMidPanel().getTradePanel().getDomesticController().getWaitOverlay().showModal();
+                                    catanPanel.getMidPanel().getTradePanel().getDomesticController().getWaitOverlay().setMessage("Waiting for Trade to Go Through");
+                                }
                             }
-
-                            domesticController.getAcceptOverlay().showModal();
-                            domesticController.getAcceptOverlay().setAcceptEnabled(canAccept);
                         }
-                }
+                    }
                     
                     /*if (gameInformation.getTurnTracker().getCurrentTurn() != playerIndex) // This boolean toggles on after your turn, so when the
                      // turn track comes around again, you get exactly one
@@ -231,21 +246,24 @@ public class MapPoller extends TimerTask {
                 if (status.equals("Playing") && playerIndex == gameInformation.getTurnTracker().getCurrentTurn()) {
                     enable = true;
                     //set the button color
-                    for (PlayerInfo player : gameInformation.getPlayers()) {
-                        if (player.getPlayerIndex() == playerIndex) {
-                            //TODO: figure out how to change the actual button's color
-                            gameStatePanel.getButton().setBackground(CatanColor.valueOf(player.getColor().toUpperCase()).getJavaColor());
-                            break;
-                        }
-                    }
+//                    for (PlayerInfo player : gameInformation.getPlayers()) {
+//                        if (player.getPlayerIndex() == playerIndex) {
+//                            TODO: figure out how to change the actual button's color
+//                            gameStatePanel.getButton().setBackground(CatanColor.valueOf(player.getColor().toUpperCase()).getJavaColor());
+//                            break;
+//                        }
+//                    }
 
                     status = "Finish Turn";
                 } else {
-                    if(!status.contains("Round")){
-                        status = "Waiting For Other Players";
+                    if(status.equals("Robbing")){
+                    
+                    }else{
+                        if(!status.contains("Round")){
+                            status = "Waiting For Other Players";
+                        }
                     }
                 }
-
                 turnTrackerView.updateGameState(status, enable);
                 //always update the local player's color
 
