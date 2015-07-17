@@ -240,7 +240,7 @@ public class MapPoller extends TimerTask {
                     if (!rollController.getRollView().isModalShowing()) {
                         rollController.getRollView().showModal();
                     }
-
+                    
                 }
                 /* End Roll Update */
                 if (status.equals("Playing") && playerIndex == gameInformation.getTurnTracker().getCurrentTurn()) {
@@ -253,7 +253,6 @@ public class MapPoller extends TimerTask {
 //                            break;
 //                        }
 //                    }
-                    System.out.println("Map Poller: MY TURN!");
                     startedRobbing = false;
                     status = "Finish Turn";
                 } else {
@@ -268,7 +267,6 @@ public class MapPoller extends TimerTask {
                             DiscardController dis = catanPanel.getDiscardController();
                             if (!dis.getDiscardView().isModalShowing()) {
                                 dis.getDiscardView().showModal();
-
                                 dis.initFromModel();
                             }
                         }
@@ -345,9 +343,10 @@ public class MapPoller extends TimerTask {
                     }
                 }
                 /* End Resource Bar Update */
-
+                
+                //Used to end the turn for each player
                 if (mapView.getController().isEndTurn()) {
-                    catanPanel.getLeftPanel().getTurnTrackerController().endTurn();
+                    turnTrackerView.getController().endTurn();
                     mapView.getController().setEndTurn(false);
                     firstTime = true;
                 }
