@@ -180,14 +180,10 @@ public class MapPoller extends TimerTask {
                 /* End Game History View Update */
 
                 /* Begin Roll Update */
-                //may need to add more so that this knows when to trigger (more than just it being your turn)
                 if (playerIndex == gameInformation.getTurnTracker().getCurrentTurn() && status.equals("Rolling")) {
-                    if (firstTime) {
-                        firstTime = false;
+         
                         rollController.getResultView().showModal();
                         rollController.getRollView().showModal();
-                    }
-
                 }
                 /* End Roll Update */
 
