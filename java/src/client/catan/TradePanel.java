@@ -57,5 +57,9 @@ public class TradePanel extends JPanel
 		this.add(Box.createRigidArea(new Dimension(3, 0)));
 	}
 	
+        public DomesticTradeController getDomesticController(){
+            return domesticController;
+        }
+        
 }
 
