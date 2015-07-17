@@ -95,33 +95,38 @@ public class MapPoller extends TimerTask {
                 /* Begin MapView Update */
                 // If they haven't initialized before or it isn't the client's
                 // turn
-                /*
-                if(gameManager.getGame().getTradeOffer()!=null){
-                    if(gameManager.getGame().getTradeOffer().getRecevier()==playerIndex){
-                        DomesticTradeController domesticController = catanPanel.getMidPanel().getTradePanel().getDomesticController();
-                        boolean canAccept = true;
-                        
-                        ResourceList resourcesPlayerHas = gameManager.getResourceManager().getGameBanks().get(playerIndex).getResourcesCards();
-                        
-                        if(resourcesPlayerHas.getBrick()+gameManager.getGame().getTradeOffer().getOffer().getBrick()<0||
-                                resourcesPlayerHas.getOre()+gameManager.getGame().getTradeOffer().getOffer().getOre()<0||
-                                resourcesPlayerHas.getSheep()+gameManager.getGame().getTradeOffer().getOffer().getSheep()<0||
-                                resourcesPlayerHas.getWheat()+gameManager.getGame().getTradeOffer().getOffer().getWheat()<0||
-                                resourcesPlayerHas.getWood()+gameManager.getGame().getTradeOffer().getOffer().getWood()<0){
-                            canAccept = false;
-                        }
-                        
-                        domesticController.getAcceptOverlay().showModal();
-                        domesticController.getAcceptOverlay().setAcceptEnabled(canAccept);
+                
+                if(catanPanel.getMidPanel().getTradePanel().getDomesticController().getWaitingForOffer()){
+                    if(gameManager.getGame().getTradeOffer()==null){
+                        catanPanel.getMidPanel().getTradePanel().getDomesticController().setWaitingForOffer(false);
+                        catanPanel.getMidPanel().getTradePanel().getDomesticController().getWaitOverlay().closeModal();
                     }
-                    
-                    
-                    if(gameManager.getGame().getTradeOffer().getSender()==playerIndex){}
                 }
-                  */  
+                    
                 
                 if (!firstInitialization || gameInformation.getTurnTracker().getCurrentTurn() != playerIndex) {
+                
                     mapView.getController().initFromModel();
+                    
+                    if(gameManager.getGame().getTradeOffer()!=null){
+                        if(gameManager.getGame().getTradeOffer().getRecevier()==playerIndex){
+                            DomesticTradeController domesticController = catanPanel.getMidPanel().getTradePanel().getDomesticController();
+                            boolean canAccept = true;
+
+                            ResourceList resourcesPlayerHas = gameManager.getResourceManager().getGameBanks().get(playerIndex).getResourcesCards();
+
+                            if(resourcesPlayerHas.getBrick()+gameManager.getGame().getTradeOffer().getOffer().getBrick()<0||
+                                    resourcesPlayerHas.getOre()+gameManager.getGame().getTradeOffer().getOffer().getOre()<0||
+                                    resourcesPlayerHas.getSheep()+gameManager.getGame().getTradeOffer().getOffer().getSheep()<0||
+                                    resourcesPlayerHas.getWheat()+gameManager.getGame().getTradeOffer().getOffer().getWheat()<0||
+                                    resourcesPlayerHas.getWood()+gameManager.getGame().getTradeOffer().getOffer().getWood()<0){
+                                canAccept = false;
+                            }
+
+                            domesticController.getAcceptOverlay().showModal();
+                            domesticController.getAcceptOverlay().setAcceptEnabled(canAccept);
+                        }
+                }
                     
                     /*if (gameInformation.getTurnTracker().getCurrentTurn() != playerIndex) // This boolean toggles on after your turn, so when the
                      // turn track comes around again, you get exactly one
