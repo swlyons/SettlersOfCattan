@@ -146,7 +146,7 @@ public class MapPoller extends TimerTask {
                      //mapController.startMove(PieceType.ROAD, false, true);
                      }
                      }*/
-                    catanPanel.getC
+                    
                     // TODO: use this to TEST the overlay for the first two rounds (till we get the logic right)
                     if (gameInformation.getTurnTracker().getCurrentTurn() == playerIndex) {
                             
