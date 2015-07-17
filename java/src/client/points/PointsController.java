@@ -44,7 +44,6 @@ public class PointsController extends Controller implements IPointsController {
 	}
 
 	private void initFromModel() {
-		System.out.println("Yay");
 		GameInfo game = ClientCommunicator.getSingleton().getGameManager().getGame();
 		int points = 0;
 		

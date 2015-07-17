@@ -12,7 +12,7 @@ public class HexLocation {
         setX(x);
         setY(y);
     }
-
+    
     public int getX() {
         return x;
     }

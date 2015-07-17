@@ -11,7 +11,7 @@ import client.data.ResourceList;
 public class OfferTrade extends Command {
 
     private ResourceList offer;
-    private int reciever;
+    private int receiver;
 
     public ResourceList getOffer() {
         return offer;
@@ -21,11 +21,11 @@ public class OfferTrade extends Command {
         this.offer = offer;
     }
 
-    public int getReciever() {
-        return reciever;
+    public int getReceiver() {
+        return receiver;
     }
 
-    public void setReciever(int reciever) {
-        this.reciever = reciever;
+    public void setReceiver(int receiver) {
+        this.receiver = receiver;
     }
 }

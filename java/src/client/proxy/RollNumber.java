@@ -9,9 +9,12 @@ package client.proxy;
 public class RollNumber extends Command {
 
     private int number;
-
-    public RollNumber(int playerIndex) {
-        super("rollNumber", playerIndex);
+    
+    public RollNumber(){
+        
+    }
+    public RollNumber(int number) {
+        this.number = number;
     }
 
     public int getNumber() {

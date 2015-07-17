@@ -6,6 +6,7 @@
 package client.data;
 
 import shared.locations.VertexLocation;
+import client.data.SettlementLocation;
 
 /**
  *
@@ -13,11 +14,12 @@ import shared.locations.VertexLocation;
  */
 public class VertexObject {
     private int owner;
-    private VertexLocation location;
-
-    public VertexObject(int owner, VertexLocation location) {
+    private VertexLocation direction;
+    private SettlementLocation location;
+    
+    public VertexObject(int owner, VertexLocation direction) {
         this.owner = owner;
-        this.location = location;
+        this.direction = direction;
     }
 
     public int getOwner() {
@@ -29,12 +31,21 @@ public class VertexObject {
     }
 
     public VertexLocation getDirection() {
+        return direction;
+    }
+
+    public void setDirection(VertexLocation direction) {
+        this.direction = direction;
+    }
+    
+    public SettlementLocation getLocation() {
         return location;
     }
 
-    public void setDirection(VertexLocation location) {
+    public void setLocation(SettlementLocation location) {
         this.location = location;
     }
+
 
     @Override
     public String toString() {

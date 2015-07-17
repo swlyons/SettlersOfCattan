@@ -22,7 +22,9 @@ public class MapController extends Controller implements IMapController {
 	private IRobView robView;
 	private boolean isFree = false;
 	private boolean endTurn = false;
-	
+        private HexLocation newRobberLocation = null;
+        
+        
 	public MapController(IMapView view, IRobView robView) {
 
 		super(view);
@@ -129,6 +131,7 @@ public class MapController extends Controller implements IMapController {
 
 			getView().addPort(new EdgeLocation(location, direction), type);
 		}
+
 	}
 
 	public boolean canPlaceRoad(EdgeLocation edgeLoc) {
@@ -155,36 +158,62 @@ public class MapController extends Controller implements IMapController {
 		GameManager gm = ClientCommunicator.getSingleton().getGameManager();
 		Integer currentPlayer = gm.getGame().getTurnTracker().getCurrentTurn();
 		if (isFree || gm.getLocationManager().getSettledLocations().size() < 9) {
+			isFree = false;
 			if (gm.placeFreeRoad(edgeLoc)) {
-				CatanColor color = CatanColor.valueOf(gm.getGame().getPlayers().get(currentPlayer).getColor().toUpperCase());
+				CatanColor color = CatanColor
+						.valueOf(gm.getGame().getPlayers().get(currentPlayer).getColor().toUpperCase());
 				getView().placeRoad(edgeLoc, color);
 				BuildRoad br = new BuildRoad();
 				br.setFree(true);
 				br.setPlayerIndex(currentPlayer);
-				br.setRoadLocation(edgeLoc);
+				XYEdgeLocation edgeSpot = new XYEdgeLocation();
+				edgeSpot.setDirection(edgeLoc.getDir());
+				edgeSpot.setX(edgeLoc.getHexLoc().getX());
+				edgeSpot.setY(edgeLoc.getHexLoc().getY());
+				br.setRoadLocation(edgeSpot);
 				br.setType("buildRoad");
 				try {
 					ClientCommunicatorFascadeSettlersOfCatan.getSingleton().buildRoad(br);
-					setEndTurn(true);
+					if (gm.getLocationManager().getSettledLocations().size() < 9)
+						setEndTurn(true);
 				} catch (Exception e) {
 					System.out.println(e.getMessage());
 				}
 			}
 		} else {
 			if (gm.buildRoad(edgeLoc)) {
-				CatanColor color = CatanColor.valueOf(gm.getGame().getPlayers().get(currentPlayer).getColor().toUpperCase());
+				CatanColor color = CatanColor
+						.valueOf(gm.getGame().getPlayers().get(currentPlayer).getColor().toUpperCase());
 				getView().placeRoad(edgeLoc, color);
+				BuildRoad br = new BuildRoad();
+				br.setFree(false);
+				br.setPlayerIndex(currentPlayer);
+				XYEdgeLocation edgeSpot = new XYEdgeLocation();
+				edgeSpot.setDirection(edgeLoc.getDir());
+				edgeSpot.setX(edgeLoc.getHexLoc().getX());
+				edgeSpot.setY(edgeLoc.getHexLoc().getY());
+				br.setRoadLocation(edgeSpot);
+				br.setType("buildRoad");
+				try {
+					ClientCommunicatorFascadeSettlersOfCatan.getSingleton().buildRoad(br);
+				} catch (Exception e) {
+					System.out.println(e.getMessage());
+				}
 			}
 		}
-
 	}
 
 	public void placeSettlement(VertexLocation vertLoc) {
 		GameManager gm = ClientCommunicator.getSingleton().getGameManager();
+		SettlementLocation settle = new SettlementLocation();
+		settle.setDirection(vertLoc.getDir());
+		settle.setX(vertLoc.getHexLoc().getX());
+		settle.setY(vertLoc.getHexLoc().getY());
 		Integer currentPlayer = gm.getGame().getTurnTracker().getCurrentTurn();
 		BuildSettlement build = new BuildSettlement();
 
 		if (isFree || gm.getLocationManager().getSettledLocations().size() < 8) {
+			isFree = false;
 			if (gm.getLocationManager().getSettledLocations().size() < 4) {
 				gm.placeFirstSettlement(vertLoc);
 			} else {
@@ -196,7 +225,7 @@ public class MapController extends Controller implements IMapController {
 			build.setFree(true);
 			build.setType("buildSettlement");
 			build.setPlayerIndex(currentPlayer);
-			build.setVertexLocation(vertLoc);
+			build.setVertexLocation(settle);
 			try {
 				ClientCommunicatorFascadeSettlersOfCatan.getSingleton().buildSettlement(build);
 				getView().placeSettlement(vertLoc, color);
@@ -211,7 +240,7 @@ public class MapController extends Controller implements IMapController {
 				build.setFree(true);
 				build.setType("buildSettlement");
 				build.setPlayerIndex(currentPlayer);
-				build.setVertexLocation(vertLoc);
+				build.setVertexLocation(settle);
 				try {
 					ClientCommunicatorFascadeSettlersOfCatan.getSingleton().buildSettlement(build);
 					getView().placeSettlement(vertLoc, color);
@@ -234,11 +263,30 @@ public class MapController extends Controller implements IMapController {
 	}
 
 	public void placeRobber(HexLocation hexLoc) {
+                newRobberLocation=hexLoc;
 		GameManager gm = ClientCommunicator.getSingleton().getGameManager();
 		if (gm.getMapManager().moveRobber(hexLoc)) {
-			getView().placeRobber(hexLoc);
-			getRobView().showModal();
+			getView().placeRobber(hexLoc);			
 		}
+                List<Location> settlements = gm.getLocationManager().getSettledLocations();
+                Set<Integer> playerIndexes = new HashSet<>();
+                for(Location settlement : settlements){
+                    List<HexLocation> neighbors = gm.getLocationManager().getHexLocationsAroundVertexLocation(settlement.getNormalizedLocation());
+                    for(HexLocation neighbor : neighbors){
+                        if(neighbor.equals(hexLoc)){
+                            playerIndexes.add(settlement.getOwnerID());
+                        }
+                    }
+                }
+                
+                List<RobPlayerInfo> victims = new ArrayList<RobPlayerInfo>();
+                for(Integer player : playerIndexes){
+                    victims.add(new RobPlayerInfo(gm.getGame().getPlayers().get(player),gm.getResourceManager().getGameBanks().get(player).getResourcesCards().getTotalResources()));
+                }
+                RobPlayerInfo[] victimsAreUs = new RobPlayerInfo[victims.size()];
+                victims.toArray(victimsAreUs);
+                getRobView().showModal();
+                getRobView().setPlayers(victimsAreUs);
 	}
 
 	/*
@@ -273,10 +321,7 @@ public class MapController extends Controller implements IMapController {
 	}
 
 	public void playSoldierCard() {
-		getRobView().showModal();
-		// I don't think this needs to do any more than this. This should just
-		// show the robView overlay, which then uses the "CanPlaceRobber" and
-		// "robPlayer" methods
+                startMove(PieceType.ROBBER, true, true);
 	}
 
 	public void playRoadBuildingCard() {
@@ -297,24 +342,23 @@ public class MapController extends Controller implements IMapController {
 		// The RobPlayer class doesn't request a resource, so the resource
 		// deciding must happen server side, or on the next poll request
 		int index = victim.getPlayerIndex();
-		RobPlayer rp = new RobPlayer(index);
-
-		GameManager gm = ClientCommunicator.getSingleton().getGameManager();
-		HexLocation loc = gm.getMapManager().getRobberLocation();
-		rp.setLocation(loc);
-
+                
+		RobPlayer rp = new RobPlayer();
+                rp.setType("robPlayer");
+		rp.setLocation(newRobberLocation);
+                rp.setVictimIndex(index);
 		try {
-			ClientCommunicatorFascadeSettlersOfCatan.getSingleton().robPlayer(rp);
+                    ClientCommunicatorFascadeSettlersOfCatan.getSingleton().robPlayer(rp);
 		} catch (Exception e) {
 
-		}
+		}finally{
+                    getRobView().closeModal();
+                }
 	}
-
 
 	public boolean isEndTurn() {
 		return endTurn;
 	}
-	
 
 	public void setEndTurn(boolean endTurn) {
 		this.endTurn = endTurn;

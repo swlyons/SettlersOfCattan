@@ -8,7 +8,10 @@ import client.managers.GameManager;
 import client.data.PlayerInfo;
 import client.data.ResourceList;
 import client.proxy.OfferTrade;
+import client.proxy.AcceptTrade;
 import client.misc.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Domestic trade controller implementation
@@ -27,6 +30,7 @@ public class DomesticTradeController extends Controller implements IDomesticTrad
         private boolean sendingOre;
         private boolean sendingWheat;
         private boolean sendingWood;
+        private boolean waitingForOffer;
         private int tradeWithIndex;     
         
 	/**
@@ -42,6 +46,7 @@ public class DomesticTradeController extends Controller implements IDomesticTrad
 
 		super(tradeView);
 		addedPlayers=false;
+                waitingForOffer=false;
 		setTradeOverlay(tradeOverlay);
 		setWaitOverlay(waitOverlay);
 		setAcceptOverlay(acceptOverlay);
@@ -122,8 +127,18 @@ public class DomesticTradeController extends Controller implements IDomesticTrad
                 initFromModel();
                 if(!addedPlayers){
                     GameManager gm = ClientCommunicator.getSingleton().getGameManager();
-                    PlayerInfo[] players = new PlayerInfo[gm.getGame().getPlayers().size()];
-                    gm.getGame().getPlayers().toArray(players);
+                    Integer playerId = ClientCommunicator.getSingleton().getPlayerId();
+                    int playerIndex = 4;
+                    for(int i=0;i<gm.getGame().getPlayers().size();i++){
+                        if(gm.getGame().getPlayers().get(i).getPlayerID()==playerId){
+                            playerIndex=i;
+                            break;
+                        }
+                    }
+                    List<PlayerInfo> playerss = gm.getGame().getPlayers();
+                    playerss.remove(playerIndex);
+                    PlayerInfo[] players = new PlayerInfo[playerss.size()];
+                    playerss.toArray(players);
                     getTradeOverlay().setPlayers(players);
                     addedPlayers = true;
                 }
@@ -232,19 +247,40 @@ public class DomesticTradeController extends Controller implements IDomesticTrad
                 offer.setWood(0-offer.getWood());
             }
             
+            GameManager gm = ClientCommunicator.getSingleton().getGameManager();
+            Integer playerId = ClientCommunicator.getSingleton().getPlayerId();
+            Integer playerIndex = 4;
+            for(int i=0;i<gm.getGame().getPlayers().size();i++){
+                if(gm.getGame().getPlayers().get(i).getPlayerID()==playerId){
+                    playerIndex=i;
+                    break;
+                }
+            }
+            
             OfferTrade trade = new OfferTrade();
+            trade.setPlayerIndex(playerIndex);
+            trade.setType("offerTrade");
             trade.setOffer(offer);
-            trade.setReciever(tradeWithIndex);
+            trade.setReceiver(tradeWithIndex);
 
             try{
                 ClientCommunicatorFascadeSettlersOfCatan.getSingleton().offerTrade(trade);
-                getTradeOverlay().closeModal();
                 getWaitOverlay().showModal();
                 getWaitOverlay().setMessage("Waiting for Trade to Go Through");
+                waitingForOffer=true;
             }catch (Exception e){
+                getTradeOverlay().reset();
                 getTradeOverlay().closeModal();
             }
 	}
+        
+        public boolean getWaitingForOffer(){
+            return waitingForOffer;
+        }
+        
+        public void setWaitingForOffer(boolean waitingForOffer){
+            this.waitingForOffer=waitingForOffer;
+        }
 
 	@Override
 	public void setPlayerToTradeWith(int playerIndex) {
@@ -325,37 +361,45 @@ public class DomesticTradeController extends Controller implements IDomesticTrad
             
             getTradeOverlay().setResourceAmount(resource, "0");
             getTradeOverlay().setResourceAmountChangeEnabled(resource, true, false);
+            calculateIfAbleToTrade();
         }
 
 	@Override
 	public void setResourceToSend(ResourceType resource) {
+            boolean hasResource = true;            
             switch(resource){
                 case brick:
                     offer.setBrick(0);
                     sendingBrick=true;
+                    hasResource=resourcesPlayerHas.getBrick()!=0;
                     break;
                 case sheep:
                     offer.setSheep(0);
                     sendingSheep=true;
+                    hasResource=resourcesPlayerHas.getSheep()!=0;
                     break;
                 case ore:
                     offer.setOre(0);
+                    hasResource=resourcesPlayerHas.getOre()!=0;
                     sendingOre=true;
                     break;
                 case wheat:
                     offer.setWheat(0);
+                    hasResource=resourcesPlayerHas.getWheat()!=0;
                     sendingWheat=true;
                     break;
                 case wood:
                     offer.setWood(0);
                     sendingWood=true;
+                    hasResource=resourcesPlayerHas.getWood()!=0;
                     break;
                 default:
                     break;
             }
             getTradeOverlay().setResourceAmount(resource, "0");
-            getTradeOverlay().setResourceAmountChangeEnabled(resource, true, false);
-	}
+            getTradeOverlay().setResourceAmountChangeEnabled(resource, hasResource, false);
+            calculateIfAbleToTrade();
+        }
 
 	@Override
 	public void unsetResource(ResourceType resource) {
@@ -380,6 +424,7 @@ public class DomesticTradeController extends Controller implements IDomesticTrad
             }
             getTradeOverlay().setResourceAmount(resource, "");
             getTradeOverlay().setResourceAmountChangeEnabled(resource, false, false);
+            calculateIfAbleToTrade();
         }
 
 	@Override
@@ -390,25 +435,34 @@ public class DomesticTradeController extends Controller implements IDomesticTrad
 
 	@Override
 	public void acceptTrade(boolean willAccept) {
-            if(willAccept){
-                GameManager gm = ClientCommunicator.getSingleton().getGameManager();
-                Integer playerId = ClientCommunicator.getSingleton().getPlayerId();
-                Integer playerIndex = 4;
-                for(int i=0;i<gm.getGame().getPlayers().size();i++){
-                    if(gm.getGame().getPlayers().get(i).getPlayerID()==playerId){
-                        playerIndex=i;
-                        break;
-                    }
+            GameManager gm = ClientCommunicator.getSingleton().getGameManager();
+            Integer playerId = ClientCommunicator.getSingleton().getPlayerId();
+            Integer playerIndex = 4;
+            for(int i=0;i<gm.getGame().getPlayers().size();i++){
+                if(gm.getGame().getPlayers().get(i).getPlayerID()==playerId){
+                    playerIndex=i;
+                    break;
                 }
-                gm.getResourceManager().getGameBanks().get(playerIndex).getResourcesCards().setBrick(0-offer.getBrick());
-                gm.getResourceManager().getGameBanks().get(playerIndex).getResourcesCards().setOre(0-offer.getOre());
-                gm.getResourceManager().getGameBanks().get(playerIndex).getResourcesCards().setSheep(0-offer.getSheep());
-                gm.getResourceManager().getGameBanks().get(playerIndex).getResourcesCards().setWheat(0-offer.getWheat());
-                gm.getResourceManager().getGameBanks().get(playerIndex).getResourcesCards().setWood(0-offer.getWood());
             }
-            
-            getWaitOverlay().closeModal();
-	
+            if(willAccept){
+                ResourceList theNewOffer = gm.getGame().getTradeOffer().getOffer();
+                ResourceList myCards = gm.getResourceManager().getGameBanks().get(playerIndex).getResourcesCards();
+                gm.getResourceManager().getGameBanks().get(playerIndex).getResourcesCards().setBrick(myCards.getBrick()+theNewOffer.getBrick());
+                gm.getResourceManager().getGameBanks().get(playerIndex).getResourcesCards().setOre(myCards.getOre()+theNewOffer.getOre());
+                gm.getResourceManager().getGameBanks().get(playerIndex).getResourcesCards().setSheep(myCards.getSheep()+theNewOffer.getSheep());
+                gm.getResourceManager().getGameBanks().get(playerIndex).getResourcesCards().setWheat(myCards.getWheat()+theNewOffer.getWheat());
+                gm.getResourceManager().getGameBanks().get(playerIndex).getResourcesCards().setWood(myCards.getWood()+theNewOffer.getWood());
+            }
+            AcceptTrade acceptTrade = new AcceptTrade();
+            acceptTrade.setPlayerIndex(playerIndex);
+            acceptTrade.setType("acceptTrade");
+            acceptTrade.setWillAccept(willAccept);
+            try{
+            ClientCommunicatorFascadeSettlersOfCatan.getSingleton().acceptTrade(acceptTrade);
+            }catch(Exception e){
+            } finally{
+                getAcceptOverlay().closeModal();
+            }
         }
 
         

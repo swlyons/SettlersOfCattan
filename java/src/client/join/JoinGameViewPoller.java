@@ -24,6 +24,7 @@ public class JoinGameViewPoller extends TimerTask {
     private JoinGameController joinGameController;
     private boolean firstTime = true;
     private boolean update = false;
+    private final int MAX_PLAYERS = 4;
 
     public JoinGameViewPoller() {
     }
@@ -64,12 +65,13 @@ public class JoinGameViewPoller extends TimerTask {
             playerInfo.setName(ClientCommunicator.getSingleton().getName());
 
             //determine if we need to update
+            int newGamePlayers = 0;
             if (!firstTime) {
                  
                 GameInfo[] oldGames = getJoinGameController().getJoinGameView().getGames();
                 int oldGamePlayers = 0;
                 int oldGameSize = oldGames.length;
-                int newGamePlayers = 0;
+                
                 int newGameSize = activeGames.size();
 
                 for (GameInfo game : oldGames) {
@@ -96,7 +98,7 @@ public class JoinGameViewPoller extends TimerTask {
         getJoinGameController().getJoinGameView().setGames(games, playerInfo, update);
         if (!getJoinGameController().getSelectColorView().isModalShowing() && !getJoinGameController().getPlayerWaitingView().isModalShowing() && !getJoinGameController().getNewGameView().isModalShowing()) {
             //only update when necessary
-            if (update) {
+            if (update /*&& (newGamePlayers != MAX_PLAYERS)*/) {
                getJoinGameController().getJoinGameView().showModal();
             }
         }

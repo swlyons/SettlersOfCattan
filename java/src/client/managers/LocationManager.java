@@ -71,6 +71,7 @@ public class LocationManager {
 							if (locationUnavailable.getNormalizedLocation().equals(unusableLocation1)
 									|| locationUnavailable.getNormalizedLocation().equals(unusableLocation2)
 									|| locationUnavailable.getNormalizedLocation().equals(unusableLocation3)) {
+								locationUnavailable.setWhoCanBuild(new HashSet<Integer>());
 								locationUnavailable.setCanBeSettled(false);
 							}
 						}
@@ -107,6 +108,7 @@ public class LocationManager {
 							if (locationUnavailable.getNormalizedLocation().equals(unusableLocation1)
 									|| locationUnavailable.getNormalizedLocation().equals(unusableLocation2)
 									|| locationUnavailable.getNormalizedLocation().equals(unusableLocation3)) {
+								locationUnavailable.setWhoCanBuild(new HashSet<Integer>());
 								locationUnavailable.setCanBeSettled(false);
 							}
 						}
@@ -169,7 +171,8 @@ public class LocationManager {
 						for (Location location : unsettledLocations) {
 							if (location.getNormalizedLocation().equals(settleable1)
 									|| location.getNormalizedLocation().equals(settleable2)) {
-								location.getWhoCanBuild().add(playerId);
+								if(location.getCanBeSettled())
+									location.getWhoCanBuild().add(playerId);
 							}
 						}
 

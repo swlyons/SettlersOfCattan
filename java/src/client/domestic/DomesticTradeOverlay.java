@@ -112,8 +112,8 @@ public class DomesticTradeOverlay extends OverlayView implements IDomesticTradeO
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				reset();// TODO, this may not be needed here. leave it
 				getController().cancelTrade();
-//				reset();// TODO, this may not be needed here
 			}
 		});
 		
