@@ -9,7 +9,6 @@ import client.managers.GameManager;
 import client.proxy.FinishMove;
 import client.proxy.RollNumber;
 
-
 /**
  * Implementation for the roll controller
  */
@@ -45,13 +44,22 @@ public class RollController extends Controller implements IRollController {
 	@Override
 	public void rollDice() {
 		GameManager gm = ClientCommunicator.getSingleton().getGameManager();
-		RollNumber rn = new RollNumber(gm.getGame().getTurnTracker().getCurrentTurn());
 		Random r = new Random();
 		int twoD6 = r.nextInt(6) + r.nextInt(6) + 2;
-		rn.setNumber(twoD6);
-
+                Integer playerId = ClientCommunicator.getSingleton().getPlayerId();
+                Integer playerIndex = 4;
+                for(int i=0;i<gm.getGame().getPlayers().size();i++){
+                    if(gm.getGame().getPlayers().get(i).getPlayerID()==playerId){
+                        playerIndex=i;
+                        break;
+                    }
+                }
 		try {
-			ClientCommunicatorFascadeSettlersOfCatan.getSingleton().rollNumber(rn);
+                        RollNumber number = new RollNumber();
+                        number.setNumber(twoD6);
+                        number.setPlayerIndex(playerIndex);
+                        number.setType("rollNumber");
+			ClientCommunicatorFascadeSettlersOfCatan.getSingleton().rollNumber(number);
 			getResultView().setRollValue(twoD6);
 			getRollView().closeModal();
 			getResultView().showModal();

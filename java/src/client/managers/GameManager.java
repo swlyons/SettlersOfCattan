@@ -83,13 +83,14 @@ public class GameManager {
 
 			Map map = game.getMap();
 
-			HexLocation robberLocation = map.getRobber();
 
 			if (mapManager == null) {
 				mapManager = new MapManager();
 			}
-
-			List<Hex> hexList = mapManager.getHexList();
+                        
+			HexLocation robberLocation = map.getRobber();
+                        
+			List<Hex> hexList = map.getHexes();
 			for (Hex hex : hexList) {
 				if (hex.getLocation().equals(robberLocation)) {
 					hex.setHasRobber(true);
@@ -97,7 +98,8 @@ public class GameManager {
 					hex.setHasRobber(false);
 				}
 			}
-			mapManager.setHexList(map.getHexes());
+                        mapManager.setHexList(hexList);
+                        
 			if (locationManager == null) {
 				locationManager = new LocationManager();
 				createUnsettledAreas(hexList);

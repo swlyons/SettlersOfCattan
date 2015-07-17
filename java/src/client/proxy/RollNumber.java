@@ -10,8 +10,7 @@ public class RollNumber extends Command {
 
     private int number;
 
-    public RollNumber(int playerIndex) {
-        super("rollNumber", playerIndex);
+    public RollNumber() {
     }
 
     public int getNumber() {
