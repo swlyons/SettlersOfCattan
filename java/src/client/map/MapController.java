@@ -163,7 +163,11 @@ public class MapController extends Controller implements IMapController {
 				BuildRoad br = new BuildRoad();
 				br.setFree(true);
 				br.setPlayerIndex(currentPlayer);
-				br.setRoadLocation(edgeLoc);
+                                XYEdgeLocation edgeSpot = new XYEdgeLocation();
+                                edgeSpot.setDirection(edgeLoc.getDir());
+                                edgeSpot.setX(edgeLoc.getHexLoc().getX());
+                                edgeSpot.setY(edgeLoc.getHexLoc().getY());
+				br.setRoadLocation(edgeSpot);
 				br.setType("buildRoad");
 				try {
 					ClientCommunicatorFascadeSettlersOfCatan.getSingleton().buildRoad(br);

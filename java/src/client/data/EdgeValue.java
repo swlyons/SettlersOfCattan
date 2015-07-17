@@ -6,6 +6,7 @@
 package client.data;
 
 import shared.locations.EdgeLocation;
+import client.data.XYEdgeLocation;
 
 /**
  *
@@ -14,8 +15,9 @@ import shared.locations.EdgeLocation;
 public class EdgeValue {
     
     private int owner;
-    private EdgeLocation location;
-
+    private EdgeLocation location2;
+    private XYEdgeLocation location;
+    
     public int getOwner() {
         return owner;
     }
@@ -24,12 +26,20 @@ public class EdgeValue {
         this.owner = owner;
     }
 
-    public EdgeLocation getLocation() {
+    public XYEdgeLocation getLocation() {
         return location;
     }
 
-    public void setLocation(EdgeLocation location) {
+    public void setLocation(XYEdgeLocation location) {
         this.location = location;
+    }
+    
+    public EdgeLocation getLocation2() {
+        return location2;
+    }
+
+    public void setLocation2(EdgeLocation location2) {
+        this.location2 = location2;
     }
 
     @Override
