@@ -204,6 +204,14 @@ public class MapView extends PanelView implements IMapView
             public void initFromModel() {
                 throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
             }
+
+            public boolean isEndTurn() {
+            	return getController().isEndTurn();
+            }
+            
+            public void setEndTurn(boolean endTurn) {
+            }
+            
 	};
 	
 	private static class MapOverlay extends OverlayView

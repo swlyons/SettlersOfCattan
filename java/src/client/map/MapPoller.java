@@ -77,7 +77,6 @@ public class MapPoller extends TimerTask {
                 gameManager.initializeGame(gameInformation);
 
                 if (playerIndex == -1) {
-
                     Integer playerId = ClientCommunicator.getSingleton().getPlayerId();
                     for (int i = 0; i < gameManager.getGame().getPlayers().size(); i++) {
                         if (gameManager.getGame().getPlayers().get(i).getPlayerID() == playerId) {
@@ -86,6 +85,12 @@ public class MapPoller extends TimerTask {
                             break;
                         }
                     }
+                }
+                
+                if(mapView.getController().isEndTurn()) {
+                	catanPanel.getLeftPanel().getTurnTrackerController().endTurn();
+                	firstTime = true;
+                	mapView.getController().setEndTurn(false);
                 }
                 /* Begin MapView Update */
                 // If they haven't initialized before or it isn't the client's
@@ -153,13 +158,13 @@ public class MapPoller extends TimerTask {
                             if(status.equals("FirstRound") && firstTime){
                                 //mapView.startDrop(PieceType.SETTLEMENT, CatanColor.valueOf(playerColor), false);
                                 mapView.getController().startMove(PieceType.SETTLEMENT, false, true);
-                                firstTime = false;
+                               	firstTime = false;
                             }
-                            /*if(status.equals("SecondRound") && firstTime){
+                            if(status.equals("SecondRound") && firstTime){
                                 mapView.startDrop(PieceType.SETTLEMENT, CatanColor.valueOf(playerColor), false);
                                 mapView.getController().startMove(PieceType.SETTLEMENT, false, true);
                                 firstTime = false;
-                            }    */ 
+                            }     
                     }
                 }
                 /* End Map View Update */

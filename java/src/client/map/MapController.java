@@ -7,6 +7,9 @@ import shared.locations.*;
 import client.base.*;
 import client.data.*;
 import client.managers.GameManager;
+import client.proxy.BuildRoad;
+import client.proxy.BuildSettlement;
+import client.proxy.FinishMove;
 import client.proxy.RobPlayer;
 import client.communication.ClientCommunicator;
 import client.communication.ClientCommunicatorFascadeSettlersOfCatan;
@@ -18,7 +21,8 @@ public class MapController extends Controller implements IMapController {
 
 	private IRobView robView;
 	private boolean isFree = false;
-
+	private boolean endTurn = false;
+	
 	public MapController(IMapView view, IRobView robView) {
 
 		super(view);
@@ -41,10 +45,10 @@ public class MapController extends Controller implements IMapController {
 		this.robView = robView;
 	}
 
-        @Override
+	@Override
 	public void initFromModel() {
 		GameManager gm = ClientCommunicator.getSingleton().getGameManager();
-		
+
 		for (int i = 0; i < gm.getMapManager().getHexList().size(); i++) {
 			Hex h = gm.getMapManager().getHexList().get(i);
 			if (h.getResource() == ResourceType.wood)
@@ -80,7 +84,7 @@ public class MapController extends Controller implements IMapController {
 		}
 
 		getView().placeRobber(gm.getMapManager().getRobberLocation());
-		
+
 		// Water tiles are hard coded, sine they never change, ever.
 		getView().addHex(new HexLocation(0, 3), HexType.water);
 		getView().addHex(new HexLocation(1, 2), HexType.water);
@@ -100,7 +104,7 @@ public class MapController extends Controller implements IMapController {
 		getView().addHex(new HexLocation(-3, 3), HexType.water);
 		getView().addHex(new HexLocation(-2, 3), HexType.water);
 		getView().addHex(new HexLocation(-1, 3), HexType.water);
-		
+
 		for (Port p : gm.getGame().getMap().getPorts()) {
 			HexLocation location = p.getLocation();
 			PortType type = PortType.THREE;
@@ -150,14 +154,25 @@ public class MapController extends Controller implements IMapController {
 	public void placeRoad(EdgeLocation edgeLoc) {
 		GameManager gm = ClientCommunicator.getSingleton().getGameManager();
 		Integer currentPlayer = gm.getGame().getTurnTracker().getCurrentTurn();
-		if (isFree) {
+		if (isFree || gm.getLocationManager().getSettledLocations().size() < 9) {
 			if (gm.placeFreeRoad(edgeLoc)) {
-				CatanColor color = CatanColor.valueOf(gm.getGame().getPlayers().get(currentPlayer).getColor());
+				CatanColor color = CatanColor.valueOf(gm.getGame().getPlayers().get(currentPlayer).getColor().toUpperCase());
 				getView().placeRoad(edgeLoc, color);
+				BuildRoad br = new BuildRoad();
+				br.setFree(true);
+				br.setPlayerIndex(currentPlayer);
+				br.setRoadLocation(edgeLoc);
+				br.setType("buildRoad");
+				try {
+					ClientCommunicatorFascadeSettlersOfCatan.getSingleton().buildRoad(br);
+					setEndTurn(true);
+				} catch (Exception e) {
+					System.out.println(e.getMessage());
+				}
 			}
 		} else {
 			if (gm.buildRoad(edgeLoc)) {
-				CatanColor color = CatanColor.valueOf(gm.getGame().getPlayers().get(currentPlayer).getColor());
+				CatanColor color = CatanColor.valueOf(gm.getGame().getPlayers().get(currentPlayer).getColor().toUpperCase());
 				getView().placeRoad(edgeLoc, color);
 			}
 		}
@@ -167,31 +182,53 @@ public class MapController extends Controller implements IMapController {
 	public void placeSettlement(VertexLocation vertLoc) {
 		GameManager gm = ClientCommunicator.getSingleton().getGameManager();
 		Integer currentPlayer = gm.getGame().getTurnTracker().getCurrentTurn();
-		if (isFree) {
+		BuildSettlement build = new BuildSettlement();
+
+		if (isFree || gm.getLocationManager().getSettledLocations().size() < 8) {
 			if (gm.getLocationManager().getSettledLocations().size() < 4) {
 				gm.placeFirstSettlement(vertLoc);
-				CatanColor color = CatanColor.valueOf(gm.getGame().getPlayers().get(currentPlayer).getColor());
-				getView().placeSettlement(vertLoc, color);
 			} else {
-				if (gm.getLocationManager().getSettledLocations().size() < 8) {
-					gm.placeSecondSettlement(vertLoc);
-					CatanColor color = CatanColor.valueOf(gm.getGame().getPlayers().get(currentPlayer).getColor());
-					getView().placeSettlement(vertLoc, color);
-				}
+				gm.placeSecondSettlement(vertLoc);
+			}
+			CatanColor color = CatanColor
+					.valueOf(gm.getGame().getPlayers().get(currentPlayer).getColor().toUpperCase());
+
+			build.setFree(true);
+			build.setType("buildSettlement");
+			build.setPlayerIndex(currentPlayer);
+			build.setVertexLocation(vertLoc);
+			try {
+				ClientCommunicatorFascadeSettlersOfCatan.getSingleton().buildSettlement(build);
+				getView().placeSettlement(vertLoc, color);
+				startMove(PieceType.ROAD, true, false);
+			} catch (Exception e) {
+				System.out.println(e.getMessage());
 			}
 		} else {
 			if (gm.buildStructure(PieceType.SETTLEMENT, vertLoc)) {
-				CatanColor color = CatanColor.valueOf(gm.getGame().getPlayers().get(currentPlayer).getColor());
-				getView().placeSettlement(vertLoc, color);
+				CatanColor color = CatanColor
+						.valueOf(gm.getGame().getPlayers().get(currentPlayer).getColor().toUpperCase());
+				build.setFree(true);
+				build.setType("buildSettlement");
+				build.setPlayerIndex(currentPlayer);
+				build.setVertexLocation(vertLoc);
+				try {
+					ClientCommunicatorFascadeSettlersOfCatan.getSingleton().buildSettlement(build);
+					getView().placeSettlement(vertLoc, color);
+				} catch (Exception e) {
+					System.out.println(e.getMessage());
+				}
 			}
 		}
+
 	}
 
 	public void placeCity(VertexLocation vertLoc) {
 		GameManager gm = ClientCommunicator.getSingleton().getGameManager();
 		Integer currentPlayer = gm.getGame().getTurnTracker().getCurrentTurn();
 		if (gm.buildStructure(PieceType.CITY, vertLoc)) {
-			CatanColor color = CatanColor.valueOf(gm.getGame().getPlayers().get(currentPlayer).getColor());
+			CatanColor color = CatanColor
+					.valueOf(gm.getGame().getPlayers().get(currentPlayer).getColor().toUpperCase());
 			getView().placeCity(vertLoc, color);
 		}
 	}
@@ -271,5 +308,15 @@ public class MapController extends Controller implements IMapController {
 		} catch (Exception e) {
 
 		}
+	}
+
+
+	public boolean isEndTurn() {
+		return endTurn;
+	}
+	
+
+	public void setEndTurn(boolean endTurn) {
+		this.endTurn = endTurn;
 	}
 }
