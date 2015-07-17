@@ -235,7 +235,7 @@ public class MapPoller extends TimerTask {
                 /* Begin Roll Update */
                 if (playerIndex == gameInformation.getTurnTracker().getCurrentTurn() && status.equals("Rolling")) {
          
-                        rollController.getResultView().showModal();
+                        //rollController.getResultView().showModal();
                         rollController.getRollView().showModal();
                 }
                 /* End Roll Update */
@@ -253,11 +253,11 @@ public class MapPoller extends TimerTask {
 //                            break;
 //                        }
 //                    }
-
+                    System.out.println("Map Poller: MY TURN!");
                     startedRobbing = false;
                     status = "Finish Turn";
                 } else {
-
+                    
                     if(status.equals("Robbing")){
                         if(!startedRobbing){
                             startedRobbing=true;

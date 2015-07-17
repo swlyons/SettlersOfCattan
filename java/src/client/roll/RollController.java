@@ -55,7 +55,6 @@ public class RollController extends Controller implements IRollController {
                     }
                 }
 		try {
-                        System.out.println("Roll Controller: Number Rolled" + twoD6);
                         RollNumber number = new RollNumber();
                         number.setNumber(twoD6);
                         number.setPlayerIndex(playerIndex);
