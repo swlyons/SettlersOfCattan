@@ -60,6 +60,18 @@ public class GameManager {
                 VertexDirection dir = game.getMap().getSettlements().get(i).getLocation().getDirection();
                 game.getMap().getSettlements().get(i).setDirection(new VertexLocation(new HexLocation(x,y),dir));
             }
+            for(int i=0;i<game.getMap().getCities().size();i++){
+                int x = game.getMap().getCities().get(i).getLocation().getX();
+                int y = game.getMap().getCities().get(i).getLocation().getY();
+                VertexDirection dir = game.getMap().getCities().get(i).getLocation().getDirection();
+                game.getMap().getCities().get(i).setDirection(new VertexLocation(new HexLocation(x,y),dir));
+            }
+            for(int i=0;i<game.getMap().getRoads().size();i++){
+                int x = game.getMap().getRoads().get(i).getLocation().getX();
+                int y = game.getMap().getRoads().get(i).getLocation().getY();
+                EdgeDirection dir = game.getMap().getRoads().get(i).getLocation().getDirection();
+                game.getMap().getRoads().get(i).setLocation2(new EdgeLocation(new HexLocation(x,y),dir));
+            }
             
             
             //our game
@@ -130,7 +142,7 @@ public class GameManager {
                 Edge roadLocation = null;
 
                 for (Edge edge : locationManager.getUnsettledEdges()) {
-                    if (edge.getEdgeLocation().equals(road.getLocation())) {
+                    if (edge.getEdgeLocation().equals(road.getLocation2())) {
                         edge.getWhoCanBuild().add(road.getOwner());
                         roadLocation = edge;
                         break;

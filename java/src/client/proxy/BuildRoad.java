@@ -1,7 +1,7 @@
 package client.proxy;
 
 import shared.locations.EdgeLocation;
-
+import client.data.XYEdgeLocation;
 /**
  * contains information about building a road
  *
@@ -10,14 +10,14 @@ import shared.locations.EdgeLocation;
  */
 public class BuildRoad extends Command {
 
-    private EdgeLocation roadLocation;
+    private XYEdgeLocation roadLocation;
     private boolean free;
 
-    public EdgeLocation getRoadLocation() {
+    public XYEdgeLocation getRoadLocation() {
         return roadLocation;
     }
 
-    public void setRoadLocation(EdgeLocation roadLocation) {
+    public void setRoadLocation(XYEdgeLocation roadLocation) {
         this.roadLocation = roadLocation;
     }
 
