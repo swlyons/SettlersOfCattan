@@ -70,15 +70,16 @@ public class MapPoller extends TimerTask {
                 ResourceBarController resourceBarController = catanPanel.getRightPanel().getResourceController();
                 MapView mapView = (MapView) catanPanel.getMidPanel().getMapController().getView();
 
-                GameManager gm = ClientCommunicator.getSingleton().getGameManager();
+                GameManager gameManager = ClientCommunicator.getSingleton().getGameManager();
 
                 GameInfo gameInformation = ClientCommunicatorFascadeSettlersOfCatan.getSingleton()
                         .getGameModel(version + "");
+
+                if (version != gameInformation.getVersion()) {
+                    gameManager.initializeGame(gameInformation);
+                }
                 version = gameInformation.getVersion();
                 String status = gameInformation.getTurnTracker().getStatus();
-
-                GameManager gameManager = ClientCommunicator.getSingleton().getGameManager();
-                gameManager.initializeGame(gameInformation);
 
                 if (playerIndex == -1) {
                     Integer playerId = ClientCommunicator.getSingleton().getPlayerId();
@@ -240,7 +241,7 @@ public class MapPoller extends TimerTask {
                     if (!rollController.getRollView().isModalShowing()) {
                         rollController.getRollView().showModal();
                     }
-                    
+
                 }
                 /* End Roll Update */
                 if (status.equals("Playing") && playerIndex == gameInformation.getTurnTracker().getCurrentTurn()) {
@@ -320,7 +321,6 @@ public class MapPoller extends TimerTask {
                 /* Begin Resource Bar Update */
                 for (PlayerInfo player : gameInformation.getPlayers()) {
                     if (player.getPlayerIndex() == playerIndex) {
-                        int sumCards = player.getRoads() + player.getCities() + player.getSettlements() + player.getSoldiers();
                         //TODO: add logic to only update when they are different
                         resourceBarController.getView().setElementAmount(ResourceBarElement.BRICK, player.getResources().getBrick());
                         resourceBarController.getView().setElementAmount(ResourceBarElement.ORE, player.getResources().getOre());
@@ -343,7 +343,7 @@ public class MapPoller extends TimerTask {
                     }
                 }
                 /* End Resource Bar Update */
-                
+
                 //Used to end the turn for each player
                 if (mapView.getController().isEndTurn()) {
                     turnTrackerView.getController().endTurn();

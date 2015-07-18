@@ -9,7 +9,6 @@ import client.data.*;
 import client.managers.GameManager;
 import client.proxy.BuildRoad;
 import client.proxy.BuildSettlement;
-import client.proxy.FinishMove;
 import client.proxy.RobPlayer;
 import client.communication.ClientCommunicator;
 import client.communication.ClientCommunicatorFascadeSettlersOfCatan;
@@ -50,7 +49,8 @@ public class MapController extends Controller implements IMapController {
 	@Override
 	public void initFromModel() {
 		GameManager gm = ClientCommunicator.getSingleton().getGameManager();
-
+                
+                //should only happen once
 		for (int i = 0; i < gm.getMapManager().getHexList().size(); i++) {
 			Hex h = gm.getMapManager().getHexList().get(i);
 			if (h.getResource() == ResourceType.wood)
