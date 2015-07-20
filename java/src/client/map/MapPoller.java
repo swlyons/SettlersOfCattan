@@ -160,7 +160,6 @@ public class MapPoller extends TimerTask {
                 //no rolling on first and second round
                 if (playerIndex == gameInformation.getTurnTracker().getCurrentTurn()) {
                     if (!status.contains("Round")) {
-                        System.out.println(rollController.getRollView().isModalShowing());
                         if (!rollController.getRollView().isModalShowing() && status.equals("Rolling")) {
                             if (mapView.getOverlay() != null) {
                                 if (mapView.getOverlay().isModalShowing()) {
