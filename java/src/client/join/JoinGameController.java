@@ -229,7 +229,6 @@ public class JoinGameController extends Controller implements IJoinGameControlle
     @Override
     public void cancelJoinGame() {
         getSelectColorView().closeModal();
-        getJoinGameView().showModal();
     }
 
     @Override
