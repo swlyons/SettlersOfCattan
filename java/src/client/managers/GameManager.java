@@ -505,8 +505,7 @@ public class GameManager {
 
     public boolean canPlaceRoad(EdgeLocation edgeLoc) {
         boolean canPlaceRoad = false;
-        if (locationManager.getSettledLocations().size() > 3 && locationManager.getSettledLocations().size() < 8) {
-            System.out.println(locationManager.getSettledLocations().size());
+        if (locationManager.getSettledEdges().size() > 3 && locationManager.getSettledEdges().size() < 8) {
             ArrayList<Location> mySettledLocations = new ArrayList<Location>();
             for (Location l : locationManager.getSettledLocations()) {
                 if (l.getOwnerID() == currentPlayer()) {
