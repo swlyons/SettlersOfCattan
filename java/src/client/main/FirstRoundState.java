@@ -10,6 +10,7 @@ import client.base.Controller;
 import client.communication.ClientCommunicator;
 import client.communication.ClientCommunicatorFascadeSettlersOfCatan;
 import client.data.GameInfo;
+import client.data.Location;
 import client.managers.GameManager;
 import client.map.MapController;
 import client.map.MapView;
@@ -61,16 +62,17 @@ public class FirstRoundState extends State {
 
             if (playerIndex == gameInformation.getTurnTracker().getCurrentTurn()) {
                 if (status.equals("FirstRound")) {
-                    if (playerIndex == 0) {
-                        if (((MapView) mapController.getView()).getOverlay() == null) {
-
-                            mapController.startMove(PieceType.SETTLEMENT, true, true);
+                    boolean builtSettlement = false;
+                    for(Location location : gameManager.getLocationManager().getSettledLocations()){
+                        if(location.getOwnerID()==playerIndex){
+                            builtSettlement = true;
                         }
-
-                    } else {
-                        if (!((MapView) mapController.getView()).getOverlay().isModalShowing()) {
+                    }
+                    if (((MapView) mapController.getView()).getOverlay() == null) {
+                        if(!builtSettlement){
                             mapController.startMove(PieceType.SETTLEMENT, true, true);
-
+                        }else{
+                            mapController.startMove(PieceType.ROAD, true, false);
                         }
                     }
                 }

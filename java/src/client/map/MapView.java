@@ -34,8 +34,6 @@ public class MapView extends PanelView implements IMapView {
     public void setOverlay(MapOverlay overlay) {
         this.overlay = overlay;
     }
-    
-    
 
     @Override
     public IMapController getController() {
