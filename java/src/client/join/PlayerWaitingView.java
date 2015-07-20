@@ -30,9 +30,9 @@ public class PlayerWaitingView extends OverlayView implements IPlayerWaitingView
     private JPanel center;
     private SpinnerListModel aiModel;
     private JSpinner aiChoices;
-    
+
     private PlayerInfo[] players;
-    
+
     public PlayerWaitingView() {
 
         this.setOpaque(true);
@@ -61,7 +61,7 @@ public class PlayerWaitingView extends OverlayView implements IPlayerWaitingView
 
         JLabel aiTypeLabel = new JLabel("Select AI Type:");
         FontUtils.setFont(aiTypeLabel, AI_TEXT_SIZE);
-		//aiTypePanel.add(aiTypeLabel);
+        //aiTypePanel.add(aiTypeLabel);
 
         aiTypePanel.add(Box.createRigidArea(new Dimension(5, 0)));
 
@@ -86,7 +86,7 @@ public class PlayerWaitingView extends OverlayView implements IPlayerWaitingView
         addAiButton = new JButton("Add a computer player");
         addAiButton.addActionListener(actionListener);
         FontUtils.setFont(addAiButton, BUTTON_TEXT_SIZE);
-		aiButtonPanel.add(addAiButton);
+        aiButtonPanel.add(addAiButton);
 
         aiButtonPanel.add(Box.createHorizontalGlue());
 
@@ -94,7 +94,7 @@ public class PlayerWaitingView extends OverlayView implements IPlayerWaitingView
 
         aiPanel.add(Box.createRigidArea(new Dimension(0, 10)));
 
-		//add the AI panel
+        //add the AI panel
         this.add(aiPanel, BorderLayout.SOUTH);
     }
 
@@ -104,6 +104,9 @@ public class PlayerWaitingView extends OverlayView implements IPlayerWaitingView
         public void actionPerformed(ActionEvent e) {
             if (e.getSource() == addAiButton) {
                 getController().addAI();
+                if (isModalShowing()) {
+                    closeModal();
+                }
             }
         }
     };
@@ -155,7 +158,7 @@ public class PlayerWaitingView extends OverlayView implements IPlayerWaitingView
     public PlayerInfo[] getPlayers() {
         return players;
     }
-    
+
     @Override
     public void setAIChoices(String[] value) {
 

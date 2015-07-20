@@ -51,7 +51,7 @@ public class LoginController extends Controller implements ILoginController {
      *
      * @return The action to be executed when the user logs in
      */
-    public IAction getLoginAction() {
+    public IAction getLoginAction() {   
 
         return loginAction;
     }
@@ -72,7 +72,6 @@ public class LoginController extends Controller implements ILoginController {
         // If log in succeeded
         if (sucessful) {
             getLoginView().closeModal();
-            
             loginAction.execute();
         } else {
             messageView.setTitle("Error");

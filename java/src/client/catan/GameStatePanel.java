@@ -28,7 +28,7 @@ public class GameStatePanel extends JPanel {
 
         this.add(button);
 
-        updateGameState("Waiting for other Players", false);
+        updateGameState("Waiting for other players", false);
     }
 
     public JButton getButton() {
