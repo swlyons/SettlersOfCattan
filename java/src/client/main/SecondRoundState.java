@@ -49,6 +49,14 @@ public class SecondRoundState extends State {
 
             gameManager.initializeGame(gameInformation);
             version = gameInformation.getVersion();
+            if(gameInformation.getTurnTracker().getStatus().equals("FirstRound")){
+                try{
+                Thread.sleep(3000);
+                }catch(Exception e){}
+                finally{
+                    continue;
+                }
+            }
             status = gameInformation.getTurnTracker().getStatus();
 
             Integer playerId = ClientCommunicator.getSingleton().getPlayerId();

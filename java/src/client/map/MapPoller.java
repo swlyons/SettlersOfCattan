@@ -27,6 +27,7 @@ import client.resources.ResourceBarElement;
 import client.roll.RollController;
 import client.turntracker.TurnTrackerView;
 import java.util.ArrayList;
+import java.util.Date;
 import shared.definitions.CatanColor;
 import shared.definitions.PieceType;
 
@@ -67,6 +68,7 @@ public class MapPoller extends TimerTask {
     }
 
     public void run() {
+        Date time1 = new Date();
         if (ClientCommunicator.getSingleton().getJoinedGame()) {
 
             try {
