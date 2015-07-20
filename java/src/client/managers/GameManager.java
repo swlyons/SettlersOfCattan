@@ -505,78 +505,50 @@ public class GameManager {
 
     public boolean canPlaceRoad(EdgeLocation edgeLoc) {
         boolean canPlaceRoad = false;
-        if (locationManager.getSettledEdges().size() > 3 && locationManager.getSettledEdges().size() < 8) {
+        if (locationManager.getSettledEdges().size() > 4 && locationManager.getSettledEdges().size() < 8) {            
+            Edge myEdge = null;
             ArrayList<Location> mySettledLocations = new ArrayList<Location>();
             for (Location l : locationManager.getSettledLocations()) {
                 if (l.getOwnerID() == currentPlayer()) {
                     mySettledLocations.add(l);
                 }
             }
-
-            boolean hasRoad = false;
-            VertexLocation v = mySettledLocations.get(0).getNormalizedLocation();
-            if (v.getDir() == VertexDirection.NW) {
-                Edge e1 = new Edge(new EdgeLocation(v.getHexLoc(), EdgeDirection.N));
-                Edge e2 = new Edge(new EdgeLocation(v.getHexLoc(), EdgeDirection.NW));
-                Edge e3 = new Edge(new EdgeLocation(new HexLocation(v.getHexLoc().getX() - 1, v.getHexLoc().getY()),
-                        EdgeDirection.NE));
-                for (Edge e : locationManager.getSettledEdges()) {
-                    if (e.getEdgeLocation().equals(e1.getEdgeLocation())
-                            || e.getEdgeLocation().equals(e2.getEdgeLocation())
-                            || e.getEdgeLocation().equals(e3.getEdgeLocation())) {
-                        hasRoad = true;
-                    }
-                }
-                if (edgeLoc.equals(e1.getEdgeLocation()) || edgeLoc.equals(e2.getEdgeLocation())
-                        || edgeLoc.equals(e3.getEdgeLocation())) {
-                    if (hasRoad) {
-                        return false;
-                    } else {
-                        return true;
-                    }
-                }
-            } else {
-                Edge e1 = new Edge(new EdgeLocation(v.getHexLoc(), EdgeDirection.N));
-                Edge e2 = new Edge(new EdgeLocation(v.getHexLoc(), EdgeDirection.NE));
-                Edge e3 = new Edge(new EdgeLocation(new HexLocation(v.getHexLoc().getX() + 1, v.getHexLoc().getY() - 1),
-                        EdgeDirection.NW));
-                for (Edge e : locationManager.getSettledEdges()) {
-                    if (e.getEdgeLocation().equals(e1.getEdgeLocation())
-                            || e.getEdgeLocation().equals(e2.getEdgeLocation())
-                            || e.getEdgeLocation().equals(e3.getEdgeLocation())) {
-                        hasRoad = true;
-                    }
-                }
-                if (edgeLoc.equals(e1.getEdgeLocation()) || edgeLoc.equals(e2.getEdgeLocation())
-                        || edgeLoc.equals(e3.getEdgeLocation())) {
-                    if (hasRoad) {
-                        return false;
-                    } else {
-                        return true;
-                    }
+            for (Edge edge : locationManager.getSettledEdges()) {
+                if (edge.getOwnerId() == currentPlayer()) {
+                    myEdge = edge;
                 }
             }
-
-            v = mySettledLocations.get(1).getNormalizedLocation();
-            if (v.getDir() == VertexDirection.NW) {
-                Edge e1 = new Edge(new EdgeLocation(v.getHexLoc(), EdgeDirection.N));
-                Edge e2 = new Edge(new EdgeLocation(v.getHexLoc(), EdgeDirection.NW));
-                Edge e3 = new Edge(new EdgeLocation(new HexLocation(v.getHexLoc().getX() - 1, v.getHexLoc().getY()),
-                        EdgeDirection.NE));
-                if (edgeLoc.equals(e1.getEdgeLocation()) || edgeLoc.equals(e2.getEdgeLocation())
-                        || edgeLoc.equals(e3.getEdgeLocation())) {
-                    return true;
-                }
-            } else {
-                Edge e1 = new Edge(new EdgeLocation(v.getHexLoc(), EdgeDirection.N));
-                Edge e2 = new Edge(new EdgeLocation(v.getHexLoc(), EdgeDirection.NE));
-                Edge e3 = new Edge(new EdgeLocation(new HexLocation(v.getHexLoc().getX() + 1, v.getHexLoc().getY() - 1),
-                        EdgeDirection.NW));
-                if (edgeLoc.equals(e1.getEdgeLocation()) || edgeLoc.equals(e2.getEdgeLocation())
-                        || edgeLoc.equals(e3.getEdgeLocation())) {
-                    return true;
-                }
+            
+            if(myEdge==null){
+                assert false;
             }
+            
+            EdgeLocation e1;
+            EdgeLocation e2;
+            EdgeLocation e3;
+            for(int i=0;i<mySettledLocations.size();i++){
+                if(mySettledLocations.get(i).getNormalizedLocation().getDir() == VertexDirection.NW){
+                    e1 = new EdgeLocation(mySettledLocations.get(i).getNormalizedLocation().getHexLoc(), EdgeDirection.N);
+                    e2 = new EdgeLocation(mySettledLocations.get(i).getNormalizedLocation().getHexLoc(), EdgeDirection.NW);
+                    e3 = new EdgeLocation(new HexLocation(mySettledLocations.get(i).getNormalizedLocation().getHexLoc().getX() - 1, mySettledLocations.get(i).getNormalizedLocation().getHexLoc().getY()), EdgeDirection.NE);
+                }else{
+                    e1 = new EdgeLocation(mySettledLocations.get(i).getNormalizedLocation().getHexLoc(), EdgeDirection.N);
+                    e2 = new EdgeLocation(mySettledLocations.get(i).getNormalizedLocation().getHexLoc(), EdgeDirection.NE);
+                    e3 = new EdgeLocation(new HexLocation(mySettledLocations.get(i).getNormalizedLocation().getHexLoc().getX() + 1, mySettledLocations.get(i).getNormalizedLocation().getHexLoc().getY() - 1), EdgeDirection.NW);
+                }
+                if(myEdge.getEdgeLocation().getNormalizedLocation().equals(e1)||
+                    myEdge.getEdgeLocation().getNormalizedLocation().equals(e2)||
+                    myEdge.getEdgeLocation().getNormalizedLocation().equals(e3)){
+                    continue;
+                }
+                
+                if(edgeLoc.equals(e1)||
+                edgeLoc.equals(e2)||
+                edgeLoc.equals(e3)){
+                    return true;
+                }
+                return false;
+            }            
             return false;
         } else {
             for (Edge edge : locationManager.getUnsettledEdges()) {
