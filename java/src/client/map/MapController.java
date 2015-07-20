@@ -330,7 +330,7 @@ public class MapController extends Controller implements IMapController {
     }
 
     public void cancelMove() {
-		// This shouldn't need to do anything. The view closes the map overlay
+        // This shouldn't need to do anything. The view closes the map overlay
         // modal, and the way we built this controller, no resources have been
         // taken yet.
     }
@@ -355,21 +355,37 @@ public class MapController extends Controller implements IMapController {
 
     public void robPlayer(RobPlayerInfo victim) {
 		// Some communication may need to happen to transfer resources between
-        // the two players.
+
+		// the two players.
         // The RobPlayer class doesn't request a resource, so the resource
         // deciding must happen server side, or on the next poll request
-        int index = victim.getPlayerIndex();
+        GameManager gm = ClientCommunicator.getSingleton().getGameManager();
+        Integer playerId = ClientCommunicator.getSingleton().getPlayerId();
+        Integer playerIndex = 4;
+        for (int i = 0; i < gm.getGame().getPlayers().size(); i++) {
+            if (gm.getGame().getPlayers().get(i).getPlayerID() == playerId) {
+                playerIndex = i;
+                break;
+            }
+        }
+
+        Integer victimIndex = 4;
+        for (int i = 0; i < gm.getGame().getPlayers().size(); i++) {
+            if (gm.getGame().getPlayers().get(i).getPlayerID() == victim.getPlayerID()) {
+                victimIndex = i;
+                break;
+            }
+        }
 
         RobPlayer rp = new RobPlayer();
+        rp.setPlayerIndex(playerIndex);
         rp.setType("robPlayer");
         rp.setLocation(newRobberLocation);
-        rp.setVictimIndex(index);
+        rp.setVictimIndex(victimIndex);
         try {
             ClientCommunicatorFascadeSettlersOfCatan.getSingleton().robPlayer(rp);
         } catch (Exception e) {
 
-        } finally {
-            getRobView().closeModal();
         }
     }
 

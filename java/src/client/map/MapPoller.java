@@ -284,6 +284,7 @@ public class MapPoller extends TimerTask {
                 if (mapView.getController().isEndTurn()) {
                     turnTrackerView.getController().endTurn();
                     mapView.getController().setEndTurn(false);
+
                 }
                 mapView.getController().initFromModel();
                 /* if (status.equals("Playing") && playerIndex == gameInformation.getTurnTracker().getCurrentTurn()) {

@@ -15,7 +15,7 @@ import client.managers.GameManager;
 public class DiscardController extends Controller implements IDiscardController {
 
 	private IWaitView waitView;
-	
+	private int amountToDiscard;
         
         public void initFromModel(){
                 GameManager gm = ClientCommunicator.getSingleton().getGameManager();
@@ -63,9 +63,14 @@ public class DiscardController extends Controller implements IDiscardController 
                             break;
                     }
                     getDiscardView().setResourceAmountChangeEnabled(resource, moreThanZero, false);
-                }                
-
+                    getDiscardView().setResourceDiscardAmount(resource,0);
+                }
+        
+                amountToDiscard=resources2.getTotalResources()/2;
+                getDiscardView().setStateMessage("0/"+amountToDiscard);
+                getDiscardView().setDiscardButtonEnabled(false);
         }
+        
 	/**
 	 * DiscardController constructor
 	 * 
@@ -112,33 +117,40 @@ public class DiscardController extends Controller implements IDiscardController 
                 if(0<resources2.getBrick()-resources.getBrick()){
                     moreThanZero = true;
                 }
+                getDiscardView().setResourceDiscardAmount(resource,resources.getBrick());
                 break;
             case ore:
                 if(0<resources2.getOre()-resources.getOre()){
                     moreThanZero = true;
                 }
+                getDiscardView().setResourceDiscardAmount(resource,resources.getOre());
                 break;
             case sheep:
                 if(0<resources2.getSheep()-resources.getSheep()){
                     moreThanZero = true;
                 }
+                getDiscardView().setResourceDiscardAmount(resource,resources.getSheep());
                 break;
             case wheat:
                 if(0<resources2.getWheat()-resources.getWheat()){
                     moreThanZero = true;
                 }
+                getDiscardView().setResourceDiscardAmount(resource,resources.getWheat());
                 break;
             case wood:
                 if(0<resources2.getWood()-resources.getWood()){
                     moreThanZero = true;
                 }
+                getDiscardView().setResourceDiscardAmount(resource,resources.getWood());
                 break;    
                 default:
                     break;
             }
-            getDiscardView().setResourceAmountChangeEnabled(resource, moreThanZero, false);
-                
-	}
+            getDiscardView().setResourceAmountChangeEnabled(resource, moreThanZero, true);
+            getDiscardView().setStateMessage(resources.getTotalResources()+"/"+amountToDiscard);
+            calculateIfAbleToDiscard();
+        
+        }
 
 	@Override
 	public void decreaseAmount(ResourceType resource) {
@@ -149,37 +161,44 @@ public class DiscardController extends Controller implements IDiscardController 
                     if(resources.getBrick()==0){
                         decreaseAble = false;
                     }
+                    getDiscardView().setResourceDiscardAmount(resource,resources.getBrick());
                     break;
                 case ore:
                     resources.removeOre(1);
-                    if(resources.getBrick()==0){
+                    if(resources.getOre()==0){
                         decreaseAble = false;
                     }
+                    getDiscardView().setResourceDiscardAmount(resource,resources.getOre());
                     break;
                 case sheep:
                     resources.removeSheep(1);
-                    if(resources.getBrick()==0){
+                    if(resources.getSheep()==0){
                         decreaseAble = false;
                     }
+                    getDiscardView().setResourceDiscardAmount(resource,resources.getSheep());
                     break;
                 case wheat:
                     resources.removeWheat(1);
-                    if(resources.getBrick()==0){
+                    if(resources.getWheat()==0){
                         decreaseAble = false;
                     }
+                    getDiscardView().setResourceDiscardAmount(resource,resources.getWheat());
                     break;
                 case wood:
                     resources.removeWood(1);
-                    if(resources.getBrick()==0){
+                    if(resources.getWood()==0){
                         decreaseAble = false;
                     }
+                    getDiscardView().setResourceDiscardAmount(resource,resources.getWood());
                     break;    
                     default:
                         break;
                 }
                 
-                    getDiscardView().setResourceAmountChangeEnabled(resource, true, decreaseAble);
-	}
+                getDiscardView().setResourceAmountChangeEnabled(resource, true, decreaseAble);
+                getDiscardView().setStateMessage(resources.getTotalResources()+"/"+amountToDiscard);
+                calculateIfAbleToDiscard();
+        }
 
 	@Override
 	public void discard() {
@@ -205,6 +224,13 @@ public class DiscardController extends Controller implements IDiscardController 
                     getDiscardView().closeModal();
             }
         }
-
+            
+        private void calculateIfAbleToDiscard(){
+            if(resources.getTotalResources()==amountToDiscard){
+                getDiscardView().setDiscardButtonEnabled(true);
+            }else{
+                getDiscardView().setDiscardButtonEnabled(false);            
+            }
+        }
 }
 
