@@ -48,6 +48,8 @@ public class SecondRoundState extends State {
 
             gameManager.initializeGame(gameInformation);
             version = gameInformation.getVersion();
+            status = gameInformation.getTurnTracker().getStatus();
+
             Integer playerId = ClientCommunicator.getSingleton().getPlayerId();
             int size = gameManager.getGame().getPlayers().size();
             for (int i = 0; i < size; i++) {
@@ -58,9 +60,12 @@ public class SecondRoundState extends State {
             }
 
             if (playerIndex == gameInformation.getTurnTracker().getCurrentTurn()) {
-                if (!((MapView) mapController.getView()).getOverlay().isModalShowing() && firstTime) {
-                    firstTime = false;
-                    mapController.startMove(PieceType.SETTLEMENT, true, true);
+                if (status.equals("SecondRound")) {
+                    if (!((MapView) mapController.getView()).getOverlay().isModalShowing() && firstTime) {
+                        firstTime = false;
+
+                        mapController.startMove(PieceType.SETTLEMENT, true, true);
+                    }
                 }
             }
 
