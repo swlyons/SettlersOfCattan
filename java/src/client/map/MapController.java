@@ -341,19 +341,35 @@ public class MapController extends Controller implements IMapController {
 		// the two players.
 		// The RobPlayer class doesn't request a resource, so the resource
 		// deciding must happen server side, or on the next poll request
-		int index = victim.getPlayerIndex();
+		GameManager gm = ClientCommunicator.getSingleton().getGameManager();
+                Integer playerId = ClientCommunicator.getSingleton().getPlayerId();
+                Integer playerIndex = 4;
+                for(int i=0;i<gm.getGame().getPlayers().size();i++){
+                    if(gm.getGame().getPlayers().get(i).getPlayerID()==playerId){
+                        playerIndex=i;
+                        break;
+                    }
+                }
+                
+                
+                Integer victimIndex = 4;
+                for(int i=0;i<gm.getGame().getPlayers().size();i++){
+                    if(gm.getGame().getPlayers().get(i).getPlayerID()==victim.getPlayerID()){
+                        victimIndex=i;
+                        break;
+                    }
+                }
                 
 		RobPlayer rp = new RobPlayer();
+                rp.setPlayerIndex(playerIndex);
                 rp.setType("robPlayer");
 		rp.setLocation(newRobberLocation);
-                rp.setVictimIndex(index);
+                rp.setVictimIndex(victimIndex);
 		try {
                     ClientCommunicatorFascadeSettlersOfCatan.getSingleton().robPlayer(rp);
 		} catch (Exception e) {
 
-		}finally{
-                    getRobView().closeModal();
-                }
+		}
 	}
 
 	public boolean isEndTurn() {
