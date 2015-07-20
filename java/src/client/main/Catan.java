@@ -7,6 +7,8 @@ import client.login.*;
 import client.join.*;
 import client.misc.*;
 import client.base.*;
+import client.data.GameInfo;
+import client.map.MapController;
 
 /**
  * Main entry point for the Catan program
@@ -14,19 +16,20 @@ import client.base.*;
 @SuppressWarnings("serial")
 public class Catan extends JFrame {
 
-    private CatanPanel catanPanel;
+    private static CatanPanel catanPanel;
 
     public Catan() {
 
         client.base.OverlayView.setWindow(this);
 
-        this.setTitle("Settlers of Catan");
+        this.setTitle("Settlers of Catan (Team Sure Style)");
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 
         catanPanel = new CatanPanel();
         this.setContentPane(catanPanel);
 
         display();
+
     }
 
     private void display() {
@@ -45,14 +48,34 @@ public class Catan extends JFrame {
         }
 
         SwingUtilities.invokeLater(new Runnable() {
+
             public void run() {
                 new Catan();
-
+                CatanStateMachine catanStateMachine = new CatanStateMachine();
+                
                 PlayerWaitingView playerWaitingView = new PlayerWaitingView();
                 final PlayerWaitingController playerWaitingController = new PlayerWaitingController(
                         playerWaitingView);
                 playerWaitingView.setController(playerWaitingController);
-
+                playerWaitingController.setPlayerAction(new IAction(){
+                    @Override
+                    public void execute() {
+                        //((MapController)catanPanel.getMidPanel().getMapController()).initFromModel();
+                        //end PlayerWaiting
+                        catanStateMachine.move((MapController)catanPanel.getMidPanel().getMapController());
+                        //setup
+                        catanStateMachine.move((MapController)catanPanel.getMidPanel().getMapController());
+                        //first round
+                        catanStateMachine.move((MapController)catanPanel.getMidPanel().getMapController());
+                        
+                        //second round
+                        catanStateMachine.move((MapController)catanPanel.getMidPanel().getMapController());
+                        
+                        //gameplay
+                        ((MapController)catanPanel.getMidPanel().getMapController()).getMapPoller().setCatanPanel(catanPanel);
+                        catanStateMachine.stay((MapController)catanPanel.getMidPanel().getMapController());
+                    }
+                });
                 JoinGameView joinView = new JoinGameView();
                 NewGameView newGameView = new NewGameView();
                 SelectColorView selectColorView = new SelectColorView();
@@ -62,13 +85,13 @@ public class Catan extends JFrame {
                         joinView,
                         newGameView,
                         selectColorView,
-                        joinMessageView, playerWaitingView, new PlayerWaitingViewPoller(), new JoinGameViewPoller());
-               
-                
+                        joinMessageView, playerWaitingView);
+
                 joinController.setJoinAction(new IAction() {
                     @Override
                     public void execute() {
                         playerWaitingController.start();
+                        catanStateMachine.stay(joinController);
                     }
                 });
                 joinView.setController(joinController);
@@ -85,13 +108,17 @@ public class Catan extends JFrame {
                     @Override
                     public void execute() {
                         joinController.start();
+                        catanStateMachine.move(joinController);
                     }
                 });
                 loginView.setController(loginController);
                 loginView.setController(loginController);
 
                 loginController.start();
+                catanStateMachine.move(loginController);
+
             }
+
         });
     }
 

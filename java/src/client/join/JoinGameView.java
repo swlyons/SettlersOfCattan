@@ -154,13 +154,11 @@ public class JoinGameView extends OverlayView implements IJoinGameView {
     }
 
     @Override
-    public void setGames(GameInfo[] games, PlayerInfo localPlayer, boolean update) {
+    public void setGames(GameInfo[] games, PlayerInfo localPlayer) {
         this.games = games;
         this.localPlayer = localPlayer;
-        if (update) {
-            this.removeAll();
-            this.initialize();
-        }
+        this.removeAll();
+        this.initialize();
     }
 
     public GameInfo[] getGames() {
