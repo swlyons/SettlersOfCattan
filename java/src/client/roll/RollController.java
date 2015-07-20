@@ -15,6 +15,7 @@ import client.proxy.RollNumber;
 public class RollController extends Controller implements IRollController {
 
 	private IRollResultView resultView;
+        private boolean clickedOk;
 
 	/**
 	 * RollController constructor
@@ -27,6 +28,7 @@ public class RollController extends Controller implements IRollController {
 		super(view);
 		
 		setResultView(resultView);
+                clickedOk=false;
 	}
 	
 	public IRollResultView getResultView() {
@@ -66,6 +68,14 @@ public class RollController extends Controller implements IRollController {
 			System.out.println("Had a hard time rolling");
 		}	
 	}
+        
+        public void setClickedOk(boolean ok){
+            clickedOk=ok;
+        }
+        
+        public boolean getClickedOk(){
+            return clickedOk;
+        }
 
 }
 

@@ -240,6 +240,7 @@ public class MapPoller extends TimerTask {
 
                     if (!rollController.getRollView().isModalShowing()) {
                         rollController.getRollView().showModal();
+                        rollController.setClickedOk(false);
                     }
 
                 }
@@ -258,19 +259,20 @@ public class MapPoller extends TimerTask {
                     status = "Finish Turn";
                 } else {
 
-                    if (status.equals("Robbing")) {
+                    if (status.equals("Robbing")&&rollController.getClickedOk()) {
                         if (!startedRobbing) {
                             startedRobbing = true;
                             catanPanel.getMidPanel().getMapController().startMove(PieceType.ROBBER, true, true);
                         }
                     } else {
-                        if (status.equals("Discarding")) {
+                        if (status.equals("Discarding")&&rollController.getClickedOk()) {
                             DiscardController dis = catanPanel.getDiscardController();
                             if (!dis.getDiscardView().isModalShowing()) {
                                 dis.initFromModel();
                                 dis.getDiscardView().showModal();
                             }
                         }
+                        
                         if (!status.contains("Round")) {
                             status = "Waiting For other Players";
                         }
