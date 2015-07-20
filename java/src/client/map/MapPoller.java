@@ -40,7 +40,6 @@ public class MapPoller extends TimerTask {
     private int version;
     private boolean firstInitialization;
     private boolean firstTimeSecondRound;
-    private boolean firstTimeRobber;
     private boolean seenTrade;
     private boolean startedRobbing;
     private int playerIndex;
@@ -52,7 +51,6 @@ public class MapPoller extends TimerTask {
 
         this.firstInitialization = false;
         this.firstTimeSecondRound = true;
-        this.firstTimeRobber = true;
         this.seenTrade = false;
         startedRobbing = false;
         playerIndex = -1;
@@ -153,54 +151,48 @@ public class MapPoller extends TimerTask {
                     }
 
                 }
-                /* End Map View Update */
-                /* Begin Turn Tracker Update */
+                
+                                /* Begin Turn Tracker Update */
+                //TODO: need to figure out which statuses need to be disable or enabled
+                boolean enable = false;
+                /* Begin Roll Update */
                 // every turn starts with a roll
+                if (status.equals("Rolling") && playerIndex == gameInformation.getTurnTracker().getCurrentTurn()) {
 
-                //no rolling on first and second round
-                if (playerIndex == gameInformation.getTurnTracker().getCurrentTurn()) {
-                    if (!status.contains("Round")) {
-                        if (!rollController.getRollView().isModalShowing() && status.equals("Rolling")) {
-                            if (mapView.getOverlay() != null) {
-                                if (mapView.getOverlay().isModalShowing()) {
-                                    mapView.getOverlay().closeModal();
-                                }
+                    if (!rollController.getRollView().isModalShowing()) {
+                        rollController.getRollView().showModal();
+                        rollController.setClickedOk(false);
+                    }
+
+                }
+                /* End Roll Update */
+                if (status.equals("Playing") && playerIndex == gameInformation.getTurnTracker().getCurrentTurn()) {
+                    enable = true;
+//                            gameStatePanel.getButton().setBackground(CatanColor.valueOf(player.getColor().toUpperCase()).getJavaColor());
+                    startedRobbing = false;
+                    status = "Finish Turn";
+                } else {
+
+                    if (status.equals("Robbing")&&rollController.getClickedOk()) {
+                        if (!startedRobbing) {
+                            startedRobbing = true;
+                            catanPanel.getMidPanel().getMapController().startMove(PieceType.ROBBER, true, true);
+                        }
+                    } else {
+                        if (status.equals("Discarding")&&rollController.getClickedOk()) {
+                            DiscardController dis = catanPanel.getDiscardController();
+                            if (!dis.getDiscardView().isModalShowing()) {
+                                dis.initFromModel();
+                                dis.getDiscardView().showModal();
                             }
-
-                            rollController.getRollView().showModal();
-
-                        } else {
-                            if (status.equals("Playing")) {
-                                //set the button color
-                                if (mapView.getOverlay().isModalShowing()) {
-                                    mapView.getOverlay().closeModal();
-                                }
-                                for (PlayerInfo player : gameInformation.getPlayers()) {
-                                    if (player.getPlayerIndex() == playerIndex) {
-                                        gameStatePanel.getButton().setForeground(CatanColor.valueOf(player.getColor().toUpperCase()).getJavaColor());
-                                        break;
-                                    }
-                                }
-                                //allow the current player to finish their turn
-                                status = "Finish Turn";
-                            } else if (status.equals("Robbing")) {
-                                if (!mapView.getOverlay().isModalShowing() && firstTimeRobber) {
-                                    mapView.getController().startMove(PieceType.ROBBER, true, true);
-                                    firstTimeRobber = false;
-                                }
-                                status = "Playing";
-                            } else if (status.equals("Discarding")) {
-                                DiscardController dis = catanPanel.getDiscardController();
-                                if (!dis.getDiscardView().isModalShowing()) {
-                                    dis.initFromModel();
-                                    dis.getDiscardView().showModal();
-                                }
-                            }
-
+                        }
+                        
+                        if (!status.contains("Round")) {
+                            status = "Waiting For other Players";
                         }
                     }
                 }
-                System.out.println("here: Status: " + status);
+                turnTrackerView.updateGameState(status, enable);
                 for (PlayerInfo player : gameInformation.getPlayers()) {
                     boolean longestRoad = false;
                     boolean largestArmy = false;
@@ -284,129 +276,6 @@ public class MapPoller extends TimerTask {
                     historyView.setEntries(newHistoryEntries);
                 }
                 /* End Game History View Update */
-
-                /* Begin Turn Tracker Update */
-                //TODO: need to figure out which statuses need to be disable or enabled
-                boolean enable = false;
-                /* Begin Roll Update */
-                // every turn starts with a roll
-                if (status.equals("Rolling") && playerIndex == gameInformation.getTurnTracker().getCurrentTurn()) {
-
-                    if (!rollController.getRollView().isModalShowing()) {
-                        rollController.getRollView().showModal();
-                        rollController.setClickedOk(false);
-                    }
-
-                }
-                /* End Roll Update */
-                if (status.equals("Playing") && playerIndex == gameInformation.getTurnTracker().getCurrentTurn()) {
-                    enable = true;
-                    //set the button color
-//                    for (PlayerInfo player : gameInformation.getPlayers()) {
-//                        if (player.getPlayerIndex() == playerIndex) {
-//                            TODO: figure out how to change the actual button's color
-//                            gameStatePanel.getButton().setBackground(CatanColor.valueOf(player.getColor().toUpperCase()).getJavaColor());
-//                            break;
-//                        }
-//                    }
-                    startedRobbing = false;
-                    status = "Finish Turn";
-                } else {
-
-                    if (status.equals("Robbing")&&rollController.getClickedOk()) {
-                        if (!startedRobbing) {
-                            startedRobbing = true;
-                            catanPanel.getMidPanel().getMapController().startMove(PieceType.ROBBER, true, true);
-                        }
-                    } else {
-                        if (status.equals("Discarding")&&rollController.getClickedOk()) {
-                            DiscardController dis = catanPanel.getDiscardController();
-                            if (!dis.getDiscardView().isModalShowing()) {
-                                dis.initFromModel();
-                                dis.getDiscardView().showModal();
-                            }
-                        }
-                        
-                        if (!status.contains("Round")) {
-                            status = "Waiting For other Players";
-                        }
-                    }
-                }
-                turnTrackerView.updateGameState(status, enable);
-                //always update the local player's color
-
-                for (PlayerInfo player : gameInformation.getPlayers()) {
-                    boolean longestRoad = false;
-                    boolean largestArmy = false;
-                    boolean highlight = false;
-                    int currentPlayerIndex = player.getPlayerIndex();
-
-                    turnTrackerView.initializePlayer(currentPlayerIndex, player.getName(), CatanColor.valueOf(player.getColor().toUpperCase()));
-
-                    //only update local player color for local player
-                    if (player.getPlayerID() == ClientCommunicator.getSingleton().getPlayerId()) {
-
-                        turnTrackerView.setLocalPlayerColor(CatanColor.valueOf(player.getColor().toUpperCase()));
-                        pointsController.getPointsView().setPoints(player.getVictoryPoints());
-                    }
-                    //decide the awards
-                    if (gameInformation.getTurnTracker().getLargestArmy() == currentPlayerIndex) {
-                        largestArmy = true;
-                    }
-                    if (gameInformation.getTurnTracker().getLongestRoad() == currentPlayerIndex) {
-                        longestRoad = true;
-                    }
-                    //decide who is current player
-                    if (gameInformation.getTurnTracker().getCurrentTurn() == currentPlayerIndex) {
-                        highlight = true;
-                    }
-                    turnTrackerView.updatePlayer(currentPlayerIndex, player.getVictoryPoints(), highlight, largestArmy, longestRoad);
-
-                    /* Begin Points Controller Update */
-                    if (player.getVictoryPoints() == MAX_POINTS) {
-                        pointsController.getFinishedView().setWinner(player.getName(), (player.getPlayerIndex() == playerIndex));
-                        if (!pointsController.getFinishedView().isModalShowing()) {
-                            pointsController.getFinishedView().showModal();
-                        }
-                    }
-                    /* End  Points Controller Update */
-
-                }
-
-                /* if (status.equals("Playing") && playerIndex == gameInformation.getTurnTracker().getCurrentTurn()) {
-                 enable = true;
-                 //set the button color
-                 for (PlayerInfo player : gameInformation.getPlayers()) {
-                 if (player.getPlayerIndex() == playerIndex) {
-                 gameStatePanel.getButton().setForeground(CatanColor.valueOf(player.getColor().toUpperCase()).getJavaColor());
-                 break;
-                 }
-                 }
-                 startedRobbing = false;
-                 status = "Finish Turn";
-                 } else {
-
-                 if (status.equals("Robbing")) {
-                 if (!startedRobbing) {
-                 startedRobbing = true;
-                 catanPanel.getMidPanel().getMapController().startMove(PieceType.ROBBER, true, true);
-                 }
-                 } else {
-                 
-                 }
-                 if (!status.contains("Round")) {
-                 status = "Waiting For other Players";
-                 }
-                 }
-                 }
-                 System.out.println("Update Map Status: " + status);
-
-                 //
-                 
-                 //always update the local player's color
-
-                
-
                  /* Begin Resource Bar Update */
                 for (PlayerInfo player : gameInformation.getPlayers()) {
                     if (player.getPlayerIndex() == playerIndex) {
@@ -438,7 +307,6 @@ public class MapPoller extends TimerTask {
 
         }
 
-        // System.out.println("meow");
     }
 
 }

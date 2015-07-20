@@ -147,7 +147,6 @@ public class DiscardController extends Controller implements IDiscardController 
                     break;
             }
             getDiscardView().setResourceAmountChangeEnabled(resource, moreThanZero, true);
-            getDiscardView().setStateMessage(resources.getTotalResources()+"/"+amountToDiscard);
             calculateIfAbleToDiscard();
         
         }
@@ -196,7 +195,6 @@ public class DiscardController extends Controller implements IDiscardController 
                 }
                 
                 getDiscardView().setResourceAmountChangeEnabled(resource, true, decreaseAble);
-                getDiscardView().setStateMessage(resources.getTotalResources()+"/"+amountToDiscard);
                 calculateIfAbleToDiscard();
         }
 
@@ -228,8 +226,10 @@ public class DiscardController extends Controller implements IDiscardController 
         private void calculateIfAbleToDiscard(){
             if(resources.getTotalResources()==amountToDiscard){
                 getDiscardView().setDiscardButtonEnabled(true);
+                getDiscardView().setStateMessage("Discard "+resources.getTotalResources()+" Resources");
             }else{
                 getDiscardView().setDiscardButtonEnabled(false);            
+                getDiscardView().setStateMessage(resources.getTotalResources()+"/"+amountToDiscard);                
             }
         }
 }
