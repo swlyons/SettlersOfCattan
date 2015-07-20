@@ -2,7 +2,6 @@ package client.catan;
 
 import java.awt.*;
 import javax.swing.*;
-import java.util.Timer;
 
 import client.map.*;
 
@@ -14,7 +13,6 @@ public class MidPanel extends JPanel {
     private RobView robView;
     private MapController mapController;
     private GameStatePanel gameStatePanel;
-    private Timer timer;
 
     public MidPanel() {
 

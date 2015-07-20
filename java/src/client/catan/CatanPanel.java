@@ -114,8 +114,8 @@ public class CatanPanel extends JPanel {
             }
         });
         this.add(testButton, BorderLayout.SOUTH);
-        timer = new Timer();
-        timer.schedule(new MapPoller(this), 0, 3000);
+
+        
     }
 
     public TitlePanel getTitlePanel() {

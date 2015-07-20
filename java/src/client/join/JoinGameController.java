@@ -10,7 +10,6 @@ import client.misc.*;
 import client.proxy.CreateGameRequest;
 import client.proxy.JoinGameRequest;
 import java.util.ArrayList;
-import java.util.Timer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -26,8 +25,6 @@ public class JoinGameController extends Controller implements IJoinGameControlle
     private IPlayerWaitingView playerWaitingView;
     private PlayerWaitingViewPoller playerWaitingViewPoller;
     private JoinGameViewPoller joinGameViewPoller;
-    private java.util.Timer playerWaitingTimer = new java.util.Timer();
-    private java.util.Timer joinGameTimer = new java.util.Timer();
 
     /**
      * JoinGameController constructor
@@ -39,7 +36,7 @@ public class JoinGameController extends Controller implements IJoinGameControlle
      * occur while the user is joining a game)
      */
     public JoinGameController(IJoinGameView view, INewGameView newGameView,
-            ISelectColorView selectColorView, IMessageView messageView, IPlayerWaitingView playerWaitingView, PlayerWaitingViewPoller playerWaitingViewPoller, JoinGameViewPoller joinGameViewPoller) {
+            ISelectColorView selectColorView, IMessageView messageView, IPlayerWaitingView playerWaitingView) {
 
         super(view);
 
@@ -47,21 +44,11 @@ public class JoinGameController extends Controller implements IJoinGameControlle
         setSelectColorView(selectColorView);
         setMessageView(messageView);
         setPlayerWaitingView(playerWaitingView);
-        setPlayerWaitingViewPoller(playerWaitingViewPoller);
-        setJoinGameViewPoller(joinGameViewPoller);
     }
 
     public IJoinGameView getJoinGameView() {
 
         return (IJoinGameView) super.getView();
-    }
-
-    public Timer getPlayerWaitingTimer() {
-        return playerWaitingTimer;
-    }
-
-    public void setPlayerWaitingTimer(Timer playerWaitingTimer) {
-        this.playerWaitingTimer = playerWaitingTimer;
     }
 
     /**
@@ -148,7 +135,7 @@ public class JoinGameController extends Controller implements IJoinGameControlle
 
     @Override
     public void start() {
-        joinGameTimer.schedule(new JoinGameViewPoller(this), 0, 1000);
+        getJoinGameView().showModal();
     }
 
     @Override
@@ -159,7 +146,6 @@ public class JoinGameController extends Controller implements IJoinGameControlle
 
     @Override
     public void cancelCreateNewGame() {
-
         getNewGameView().closeModal();
     }
 
@@ -190,7 +176,7 @@ public class JoinGameController extends Controller implements IJoinGameControlle
             //playerInfo.setPlayerIndex(0);
             GameInfo[] allGames = new GameInfo[gamesOnServer.size()];
             gamesOnServer.toArray(allGames);
-            getJoinGameView().setGames(allGames, playerInfo, true);
+            getJoinGameView().setGames(allGames, playerInfo);
 
             //if successful clear out old options
             getNewGameView().setRandomlyPlaceHexes(false);
@@ -246,34 +232,17 @@ public class JoinGameController extends Controller implements IJoinGameControlle
     public void joinGame(CatanColor color) {
 
         JoinGameRequest request = new JoinGameRequest(gameId, color.name().toLowerCase());
+
         try {
             if (ClientCommunicatorFascadeSettlersOfCatan.getSingleton().joinGame(request)) {
-                //start the View Poller (runs every 1 seconds)
-                playerWaitingTimer.schedule(new PlayerWaitingViewPoller(this, playerWaitingTimer, joinGameTimer), 0, 1000);
-
-            } else {
-                ArrayList<GameInfo> gamesOnServer = ClientCommunicatorFascadeSettlersOfCatan.getSingleton().listGames();
-                PlayerInfo playerInfo = new PlayerInfo();
-                playerInfo.setPlayerID(ClientCommunicator.getSingleton().getPlayerId());
-                playerInfo.setName(ClientCommunicator.getSingleton().getName());
-                GameInfo[] allGames = new GameInfo[gamesOnServer.size()];
-                gamesOnServer.toArray(allGames);
-                getJoinGameView().setGames(allGames, playerInfo, true);
+                getJoinGameView().closeModal();
+                getSelectColorView().closeModal();
+                joinAction.execute();
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-            getSelectColorView().closeModal();
-            try {
-                ArrayList<GameInfo> gamesOnServer = ClientCommunicatorFascadeSettlersOfCatan.getSingleton().listGames();
-                PlayerInfo playerInfo = new PlayerInfo();
-                playerInfo.setPlayerID(ClientCommunicator.getSingleton().getPlayerId());
-                playerInfo.setName(ClientCommunicator.getSingleton().getName());
-                GameInfo[] allGames = new GameInfo[gamesOnServer.size()];
-                gamesOnServer.toArray(allGames);
-                getJoinGameView().setGames(allGames, playerInfo, true);
-            } catch (Exception e2) {
-            }
+        } catch (ClientException ex) {
+            Logger.getLogger(JoinGameController.class.getName()).log(Level.SEVERE, null, ex);
         }
+
     }
 
 }

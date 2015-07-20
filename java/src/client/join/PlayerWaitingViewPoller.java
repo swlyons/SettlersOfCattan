@@ -11,7 +11,6 @@ import client.communication.ClientCommunicatorFascadeSettlersOfCatan;
 import client.data.GameInfo;
 import client.data.PlayerInfo;
 import java.util.ArrayList;
-import java.util.Timer;
 import java.util.TimerTask;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -23,19 +22,14 @@ import java.util.logging.Logger;
 public class PlayerWaitingViewPoller extends TimerTask {
 
     private JoinGameController joinGameController;
-    private Timer playerWaitingTimer;
-    private Timer joinGameTimer;
-    private boolean firstTime = true;
     private boolean update = false;
     private final int MAX_PLAYERS = 4;
 
     public PlayerWaitingViewPoller() {
     }
 
-    public PlayerWaitingViewPoller(JoinGameController joinGameController, Timer playerWaitingTimer, Timer joinGameTimer) {
+    public PlayerWaitingViewPoller(JoinGameController joinGameController) {
         this.joinGameController = joinGameController;
-        this.playerWaitingTimer = playerWaitingTimer;
-        this.joinGameTimer = joinGameTimer;
     }
 
     public JoinGameController getJoinGameController() {
@@ -49,7 +43,6 @@ public class PlayerWaitingViewPoller extends TimerTask {
     public void run() {
         ArrayList<PlayerInfo> activePlayers = new ArrayList();
         ArrayList<GameInfo> activeGames = new ArrayList();
-        int winner = -1;
 
         try {
             activeGames = ClientCommunicatorFascadeSettlersOfCatan.getSingleton().listGames();
@@ -61,68 +54,45 @@ public class PlayerWaitingViewPoller extends TimerTask {
                 for (PlayerInfo player : game.getPlayers()) {
                     if (player.getId() != -1) {
                         activePlayers.add(player);
-                        // no need to update the list of games for the current player (Turns off the poller and
-                        // closes the modal if it's open
-                        if (player.getId() == ClientCommunicator.getSingleton().getPlayerId()) {
-                            if (getJoinGameController().getJoinGameView().isModalShowing()) {
-                                getJoinGameController().getJoinGameView().closeModal();
-                            }
-                            joinGameTimer.cancel();
-                            joinGameTimer.purge();
-                        }
                     }
                 }
-                winner = game.getWinner();
                 PlayerInfo[] players = new PlayerInfo[activePlayers.size()];
                 activePlayers.toArray(players);
+                PlayerInfo[] oldPlayers = getJoinGameController().getPlayerWaitingView().getPlayers();
                 // only update if there is a new player added or removed
-                if (!firstTime) {
-                    if (activePlayers.size() != getJoinGameController().getPlayerWaitingView().getPlayers().length) {
-                        update = true;
-                    } else {
-                        update = false;
-                    }
-                } else {
+                if (oldPlayers == null) {
                     update = true;
+                } else {
+                    update = (activePlayers.size() != getJoinGameController().getPlayerWaitingView().getPlayers().length);
                 }
-                if (firstTime || update || (activePlayers.size() == MAX_PLAYERS)) {
+
+                if (update) {
                     getJoinGameController().getPlayerWaitingView().setPlayers(players);
-                    firstTime = false;
+
                 }
                 break;
             }
         }
-        if (getJoinGameController().getSelectColorView().isModalShowing()) {
-            getJoinGameController().getSelectColorView().closeModal();
-        }
-        if (getJoinGameController().getJoinGameView().isModalShowing()) {
-            getJoinGameController().getJoinGameView().closeModal();
-        }
 
         if (update) {
-            getJoinGameController().getJoinAction().execute();
-        }
-
-        //the game is over (no need to update anymore)
-        if (winner > 0) {
-            joinGameTimer.cancel();
-            joinGameTimer.purge();
-            playerWaitingTimer.cancel();
-            playerWaitingTimer.purge();
-        }
-        //make the map accessible
-        if (activePlayers.size() == MAX_PLAYERS) {
-            joinGameTimer.cancel();
-            joinGameTimer.purge();
-            playerWaitingTimer.cancel();
-            playerWaitingTimer.purge();
-            if (getJoinGameController().getJoinGameView().isModalShowing()) {
-                getJoinGameController().getJoinGameView().closeModal();
-            }
             if (getJoinGameController().getPlayerWaitingView().isModalShowing()) {
                 getJoinGameController().getPlayerWaitingView().closeModal();
             }
+            getJoinGameController().getJoinAction().execute();
+        }
+
+        //make the map accessible
+        if (activePlayers.size()
+                == MAX_PLAYERS) {
+
+            if (getJoinGameController().getPlayerWaitingView().isModalShowing()) {
+                getJoinGameController().getPlayerWaitingView().closeModal();
+            }
+            //switch to the next state
             ClientCommunicator.getSingleton().setJoinedGame(true);
+
+            //start the game cause we have 4 players
+            ((PlayerWaitingController) getJoinGameController().getPlayerWaitingView().getController()).ready();
 
         }
 

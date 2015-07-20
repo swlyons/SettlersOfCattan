@@ -17,7 +17,7 @@ public interface IJoinGameView extends IOverlayView
 	 * @param localPlayer
 	 *            Information about the local player
 	 */
-	void setGames(GameInfo[] games, PlayerInfo localPlayer, boolean update);
+	void setGames(GameInfo[] games, PlayerInfo localPlayer);
         GameInfo[] getGames();
 }
 
