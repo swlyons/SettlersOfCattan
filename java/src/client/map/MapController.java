@@ -170,7 +170,7 @@ public class MapController extends Controller implements IMapController {
     public void placeRoad(EdgeLocation edgeLoc) {
         GameManager gm = ClientCommunicator.getSingleton().getGameManager();
         Integer currentPlayer = gm.getGame().getTurnTracker().getCurrentTurn();
-        if (isFree || gm.getLocationManager().getSettledLocations().size() < 9) {
+        if (isFree || gm.getGame().getTurnTracker().getStatus().equals("FirstRound") || gm.getGame().getTurnTracker().getStatus().equals("SecondRound")) {
             isFree = false;
             if (gm.placeFreeRoad(edgeLoc)) {
                 CatanColor color = CatanColor
@@ -187,7 +187,7 @@ public class MapController extends Controller implements IMapController {
                 br.setType("buildRoad");
                 try {
                     ClientCommunicatorFascadeSettlersOfCatan.getSingleton().buildRoad(br);
-                    if (gm.getLocationManager().getSettledLocations().size() < 9) {
+                    if (gm.getGame().getTurnTracker().getStatus().equals("FirstRound") || gm.getGame().getTurnTracker().getStatus().equals("SecondRound")) {
                         setEndTurn(true);
                     }
 

@@ -90,7 +90,7 @@ public class SecondRoundState extends State {
                 try {
                     gameManager.initializeGame(ClientCommunicatorFascadeSettlersOfCatan.getSingleton().finishMove(fm));
                 } catch (ClientException ex) {
-                    Logger.getLogger(FirstRoundState.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(SecondRoundState.class.getName()).log(Level.SEVERE, null, ex);
                 }
                 mapController.setEndTurn(false);
 
