@@ -21,7 +21,7 @@ public class GamePlayState extends State {
     @Override
     public void doAction(Controller controller) {
         MapController mapController = (MapController) controller;
-
+        
         //make sure no overlay is left over
         if (((MapView) mapController.getView()).getOverlay().isModalShowing()) {
             ((MapView) mapController.getView()).getOverlay().closeModal();

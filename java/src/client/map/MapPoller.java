@@ -221,7 +221,7 @@ public class MapPoller extends TimerTask {
                     if (gameInformation.getTurnTracker().getCurrentTurn() == currentPlayerIndex) {
                         highlight = true;
                     }
-
+                    
                     turnTrackerView.updatePlayer(currentPlayerIndex, player.getVictoryPoints(), highlight, largestArmy, longestRoad);
 
                     /* Begin Points Controller Update */

@@ -60,6 +60,7 @@ public class Catan extends JFrame {
                 playerWaitingController.setPlayerAction(new IAction(){
                     @Override
                     public void execute() {
+                        //((MapController)catanPanel.getMidPanel().getMapController()).initFromModel();
                         //end PlayerWaiting
                         catanStateMachine.move((MapController)catanPanel.getMidPanel().getMapController());
                         //setup

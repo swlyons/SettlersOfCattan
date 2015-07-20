@@ -49,7 +49,9 @@ public class FirstRoundState extends State {
             gameManager.initializeGame(gameInformation);
             version = gameInformation.getVersion();
             Integer playerId = ClientCommunicator.getSingleton().getPlayerId();
-            for (int i = 0; i < gameManager.getGame().getPlayers().size(); i++) {
+            int size =  gameManager.getGame().getPlayers().size();
+            
+            for (int i = 0; i < size; i++) {
                 if (gameManager.getGame().getPlayers().get(i).getPlayerID() == playerId) {
                     playerIndex = gameManager.getGame().getPlayers().get(i).getPlayerIndex();
                     break;
@@ -69,7 +71,7 @@ public class FirstRoundState extends State {
                     }
                 }
             }
-
+            
             //end your turn
             if (mapController.isEndTurn()) {
 
