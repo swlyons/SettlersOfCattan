@@ -21,10 +21,12 @@ public class GamePlayState extends State {
     @Override
     public void doAction(Controller controller) {
         MapController mapController = (MapController) controller;
-        
+
         //make sure no overlay is left over
-        if (((MapView) mapController.getView()).getOverlay().isModalShowing()) {
-            ((MapView) mapController.getView()).getOverlay().closeModal();
+        if (((MapView) mapController.getView()).getOverlay() != null) {
+            if (((MapView) mapController.getView()).getOverlay().isModalShowing()) {
+                ((MapView) mapController.getView()).getOverlay().closeModal();
+            }
         }
         System.out.println(this.toString());
         gamePlayTimer.schedule(mapController.getMapPoller(), 0, 3000);

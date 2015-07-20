@@ -48,9 +48,10 @@ public class FirstRoundState extends State {
 
             gameManager.initializeGame(gameInformation);
             version = gameInformation.getVersion();
+            status = gameInformation.getTurnTracker().getStatus();
             Integer playerId = ClientCommunicator.getSingleton().getPlayerId();
-            int size =  gameManager.getGame().getPlayers().size();
-            
+            int size = gameManager.getGame().getPlayers().size();
+
             for (int i = 0; i < size; i++) {
                 if (gameManager.getGame().getPlayers().get(i).getPlayerID() == playerId) {
                     playerIndex = gameManager.getGame().getPlayers().get(i).getPlayerIndex();
@@ -59,19 +60,22 @@ public class FirstRoundState extends State {
             }
 
             if (playerIndex == gameInformation.getTurnTracker().getCurrentTurn()) {
-                if (playerIndex == 0) {
-                    if (((MapView) mapController.getView()).getOverlay() == null) {
-                        mapController.startMove(PieceType.SETTLEMENT, true, true);
+                if (status.equals("FirstRound")) {
+                    if (playerIndex == 0) {
+                        if (((MapView) mapController.getView()).getOverlay() == null) {
 
-                    }
-                } else {
-                    if (!((MapView) mapController.getView()).getOverlay().isModalShowing()) {
-                        mapController.startMove(PieceType.SETTLEMENT, true, true);
+                            mapController.startMove(PieceType.SETTLEMENT, true, true);
+                        }
 
+                    } else {
+                        if (!((MapView) mapController.getView()).getOverlay().isModalShowing()) {
+                            mapController.startMove(PieceType.SETTLEMENT, true, true);
+
+                        }
                     }
                 }
             }
-            
+
             //end your turn
             if (mapController.isEndTurn()) {
 

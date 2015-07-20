@@ -91,6 +91,8 @@ public class MapPoller extends TimerTask {
 
                 String status = gameInformation.getTurnTracker().getStatus();
 
+                mapView.getController().initFromModel();
+
                 if (playerIndex == -1) {
                     Integer playerId = ClientCommunicator.getSingleton().getPlayerId();
                     for (int i = 0; i < gameManager.getGame().getPlayers().size(); i++) {
@@ -154,15 +156,18 @@ public class MapPoller extends TimerTask {
                 /* End Map View Update */
                 /* Begin Turn Tracker Update */
                 // every turn starts with a roll
-                
+
                 //no rolling on first and second round
                 if (playerIndex == gameInformation.getTurnTracker().getCurrentTurn()) {
                     if (!status.contains("Round")) {
-
+                        System.out.println(rollController.getRollView().isModalShowing());
                         if (!rollController.getRollView().isModalShowing() && status.equals("Rolling")) {
-                            if (mapView.getOverlay().isModalShowing()) {
-                                mapView.getOverlay().closeModal();
+                            if (mapView.getOverlay() != null) {
+                                if (mapView.getOverlay().isModalShowing()) {
+                                    mapView.getOverlay().closeModal();
+                                }
                             }
+
                             rollController.getRollView().showModal();
 
                         } else {
@@ -196,15 +201,15 @@ public class MapPoller extends TimerTask {
                         }
                     }
                 }
-
+                System.out.println("here: Status: " + status);
                 for (PlayerInfo player : gameInformation.getPlayers()) {
                     boolean longestRoad = false;
                     boolean largestArmy = false;
                     boolean highlight = false;
                     int currentPlayerIndex = player.getPlayerIndex();
-                    
+
                     turnTrackerView.initializePlayer(currentPlayerIndex, player.getName(), CatanColor.valueOf(player.getColor().toUpperCase()));
-                        
+
                     //only update local player color for local player
                     if (player.getPlayerID() == ClientCommunicator.getSingleton().getPlayerId()) {
                         turnTrackerView.setLocalPlayerColor(CatanColor.valueOf(player.getColor().toUpperCase()));
@@ -221,7 +226,7 @@ public class MapPoller extends TimerTask {
                     if (gameInformation.getTurnTracker().getCurrentTurn() == currentPlayerIndex) {
                         highlight = true;
                     }
-                    
+
                     turnTrackerView.updatePlayer(currentPlayerIndex, player.getVictoryPoints(), highlight, largestArmy, longestRoad);
 
                     /* Begin Points Controller Update */
@@ -286,7 +291,7 @@ public class MapPoller extends TimerTask {
                     mapView.getController().setEndTurn(false);
 
                 }
-                mapView.getController().initFromModel();
+
                 /* if (status.equals("Playing") && playerIndex == gameInformation.getTurnTracker().getCurrentTurn()) {
                  enable = true;
                  //set the button color
