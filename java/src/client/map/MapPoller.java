@@ -267,8 +267,8 @@ public class MapPoller extends TimerTask {
                         if (status.equals("Discarding")) {
                             DiscardController dis = catanPanel.getDiscardController();
                             if (!dis.getDiscardView().isModalShowing()) {
-                                dis.getDiscardView().showModal();
                                 dis.initFromModel();
+                                dis.getDiscardView().showModal();
                             }
                         }
                         if (!status.contains("Round")) {
