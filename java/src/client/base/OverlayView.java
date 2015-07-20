@@ -103,10 +103,10 @@ public class OverlayView extends PanelView implements IOverlayView {
      */
     public void closeModal() {
         /** USE FOR DEBUGGING OVERLAY ISSUES **/
-        System.out.println("Overlay View: Items Left In Stack: " + overlayStack.size());
-        for(OverlayInfo overlay : overlayStack){
-            System.out.println("\tOverlay Class: " +  overlay.getOverlayView().getClass());
-        }
+//        System.out.println("Overlay View: Items Left In Stack: " + overlayStack.size());
+//        for(OverlayInfo overlay : overlayStack){
+//            System.out.println("\tOverlay Class: " +  overlay.getOverlayView().getClass());
+//        }
         /***************************************/
         assert overlayStack.size() > 0;
         assert window.getGlassPane() == overlayStack.peek().getOverlayPanel();
