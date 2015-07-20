@@ -170,8 +170,6 @@ public class JoinGameView extends OverlayView implements IJoinGameView {
         public void actionPerformed(ActionEvent e) {
             if (e.getSource() == createButton) {
                 getController().startCreateNewGame();
-            } else if (e.getSource() == tempJoinButton) {
-                getController().startJoinGame(null);
             } else {
                 try {
                     //System.out.println(e.getActionCommand());

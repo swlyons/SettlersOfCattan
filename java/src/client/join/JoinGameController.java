@@ -204,6 +204,10 @@ public class JoinGameController extends Controller implements IJoinGameControlle
         activeGames.toArray(games);
         int activePlayer = ClientCommunicator.getSingleton().getPlayerId();
 
+        for(CatanColor color : CatanColor.values()){
+            getSelectColorView().setColorEnabled(color, true);            
+        }
+        
         //disable the necessary player colors
         for (GameInfo activeGame : activeGames) {
             if (activeGame.getId() == gameId) {
