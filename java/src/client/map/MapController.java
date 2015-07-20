@@ -293,10 +293,14 @@ public class MapController extends Controller implements IMapController {
                 }
             }
         }
+        
+        Integer currentPlayer = gm.getGame().getTurnTracker().getCurrentTurn();
 
         List<RobPlayerInfo> victims = new ArrayList<RobPlayerInfo>();
         for (Integer player : playerIndexes) {
-            victims.add(new RobPlayerInfo(gm.getGame().getPlayers().get(player), gm.getResourceManager().getGameBanks().get(player).getResourcesCards().getTotalResources()));
+            if(currentPlayer != player){
+                victims.add(new RobPlayerInfo(gm.getGame().getPlayers().get(player), gm.getResourceManager().getGameBanks().get(player).getResourcesCards().getTotalResources()));
+            }
         }
         RobPlayerInfo[] victimsAreUs = new RobPlayerInfo[victims.size()];
         victims.toArray(victimsAreUs);
