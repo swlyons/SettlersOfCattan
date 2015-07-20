@@ -65,7 +65,8 @@ public class SecondRoundState extends State {
                     if(((MapView) mapController.getView()).getOverlay()==null||
                             (firstTime&&!((MapView) mapController.getView()).getOverlay().isModalShowing())){    
                        firstTime = false;
-                        int settlements = 0;
+                       mapController.initFromModel();
+                       int settlements = 0;
                         for(Location location : gameManager.getLocationManager().getSettledLocations()){
                             if(playerIndex == location.getOwnerID()){
                                 settlements++;

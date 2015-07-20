@@ -69,6 +69,7 @@ public class FirstRoundState extends State {
                         }
                     }
                     if (((MapView) mapController.getView()).getOverlay() == null) {
+                        mapController.initFromModel();
                         if(!builtSettlement){
                             mapController.startMove(PieceType.SETTLEMENT, true, true);
                         }else{
