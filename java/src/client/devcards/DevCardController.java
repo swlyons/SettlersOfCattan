@@ -10,6 +10,7 @@ import client.managers.GameManager;
 import client.proxy.BuyDevCard;
 import client.proxy.Monopoly;
 import client.proxy.Monument;
+import client.proxy.Soldier;
 import client.proxy.Year_Of_Plenty;
 import client.resources.ResourceBarElement;
 
@@ -132,7 +133,7 @@ public class DevCardController extends Controller implements IDevCardController 
             gm.useMonopoly(resource);
             getPlayCardView().closeModal();
         } catch (Exception e) {
-            e.printStackTrace();
+//            e.printStackTrace();
             //Shouldn't happen
         }
     }
@@ -150,13 +151,17 @@ public class DevCardController extends Controller implements IDevCardController 
     @Override
     public void playMonumentCard() {
         GameManager gm = ClientCommunicator.getSingleton().getGameManager();
+        Integer playerId = ClientCommunicator.getSingleton().getPlayerId();
 
+        Monument m = new Monument();
+        m.setType("Monument");
+        m.setPlayerIndex(gm.getPlayerIndex(playerId));
         try {
-            ClientCommunicatorFascadeSettlersOfCatan.getSingleton().monument(new Monument());
+            ClientCommunicatorFascadeSettlersOfCatan.getSingleton().monument(m);
             gm.useMonument();
             getPlayCardView().closeModal();
         } catch (Exception e) {
-            e.printStackTrace();
+//            e.printStackTrace();
             //Shouldn't happen
         }
     }
@@ -189,7 +194,6 @@ public class DevCardController extends Controller implements IDevCardController 
 
     @Override
     public void playSoldierCard() {
-
         soldierAction.execute();
     }
 
@@ -209,6 +213,8 @@ public class DevCardController extends Controller implements IDevCardController 
         Integer playerId = ClientCommunicator.getSingleton().getPlayerId();
 
         Year_Of_Plenty y = new Year_Of_Plenty(gm.getPlayerIndex(playerId));
+        y.setType("Year_of_Plenty");
+        y.setPlayerIndex(playerId);
         y.setResource1(resource1);
         y.setResource2(resource2);
         try {

@@ -12,6 +12,7 @@ import client.proxy.BuildRoad;
 import client.proxy.Road_Building;
 import client.proxy.BuildSettlement;
 import client.proxy.RobPlayer;
+import client.proxy.Soldier;
 import client.communication.ClientCommunicator;
 import client.communication.ClientCommunicatorFascadeSettlersOfCatan;
 
@@ -25,6 +26,7 @@ public class MapController extends Controller implements IMapController {
     private boolean endTurn = false;
     private boolean playedRoadBuilding = false;
     private boolean placedFirstRoadBuildingRoad = false;
+    private boolean playedSoldier = false;
     private boolean doneOnce = false;
     private EdgeLocation firstRoad;
     private HexLocation newRobberLocation = null;
@@ -223,6 +225,23 @@ public class MapController extends Controller implements IMapController {
                     e.printStackTrace();
                 }
             }
+            if(playedRoadBuilding){
+                if(!placedFirstRoadBuildingRoad){
+                    firstRoad=edgeLoc;
+                    placedFirstRoadBuildingRoad=true;
+                    startMove(PieceType.ROAD, true, false);
+                }else{
+                    Road_Building roadBuilding = new Road_Building(currentPlayer);
+                    roadBuilding.setSpot1(firstRoad);
+                    roadBuilding.setSpot2(edgeLoc);
+                    placedFirstRoadBuildingRoad=false;
+                    firstRoad=null;
+                    try{
+                        ClientCommunicatorFascadeSettlersOfCatan.getSingleton().roadBuilding(roadBuilding);
+                    }catch(Exception e){}
+                    
+                }
+            }
         } else {
             if (gm.buildRoad(edgeLoc)) {
                 CatanColor color = CatanColor
@@ -241,22 +260,6 @@ public class MapController extends Controller implements IMapController {
                     ClientCommunicatorFascadeSettlersOfCatan.getSingleton().buildRoad(br);
                 } catch (Exception e) {
                     e.printStackTrace();
-                }
-            }
-            if(playedRoadBuilding){
-                if(!placedFirstRoadBuildingRoad){
-                    firstRoad=edgeLoc;
-                    placedFirstRoadBuildingRoad=true;
-                }else{
-                    Road_Building roadBuilding = new Road_Building(currentPlayer);
-                    roadBuilding.setSpot1(firstRoad);
-                    roadBuilding.setSpot2(edgeLoc);
-                    placedFirstRoadBuildingRoad=false;
-                    firstRoad=null;
-                    try{
-                        ClientCommunicatorFascadeSettlersOfCatan.getSingleton().roadBuilding(roadBuilding);
-                    }catch(Exception e){}
-                    
                 }
             }
         }
@@ -399,17 +402,18 @@ public class MapController extends Controller implements IMapController {
 
     public void playSoldierCard() {
         startMove(PieceType.ROBBER, true, true);
+        playedSoldier = true;
     }
 
     public void playRoadBuildingCard() {
         GameManager gm = ClientCommunicator.getSingleton().getGameManager();
         this.isFree = true;
         int currentPlayerIndex = gm.getGame().getTurnTracker().getCurrentTurn();
+        playedRoadBuilding=true;
         if (gm.getResourceManager().getGameBanks().get(currentPlayerIndex).getRoads() > 0) {
             getView().startDrop(PieceType.ROAD,
-                    CatanColor.valueOf(gm.getGame().getPlayers().get(currentPlayerIndex).getColor()), false);
+                    CatanColor.valueOf(gm.getGame().getPlayers().get(currentPlayerIndex).getColor().toUpperCase()), false);
         }
-        playedRoadBuilding=true;
         
     }
 
@@ -437,13 +441,22 @@ public class MapController extends Controller implements IMapController {
             }
         }
 
-        RobPlayer rp = new RobPlayer();
-        rp.setPlayerIndex(playerIndex);
-        rp.setType("robPlayer");
-        rp.setLocation(newRobberLocation);
-        rp.setVictimIndex(victimIndex);
         try {
-            ClientCommunicatorFascadeSettlersOfCatan.getSingleton().robPlayer(rp);
+            if(playedSoldier) {
+                gm.useSoldier();
+                Soldier s = new Soldier(playerIndex);
+                s.setType("Soldier");
+                s.setVicitmIndex(victimIndex);
+                s.setLocation(newRobberLocation);
+                ClientCommunicatorFascadeSettlersOfCatan.getSingleton().soldier(s);
+            } else {
+                RobPlayer rp = new RobPlayer();
+                rp.setPlayerIndex(playerIndex);
+                rp.setType("robPlayer");
+                rp.setLocation(newRobberLocation);
+                rp.setVictimIndex(victimIndex);
+                ClientCommunicatorFascadeSettlersOfCatan.getSingleton().robPlayer(rp);
+            }
         } catch (Exception e) {
         	e.printStackTrace();
         }
