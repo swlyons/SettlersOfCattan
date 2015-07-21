@@ -7,6 +7,7 @@ import shared.locations.*;
 import client.base.*;
 import client.data.*;
 import client.managers.GameManager;
+import client.proxy.BuildCity;
 import client.proxy.BuildRoad;
 import client.proxy.BuildSettlement;
 import client.proxy.RobPlayer;
@@ -270,10 +271,25 @@ public class MapController extends Controller implements IMapController {
     public void placeCity(VertexLocation vertLoc) {
         GameManager gm = ClientCommunicator.getSingleton().getGameManager();
         Integer currentPlayer = gm.getGame().getTurnTracker().getCurrentTurn();
+        BuildCity build = new BuildCity(currentPlayer);
+        SettlementLocation settle = new SettlementLocation();
+        settle.setDirection(vertLoc.getDir());
+        settle.setX(vertLoc.getHexLoc().getX());
+        settle.setY(vertLoc.getHexLoc().getY());
+
         if (gm.buildStructure(PieceType.CITY, vertLoc)) {
             CatanColor color = CatanColor
                     .valueOf(gm.getGame().getPlayers().get(currentPlayer).getColor().toUpperCase());
             getView().placeCity(vertLoc, color);
+            build.setType("buildCity");
+            build.setPlayerIndex(currentPlayer);
+            build.setVertexLocation(settle);
+            try {
+                ClientCommunicatorFascadeSettlersOfCatan.getSingleton().buildCity(build);
+                getView().placeCity(vertLoc, color);
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+            }
         }
     }
 
