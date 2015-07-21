@@ -1,18 +1,18 @@
 package client.managers;
 
-import client.data.Bank;
-import client.data.DevCardList;
-import client.data.Edge;
-import client.data.Hex;
-import client.data.Location;
-import client.data.Port;
-import client.data.ResourceList;
-import client.data.Map;
-import client.data.VertexObject;
+import shared.data.Bank;
+import shared.data.DevCardList;
+import shared.data.Edge;
+import shared.data.Hex;
+import shared.data.Location;
+import shared.data.Port;
+import shared.data.ResourceList;
+import shared.data.Map;
+import shared.data.VertexObject;
 import javafx.geometry.VerticalDirection;
-import client.data.EdgeValue;
-import client.data.GameInfo;
-import client.data.PlayerInfo;
+import shared.data.EdgeValue;
+import shared.data.GameInfo;
+import shared.data.PlayerInfo;
 
 import java.util.List;
 import java.util.ArrayList;
@@ -109,9 +109,9 @@ public class GameManager {
             for (VertexObject settlement : map.getSettlements()) {
                 Location settlementLocation = null;
                 for (Location location : locationManager.getUnsettledLocations()) {
-                	if(locationManager.getSettledEdges().size() == 8) {
-                		location.setWhoCanBuild(new HashSet<Integer>());
-                	}
+                    if (locationManager.getSettledEdges().size() == 8) {
+                        location.setWhoCanBuild(new HashSet<Integer>());
+                    }
                     if (location.getNormalizedLocation().equals(settlement.getDirection())) {
                         location.setIsCity(false);
                         location.getWhoCanBuild().add(settlement.getOwner());

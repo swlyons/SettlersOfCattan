@@ -1,12 +1,13 @@
 package client.join;
 
+import shared.data.PlayerInfo;
+import shared.data.GameInfo;
 import java.awt.*;
 import java.awt.event.*;
 
 import javax.swing.*;
 
 import client.base.*;
-import client.data.*;
 
 /**
  * Implementation for the join game view, which lets the user select a game to

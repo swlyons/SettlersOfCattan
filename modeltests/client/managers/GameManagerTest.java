@@ -5,7 +5,14 @@
  */
 package client.managers;
 
-import client.data.*;
+import shared.data.Hex;
+import shared.data.Bank;
+import shared.data.GameInfo;
+import shared.data.Port;
+import shared.data.ResourceList;
+import shared.data.Edge;
+import shared.data.Location;
+import shared.data.DevCardList;
 import com.google.gson.GsonBuilder;
 
 import shared.locations.*;
@@ -875,7 +882,7 @@ public class GameManagerTest {
 				.getSoldiers();
 		int heldBefore = target.getResourceManager().getGameBanks().get(0)
 				.getDevelopmentCards().getSoldier();
-		target.useSoldier(new HexLocation(0, 0));
+		target.useSoldier();
 		int playedAfter = target.getResourceManager().getGameBanks().get(0)
 				.getSoldiers();
 		int heldAfter = target.getResourceManager().getGameBanks().get(0)

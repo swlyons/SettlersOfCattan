@@ -4,9 +4,9 @@ import java.util.*;
 import java.util.List;
 
 import client.base.*;
-import client.data.GameInfo;
-import client.data.MessageLine;
-import client.data.Player;
+import shared.data.GameInfo;
+import shared.data.MessageLine;
+import shared.data.Player;
 import shared.definitions.*;
 
 /**

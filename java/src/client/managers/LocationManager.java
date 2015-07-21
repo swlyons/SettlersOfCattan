@@ -1,8 +1,8 @@
 package client.managers;
 
-import client.data.Edge;
-import client.data.Location;
-import client.data.Port;
+import shared.data.Edge;
+import shared.data.Location;
+import shared.data.Port;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.HashSet;

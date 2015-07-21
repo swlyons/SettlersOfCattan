@@ -9,15 +9,15 @@ import client.catan.CatanPanel;
 import client.catan.GameStatePanel;
 import client.communication.ChatView;
 import java.util.TimerTask;
-import client.data.GameInfo;
+import shared.data.GameInfo;
 import client.managers.GameManager;
 import client.communication.ClientCommunicator;
 import client.communication.ClientCommunicatorFascadeSettlersOfCatan;
 import client.communication.GameHistoryView;
 import client.communication.LogEntry;
-import client.data.MessageLine;
-import client.data.PlayerInfo;
-import client.data.ResourceList;
+import shared.data.MessageLine;
+import shared.data.PlayerInfo;
+import shared.data.ResourceList;
 import client.discard.DiscardController;
 import client.domestic.DomesticTradeController;
 import client.points.PointsController;
@@ -49,7 +49,7 @@ public class MapPoller extends TimerTask {
 
     public MapPoller() {
         super();
-        discardedOnce=false;
+        discardedOnce = false;
         this.initializedPlayers = false;
         this.doneOnce = false;
         this.seenTrade = false;
@@ -150,19 +150,19 @@ public class MapPoller extends TimerTask {
                 /* End Resource Bar Update */
                 DiscardController dis = catanPanel.getDiscardController();
 
-                if(doneOnce && gameInformation.getTurnTracker().getCurrentTurn() == playerIndex  && rollController.getClickedOk() ){
-                    if(status.equals("Discarding")&&!gameInformation.getPlayers().get(playerIndex).isDiscarded() && gameManager.getResourceManager() 
-                                .getGameBanks().get(playerIndex).getResourcesCards().getTotalResources() > 7&&!discardedOnce) {
+                if (doneOnce && gameInformation.getTurnTracker().getCurrentTurn() == playerIndex && rollController.getClickedOk()) {
+                    if (status.equals("Discarding") && !gameInformation.getPlayers().get(playerIndex).isDiscarded() && gameManager.getResourceManager()
+                            .getGameBanks().get(playerIndex).getResourcesCards().getTotalResources() > 7 && !discardedOnce) {
                         if (!dis.getDiscardView().isModalShowing()) {
                             dis.initFromModel();
                             dis.getDiscardView().showModal();
-                            discardedOnce=true;
+                            discardedOnce = true;
                         }
                     }
                     if (status.equals("Robbing")) {
                         catanPanel.getMidPanel().getMapController().startMove(PieceType.ROBBER, true, true);
                         rollController.setClickedOk(false);
-                        discardedOnce=false;
+                        discardedOnce = false;
                     }
                 }
 
@@ -362,7 +362,7 @@ public class MapPoller extends TimerTask {
                 /* End Game History View Update */
 
             } catch (Exception e) {
-            	e.printStackTrace();
+                e.printStackTrace();
             }
 
         }

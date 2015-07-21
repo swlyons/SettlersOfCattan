@@ -9,12 +9,12 @@ import client.ClientException;
 import client.base.Controller;
 import client.communication.ClientCommunicator;
 import client.communication.ClientCommunicatorFascadeSettlersOfCatan;
-import client.data.GameInfo;
-import client.data.Location;
+import shared.data.GameInfo;
+import shared.data.Location;
 import client.managers.GameManager;
 import client.map.MapController;
 import client.map.MapView;
-import client.proxy.FinishMove;
+import shared.model.FinishMove;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import shared.definitions.PieceType;
@@ -44,7 +44,7 @@ public class FirstRoundState extends State {
                 gameInformation = ClientCommunicatorFascadeSettlersOfCatan.getSingleton()
                         .getGameModel(version + "");
             } catch (ClientException ex) {
-            	ex.printStackTrace();
+                ex.printStackTrace();
                 Logger.getLogger(FirstRoundState.class.getName()).log(Level.SEVERE, null, ex);
             }
 
@@ -89,7 +89,7 @@ public class FirstRoundState extends State {
                 try {
                     gameManager.initializeGame(ClientCommunicatorFascadeSettlersOfCatan.getSingleton().finishMove(fm));
                 } catch (ClientException ex) {
-                	ex.printStackTrace();
+                    ex.printStackTrace();
                     Logger.getLogger(FirstRoundState.class.getName()).log(Level.SEVERE, null, ex);
                 }
                 mapController.setEndTurn(false);

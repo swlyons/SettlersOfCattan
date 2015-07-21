@@ -5,33 +5,32 @@
  */
 package client.communication;
 
-import client.proxy.JoinGameRequest;
-import client.proxy.LoadGameRequest;
-import client.proxy.CreateGameRequest;
-import client.proxy.SaveGameRequest;
+import shared.model.JoinGameRequest;
+import shared.model.LoadGameRequest;
+import shared.model.CreateGameRequest;
+import shared.model.SaveGameRequest;
 import client.ClientException;
-import client.data.User;
-import client.data.Game;
-import client.data.GameInfo;
-import client.proxy.AcceptTrade;
-import client.proxy.AddAIRequest;
-import client.proxy.BuildCity;
-import client.proxy.BuildRoad;
-import client.proxy.BuildSettlement;
-import client.proxy.BuyDevCard;
-import client.proxy.Command;
-import client.proxy.DiscardCards;
-import client.proxy.FinishMove;
-import client.proxy.MaritimeTrade;
-import client.proxy.Monopoly;
-import client.proxy.Monument;
-import client.proxy.OfferTrade;
-import client.proxy.Road_Building;
-import client.proxy.RobPlayer;
-import client.proxy.RollNumber;
-import client.proxy.SendChat;
-import client.proxy.Soldier;
-import client.proxy.Year_Of_Plenty;
+import shared.data.User;
+import shared.data.GameInfo;
+import shared.model.AcceptTrade;
+import shared.model.AddAIRequest;
+import shared.model.BuildCity;
+import shared.model.BuildRoad;
+import shared.model.BuildSettlement;
+import shared.model.BuyDevCard;
+import shared.model.Command;
+import shared.model.DiscardCards;
+import shared.model.FinishMove;
+import shared.model.MaritimeTrade;
+import shared.model.Monopoly;
+import shared.model.Monument;
+import shared.model.OfferTrade;
+import shared.model.Road_Building;
+import shared.model.RobPlayer;
+import shared.model.RollNumber;
+import shared.model.SendChat;
+import shared.model.Soldier;
+import shared.model.Year_Of_Plenty;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -58,6 +57,7 @@ public class ClientCommunicatorFascadeSettlersOfCatan {
     }
 
     public boolean login(User credentials) throws ClientException {
+        System.out.println(ClientCommunicator.getSingleton().getSERVER_HOST());
         return (ClientCommunicator
                 .getSingleton()
                 .doPost(LOGIN_USER, credentials, -1).getResponseBody()).equals("Success");

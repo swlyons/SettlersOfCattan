@@ -1,7 +1,7 @@
 package client.join;
 
+import shared.data.GameInfo;
 import client.base.*;
-import client.data.*;
 import shared.definitions.*;
 
 /**

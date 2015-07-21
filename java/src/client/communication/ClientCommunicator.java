@@ -6,11 +6,9 @@
 package client.communication;
 
 import client.ClientException;
-import client.data.Game;
-import client.data.GameInfo;
+import shared.data.Game;
+import shared.data.GameInfo;
 import client.managers.GameManager;
-import client.proxy.BuyDevCard;
-import client.proxy.Command;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;

@@ -1,7 +1,7 @@
 package client.join;
 
 import client.base.*;
-import client.proxy.AddAIRequest;
+import shared.model.AddAIRequest;
 import client.communication.ClientCommunicatorFascadeSettlersOfCatan;
 import java.util.ArrayList;
 
@@ -34,7 +34,7 @@ public class PlayerWaitingController extends Controller implements IPlayerWaitin
             getView().setAIChoices(aiTypes2);
 
         } catch (Exception e) {
-        	e.printStackTrace();
+            e.printStackTrace();
         }
     }
 

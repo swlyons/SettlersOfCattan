@@ -1,14 +1,15 @@
 package client.join;
 
+import shared.data.PlayerInfo;
+import shared.data.GameInfo;
 import client.ClientException;
 import shared.definitions.CatanColor;
 import client.base.*;
 import client.communication.ClientCommunicator;
 import client.communication.ClientCommunicatorFascadeSettlersOfCatan;
-import client.data.*;
 import client.misc.*;
-import client.proxy.CreateGameRequest;
-import client.proxy.JoinGameRequest;
+import shared.model.CreateGameRequest;
+import shared.model.JoinGameRequest;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -184,7 +185,7 @@ public class JoinGameController extends Controller implements IJoinGameControlle
             getNewGameView().setUseRandomPorts(false);
             getNewGameView().setTitle("");
         } catch (Exception e) {
-        	e.printStackTrace();
+            e.printStackTrace();
         } finally {
             getNewGameView().closeModal();
         }
@@ -199,7 +200,7 @@ public class JoinGameController extends Controller implements IJoinGameControlle
         try {
             activeGames = ClientCommunicatorFascadeSettlersOfCatan.getSingleton().listGames();
         } catch (ClientException ex) {
-        	ex.printStackTrace();
+            ex.printStackTrace();
             Logger.getLogger(JoinGameController.class.getName()).log(Level.SEVERE, null, ex);
         }
         GameInfo[] games = new GameInfo[activeGames.size()];
@@ -245,7 +246,7 @@ public class JoinGameController extends Controller implements IJoinGameControlle
                 joinAction.execute();
             }
         } catch (ClientException ex) {
-        	ex.printStackTrace();
+            ex.printStackTrace();
             Logger.getLogger(JoinGameController.class.getName()).log(Level.SEVERE, null, ex);
         }
 

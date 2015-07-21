@@ -9,7 +9,7 @@ import client.ClientException;
 import client.base.Controller;
 import client.communication.ClientCommunicator;
 import client.communication.ClientCommunicatorFascadeSettlersOfCatan;
-import client.data.GameInfo;
+import shared.data.GameInfo;
 import client.managers.GameManager;
 import client.map.MapController;
 import java.util.logging.Level;
@@ -31,7 +31,7 @@ public class SetupState extends State {
         try {
             gameInformation = ClientCommunicatorFascadeSettlersOfCatan.getSingleton().getGameModel(-1 + "");
         } catch (ClientException ex) {
-        	ex.printStackTrace();
+            ex.printStackTrace();
             Logger.getLogger(SetupState.class.getName()).log(Level.SEVERE, null, ex);
         }
 

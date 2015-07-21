@@ -2,7 +2,7 @@ package client.managers;
 
 import client.ClientException;
 import client.communication.ClientCommunicatorFascadeSettlersOfCatan;
-import client.data.User;
+import shared.data.User;
 
 public class UserManager {
 

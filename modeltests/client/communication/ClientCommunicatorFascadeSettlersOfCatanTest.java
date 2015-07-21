@@ -5,24 +5,24 @@
  */
 package client.communication;
 
-import client.proxy.LoadGameRequest;
-import client.proxy.JoinGameRequest;
-import client.proxy.CreateGameRequest;
-import client.proxy.SaveGameRequest;
+import shared.model.LoadGameRequest;
+import shared.model.JoinGameRequest;
+import shared.model.CreateGameRequest;
+import shared.model.SaveGameRequest;
 import client.communication.ClientCommunicator;
-import client.data.Game;
-import client.data.GameInfo;
-import client.data.SettlementLocation;
-import client.data.User;
-import client.proxy.BuildCity;
-import client.proxy.BuyDevCard;
-import client.proxy.Command;
-import client.proxy.FinishMove;
-import client.proxy.Monopoly;
-import client.proxy.Road_Building;
-import client.proxy.RollNumber;
-import client.proxy.SendChat;
-import client.proxy.Year_Of_Plenty;
+import shared.data.Game;
+import shared.data.GameInfo;
+import shared.data.SettlementLocation;
+import shared.data.User;
+import shared.model.BuildCity;
+import shared.model.BuyDevCard;
+import shared.model.Command;
+import shared.model.FinishMove;
+import shared.model.Monopoly;
+import shared.model.Road_Building;
+import shared.model.RollNumber;
+import shared.model.SendChat;
+import shared.model.Year_Of_Plenty;
 
 import java.util.ArrayList;
 

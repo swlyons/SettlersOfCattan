@@ -3,8 +3,8 @@ package client.discard;
 import shared.definitions.*;
 import client.base.*;
 import client.misc.*;
-import client.data.ResourceList;
-import client.proxy.DiscardCards;
+import shared.data.ResourceList;
+import shared.model.DiscardCards;
 import client.communication.ClientCommunicatorFascadeSettlersOfCatan;
 import client.communication.ClientCommunicator;
 import client.managers.GameManager;
@@ -99,7 +99,7 @@ public class DiscardController extends Controller implements IDiscardController 
 
     @Override
     public void increaseAmount(ResourceType resource) {
-        
+
         resources.add(resource, 1);
         GameManager gm = ClientCommunicator.getSingleton().getGameManager();
         Integer playerId = ClientCommunicator.getSingleton().getPlayerId();

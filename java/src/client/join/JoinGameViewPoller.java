@@ -8,8 +8,8 @@ package client.join;
 import client.ClientException;
 import client.communication.ClientCommunicator;
 import client.communication.ClientCommunicatorFascadeSettlersOfCatan;
-import client.data.GameInfo;
-import client.data.PlayerInfo;
+import shared.data.GameInfo;
+import shared.data.PlayerInfo;
 import java.util.ArrayList;
 import java.util.TimerTask;
 import java.util.logging.Level;
@@ -48,7 +48,7 @@ public class JoinGameViewPoller extends TimerTask {
 
             //
         } catch (ClientException ex) {
-        	ex.printStackTrace();
+            ex.printStackTrace();
             Logger.getLogger(JoinGameViewPoller.class.getName()).log(Level.SEVERE, null, ex);
         }
         GameInfo[] games = new GameInfo[activeGames.size()];
