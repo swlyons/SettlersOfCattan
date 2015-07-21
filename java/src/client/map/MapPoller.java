@@ -362,6 +362,7 @@ public class MapPoller extends TimerTask {
                 /* End Game History View Update */
 
             } catch (Exception e) {
+            	e.printStackTrace();
             }
 
         }

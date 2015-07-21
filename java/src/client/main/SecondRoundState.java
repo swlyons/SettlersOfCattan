@@ -44,17 +44,21 @@ public class SecondRoundState extends State {
                 gameInformation = ClientCommunicatorFascadeSettlersOfCatan.getSingleton()
                         .getGameModel(0 + "");
             } catch (ClientException ex) {
+                ex.printStackTrace();
                 Logger.getLogger(FirstRoundState.class.getName()).log(Level.SEVERE, null, ex);
             }
 
             gameManager.initializeGame(gameInformation);
             version = gameInformation.getVersion();
+
             if (gameInformation.getTurnTracker().getStatus().equals("FirstRound")) {
                 try {
                     Thread.sleep(3000);
-                } catch (Exception e) {
-                } finally {
                     continue;
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    continue;
+
                 }
             }
             status = gameInformation.getTurnTracker().getStatus();

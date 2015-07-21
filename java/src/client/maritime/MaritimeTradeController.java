@@ -72,8 +72,29 @@ public class MaritimeTradeController extends Controller implements IMaritimeTrad
                         default:
                             break;
                     }
+<<<<<<< HEAD
                 } else {
                     hasTradeForThreePort = true;
+=======
+                    
+                    
+                    gm.getResourceManager().transferResourceCard(playerIndex, 4, giveItems);
+                    gm.getResourceManager().transferResourceCard(4, playerIndex, getItem);
+                    
+                    MaritimeTrade trade = new MaritimeTrade();
+                    trade.setOutputResource(getResource);
+                    trade.setInputResource(giveResource);
+                    trade.setRatio(amount);
+                    trade.setPlayerIndex(playerIndex);
+                    trade.setType("maritimeTrade");                    
+                    ClientCommunicatorFascadeSettlersOfCatan.getSingleton().maritimeTrade(trade);
+
+                }catch(Exception e){
+                	e.printStackTrace();
+                }finally{
+                    getTradeOverlay().reset();
+                    getTradeOverlay().closeModal();
+>>>>>>> 904560936bc1cd812f56be8d74875c54765b9beb
                 }
             }
 

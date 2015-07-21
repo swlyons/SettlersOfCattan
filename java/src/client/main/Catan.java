@@ -44,7 +44,7 @@ public class Catan extends JFrame {
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception e) {
-            e.printStackTrace();
+            e.printStackTrace();;
         }
 
         SwingUtilities.invokeLater(new Runnable() {

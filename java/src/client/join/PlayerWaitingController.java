@@ -34,6 +34,7 @@ public class PlayerWaitingController extends Controller implements IPlayerWaitin
             getView().setAIChoices(aiTypes2);
 
         } catch (Exception e) {
+        	e.printStackTrace();
         }
     }
 

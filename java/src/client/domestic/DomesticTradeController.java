@@ -271,6 +271,7 @@ public class DomesticTradeController extends Controller implements IDomesticTrad
             getWaitOverlay().setMessage("Waiting for Trade to Go Through");
             waitingForOffer = true;
         } catch (Exception e) {
+            e.printStackTrace();
             getTradeOverlay().reset();
             getTradeOverlay().closeModal();
         }

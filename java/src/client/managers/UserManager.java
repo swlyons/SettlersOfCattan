@@ -25,6 +25,7 @@ public class UserManager {
         } else if (!validatePasswordsMatch(password, passwordValidate)) {
             return false;
         } else {
+<<<<<<< HEAD
             try {
                 User credentials = new User(username, password);
                 boolean success = server.register(credentials);
@@ -35,6 +36,19 @@ public class UserManager {
             } catch (ClientException e) {
                 return false;
             }
+=======
+			try {
+	            User credentials = new User(username, password);
+	            boolean success = server.register(credentials);
+	            if (success) {
+	            	success = server.login(credentials);
+	            }
+	            return success;
+			} catch (ClientException e) {
+            	e.printStackTrace();
+				return false;
+			}
+>>>>>>> 904560936bc1cd812f56be8d74875c54765b9beb
         }
     }
 
@@ -50,6 +64,7 @@ public class UserManager {
         if (!validateUsername(username) || !validatePassword(password)) {
             return false;
         } else {
+<<<<<<< HEAD
             try {
                 User credentials = new User(username, password);
                 boolean success = server.login(credentials);
@@ -57,6 +72,16 @@ public class UserManager {
             } catch (ClientException e) {
                 return false;
             }
+=======
+        	try {
+	            User credentials = new User(username, password);
+	            boolean success = server.login(credentials);
+	            return success;
+			} catch (ClientException e) {
+            	e.printStackTrace();
+				return false;
+			}
+>>>>>>> 904560936bc1cd812f56be8d74875c54765b9beb
         }
     }
 

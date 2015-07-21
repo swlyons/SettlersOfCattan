@@ -10,7 +10,6 @@ import javax.swing.JPanel;
 import shared.definitions.ResourceType;
 import client.discard.DiscardController;
 import client.discard.DiscardView;
-import client.map.MapPoller;
 import client.misc.WaitView;
 import client.roll.RollController;
 import client.roll.RollResultView;
