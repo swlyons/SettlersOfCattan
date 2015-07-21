@@ -99,6 +99,7 @@ public class DiscardController extends Controller implements IDiscardController 
 
     @Override
     public void increaseAmount(ResourceType resource) {
+        
         resources.add(resource, 1);
         GameManager gm = ClientCommunicator.getSingleton().getGameManager();
         Integer playerId = ClientCommunicator.getSingleton().getPlayerId();
@@ -111,43 +112,43 @@ public class DiscardController extends Controller implements IDiscardController 
         }
         ResourceList resources2 = gm.getResourceManager().getGameBanks().get(playerIndex).getResourcesCards();
 
-        boolean moreThanZero;
-        moreThanZero = false;
+        boolean increaseAble;
+        increaseAble = false;
         switch (resource) {
             case brick:
                 if (0 < resources2.getBrick() - resources.getBrick()) {
-                    moreThanZero = true;
+                    increaseAble = true;
                 }
                 getDiscardView().setResourceDiscardAmount(resource, resources.getBrick());
                 break;
             case ore:
                 if (0 < resources2.getOre() - resources.getOre()) {
-                    moreThanZero = true;
+                    increaseAble = true;
                 }
                 getDiscardView().setResourceDiscardAmount(resource, resources.getOre());
                 break;
             case sheep:
                 if (0 < resources2.getSheep() - resources.getSheep()) {
-                    moreThanZero = true;
+                    increaseAble = true;
                 }
                 getDiscardView().setResourceDiscardAmount(resource, resources.getSheep());
                 break;
             case wheat:
                 if (0 < resources2.getWheat() - resources.getWheat()) {
-                    moreThanZero = true;
+                    increaseAble = true;
                 }
                 getDiscardView().setResourceDiscardAmount(resource, resources.getWheat());
                 break;
             case wood:
                 if (0 < resources2.getWood() - resources.getWood()) {
-                    moreThanZero = true;
+                    increaseAble = true;
                 }
                 getDiscardView().setResourceDiscardAmount(resource, resources.getWood());
                 break;
             default:
                 break;
         }
-        getDiscardView().setResourceAmountChangeEnabled(resource, moreThanZero, true);
+        getDiscardView().setResourceAmountChangeEnabled(resource, increaseAble, true);
         calculateIfAbleToDiscard();
 
     }

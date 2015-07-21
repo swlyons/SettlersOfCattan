@@ -20,7 +20,8 @@ public class RollResultView extends OverlayView implements IRollResultView {
 	private final int LABEL_TEXT_SIZE = 28;
 	private final int BUTTON_TEXT_SIZE = 28;
 	private final int BORDER_WIDTH = 10;
-
+        private final int LUCKY = 7;
+        
 	private JLabel titleLabel;
 	private JButton okayButton;
 	//private JPanel buttonPanel;
@@ -83,7 +84,7 @@ public class RollResultView extends OverlayView implements IRollResultView {
 			if (e.getSource() == okayButton) {
                             closeModal();
                             
-                            if(rolledValue==7){
+                            if(rolledValue==LUCKY){
                             getController().setClickedOk(true);
                             }
                         }
@@ -99,6 +100,9 @@ private int rolledValue;
 	@Override
 	public void setRollValue(int value) {
             rolledValue = value;
+            if(rolledValue == LUCKY){
+                ((IRollView)getController().getView()).getRollTimer().stop();
+            }
             String rollText = String.format("You rolled a %d.", value);
             rollLabel.setText(rollText);
 	}
