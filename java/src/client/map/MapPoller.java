@@ -145,10 +145,19 @@ public class MapPoller extends TimerTask {
                     }
                 }
                 /* End Resource Bar Update */
-                
+                DiscardController dis = catanPanel.getDiscardController();
                 if(doneOnce && gameInformation.getTurnTracker().getCurrentTurn() == playerIndex  && rollController.getClickedOk() ){
-                    catanPanel.getMidPanel().getMapController().startMove(PieceType.ROBBER, true, true);
-                    rollController.setClickedOk(false);
+                    if(status.equals("Discarding")&&!gameInformation.getPlayers().get(playerIndex).isDiscarded() && gameManager.getResourceManager() 
+                                .getGameBanks().get(playerIndex).getResourcesCards().getTotalResources() > 7) {
+                        if (!dis.getDiscardView().isModalShowing()) {
+                            dis.initFromModel();
+                            dis.getDiscardView().showModal();
+                        }
+                    }
+                    if(status.equals("Robbing")){
+                        catanPanel.getMidPanel().getMapController().startMove(PieceType.ROBBER, true, true);
+                        rollController.setClickedOk(false);
+                    }
                 }
 
                 if (!doneOnce || gameInformation.getTurnTracker().getCurrentTurn() != playerIndex) {
@@ -160,7 +169,7 @@ public class MapPoller extends TimerTask {
                         
                         if (status.equals("Discarding") && !gameInformation.getPlayers().get(playerIndex).isDiscarded() && gameManager.getResourceManager()
                                 .getGameBanks().get(playerIndex).getResourcesCards().getTotalResources() > 7) {
-                            DiscardController dis = catanPanel.getDiscardController();
+                            
                             if (!dis.getDiscardView().isModalShowing()) {
                                 dis.initFromModel();
                                 dis.getDiscardView().showModal();
@@ -171,7 +180,6 @@ public class MapPoller extends TimerTask {
                         /* Begin Discard Window Update */
                         if (status.equals("Discarding") && !gameInformation.getPlayers().get(playerIndex).isDiscarded() && gameManager.getResourceManager() 
                                 .getGameBanks().get(playerIndex).getResourcesCards().getTotalResources() > 7) {
-                            DiscardController dis = catanPanel.getDiscardController();
                             if (!dis.getDiscardView().isModalShowing()) {
                                 dis.initFromModel();
                                 dis.getDiscardView().showModal();
