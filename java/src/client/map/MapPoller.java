@@ -7,7 +7,6 @@ package client.map;
 
 import client.catan.CatanPanel;
 import client.catan.GameStatePanel;
-import client.catan.TradePanel;
 import client.communication.ChatView;
 import java.util.TimerTask;
 import client.data.GameInfo;
@@ -29,7 +28,6 @@ import client.turntracker.TurnTrackerView;
 import java.util.ArrayList;
 import java.util.Date;
 import shared.definitions.CatanColor;
-import shared.definitions.PieceType;
 
 /**
  *
@@ -230,6 +228,7 @@ public class MapPoller extends TimerTask {
 
 					if (!rollController.getRollView().isModalShowing()) {
 						rollController.getRollView().showModal();
+                                                rollController.getRollView().getRollTimer().start();
 						rollController.setClickedOk(false);
 					}
 
