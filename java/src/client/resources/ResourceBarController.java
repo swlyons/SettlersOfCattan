@@ -73,8 +73,8 @@ public class ResourceBarController extends Controller implements IResourceBarCon
     public boolean canPlayCard() {
         GameManager gm = ClientCommunicator.getSingleton().getGameManager();
         Integer playerId = ClientCommunicator.getSingleton().getPlayerId();
-        boolean canBuild = gm.canPlayCard() && gm.getGame().getTurnTracker().getCurrentTurn() == gm.getPlayerIndex(playerId);
-        return canBuild;
+//        boolean canBuild = gm.canPlayCard() && gm.getGame().getTurnTracker().getCurrentTurn() == gm.getPlayerIndex(playerId);
+        return gm.getGame().getTurnTracker().getCurrentTurn() == gm.getPlayerIndex(playerId);
     }
 
     @Override

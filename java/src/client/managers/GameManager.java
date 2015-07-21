@@ -825,9 +825,8 @@ public class GameManager {
         return devList.getSoldier() > 0;
     }
 
-    public void useSoldier(HexLocation h) {
+    public void useSoldier() {
         int currentPlayer = game.getTurnTracker().getCurrentTurn();
-        diceIsSevenMoveRobber(h);
         resourceManager.soldierUsed(currentPlayer);
     }
 
