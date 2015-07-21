@@ -3,9 +3,6 @@ package client.managers;
 import client.ClientException;
 import client.communication.ClientCommunicatorFascadeSettlersOfCatan;
 import client.data.User;
-import client.proxy.IServer;
-import client.proxy.MockServer;
-import client.proxy.ServerProxy;
 
 public class UserManager {
 
@@ -25,7 +22,7 @@ public class UserManager {
         } else if (!validatePasswordsMatch(password, passwordValidate)) {
             return false;
         } else {
-<<<<<<< HEAD
+
             try {
                 User credentials = new User(username, password);
                 boolean success = server.register(credentials);
@@ -34,21 +31,9 @@ public class UserManager {
                 }
                 return success;
             } catch (ClientException e) {
+                e.printStackTrace();
                 return false;
             }
-=======
-			try {
-	            User credentials = new User(username, password);
-	            boolean success = server.register(credentials);
-	            if (success) {
-	            	success = server.login(credentials);
-	            }
-	            return success;
-			} catch (ClientException e) {
-            	e.printStackTrace();
-				return false;
-			}
->>>>>>> 904560936bc1cd812f56be8d74875c54765b9beb
         }
     }
 
@@ -64,24 +49,15 @@ public class UserManager {
         if (!validateUsername(username) || !validatePassword(password)) {
             return false;
         } else {
-<<<<<<< HEAD
+
             try {
                 User credentials = new User(username, password);
                 boolean success = server.login(credentials);
                 return success;
             } catch (ClientException e) {
+                e.printStackTrace();
                 return false;
             }
-=======
-        	try {
-	            User credentials = new User(username, password);
-	            boolean success = server.login(credentials);
-	            return success;
-			} catch (ClientException e) {
-            	e.printStackTrace();
-				return false;
-			}
->>>>>>> 904560936bc1cd812f56be8d74875c54765b9beb
         }
     }
 
