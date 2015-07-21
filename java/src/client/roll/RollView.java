@@ -29,6 +29,8 @@ public class RollView extends OverlayView implements IRollView {
     private JLabel imageLabel;
     private JButton rollButton;
     private JPanel buttonPanel;
+    private Timer rollTimer;
+    
 
     public RollView() {
 
@@ -53,6 +55,11 @@ public class RollView extends OverlayView implements IRollView {
 
         rollButton = new JButton("Roll!");
         rollButton.addActionListener(actionListener);
+        
+        //add 5 second timer to roll button
+        rollTimer = new Timer(5000, actionListener);
+        rollTimer.setRepeats(false);
+        
         Font buttonFont = rollButton.getFont();
         buttonFont = buttonFont.deriveFont(buttonFont.getStyle(), BUTTON_TEXT_SIZE);
         rollButton.setFont(buttonFont);
@@ -66,9 +73,13 @@ public class RollView extends OverlayView implements IRollView {
     private ActionListener actionListener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
-
+            
             if (e.getSource() == rollButton) {
-                closeModal();
+                rollTimer.stop();
+                closeModal();     
+                getController().rollDice();
+            }else{
+                closeModal();     
                 getController().rollDice();
             }
         }
@@ -84,5 +95,11 @@ public class RollView extends OverlayView implements IRollView {
     public void setMessage(String message) {
         label.setText(message);
     }
+
+    @Override
+    public Timer getRollTimer() {
+        return rollTimer;
+    }
+    
 
 }

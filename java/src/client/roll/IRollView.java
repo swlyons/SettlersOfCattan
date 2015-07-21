@@ -1,6 +1,7 @@
 package client.roll;
 
 import client.base.*;
+import javax.swing.Timer;
 
 /**
  * Interface for the roll view, which allows the user to roll the dice
@@ -15,6 +16,8 @@ public interface IRollView extends IOverlayView
 	 *            The message to be displayed
 	 */
 	void setMessage(String message);
+        
+        Timer getRollTimer();
 	
 }
 
