@@ -3,15 +3,15 @@ package client.devcards;
 import shared.definitions.DevCardType;
 import shared.definitions.ResourceType;
 import client.base.*;
-import client.proxy.BuyDevCard;
+import shared.model.BuyDevCard;
 import client.communication.ClientCommunicator;
 import client.communication.ClientCommunicatorFascadeSettlersOfCatan;
 import client.managers.GameManager;
-import client.proxy.BuyDevCard;
-import client.proxy.Monopoly;
-import client.proxy.Monument;
-import client.proxy.Soldier;
-import client.proxy.Year_Of_Plenty;
+import shared.model.BuyDevCard;
+import shared.model.Monopoly;
+import shared.model.Monument;
+import shared.model.Soldier;
+import shared.model.Year_Of_Plenty;
 import client.resources.ResourceBarElement;
 
 /**

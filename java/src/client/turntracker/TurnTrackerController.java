@@ -4,7 +4,7 @@ import shared.definitions.CatanColor;
 import client.base.*;
 import client.communication.ClientCommunicator;
 import client.communication.ClientCommunicatorFascadeSettlersOfCatan;
-import client.proxy.FinishMove;
+import shared.model.FinishMove;
 import client.managers.GameManager;
 
 /**

@@ -1,5 +1,6 @@
 package client.join;
 
+import shared.data.PlayerInfo;
 import java.util.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -7,7 +8,6 @@ import java.awt.event.*;
 import javax.swing.*;
 
 import client.base.*;
-import client.data.*;
 import client.utils.*;
 import shared.definitions.CatanColor;
 

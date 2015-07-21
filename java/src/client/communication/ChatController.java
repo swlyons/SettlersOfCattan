@@ -2,11 +2,11 @@ package client.communication;
 
 import client.ClientException;
 import client.base.*;
-import client.data.GameInfo;
-import client.data.MessageLine;
-import client.data.MessageList;
-import client.data.PlayerInfo;
-import client.proxy.SendChat;
+import shared.data.GameInfo;
+import shared.data.MessageLine;
+import shared.data.MessageList;
+import shared.data.PlayerInfo;
+import shared.model.SendChat;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import shared.definitions.CatanColor;

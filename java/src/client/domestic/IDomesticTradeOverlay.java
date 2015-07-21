@@ -1,7 +1,7 @@
 package client.domestic;
 
+import shared.data.PlayerInfo;
 import client.base.*;
-import client.data.*;
 import shared.definitions.*;
 
 /**

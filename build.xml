@@ -143,10 +143,15 @@
             </manifest>
         </jar>
     </target>
-	
+    <!-- ant our-client {-Dhost.arg=<SERVER_HOST>} {-Dport.arg=<SERVER_PORT_NUMBER>} -->
+    <!-- EXAMPLE: ant our-client -Dhost.arg=localhost -Dport.arg=8081 -->
+    <!-- If host and/or port number are omitted, default values are used. -->
+    <!-- EXAMPLE: ant our-client -->
     <target name="our-client" depends="package" description="compiles, packages, and runs the student client">
         <java jar="${java.dist}/catan-client.jar" dir="${java.dist}" fork="yes">
             <sysproperty key="com.sun.management.jmxremote" value=""/>
+            <arg value="${host.arg}"/>
+            <arg value="${port.arg}"/>
             <assertions>
                 <enable/>
             </assertions>
@@ -161,23 +166,7 @@
             </assertions>
         </java>
     </target>
-    <!-- ant client {-Dhost=<SERVER_HOST>} {-Dport=<SERVER_PORT_NUMBER>} -->
-    <!-- EXAMPLE: ant client -Dhost=testserver.cs.byu.edu -Dport=39640 -->
-    <!-- If host and/or port number are omitted, default values are used. -->
-    <!-- EXAMPLE: ant client -->
-    <target name="start-client" depends="compile" description="run client using server on specified host and port">
-        <java classname="client.Client" fork="yes">
-            <classpath>
-                <pathelement location="${java.lib.dir}/gson-2.2.4.jar"/>
-                <pathelement location="${java.build}" />
-            </classpath>
-            <arg value="${host.arg}"/>
-            <arg value="${port.arg}"/>
-            <assertions>
-                <enable/>
-            </assertions>
-        </java>
-    </target>
+    
     <target name="test" depends="compile, start-client">
         <junit>
             <classpath>

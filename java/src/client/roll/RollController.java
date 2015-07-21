@@ -6,8 +6,7 @@ import client.base.*;
 import client.communication.ClientCommunicator;
 import client.communication.ClientCommunicatorFascadeSettlersOfCatan;
 import client.managers.GameManager;
-import client.proxy.FinishMove;
-import client.proxy.RollNumber;
+import shared.model.RollNumber;
 
 /**
  * Implementation for the roll controller

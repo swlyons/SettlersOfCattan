@@ -4,10 +4,10 @@ import shared.definitions.*;
 import client.base.*;
 import client.communication.ClientCommunicator;
 import client.communication.ClientCommunicatorFascadeSettlersOfCatan;
-import client.proxy.MaritimeTrade;
+import shared.model.MaritimeTrade;
 import client.managers.GameManager;
-import client.data.Port;
-import client.data.ResourceList;
+import shared.data.Port;
+import shared.data.ResourceList;
 import java.util.ArrayList;
 import java.util.List;
 

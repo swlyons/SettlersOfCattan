@@ -7,7 +7,8 @@ import client.login.*;
 import client.join.*;
 import client.misc.*;
 import client.base.*;
-import client.data.GameInfo;
+import client.communication.ClientCommunicator;
+import shared.data.GameInfo;
 import client.map.MapController;
 
 /**
@@ -29,7 +30,6 @@ public class Catan extends JFrame {
         this.setContentPane(catanPanel);
 
         display();
-
     }
 
     private void display() {
@@ -41,6 +41,7 @@ public class Catan extends JFrame {
     // Main
     //
     public static void main(final String[] args) {
+
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception e) {
@@ -50,6 +51,12 @@ public class Catan extends JFrame {
         SwingUtilities.invokeLater(new Runnable() {
 
             public void run() {
+                System.out.println(args[0]);
+                // set the host and port for the client to run on
+                ClientCommunicator.getSingleton().setSERVER_HOST(args[0]);
+                ClientCommunicator.getSingleton().setSERVER_PORT(
+                        Integer.parseInt(args[1]));
+                //start catan
                 new Catan();
                 CatanStateMachine catanStateMachine = new CatanStateMachine();
 

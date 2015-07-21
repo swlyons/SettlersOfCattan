@@ -1,18 +1,24 @@
 package client.map;
 
+import shared.data.Edge;
+import shared.data.SettlementLocation;
+import shared.data.Hex;
+import shared.data.RobPlayerInfo;
+import shared.data.XYEdgeLocation;
+import shared.data.Port;
+import shared.data.Location;
 import java.util.*;
 
 import shared.definitions.*;
 import shared.locations.*;
 import client.base.*;
-import client.data.*;
 import client.managers.GameManager;
-import client.proxy.BuildCity;
-import client.proxy.BuildRoad;
-import client.proxy.Road_Building;
-import client.proxy.BuildSettlement;
-import client.proxy.RobPlayer;
-import client.proxy.Soldier;
+import shared.model.BuildCity;
+import shared.model.BuildRoad;
+import shared.model.Road_Building;
+import shared.model.BuildSettlement;
+import shared.model.RobPlayer;
+import shared.model.Soldier;
 import client.communication.ClientCommunicator;
 import client.communication.ClientCommunicatorFascadeSettlersOfCatan;
 

@@ -1,14 +1,15 @@
 package client.join;
 
+import shared.data.PlayerInfo;
+import shared.data.GameInfo;
 import client.ClientException;
 import shared.definitions.CatanColor;
 import client.base.*;
 import client.communication.ClientCommunicator;
 import client.communication.ClientCommunicatorFascadeSettlersOfCatan;
-import client.data.*;
 import client.misc.*;
-import client.proxy.CreateGameRequest;
-import client.proxy.JoinGameRequest;
+import shared.model.CreateGameRequest;
+import shared.model.JoinGameRequest;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;

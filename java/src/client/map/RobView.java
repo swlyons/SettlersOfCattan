@@ -1,5 +1,6 @@
 package client.map;
 
+import shared.data.RobPlayerInfo;
 import java.awt.*;
 import java.awt.event.*;
 
@@ -9,7 +10,6 @@ import java.util.*;
 
 import client.base.*;
 import client.communication.ClientCommunicator;
-import client.data.*;
 import client.managers.GameManager;
 import shared.definitions.CatanColor;
 

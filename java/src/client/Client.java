@@ -6,6 +6,7 @@
 package client;
 
 import client.communication.ClientCommunicator;
+import client.main.Catan;
 import java.awt.EventQueue;
 
 /**
@@ -19,13 +20,14 @@ public class Client {
         // set the host and port for the client to run on
         ClientCommunicator.getSingleton().setSERVER_HOST(args[0]);
         ClientCommunicator.getSingleton().setSERVER_PORT(
-                Integer.parseInt(args[1]));
+                    Integer.parseInt(args[1]));
 
         EventQueue.invokeLater(new Runnable() {
 
             @Override
             public void run() {
                 Client client = new Client();
+                new Catan();
             }
         });
 

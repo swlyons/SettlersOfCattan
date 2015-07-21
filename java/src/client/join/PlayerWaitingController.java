@@ -1,7 +1,7 @@
 package client.join;
 
 import client.base.*;
-import client.proxy.AddAIRequest;
+import shared.model.AddAIRequest;
 import client.communication.ClientCommunicatorFascadeSettlersOfCatan;
 import java.util.ArrayList;
 

@@ -1,6 +1,6 @@
 package client.managers;
 
-import client.data.Hex;
+import shared.data.Hex;
 import java.util.List;
 import java.util.ArrayList;
 import shared.locations.HexLocation;
