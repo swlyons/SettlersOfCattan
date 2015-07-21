@@ -45,9 +45,11 @@ public class MapPoller extends TimerTask {
     private String playerColor;
     private final int MAX_POINTS = 10;
     private boolean initializedPlayers;
+    private boolean discardedOnce;
 
     public MapPoller() {
         super();
+        discardedOnce=false;
         this.initializedPlayers = false;
         this.doneOnce = false;
         this.seenTrade = false;
@@ -147,17 +149,20 @@ public class MapPoller extends TimerTask {
                 }
                 /* End Resource Bar Update */
                 DiscardController dis = catanPanel.getDiscardController();
-                if (doneOnce && gameInformation.getTurnTracker().getCurrentTurn() == playerIndex && rollController.getClickedOk()) {
-                    if (status.equals("Discarding") && !gameInformation.getPlayers().get(playerIndex).isDiscarded() && gameManager.getResourceManager()
-                            .getGameBanks().get(playerIndex).getResourcesCards().getTotalResources() > 7) {
+
+                if(doneOnce && gameInformation.getTurnTracker().getCurrentTurn() == playerIndex  && rollController.getClickedOk() ){
+                    if(status.equals("Discarding")&&!gameInformation.getPlayers().get(playerIndex).isDiscarded() && gameManager.getResourceManager() 
+                                .getGameBanks().get(playerIndex).getResourcesCards().getTotalResources() > 7&&!discardedOnce) {
                         if (!dis.getDiscardView().isModalShowing()) {
                             dis.initFromModel();
                             dis.getDiscardView().showModal();
+                            discardedOnce=true;
                         }
                     }
                     if (status.equals("Robbing")) {
                         catanPanel.getMidPanel().getMapController().startMove(PieceType.ROBBER, true, true);
                         rollController.setClickedOk(false);
+                        discardedOnce=false;
                     }
                 }
 
