@@ -25,9 +25,14 @@ public class MapController extends Controller implements IMapController {
     private boolean endTurn = false;
     private boolean playedRoadBuilding = false;
     private boolean placedFirstRoadBuildingRoad = false;
+    private boolean doneOnce = false;
     private EdgeLocation firstRoad;
     private HexLocation newRobberLocation = null;
+    private HexLocation newRobberLocation2 = null;
     private MapPoller mapPoller = new MapPoller();
+    private ArrayList<Location> settledCities;
+    private ArrayList<Location> settledLocations;
+    private ArrayList<Edge> settledEdges;
 
     public MapController(IMapView view, IRobView robView) {
 
@@ -35,6 +40,9 @@ public class MapController extends Controller implements IMapController {
 
         setRobView(robView);
 
+        settledCities = new ArrayList<Location>();
+        settledLocations = new ArrayList<Location>();
+        settledEdges = new ArrayList<Edge>();
         // initFromModel();
     }
 
@@ -62,46 +70,60 @@ public class MapController extends Controller implements IMapController {
     @Override
     public void initFromModel() {
         GameManager gm = ClientCommunicator.getSingleton().getGameManager();
+        if(!doneOnce){
+            //should only happen once
+            for (int i = 0; i < gm.getMapManager().getHexList().size(); i++) {
+                Hex h = gm.getMapManager().getHexList().get(i);
+                if (h.getResource() == ResourceType.wood) {
+                    getView().addHex(h.getLocation(), HexType.wood);
+                } else if (h.getResource() == ResourceType.brick) {
+                    getView().addHex(h.getLocation(), HexType.brick);
+                } else if (h.getResource() == ResourceType.sheep) {
+                    getView().addHex(h.getLocation(), HexType.sheep);
+                } else if (h.getResource() == ResourceType.ore) {
+                    getView().addHex(h.getLocation(), HexType.ore);
+                } else if (h.getResource() == ResourceType.wheat) {
+                    getView().addHex(h.getLocation(), HexType.wheat);
+                } else {
+                    getView().addHex(h.getLocation(), HexType.desert);
+                }
 
-        //should only happen once
-        for (int i = 0; i < gm.getMapManager().getHexList().size(); i++) {
-            Hex h = gm.getMapManager().getHexList().get(i);
-            if (h.getResource() == ResourceType.wood) {
-                getView().addHex(h.getLocation(), HexType.wood);
-            } else if (h.getResource() == ResourceType.brick) {
-                getView().addHex(h.getLocation(), HexType.brick);
-            } else if (h.getResource() == ResourceType.sheep) {
-                getView().addHex(h.getLocation(), HexType.sheep);
-            } else if (h.getResource() == ResourceType.ore) {
-                getView().addHex(h.getLocation(), HexType.ore);
-            } else if (h.getResource() == ResourceType.wheat) {
-                getView().addHex(h.getLocation(), HexType.wheat);
-            } else {
-                getView().addHex(h.getLocation(), HexType.desert);
-            }
-
-            if ((h.getNumber() >= 2 && h.getNumber() <= 6) || (h.getNumber() >= 8 && h.getNumber() <= 12)) {
-                getView().addNumber(h.getLocation(), h.getNumber());
+                if ((h.getNumber() >= 2 && h.getNumber() <= 6) || (h.getNumber() >= 8 && h.getNumber() <= 12)) {
+                    getView().addNumber(h.getLocation(), h.getNumber());
+                }
             }
         }
-
+        
         for (Edge e : gm.getLocationManager().getSettledEdges()) {
-            getView().placeRoad(e.getEdgeLocation(),
+            if(!settledEdges.contains(e)){
+                settledEdges.add(e);
+                getView().placeRoad(e.getEdgeLocation(),
                     CatanColor.valueOf(gm.getGame().getPlayers().get(e.getOwnerId()).getColor().toUpperCase()));
+            }
         }
 
         for (Location l : gm.getLocationManager().getSettledLocations()) {
             if (l.getIsCity()) {
-                getView().placeCity(l.getNormalizedLocation(),
+                if(!settledCities.contains(l)){
+                    settledCities.add(l);
+                    getView().placeCity(l.getNormalizedLocation(),
                         CatanColor.valueOf(gm.getGame().getPlayers().get(l.getOwnerID()).getColor().toUpperCase()));
+                }
             } else {
-                getView().placeSettlement(l.getNormalizedLocation(),
+                if(!settledLocations.contains(l)){
+                    settledLocations.add(l);
+                    getView().placeSettlement(l.getNormalizedLocation(),
                         CatanColor.valueOf(gm.getGame().getPlayers().get(l.getOwnerID()).getColor().toUpperCase()));
+                }
             }
         }
 
-        getView().placeRobber(gm.getMapManager().getRobberLocation());
-
+        if((newRobberLocation2!=null&&!newRobberLocation2.equals(gm.getMapManager().getRobberLocation()))||!doneOnce){
+            getView().placeRobber(gm.getMapManager().getRobberLocation());
+            newRobberLocation2 = gm.getMapManager().getRobberLocation();
+        }
+        
+        if(!doneOnce){
         // Water tiles are hard coded, sine they never change, ever.
         getView().addHex(new HexLocation(0, 3), HexType.water);
         getView().addHex(new HexLocation(1, 2), HexType.water);
@@ -149,7 +171,8 @@ public class MapController extends Controller implements IMapController {
 
             getView().addPort(new EdgeLocation(location, direction), type);
         }
-
+        }
+        doneOnce=true;
     }
 
     public boolean canPlaceRoad(EdgeLocation edgeLoc) {
