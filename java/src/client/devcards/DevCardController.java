@@ -77,7 +77,7 @@ public class DevCardController extends Controller implements IDevCardController 
                     ClientCommunicatorFascadeSettlersOfCatan.getSingleton().buyDevCard(card);
                     gm.buyDevCard();
 		} catch (Exception e) {
-                    System.out.println(e.getMessage());
+                    e.printStackTrace();
                     //Shouldn't happen
 		}finally{
                     getBuyCardView().closeModal();			                
@@ -131,7 +131,7 @@ public class DevCardController extends Controller implements IDevCardController 
 			gm.useMonopoly(resource);
 			getPlayCardView().closeModal();
 		} catch (Exception e) {
-			System.out.println(e.getMessage());
+			e.printStackTrace();
 			//Shouldn't happen
 		}
 	}
@@ -155,7 +155,7 @@ public class DevCardController extends Controller implements IDevCardController 
 			gm.useMonument();
 			getPlayCardView().closeModal();
 		} catch (Exception e) {
-			System.out.println(e.getMessage());
+			e.printStackTrace();
 			//Shouldn't happen
 		}		
 	}
@@ -215,7 +215,7 @@ public class DevCardController extends Controller implements IDevCardController 
 			gm.useYearOfPlenty(resource1, resource2);
 			getPlayCardView().closeModal();
 		} catch (Exception e) {
-			System.out.println(e.getMessage());
+			e.printStackTrace();
 			//Shouldn't happen
 		}
 	}

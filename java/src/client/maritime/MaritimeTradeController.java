@@ -231,6 +231,7 @@ public class MaritimeTradeController extends Controller implements IMaritimeTrad
                     ClientCommunicatorFascadeSettlersOfCatan.getSingleton().maritimeTrade(trade);
 
                 }catch(Exception e){
+                	e.printStackTrace();
                 }finally{
                     getTradeOverlay().reset();
                     getTradeOverlay().closeModal();

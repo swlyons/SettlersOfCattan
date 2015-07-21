@@ -77,7 +77,9 @@ public class RightPanel extends JPanel {
                             if(resourceController.canBuyCard()){
                                 devCardController.startBuyCard();
                             }
-                        }catch(Exception e){}
+                        }catch(Exception e){
+                        	e.printStackTrace();
+                        }
                     }
                 });
         resourceController.setElementAction(ResourceBarElement.PLAY_CARD,
@@ -89,7 +91,9 @@ public class RightPanel extends JPanel {
                             if(resourceController.canPlayCard()){
                                 devCardController.startPlayCard();
                             }
-                        }catch(Exception e){}
+                        }catch(Exception e){
+                        	e.printStackTrace();                       	
+                        }
                     }
                 });
         resourceView.setController(resourceController);
@@ -127,7 +131,9 @@ public class RightPanel extends JPanel {
                     if(isAllowed){
                         mapController.startMove(pieceType, isFree, allowDisconnected);
                     }
-                }catch(Exception e){}
+                }catch(Exception e){
+                	e.printStackTrace();
+                }
             }
         };
     }

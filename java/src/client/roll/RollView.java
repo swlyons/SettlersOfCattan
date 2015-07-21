@@ -50,6 +50,7 @@ public class RollView extends OverlayView implements IRollView {
             imageLabel = new JLabel(new ImageIcon(smallDiceImg));
             this.add(imageLabel, BorderLayout.CENTER);
         } catch (IOException ex) {
+        	ex.printStackTrace();
             // Handle Exception Here
         }
 
