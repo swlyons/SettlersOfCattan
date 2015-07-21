@@ -8,6 +8,7 @@ import client.base.*;
 import client.data.*;
 import client.managers.GameManager;
 import client.proxy.BuildRoad;
+import client.proxy.Road_Building;
 import client.proxy.BuildSettlement;
 import client.proxy.RobPlayer;
 import client.communication.ClientCommunicator;
@@ -21,6 +22,9 @@ public class MapController extends Controller implements IMapController {
     private IRobView robView;
     private boolean isFree = false;
     private boolean endTurn = false;
+    private boolean playedRoadBuilding = false;
+    private boolean placedFirstRoadBuildingRoad = false;
+    private EdgeLocation firstRoad;
     private HexLocation newRobberLocation = null;
     private MapPoller mapPoller = new MapPoller();
 
@@ -215,6 +219,22 @@ public class MapController extends Controller implements IMapController {
                     System.out.println(e.getMessage());
                 }
             }
+            if(playedRoadBuilding){
+                if(!placedFirstRoadBuildingRoad){
+                    firstRoad=edgeLoc;
+                    placedFirstRoadBuildingRoad=true;
+                }else{
+                    Road_Building roadBuilding = new Road_Building(currentPlayer);
+                    roadBuilding.setSpot1(firstRoad);
+                    roadBuilding.setSpot2(edgeLoc);
+                    placedFirstRoadBuildingRoad=false;
+                    firstRoad=null;
+                    try{
+                        ClientCommunicatorFascadeSettlersOfCatan.getSingleton().roadBuilding(roadBuilding);
+                    }catch(Exception e){}
+                    
+                }
+            }
         }
     }
 
@@ -351,10 +371,8 @@ public class MapController extends Controller implements IMapController {
             getView().startDrop(PieceType.ROAD,
                     CatanColor.valueOf(gm.getGame().getPlayers().get(currentPlayerIndex).getColor()), false);
         }
-        if (gm.getResourceManager().getGameBanks().get(currentPlayerIndex).getRoads() > 0) {
-            getView().startDrop(PieceType.ROAD,
-                    CatanColor.valueOf(gm.getGame().getPlayers().get(currentPlayerIndex).getColor()), false);
-        }
+        playedRoadBuilding=true;
+        
     }
 
     public void robPlayer(RobPlayerInfo victim) {

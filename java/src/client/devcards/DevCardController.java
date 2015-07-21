@@ -3,6 +3,7 @@ package client.devcards;
 import shared.definitions.DevCardType;
 import shared.definitions.ResourceType;
 import client.base.*;
+import client.proxy.BuyDevCard;
 import client.communication.ClientCommunicator;
 import client.communication.ClientCommunicatorFascadeSettlersOfCatan;
 import client.managers.GameManager;
@@ -64,14 +65,23 @@ public class DevCardController extends Controller implements IDevCardController 
 	public void buyCard() {		
 		GameManager gm = ClientCommunicator.getSingleton().getGameManager();
 		Integer playerId = ClientCommunicator.getSingleton().getPlayerId();
+                Integer playerIndex = 4;
+                for(int i=0;i<gm.getGame().getPlayers().size();i++){
+                    if(gm.getGame().getPlayers().get(i).getPlayerID()==playerId){
+                        playerIndex=i;
+                        break;
+                    }
+                }
+                BuyDevCard card = new BuyDevCard(playerIndex);
 		try {
-			ClientCommunicatorFascadeSettlersOfCatan.getSingleton().buyDevCard(new BuyDevCard(gm.getPlayerIndex(playerId)));
-			gm.buyDevCard();
-			getBuyCardView().closeModal();			
+                    ClientCommunicatorFascadeSettlersOfCatan.getSingleton().buyDevCard(card);
+                    gm.buyDevCard();
 		} catch (Exception e) {
-			System.out.println(e.getMessage());
-			//Shouldn't happen
-		}
+                    System.out.println(e.getMessage());
+                    //Shouldn't happen
+		}finally{
+                    getBuyCardView().closeModal();			                
+                }
 	}
 
 	@Override
