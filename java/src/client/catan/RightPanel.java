@@ -3,9 +3,11 @@ package client.catan;
 import javax.swing.*;
 
 import shared.definitions.PieceType;
+import client.communication.ClientCommunicator;
 import client.points.*;
 import client.resources.*;
 import client.base.*;
+import client.communication.ClientCommunicatorFascadeSettlersOfCatan;
 import client.map.*;
 import client.devcards.*;
 
@@ -26,7 +28,6 @@ public class RightPanel extends JPanel {
         this.setLayout(new BoxLayout(this, BoxLayout.LINE_AXIS));
 
         // Initialize development card views and controller
-        //
         playCardView = new PlayDevCardView();
         buyCardView = new BuyDevCardView();
         IAction soldierAction = new IAction() {
@@ -47,14 +48,11 @@ public class RightPanel extends JPanel {
         buyCardView.setController(devCardController);
 
         // Initialize victory point view and controller
-        //
         pointsView = new PointsView();
         finishedView = new GameFinishedView();
         pointsController = new PointsController(pointsView, finishedView);
         pointsView.setController(pointsController);
-
         // Initialize resource bar view and controller
-        //
         resourceView = new ResourceBarView();
         resourceController = new ResourceBarController(resourceView);
         resourceController.setElementAction(ResourceBarElement.ROAD,
@@ -70,14 +68,26 @@ public class RightPanel extends JPanel {
                 new IAction() {
                     @Override
                     public void execute() {
-                        devCardController.startBuyCard();
+                        try {
+                            ClientCommunicator.getSingleton().getGameManager().initializeGame(ClientCommunicatorFascadeSettlersOfCatan.getSingleton().getGameModel(0 + ""));
+                            if (resourceController.canBuyCard()) {
+                                devCardController.startBuyCard();
+                            }
+                        } catch (Exception e) {
+                        }
                     }
                 });
         resourceController.setElementAction(ResourceBarElement.PLAY_CARD,
                 new IAction() {
                     @Override
                     public void execute() {
-                        devCardController.startPlayCard();
+                        try {
+                            ClientCommunicator.getSingleton().getGameManager().initializeGame(ClientCommunicatorFascadeSettlersOfCatan.getSingleton().getGameModel(0 + ""));
+                            if (resourceController.canPlayCard()) {
+                                devCardController.startPlayCard();
+                            }
+                        } catch (Exception e) {
+                        }
                     }
                 });
         resourceView.setController(resourceController);
@@ -95,7 +105,28 @@ public class RightPanel extends JPanel {
             public void execute() {
                 boolean isFree = false;
                 boolean allowDisconnected = false;
-                mapController.startMove(pieceType, isFree, allowDisconnected);
+                boolean isAllowed = false;
+                try {
+                    ClientCommunicator.getSingleton().getGameManager().initializeGame(ClientCommunicatorFascadeSettlersOfCatan.getSingleton().getGameModel(0 + ""));
+                    switch (pieceType) {
+                        case ROAD:
+                            isAllowed = resourceController.canBuildRoad();
+                            break;
+                        case SETTLEMENT:
+                            isAllowed = resourceController.canBuildSettlement();
+                            break;
+                        case CITY:
+                            isAllowed = resourceController.canBuildCity();
+                            break;
+                        default:
+                            break;
+                    }
+
+                    if (isAllowed) {
+                        mapController.startMove(pieceType, isFree, allowDisconnected);
+                    }
+                } catch (Exception e) {
+                }
             }
         };
     }

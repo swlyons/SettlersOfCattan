@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import javax.swing.Icon;
 import shared.definitions.CatanColor;
+import shared.definitions.PieceType;
 
 /**
  *
@@ -38,8 +39,7 @@ public class MapPoller extends TimerTask {
 
     private CatanPanel catanPanel;
     private int version;
-    private boolean firstInitialization;
-    private boolean firstTimeSecondRound;
+    private boolean doneOnce;
     private boolean seenTrade;
     private int playerIndex;
     private String playerColor;
@@ -48,10 +48,8 @@ public class MapPoller extends TimerTask {
 
     public MapPoller() {
         super();
-
         this.initializedPlayers = false;
-        this.firstInitialization = false;
-        this.firstTimeSecondRound = true;
+        this.doneOnce = false;
         this.seenTrade = false;
         playerIndex = -1;
         playerColor = "";
@@ -75,7 +73,9 @@ public class MapPoller extends TimerTask {
                 GameHistoryView historyView = catanPanel.getLeftPanel().getHistoryView();
                 TurnTrackerView turnTrackerView = catanPanel.getLeftPanel().getTurnView();
                 RollController rollController = catanPanel.getRollController();
+
                 GameStatePanel gameStatePanel = catanPanel.getMidPanel().getGameStatePanel();
+
                 PointsController pointsController = catanPanel.getRightPanel().getPointsController();
                 ResourceBarController resourceBarController = catanPanel.getRightPanel().getResourceController();
                 MapView mapView = (MapView) catanPanel.getMidPanel().getMapController().getView();
@@ -115,107 +115,126 @@ public class MapPoller extends TimerTask {
                         catanPanel.getMidPanel().getTradePanel().getDomesticController().getTradeOverlay().reset();
                     }
                 }
-
-                if (!firstInitialization || gameInformation.getTurnTracker().getCurrentTurn() != playerIndex) {
-                    /* Begin Resource Bar Update */
-                    for (PlayerInfo player : gameInformation.getPlayers()) {
-                        if (player.getPlayerIndex() == playerIndex) {
-                            int sumCards = player.getRoads() + player.getCities() + player.getSettlements()
-                                    + player.getSoldiers();
-                            // TODO: add logic to only update when they are
-                            // different
-                            resourceBarController.getView().setElementAmount(ResourceBarElement.BRICK,
-                                    player.getResources().getBrick());
-                            resourceBarController.getView().setElementAmount(ResourceBarElement.ORE,
-                                    player.getResources().getOre());
-                            resourceBarController.getView().setElementAmount(ResourceBarElement.SHEEP,
-                                    player.getResources().getSheep());
-                            resourceBarController.getView().setElementAmount(ResourceBarElement.WHEAT,
-                                    player.getResources().getWheat());
-                            resourceBarController.getView().setElementAmount(ResourceBarElement.WOOD,
-                                    player.getResources().getWood());
-                            resourceBarController.getView().setElementAmount(ResourceBarElement.ROAD, player.getRoads());
-                            resourceBarController.getView().setElementAmount(ResourceBarElement.CITY, player.getCities());
-                            resourceBarController.getView().setElementAmount(ResourceBarElement.SETTLEMENT,
-                                    player.getSettlements());
-                            resourceBarController.getView().setElementAmount(ResourceBarElement.SOLDIERS,
-                                    player.getSoldiers());
-                            resourceBarController.canBuildCity();
-                            resourceBarController.canBuyCard();
-                            resourceBarController.canBuildSettlement();
-                            resourceBarController.canBuildRoad();
-                            resourceBarController.canPlayCard();
-
-                            /*
-                             * TODO: Figure out what to do with these (not sure what
-                             * they are)
-                             * resourceBarController.getView().setElementAmount(
-                             * ResourceBarElement.BUY_CARD, player.getSoldiers());
-                             * resourceBarController.getView().setElementAmount(
-                             * ResourceBarElement.PLAY_CARD, player.getSoldiers());
-                             */
-                        }
+                /* Begin Resource Bar Update */
+                for (PlayerInfo player : gameInformation.getPlayers()) {
+                    if (player.getPlayerIndex() == playerIndex) {
+                        int sumCards = player.getRoads() + player.getCities() + player.getSettlements()
+                                + player.getSoldiers();
+                        // TODO: add logic to only update when they are
+                        // different
+                        resourceBarController.getView().setElementAmount(ResourceBarElement.BRICK,
+                                player.getResources().getBrick());
+                        resourceBarController.getView().setElementAmount(ResourceBarElement.ORE,
+                                player.getResources().getOre());
+                        resourceBarController.getView().setElementAmount(ResourceBarElement.SHEEP,
+                                player.getResources().getSheep());
+                        resourceBarController.getView().setElementAmount(ResourceBarElement.WHEAT,
+                                player.getResources().getWheat());
+                        resourceBarController.getView().setElementAmount(ResourceBarElement.WOOD,
+                                player.getResources().getWood());
+                        resourceBarController.getView().setElementAmount(ResourceBarElement.ROAD, player.getRoads());
+                        resourceBarController.getView().setElementAmount(ResourceBarElement.CITY, player.getCities());
+                        resourceBarController.getView().setElementAmount(ResourceBarElement.SETTLEMENT,
+                                player.getSettlements());
+                        resourceBarController.getView().setElementAmount(ResourceBarElement.SOLDIERS,
+                                player.getSoldiers());
+                        resourceBarController.canBuildCity();
+                        resourceBarController.canBuyCard();
+                        resourceBarController.canBuildSettlement();
+                        resourceBarController.canBuildRoad();
+                        resourceBarController.canPlayCard();
                     }
-                    /* End Resource Bar Update */
-
-                    /* Begin Discard Window Update */
-                    if (status.equals("Discarding") && rollController.getClickedOk() && gameManager.getResourceManager()
+                }
+                /* End Resource Bar Update */
+                DiscardController dis = catanPanel.getDiscardController();
+                if (doneOnce && gameInformation.getTurnTracker().getCurrentTurn() == playerIndex && rollController.getClickedOk()) {
+                    if (status.equals("Discarding") && !gameInformation.getPlayers().get(playerIndex).isDiscarded() && gameManager.getResourceManager()
                             .getGameBanks().get(playerIndex).getResourcesCards().getTotalResources() > 7) {
-                        DiscardController dis = catanPanel.getDiscardController();
                         if (!dis.getDiscardView().isModalShowing()) {
                             dis.initFromModel();
                             dis.getDiscardView().showModal();
                         }
                     }
-                    /* End Discard Window Update */
+                    if (status.equals("Robbing")) {
+                        catanPanel.getMidPanel().getMapController().startMove(PieceType.ROBBER, true, true);
+                        rollController.setClickedOk(false);
+                    }
+                }
 
-                    /* Begin tradeWindow Update */
-                    if (gameManager.getGame().getTradeOffer() != null
-                            && !catanPanel.getMidPanel().getTradePanel().getDomesticController().getWaitingForOffer()) {
-                        if (!seenTrade) {
-                            seenTrade = true;
-                            if (gameManager.getGame().getTradeOffer().getReceiver() == playerIndex) {
-                                DomesticTradeController domesticController = catanPanel.getMidPanel().getTradePanel()
-                                        .getDomesticController();
-                                boolean canAccept = true;
+                if (!doneOnce || gameInformation.getTurnTracker().getCurrentTurn() != playerIndex) {
+                    doneOnce = true;
+                    if (gameInformation.getTurnTracker().getCurrentTurn() == playerIndex) {
+                        if (status.equals("Robbing")) {
+                            catanPanel.getMidPanel().getMapController().startMove(PieceType.ROBBER, true, true);
+                        }
 
-                                ResourceList resourcesPlayerHas = gameManager.getResourceManager().getGameBanks()
-                                        .get(playerIndex).getResourcesCards();
+                        if (status.equals("Discarding") && !gameInformation.getPlayers().get(playerIndex).isDiscarded() && gameManager.getResourceManager()
+                                .getGameBanks().get(playerIndex).getResourcesCards().getTotalResources() > 7) {
 
-                                if (resourcesPlayerHas.getBrick()
-                                        + gameManager.getGame().getTradeOffer().getOffer().getBrick() < 0
-                                        || resourcesPlayerHas.getOre()
-                                        + gameManager.getGame().getTradeOffer().getOffer().getOre() < 0
-                                        || resourcesPlayerHas.getSheep()
-                                        + gameManager.getGame().getTradeOffer().getOffer().getSheep() < 0
-                                        || resourcesPlayerHas.getWheat()
-                                        + gameManager.getGame().getTradeOffer().getOffer().getWheat() < 0
-                                        || resourcesPlayerHas.getWood()
-                                        + gameManager.getGame().getTradeOffer().getOffer().getWood() < 0) {
-                                    canAccept = false;
-                                }
-                                if (!domesticController.getAcceptOverlay().isModalShowing()) {
-                                    domesticController.getAcceptOverlay().showModal();
-                                    domesticController.getAcceptOverlay().setAcceptEnabled(canAccept);
-                                }
-                            } else {
-                                if (gameManager.getGame().getTradeOffer().getSender() == playerIndex) {
-                                    catanPanel.getMidPanel().getTradePanel().getDomesticController()
-                                            .setWaitingForOffer(true);
-                                    catanPanel.getMidPanel().getTradePanel().getDomesticController().startTrade();
-                                    if (!catanPanel.getMidPanel().getTradePanel().getDomesticController()
-                                            .getWaitOverlay().isModalShowing()) {
+                            if (!dis.getDiscardView().isModalShowing()) {
+                                dis.initFromModel();
+                                dis.getDiscardView().showModal();
+                            }
+                        }
+                    } else {
+
+                        /* Begin Discard Window Update */
+                        if (status.equals("Discarding") && !gameInformation.getPlayers().get(playerIndex).isDiscarded() && gameManager.getResourceManager()
+                                .getGameBanks().get(playerIndex).getResourcesCards().getTotalResources() > 7) {
+                            if (!dis.getDiscardView().isModalShowing()) {
+                                dis.initFromModel();
+                                dis.getDiscardView().showModal();
+                            }
+                        }
+                        /* End Discard Window Update */
+
+                        /* Begin tradeWindow Update */
+                        if (gameManager.getGame().getTradeOffer() != null
+                                && !catanPanel.getMidPanel().getTradePanel().getDomesticController().getWaitingForOffer()) {
+                            if (!seenTrade) {
+                                seenTrade = true;
+                                if (gameManager.getGame().getTradeOffer().getReceiver() == playerIndex) {
+                                    DomesticTradeController domesticController = catanPanel.getMidPanel().getTradePanel()
+                                            .getDomesticController();
+                                    boolean canAccept = true;
+
+                                    ResourceList resourcesPlayerHas = gameManager.getResourceManager().getGameBanks()
+                                            .get(playerIndex).getResourcesCards();
+
+                                    if (resourcesPlayerHas.getBrick()
+                                            + gameManager.getGame().getTradeOffer().getOffer().getBrick() < 0
+                                            || resourcesPlayerHas.getOre()
+                                            + gameManager.getGame().getTradeOffer().getOffer().getOre() < 0
+                                            || resourcesPlayerHas.getSheep()
+                                            + gameManager.getGame().getTradeOffer().getOffer().getSheep() < 0
+                                            || resourcesPlayerHas.getWheat()
+                                            + gameManager.getGame().getTradeOffer().getOffer().getWheat() < 0
+                                            || resourcesPlayerHas.getWood()
+                                            + gameManager.getGame().getTradeOffer().getOffer().getWood() < 0) {
+                                        canAccept = false;
+                                    }
+                                    if (!domesticController.getAcceptOverlay().isModalShowing()) {
+                                        domesticController.getAcceptOverlay().showModal();
+                                        domesticController.getAcceptOverlay().setAcceptEnabled(canAccept);
+                                    }
+                                } else {
+                                    if (gameManager.getGame().getTradeOffer().getSender() == playerIndex) {
                                         catanPanel.getMidPanel().getTradePanel().getDomesticController()
-                                                .getWaitOverlay().showModal();
-                                        catanPanel.getMidPanel().getTradePanel().getDomesticController()
-                                                .getWaitOverlay().setMessage("Waiting for Trade to Go Through");
+                                                .setWaitingForOffer(true);
+                                        catanPanel.getMidPanel().getTradePanel().getDomesticController().startTrade();
+                                        if (!catanPanel.getMidPanel().getTradePanel().getDomesticController()
+                                                .getWaitOverlay().isModalShowing()) {
+                                            catanPanel.getMidPanel().getTradePanel().getDomesticController()
+                                                    .getWaitOverlay().showModal();
+                                            catanPanel.getMidPanel().getTradePanel().getDomesticController()
+                                                    .getWaitOverlay().setMessage("Waiting for Trade to Go Through");
+                                        }
                                     }
                                 }
                             }
                         }
+                        /* End tradeWindow Update */
                     }
-                    /* End tradeWindow Update */
-
                 }
 
                 /* Begin Turn Tracker Update */
