@@ -20,6 +20,7 @@ import com.sun.net.httpserver.HttpServer;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import server.dao.Database;
 
 public class Server {
 
@@ -41,16 +42,15 @@ public class Server {
 
 	/** Initializes the Database */
 	private void run() {
-		//TODO: Create database to initialize
-                /*try {
+                try {
                         
-			//Database.initialize();
+			Database.initialize();
 		} catch (ServerException e) {
 			System.out.println("Could not initialize database: "
 					+ e.getMessage());
 			e.printStackTrace();
 			return;
-		}*/
+		}
 
 		try {
 			server = HttpServer.create(
