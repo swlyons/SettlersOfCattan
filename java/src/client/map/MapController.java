@@ -197,7 +197,7 @@ public class MapController extends Controller implements IMapController {
                     }
 
                 } catch (Exception e) {
-                    System.out.println(e.getMessage());
+                    e.printStackTrace();
                 }
             }
         } else {
@@ -217,7 +217,7 @@ public class MapController extends Controller implements IMapController {
                 try {
                     ClientCommunicatorFascadeSettlersOfCatan.getSingleton().buildRoad(br);
                 } catch (Exception e) {
-                    System.out.println(e.getMessage());
+                    e.printStackTrace();
                 }
             }
             if(playedRoadBuilding){
@@ -267,13 +267,12 @@ public class MapController extends Controller implements IMapController {
                 getView().placeSettlement(vertLoc, color);
                 startMove(PieceType.ROAD, true, false);
             } catch (Exception e) {
-                System.out.println(e.getMessage());
+                e.printStackTrace();
             }
         } else {
             if (gm.buildStructure(PieceType.SETTLEMENT, vertLoc)) {
                 CatanColor color = CatanColor
                         .valueOf(gm.getGame().getPlayers().get(currentPlayer).getColor().toUpperCase());
-                build.setFree(true);
                 build.setType("buildSettlement");
                 build.setPlayerIndex(currentPlayer);
                 build.setVertexLocation(settle);
@@ -281,7 +280,7 @@ public class MapController extends Controller implements IMapController {
                     ClientCommunicatorFascadeSettlersOfCatan.getSingleton().buildSettlement(build);
                     getView().placeSettlement(vertLoc, color);
                 } catch (Exception e) {
-                    System.out.println(e.getMessage());
+                    e.printStackTrace();
                 }
             }
         }
@@ -308,7 +307,7 @@ public class MapController extends Controller implements IMapController {
                 ClientCommunicatorFascadeSettlersOfCatan.getSingleton().buildCity(build);
                 getView().placeCity(vertLoc, color);
             } catch (Exception e) {
-                System.out.println(e.getMessage());
+                e.printStackTrace();
             }
         }
     }
@@ -423,7 +422,7 @@ public class MapController extends Controller implements IMapController {
         try {
             ClientCommunicatorFascadeSettlersOfCatan.getSingleton().robPlayer(rp);
         } catch (Exception e) {
-
+        	e.printStackTrace();
         }
     }
 

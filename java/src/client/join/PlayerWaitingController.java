@@ -34,6 +34,7 @@ public class PlayerWaitingController extends Controller implements IPlayerWaitin
             
             
         } catch (Exception e) {
+        	e.printStackTrace();
         }
     }
 

@@ -216,7 +216,9 @@ public class DiscardController extends Controller implements IDiscardController 
                 cards.setDiscardedCards(resources);
                 try{
                     ClientCommunicatorFascadeSettlersOfCatan.getSingleton().discardCards(cards);
-                }catch(Exception e){}
+                }catch(Exception e){
+                	e.printStackTrace();
+                }
                 finally{
                     resources = new ResourceList();
                     getDiscardView().closeModal();

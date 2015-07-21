@@ -33,6 +33,7 @@ public class UserManager {
 	            }
 	            return success;
 			} catch (ClientException e) {
+            	e.printStackTrace();
 				return false;
 			}
         }
@@ -55,6 +56,7 @@ public class UserManager {
 	            boolean success = server.login(credentials);
 	            return success;
 			} catch (ClientException e) {
+            	e.printStackTrace();
 				return false;
 			}
         }

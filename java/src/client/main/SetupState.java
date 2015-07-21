@@ -31,6 +31,7 @@ public class SetupState extends State {
         try {
             gameInformation = ClientCommunicatorFascadeSettlersOfCatan.getSingleton().getGameModel(-1 + "");
         } catch (ClientException ex) {
+        	ex.printStackTrace();
             Logger.getLogger(SetupState.class.getName()).log(Level.SEVERE, null, ex);
         }
 

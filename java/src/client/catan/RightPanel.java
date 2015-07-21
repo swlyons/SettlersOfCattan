@@ -78,7 +78,7 @@ public class RightPanel extends JPanel {
                                 devCardController.startBuyCard();
                             }
                         }catch(Exception e){
-                        	System.out.println(e.getMessage());
+                        	e.printStackTrace();
                         }
                     }
                 });
@@ -92,7 +92,7 @@ public class RightPanel extends JPanel {
                                 devCardController.startPlayCard();
                             }
                         }catch(Exception e){
-                        	System.out.println(e.getMessage());                       	
+                        	e.printStackTrace();                       	
                         }
                     }
                 });
@@ -132,7 +132,7 @@ public class RightPanel extends JPanel {
                         mapController.startMove(pieceType, isFree, allowDisconnected);
                     }
                 }catch(Exception e){
-                	System.out.println(e.getMessage());
+                	e.printStackTrace();
                 }
             }
         };

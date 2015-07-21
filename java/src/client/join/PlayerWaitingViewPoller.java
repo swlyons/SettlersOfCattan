@@ -47,6 +47,7 @@ public class PlayerWaitingViewPoller extends TimerTask {
         try {
             activeGames = ClientCommunicatorFascadeSettlersOfCatan.getSingleton().listGames();
         } catch (ClientException ex) {
+        	ex.printStackTrace();
             Logger.getLogger(PlayerWaitingViewPoller.class.getName()).log(Level.SEVERE, null, ex);
         }
         for (GameInfo game : activeGames) {
