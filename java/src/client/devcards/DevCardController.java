@@ -213,6 +213,8 @@ public class DevCardController extends Controller implements IDevCardController 
         Integer playerId = ClientCommunicator.getSingleton().getPlayerId();
 
         Year_Of_Plenty y = new Year_Of_Plenty(gm.getPlayerIndex(playerId));
+        y.setType("Year_of_Plenty");
+        y.setPlayerIndex(playerId);
         y.setResource1(resource1);
         y.setResource2(resource2);
         try {
