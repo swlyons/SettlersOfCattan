@@ -82,8 +82,11 @@ public class RollResultView extends OverlayView implements IRollResultView {
 			
 			if (e.getSource() == okayButton) {
                             closeModal();
+                            
+                            if(rolledValue==7){
                             getController().setClickedOk(true);
-			}
+                            }
+                        }
 		}	
 	};
 	
@@ -92,11 +95,12 @@ public class RollResultView extends OverlayView implements IRollResultView {
 		
 		return (IRollController)super.getController();
 	}
-
+private int rolledValue;
 	@Override
 	public void setRollValue(int value) {
-		String rollText = String.format("You rolled a %d.", value);
-		rollLabel.setText(rollText);
+            rolledValue = value;
+            String rollText = String.format("You rolled a %d.", value);
+            rollLabel.setText(rollText);
 	}
 
 }
