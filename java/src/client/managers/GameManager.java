@@ -109,7 +109,9 @@ public class GameManager {
             for (VertexObject settlement : map.getSettlements()) {
                 Location settlementLocation = null;
                 for (Location location : locationManager.getUnsettledLocations()) {
-
+                	if(locationManager.getSettledEdges().size() == 8) {
+                		location.setWhoCanBuild(new HashSet<Integer>());
+                	}
                     if (location.getNormalizedLocation().equals(settlement.getDirection())) {
                         location.setIsCity(false);
                         location.getWhoCanBuild().add(settlement.getOwner());
@@ -594,7 +596,7 @@ public class GameManager {
         boolean canPlaceSettlement = false;
         for (Location lc : locationManager.getUnsettledLocations()) {
             if (lc.getNormalizedLocation().equals(vertLoc)) {
-                if (lc.getWhoCanBuild().contains(currentPlayer())) {
+                if (lc.getWhoCanBuild().contains(currentPlayer()) && lc.getCanBeSettled()) {
                     canPlaceSettlement = true;
                 }
             }
@@ -839,7 +841,7 @@ public class GameManager {
      */
     public void endTurn() {
         resourceManager.makeCardsUsable();
-        if (locationManager.getSettledLocations().size() == 8) {
+        if (game.getTurnTracker().getStatus() == "SecondRound") {
             for (Location l : locationManager.getUnsettledLocations()) {
                 l.setWhoCanBuild(new HashSet<Integer>());
             }

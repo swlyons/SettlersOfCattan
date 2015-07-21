@@ -28,6 +28,7 @@ import client.turntracker.TurnTrackerView;
 import java.util.ArrayList;
 import java.util.Date;
 import shared.definitions.CatanColor;
+import shared.definitions.PieceType;
 
 /**
  *
@@ -38,7 +39,6 @@ public class MapPoller extends TimerTask {
     private CatanPanel catanPanel;
     private int version;
     private boolean doneOnce;
-    private boolean firstTimeSecondRound;
     private boolean seenTrade;
     private int playerIndex;
     private String playerColor;
@@ -50,7 +50,6 @@ public class MapPoller extends TimerTask {
 
         this.initializedPlayers = false;
         this.doneOnce = false;
-        this.firstTimeSecondRound = true;
         this.seenTrade = false;
         playerIndex = -1;
         playerColor = "";
@@ -74,7 +73,7 @@ public class MapPoller extends TimerTask {
                 GameHistoryView historyView = catanPanel.getLeftPanel().getHistoryView();
                 TurnTrackerView turnTrackerView = catanPanel.getLeftPanel().getTurnView();
                 RollController rollController = catanPanel.getRollController();
-                GameStatePanel gameStatePanel = catanPanel.getMidPanel().getGameStatePanel();
+//              GameStatePanel gameStatePanel = catanPanel.getMidPanel().getGameStatePanel();
                 PointsController pointsController = catanPanel.getRightPanel().getPointsController();
                 ResourceBarController resourceBarController = catanPanel.getRightPanel().getResourceController();
                 MapView mapView = (MapView) catanPanel.getMidPanel().getMapController().getView();
@@ -143,15 +142,6 @@ public class MapPoller extends TimerTask {
                         resourceBarController.canBuildSettlement();
                         resourceBarController.canBuildRoad();
                         resourceBarController.canPlayCard();
-
-                        /*
-                         * TODO: Figure out what to do with these (not sure what
-                         * they are)
-                         * resourceBarController.getView().setElementAmount(
-                         * ResourceBarElement.BUY_CARD, player.getSoldiers());
-                         * resourceBarController.getView().setElementAmount(
-                         * ResourceBarElement.PLAY_CARD, player.getSoldiers());
-                         */
                     }
                 }
                 /* End Resource Bar Update */
