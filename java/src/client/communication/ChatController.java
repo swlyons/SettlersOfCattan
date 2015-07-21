@@ -1,6 +1,6 @@
 package client.communication;
 
-import client.ClientException;
+import client.main.ClientException;
 import client.base.*;
 import shared.data.GameInfo;
 import shared.data.MessageLine;

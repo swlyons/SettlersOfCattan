@@ -89,6 +89,7 @@
     <property name="java.dir" location="java"/>
     <property name="java.src" location="${java.dir}/src"/>
     <property name="java.images" location="${java.dir}/images"/>
+     <property name="java.docs" location="${java.dir}/docs"/>
     <property name="java.build" location="${java.dir}/build"/>
     <property name="java.dist" location="${java.dir}/dist"/>
     <property name="java.lib" location="${java.dir}/lib"/>
@@ -128,6 +129,12 @@
                 <include name="**"/>
             </fileset>
         </copy>
+        <mkdir dir="${java.dist}/docs"/>
+        <copy todir="${java.dist}/docs">
+            <fileset dir="${java.docs}">
+                <include name="**"/>
+            </fileset>
+        </copy>
         <jar jarfile="${java.dist}/catan-client.jar" basedir="${java.build}">
             <manifest>
                 <attribute name="Main-Class" value="client.main.Catan"/>
@@ -137,7 +144,7 @@
         </jar>
         <jar jarfile="${java.dist}/catan-server.jar" basedir="${java.build}">
             <manifest>
-                <attribute name="Main-Class" value="PUT THE NAME OF YOUR SERVER'S MAIN CLASS HERE"/>
+                <attribute name="Main-Class" value="server.main.Server"/>
                 <attribute name="Class-Path" 
                            value="lib/gson-2.2.4.jar" />
             </manifest>
@@ -159,6 +166,15 @@
         </java>
     </target>
     
+    <target name="our-server" depends="package" description="compiles, packages, and runs the student client">
+        <java jar="${java.dist}/catan-server.jar" dir="${java.dist}" fork="yes">
+            <sysproperty key="com.sun.management.jmxremote" value=""/>
+            <arg value="${port.arg}"/>
+            <assertions>
+                <enable/>
+            </assertions>
+        </java>
+    </target>
     <!-- EXAMPLE: ant client -->
     <target name="start-client" depends="compile" description="run client using server on specified host and port">
         <java classname="client.Client" fork="yes">

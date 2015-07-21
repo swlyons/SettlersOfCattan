@@ -5,7 +5,6 @@
  */
 package client.main;
 
-import client.ClientException;
 import client.base.Controller;
 import client.communication.ClientCommunicator;
 import client.communication.ClientCommunicatorFascadeSettlersOfCatan;

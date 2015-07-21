@@ -2,7 +2,7 @@ package client.join;
 
 import shared.data.PlayerInfo;
 import shared.data.GameInfo;
-import client.ClientException;
+import client.main.ClientException;
 import shared.definitions.CatanColor;
 import client.base.*;
 import client.communication.ClientCommunicator;
