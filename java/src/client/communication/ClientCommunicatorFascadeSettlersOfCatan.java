@@ -57,7 +57,6 @@ public class ClientCommunicatorFascadeSettlersOfCatan {
     }
 
     public boolean login(User credentials) throws ClientException {
-        System.out.println(ClientCommunicator.getSingleton().getSERVER_HOST());
         return (ClientCommunicator
                 .getSingleton()
                 .doPost(LOGIN_USER, credentials, -1).getResponseBody()).equals("Success");
