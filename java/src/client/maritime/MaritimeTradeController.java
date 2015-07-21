@@ -53,18 +53,22 @@ public class MaritimeTradeController extends Controller implements IMaritimeTrad
                                 if(2<=allResourcesPlayerHas.getBrick()){
                                     resourceTypes.add(port.getResource());
                                 }
+                                break;
                             case ore:
                                 if(2<=allResourcesPlayerHas.getOre()){
                                     resourceTypes.add(port.getResource());
                                 }
+                                break;
                             case sheep:
                                 if(2<=allResourcesPlayerHas.getSheep()){
                                     resourceTypes.add(port.getResource());
                                 }
+                                break;
                             case wheat:
                                 if(2<=allResourcesPlayerHas.getWheat()){
                                     resourceTypes.add(port.getResource());
                                 }
+                                break;
                             case wood:
                                 if(2<=allResourcesPlayerHas.getWood()){
                                     resourceTypes.add(port.getResource());
