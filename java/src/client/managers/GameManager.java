@@ -109,9 +109,9 @@ public class GameManager {
             for (VertexObject settlement : map.getSettlements()) {
                 Location settlementLocation = null;
                 for (Location location : locationManager.getUnsettledLocations()) {
-                	if(locationManager.getSettledEdges().size() == 8) {
-                		location.setWhoCanBuild(new HashSet<Integer>());
-                	}
+                    if (locationManager.getSettledEdges().size() == 8) {
+                        location.setWhoCanBuild(new HashSet<Integer>());
+                    }
                     if (location.getNormalizedLocation().equals(settlement.getDirection())) {
                         location.setIsCity(false);
                         location.getWhoCanBuild().add(settlement.getOwner());

@@ -42,12 +42,12 @@ public class GameStatePanel extends JPanel {
     public JPanel getCentered() {
         return centered;
     }
-    
+
     public void updateGameState(String stateMessage, boolean enable) {
         button.setText(stateMessage);
         button.setEnabled(enable);
     }
-    
+
     public void setButtonAction(final IAction action) {
         ActionListener[] listeners = button.getActionListeners();
         for (ActionListener listener : listeners) {

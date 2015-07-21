@@ -48,7 +48,7 @@ public class JoinGameViewPoller extends TimerTask {
 
             //
         } catch (ClientException ex) {
-        	ex.printStackTrace();
+            ex.printStackTrace();
             Logger.getLogger(JoinGameViewPoller.class.getName()).log(Level.SEVERE, null, ex);
         }
         GameInfo[] games = new GameInfo[activeGames.size()];

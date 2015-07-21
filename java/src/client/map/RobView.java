@@ -66,12 +66,12 @@ public class RobView extends OverlayView implements IRobView {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-        	GameManager gm = ClientCommunicator.getSingleton().getGameManager();
-        	Integer playerId = ClientCommunicator.getSingleton().getPlayerId();
+            GameManager gm = ClientCommunicator.getSingleton().getGameManager();
+            Integer playerId = ClientCommunicator.getSingleton().getPlayerId();
 
-        	if (e.getSource() == defaultButton) {
-            	closeModal();
-            	getController().robPlayer(victims[gm.getPlayerIndex(playerId)]);
+            if (e.getSource() == defaultButton) {
+                closeModal();
+                getController().robPlayer(victims[gm.getPlayerIndex(playerId)]);
             } else {
 
                 for (int i = 0; i < victimButtons.size(); i++) {

@@ -27,11 +27,11 @@ public class MidPanel extends JPanel {
         robView.setController(mapController);
 
         gameStatePanel = new GameStatePanel();
-        
+
         this.add(tradePanel, BorderLayout.NORTH);
         this.add(mapView, BorderLayout.CENTER);
         this.add(gameStatePanel, BorderLayout.SOUTH);
-        
+
         this.setPreferredSize(new Dimension(800, 700));
 
     }

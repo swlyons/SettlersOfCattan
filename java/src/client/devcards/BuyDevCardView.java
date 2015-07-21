@@ -48,7 +48,7 @@ public class BuyDevCardView extends OverlayView implements IBuyDevCardView {
             this.setBackground(Color.WHITE);
             this.add(imageLabel, BorderLayout.CENTER);
         } catch (IOException ex) {
-        	ex.printStackTrace();
+            ex.printStackTrace();
             // Handle Exception Here
         }
 

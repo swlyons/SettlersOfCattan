@@ -185,7 +185,7 @@ public class JoinGameController extends Controller implements IJoinGameControlle
             getNewGameView().setUseRandomPorts(false);
             getNewGameView().setTitle("");
         } catch (Exception e) {
-        	e.printStackTrace();
+            e.printStackTrace();
         } finally {
             getNewGameView().closeModal();
         }
@@ -200,7 +200,7 @@ public class JoinGameController extends Controller implements IJoinGameControlle
         try {
             activeGames = ClientCommunicatorFascadeSettlersOfCatan.getSingleton().listGames();
         } catch (ClientException ex) {
-        	ex.printStackTrace();
+            ex.printStackTrace();
             Logger.getLogger(JoinGameController.class.getName()).log(Level.SEVERE, null, ex);
         }
         GameInfo[] games = new GameInfo[activeGames.size()];
@@ -246,7 +246,7 @@ public class JoinGameController extends Controller implements IJoinGameControlle
                 joinAction.execute();
             }
         } catch (ClientException ex) {
-        	ex.printStackTrace();
+            ex.printStackTrace();
             Logger.getLogger(JoinGameController.class.getName()).log(Level.SEVERE, null, ex);
         }
 

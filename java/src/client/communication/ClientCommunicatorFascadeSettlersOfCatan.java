@@ -53,7 +53,7 @@ public class ClientCommunicatorFascadeSettlersOfCatan {
      * Client Communicator facade constructor
      */
     public ClientCommunicatorFascadeSettlersOfCatan() {
-        
+
     }
 
     public boolean login(User credentials) throws ClientException {

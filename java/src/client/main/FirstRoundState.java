@@ -44,7 +44,7 @@ public class FirstRoundState extends State {
                 gameInformation = ClientCommunicatorFascadeSettlersOfCatan.getSingleton()
                         .getGameModel(version + "");
             } catch (ClientException ex) {
-            	ex.printStackTrace();
+                ex.printStackTrace();
                 Logger.getLogger(FirstRoundState.class.getName()).log(Level.SEVERE, null, ex);
             }
 
@@ -89,7 +89,7 @@ public class FirstRoundState extends State {
                 try {
                     gameManager.initializeGame(ClientCommunicatorFascadeSettlersOfCatan.getSingleton().finishMove(fm));
                 } catch (ClientException ex) {
-                	ex.printStackTrace();
+                    ex.printStackTrace();
                     Logger.getLogger(FirstRoundState.class.getName()).log(Level.SEVERE, null, ex);
                 }
                 mapController.setEndTurn(false);

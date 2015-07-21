@@ -28,7 +28,7 @@ public class RoundedButton extends JButton {
         rh.put(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g2.setRenderingHints(rh);
 
-		// Make it grey #DDDDDD, and make it round with   
+        // Make it grey #DDDDDD, and make it round with   
         // 1px black border.  
         // Use an HTML color guide to find a desired color.  
         // Last color is alpha, with max 0xFF to make   

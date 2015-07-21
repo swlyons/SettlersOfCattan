@@ -99,7 +99,7 @@ public class DiscardController extends Controller implements IDiscardController 
 
     @Override
     public void increaseAmount(ResourceType resource) {
-        
+
         resources.add(resource, 1);
         GameManager gm = ClientCommunicator.getSingleton().getGameManager();
         Integer playerId = ClientCommunicator.getSingleton().getPlayerId();
