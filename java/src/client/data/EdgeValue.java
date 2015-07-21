@@ -13,11 +13,11 @@ import client.data.XYEdgeLocation;
  * @author ddennis
  */
 public class EdgeValue {
-    
+
     private int owner;
     private EdgeLocation location2;
     private XYEdgeLocation location;
-    
+
     public int getOwner() {
         return owner;
     }
@@ -33,7 +33,7 @@ public class EdgeValue {
     public void setLocation(XYEdgeLocation location) {
         this.location = location;
     }
-    
+
     public EdgeLocation getLocation2() {
         return location2;
     }
@@ -46,6 +46,5 @@ public class EdgeValue {
     public String toString() {
         return "{" + "owner : " + owner + ", location :" + location + '}';
     }
-    
-    
+
 }

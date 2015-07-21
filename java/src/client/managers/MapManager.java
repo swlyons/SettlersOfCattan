@@ -1,6 +1,5 @@
 package client.managers;
 
-
 import client.data.Hex;
 import java.util.List;
 import java.util.ArrayList;
@@ -37,26 +36,27 @@ public class MapManager {
      * @pre A 7 was rolled
      * @post The each player discarded half of their cards if they had 7 or
      * more, the current player robbed 1 player that settled on the hex (if any)
-     * returns the success of moving the Robber. If true the robber was moved successfully.
+     * returns the success of moving the Robber. If true the robber was moved
+     * successfully.
      */
     public boolean moveRobber(HexLocation newLocationForRobber) {
-        
-        for(Hex hex : hexList){
-            if(hex.getHasRobber() && hex.getLocation().equals(newLocationForRobber)){
+
+        for (Hex hex : hexList) {
+            if (hex.getHasRobber() && hex.getLocation().equals(newLocationForRobber)) {
                 return false;
             }
         }
-        
+
         return true;
     }
-    
+
     public HexLocation getRobberLocation() {
-    	for (Hex hex : hexList) {
-    		if (hex.getHasRobber()) {
-    			return hex.getLocation();
-    		}
-    	}
-    	return null;
+        for (Hex hex : hexList) {
+            if (hex.getHasRobber()) {
+                return hex.getLocation();
+            }
+        }
+        return null;
     }
 
     public List<Hex> getHexList() {

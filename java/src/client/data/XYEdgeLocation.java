@@ -4,20 +4,22 @@
  * and open the template in the editor.
  */
 package client.data;
+
 import shared.locations.EdgeDirection;
+
 /**
  *
  * @author Samuel
  */
 public class XYEdgeLocation {
-    
-    public XYEdgeLocation(){
+
+    public XYEdgeLocation() {
     }
-    
+
     private int x;
     private int y;
     private EdgeDirection direction;
-    
+
     public int getX() {
         return x;
     }
@@ -33,12 +35,12 @@ public class XYEdgeLocation {
     public void setY(int y) {
         this.y = y;
     }
-    
-    public EdgeDirection getDirection(){
+
+    public EdgeDirection getDirection() {
         return direction;
     }
-    
-    public void setDirection(EdgeDirection direction){
+
+    public void setDirection(EdgeDirection direction) {
         this.direction = direction;
     }
 }

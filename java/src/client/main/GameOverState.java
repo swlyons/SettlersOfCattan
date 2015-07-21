@@ -10,5 +10,5 @@ package client.main;
  * @author ddennis
  */
 public class GameOverState {
-    
+
 }

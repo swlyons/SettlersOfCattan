@@ -4,12 +4,12 @@ public class User {
 
     private String username;
     private String password;
-    
+
     /**
-     * 
+     *
      * @param username
-     * @param password 
-     * @pre 
+     * @param password
+     * @pre
      */
     public User(String username, String password) {
         this.username = username;
@@ -54,7 +54,7 @@ public class User {
         User other = (User) obj;
         if (username.equals(other.getUsername())) {
             condition = true;
-        } 
+        }
         return condition;
     }
 }

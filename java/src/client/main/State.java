@@ -14,17 +14,11 @@ import client.base.Controller;
 abstract class State {
 
     /**
-     * INITIAL,
-        LOGIN,
-        WAITING,
-        JOIN_GAME,
-        PLAYER_WAITING,
-        SETUP,
-        FIRST_ROUND ,
-        SECOND_ROUND ,
-        GAME_PLAY ,
-        GAME_OVER ;
+     * INITIAL, LOGIN, WAITING, JOIN_GAME, PLAYER_WAITING, SETUP, FIRST_ROUND ,
+     * SECOND_ROUND , GAME_PLAY , GAME_OVER ;
+     *
      * @param context
      */
-    public void doAction(Controller controller){}
+    public void doAction(Controller controller) {
+    }
 }

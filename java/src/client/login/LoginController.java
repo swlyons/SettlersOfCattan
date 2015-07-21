@@ -4,6 +4,7 @@ import client.base.*;
 import client.managers.UserManager;
 import client.misc.*;
 import client.communication.ClientCommunicator;
+
 /**
  * Implementation for the login controller
  */
@@ -51,7 +52,7 @@ public class LoginController extends Controller implements ILoginController {
      *
      * @return The action to be executed when the user logs in
      */
-    public IAction getLoginAction() {   
+    public IAction getLoginAction() {
 
         return loginAction;
     }

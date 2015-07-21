@@ -16,7 +16,7 @@ public class Soldier extends Command {
     public Soldier(int playerIndex) {
         super("Soldier", playerIndex);
     }
-    
+
     public int getVicitmIndex() {
         return victimIndex;
     }

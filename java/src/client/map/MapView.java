@@ -182,7 +182,7 @@ public class MapView extends PanelView implements IMapView {
         }
 
         public boolean isEndTurn() {
-            
+
             return getController().isEndTurn();
         }
 

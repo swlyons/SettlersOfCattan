@@ -92,7 +92,7 @@ public class LogComponent extends JComponent {
             List<String> lines = wrapText(fontContext, entry.getMessage(), width);
             int rectHeight = TOP_MARGIN + BOTTOM_MARGIN + lines.size()
                     * fontMetrics.getHeight();
-            
+
             g2.setColor(entry.getColor().getJavaColor());
             g2.fillRect(0, y, this.getWidth(), rectHeight);
 
@@ -132,7 +132,7 @@ public class LogComponent extends JComponent {
                 String word = scanner.next();
 
                 if (line.length() == 0) {
-					// Each line must have at least one word (even if
+                    // Each line must have at least one word (even if
                     // it doesn't fit)
                     line = word;
                 } else {

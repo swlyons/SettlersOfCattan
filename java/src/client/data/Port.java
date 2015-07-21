@@ -8,14 +8,14 @@ public class Port {
     private int ratio;
     private ResourceType resource;
     private HexLocation location;
-    
-    public Port(int ratio, ResourceType resource, HexLocation location){
-        this.ratio=ratio;
-        this.resource=resource;
-        this.location=location;
+
+    public Port(int ratio, ResourceType resource, HexLocation location) {
+        this.ratio = ratio;
+        this.resource = resource;
+        this.location = location;
     }
-    
-        public ResourceType getResource() {
+
+    public ResourceType getResource() {
         return resource;
     }
 
@@ -43,6 +43,5 @@ public class Port {
     public String toString() {
         return "{" + "resource : " + resource + ", location : " + location + ", ratio : " + ratio + '}';
     }
-    
-    
+
 }

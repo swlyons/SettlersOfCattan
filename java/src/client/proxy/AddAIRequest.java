@@ -10,6 +10,7 @@ package client.proxy;
  * @author ddennis
  */
 public class AddAIRequest {
+
     private String AIType;
 
     public AddAIRequest(String AIType) {
@@ -23,5 +24,5 @@ public class AddAIRequest {
     public void setAIType(String AIType) {
         this.AIType = AIType;
     }
-    
+
 }

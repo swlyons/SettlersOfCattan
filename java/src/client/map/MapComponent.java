@@ -206,7 +206,7 @@ public class MapComponent extends JComponent {
         setPreferredSize(new Dimension(prefWidth, prefHeight));
 
         setController(controller);
-        
+
         /* Made all the applicable HashMaps ConcurrentHashMaps to avoid concurrency exception on redraws */
         hexes = new ConcurrentHashMap<HexLocation, HexType>();
         roads = new ConcurrentHashMap<EdgeLocation, CatanColor>();

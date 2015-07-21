@@ -293,12 +293,12 @@ public class MapController extends Controller implements IMapController {
                 }
             }
         }
-        
+
         Integer currentPlayer = gm.getGame().getTurnTracker().getCurrentTurn();
 
         List<RobPlayerInfo> victims = new ArrayList<RobPlayerInfo>();
         for (Integer player : playerIndexes) {
-            if(currentPlayer != player){
+            if (currentPlayer != player) {
                 victims.add(new RobPlayerInfo(gm.getGame().getPlayers().get(player), gm.getResourceManager().getGameBanks().get(player).getResourcesCards().getTotalResources()));
             }
         }
@@ -360,7 +360,7 @@ public class MapController extends Controller implements IMapController {
     public void robPlayer(RobPlayerInfo victim) {
 		// Some communication may need to happen to transfer resources between
 
-		// the two players.
+        // the two players.
         // The RobPlayer class doesn't request a resource, so the resource
         // deciding must happen server side, or on the next poll request
         GameManager gm = ClientCommunicator.getSingleton().getGameManager();

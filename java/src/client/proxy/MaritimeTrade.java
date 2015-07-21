@@ -13,7 +13,7 @@ public class MaritimeTrade extends Command {
     private int ratio;
     private ResourceType inputResource;
     private ResourceType outputResource;
-    
+
     public ResourceType getInputResource() {
         return inputResource;
     }
@@ -29,12 +29,12 @@ public class MaritimeTrade extends Command {
     public void setOutputResource(ResourceType outputResource) {
         this.outputResource = outputResource;
     }
-    
-    public int getRatio(){
+
+    public int getRatio() {
         return ratio;
     }
-    
-    public void setRatio(int ratio){
-        this.ratio=ratio;
+
+    public void setRatio(int ratio) {
+        this.ratio = ratio;
     }
 }

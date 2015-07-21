@@ -10,6 +10,7 @@ package client.proxy;
  * @author ddennis
  */
 public class CreateGameRequest {
+
     private boolean randomTiles;
     private boolean randomNumbers;
     private boolean randomPorts;
@@ -53,5 +54,5 @@ public class CreateGameRequest {
     public void setName(String name) {
         this.name = name;
     }
-    
+
 }

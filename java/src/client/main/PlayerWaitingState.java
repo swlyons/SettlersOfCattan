@@ -27,17 +27,16 @@ public class PlayerWaitingState extends State {
             joinGameController = (JoinGameController) controller;
 
             System.out.println(this.toString());
-            
+
             if (joinGameController.getPlayerWaitingView().isModalShowing()) {
                 playerWaitingTimer.schedule(new PlayerWaitingViewPoller(joinGameController), 0, 1000);
             }
-        }
-        else{
-            
+        } else {
+
             // we have 4 players no need to poll anymore
             playerWaitingTimer.cancel();
             playerWaitingTimer.purge();
-            
+
         }
     }
 

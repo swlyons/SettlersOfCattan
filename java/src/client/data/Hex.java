@@ -7,9 +7,8 @@ import shared.definitions.ResourceType;
 import shared.locations.EdgeLocation;
 import shared.locations.HexLocation;
 
-
 public class Hex {
-    
+
     private HexLocation location;
     private ArrayList<EdgeLocation> edgeLocations;
     private int rollValue;
@@ -17,12 +16,12 @@ public class Hex {
     private HexType type;
     private boolean hasRobber;
     private int number;
-    
-    public Hex(HexLocation hexStart, int rollValueStart, ResourceType resourceTypeStart){
-        location=hexStart;
-        rollValue=rollValueStart;
-        resource=resourceTypeStart;
-        hasRobber=false;
+
+    public Hex(HexLocation hexStart, int rollValueStart, ResourceType resourceTypeStart) {
+        location = hexStart;
+        rollValue = rollValueStart;
+        resource = resourceTypeStart;
+        hasRobber = false;
     }
 
     public ArrayList<EdgeLocation> getEdgeLocations() {
@@ -40,7 +39,7 @@ public class Hex {
     public void setRollValue(int rollValue) {
         this.rollValue = rollValue;
     }
-    
+
     public boolean getHasRobber() {
         return hasRobber;
     }
@@ -66,12 +65,12 @@ public class Hex {
     }
 
     public HexType getType() {
-		return type;
-	}
+        return type;
+    }
 
-	public void setType(HexType type) {
-		this.type = type;
-	}
+    public void setType(HexType type) {
+        this.type = type;
+    }
 
     public int getNumber() {
         return number;
@@ -86,6 +85,4 @@ public class Hex {
         return "{" + "location : " + location + ", resource : " + resource + ", number : " + number + '}';
     }
 
-    
-    
 }

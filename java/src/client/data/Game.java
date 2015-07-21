@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Game {
-    
+
     private String title;
     private String id;
     private ResourceList bank;
@@ -22,13 +22,14 @@ public class Game {
         this.title = title;
     }
 
-    public void setTitle(String title){
+    public void setTitle(String title) {
         this.title = title;
     }
-    
-    public String getTitle(){
+
+    public String getTitle() {
         return title;
     }
+
     public String getId() {
         return id;
     }
@@ -36,6 +37,7 @@ public class Game {
     public void setId(String id) {
         this.id = id;
     }
+
     public List<Player> getPlayers() {
         return players;
     }
@@ -112,7 +114,5 @@ public class Game {
     public String toString() {
         return "{" + "title : " + title + ", id : " + id + ", bank : " + bank + ", chat : " + chat + ", log : " + log + ", map : " + map + ", players : " + players + ", tradeOffer : " + tradeOffer + ", turnTracker : " + turnTracker + ", version : " + version + ", winner : " + winner + '}';
     }
-
-    
 
 }

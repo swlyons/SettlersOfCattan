@@ -13,10 +13,11 @@ import client.data.SettlementLocation;
  * @author ddennis
  */
 public class VertexObject {
+
     private int owner;
     private VertexLocation direction;
     private SettlementLocation location;
-    
+
     public VertexObject(int owner, VertexLocation direction) {
         this.owner = owner;
         this.direction = direction;
@@ -37,7 +38,7 @@ public class VertexObject {
     public void setDirection(VertexLocation direction) {
         this.direction = direction;
     }
-    
+
     public SettlementLocation getLocation() {
         return location;
     }
@@ -46,11 +47,9 @@ public class VertexObject {
         this.location = location;
     }
 
-
     @Override
     public String toString() {
         return "{" + "owner : " + owner + ", location : " + location + '}';
     }
-    
-    
+
 }

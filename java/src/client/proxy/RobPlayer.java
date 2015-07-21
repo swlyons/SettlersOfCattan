@@ -15,7 +15,7 @@ public class RobPlayer extends Command {
 
     public RobPlayer() {
     }
-    
+
     public int getVictimIndex() {
         return victimIndex;
     }

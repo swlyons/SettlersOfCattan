@@ -17,16 +17,17 @@ import java.util.Timer;
 public class JoinGameState extends State {
 
     private Timer joinGameTimer = new Timer();
+
     @Override
     public void doAction(Controller controller) {
         JoinGameController joinGameController = (JoinGameController) controller;
         System.out.println(this.toString());
-      
-       if(joinGameController.getJoinGameView().isModalShowing()){
-          joinGameTimer.schedule(new JoinGameViewPoller(joinGameController), 0, 1000);
-       }
+
+        if (joinGameController.getJoinGameView().isModalShowing()) {
+            joinGameTimer.schedule(new JoinGameViewPoller(joinGameController), 0, 1000);
+        }
     }
-    
+
     @Override
     public String toString() {
         return "JoinGameState{" + '}';

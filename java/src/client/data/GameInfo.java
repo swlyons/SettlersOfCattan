@@ -26,12 +26,13 @@ public class GameInfo {
     private TurnTracker turnTracker;
     private int version;
     private int winner;
-    
+
     public GameInfo(String title) {
         setId(-1);
         setTitle(title);
         players = new ArrayList<>();
     }
+
     public int getId() {
         return id;
     }
@@ -108,8 +109,6 @@ public class GameInfo {
         this.winner = winner;
     }
 
-    
-
     public String getTitle() {
         return title;
     }
@@ -121,7 +120,7 @@ public class GameInfo {
     public void addPlayer(PlayerInfo newPlayer) {
         players.add(newPlayer);
     }
-    
+
     @Override
     public String toString() {
         return "{" + "title : " + title + ", id : " + id + ", bank : " + bank + ", chat : " + chat + ", log : " + log + ", map : " + map + ", players : " + players + ", tradeOffer : " + tradeOffer + ", turnTracker : " + turnTracker + ", version : " + version + ", winner : " + winner + '}';

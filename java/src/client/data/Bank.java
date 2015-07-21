@@ -14,46 +14,45 @@ public class Bank {
     private int soldiers;
     private int monuments;
     private final int mainBankIndex = 4;
-    
-    public Bank(boolean isMainBankInitializer){
-    	if(isMainBankInitializer){
-    		this.ownerID = mainBankIndex;
-    		this.settlements = 0;
-    		this.cities = 0;
-    		this.roads = 0;
-    		this.hasLargestArmy = true;
-    		this.hasLongestRoad = true;
-    	} else {
-    		this.settlements = 5;
-    		this.cities = 4;
-    		this.roads = 15;
-    		this.hasLargestArmy = false;
-    		this.hasLongestRoad = false;
-    	}
-		this.resourcesCards = new ResourceList(isMainBankInitializer);
-		this.developmentCards = new DevCardList(isMainBankInitializer);
-		this.unusableDevCards = new DevCardList();
-		this.soldiers = 0;
-		this.monuments = 0;
+
+    public Bank(boolean isMainBankInitializer) {
+        if (isMainBankInitializer) {
+            this.ownerID = mainBankIndex;
+            this.settlements = 0;
+            this.cities = 0;
+            this.roads = 0;
+            this.hasLargestArmy = true;
+            this.hasLongestRoad = true;
+        } else {
+            this.settlements = 5;
+            this.cities = 4;
+            this.roads = 15;
+            this.hasLargestArmy = false;
+            this.hasLongestRoad = false;
+        }
+        this.resourcesCards = new ResourceList(isMainBankInitializer);
+        this.developmentCards = new DevCardList(isMainBankInitializer);
+        this.unusableDevCards = new DevCardList();
+        this.soldiers = 0;
+        this.monuments = 0;
     }
 
     public Bank(PlayerInfo p, boolean hasLargestArmy, boolean hasLongestRoad) {
-	    this.ownerID = p.getPlayerID();
-	    this.hasLongestRoad = hasLongestRoad;
-	    this.hasLargestArmy = hasLargestArmy;
-	    this.resourcesCards = p.getResources();
-	    this.developmentCards = p.getOldDevCards();
-	    this.unusableDevCards = new DevCardList();
-	    this.soldiers = p.getSoldiers();
-	    this.monuments = p.getMonuments();
-	    this.settlements = p.getSettlements();
-	    this.cities = p.getCities();
-	    this.roads = p.getRoads();
-	}
-    
-    
+        this.ownerID = p.getPlayerID();
+        this.hasLongestRoad = hasLongestRoad;
+        this.hasLargestArmy = hasLargestArmy;
+        this.resourcesCards = p.getResources();
+        this.developmentCards = p.getOldDevCards();
+        this.unusableDevCards = new DevCardList();
+        this.soldiers = p.getSoldiers();
+        this.monuments = p.getMonuments();
+        this.settlements = p.getSettlements();
+        this.cities = p.getCities();
+        this.roads = p.getRoads();
+    }
+
     public Bank(int ownerID, boolean hasLongestRoad, boolean hasLargestArmy, ResourceList resourcesCards, DevCardList developmentCards, DevCardList unusableDevCards,
-    			int soldiers, int monuments, int settlements, int cities, int roads) {
+            int soldiers, int monuments, int settlements, int cities, int roads) {
         this.ownerID = ownerID;
         this.hasLongestRoad = hasLongestRoad;
         this.hasLargestArmy = hasLargestArmy;
@@ -66,7 +65,6 @@ public class Bank {
         this.cities = cities;
         this.roads = roads;
     }
-    
 
     public Bank(ResourceList resourceCards, DevCardList developmentCards, boolean hasLargestArmy, boolean hasLongestRoad) {
         this.ownerID = mainBankIndex;
@@ -79,11 +77,10 @@ public class Bank {
         this.monuments = 0;
         this.settlements = 0;
         this.cities = 0;
-        this.roads = 0;	
+        this.roads = 0;
     }
 
-
-	public int getSettlements() {
+    public int getSettlements() {
         return settlements;
     }
 
@@ -91,14 +88,14 @@ public class Bank {
         this.settlements = settlements;
     }
 
-    public void removeSettlement(){
-    	settlements--;
+    public void removeSettlement() {
+        settlements--;
     }
-    
+
     public void addSettlement() {
-    	settlements++;
+        settlements++;
     }
-    
+
     public int getCities() {
         return cities;
     }
@@ -107,10 +104,10 @@ public class Bank {
         this.cities = cities;
     }
 
-    public void removeCity(){
-    	cities--;
+    public void removeCity() {
+        cities--;
     }
-    
+
     public int getRoads() {
         return roads;
     }
@@ -119,10 +116,10 @@ public class Bank {
         this.roads = roads;
     }
 
-    public void removeRoad(){
-    	roads--;
+    public void removeRoad() {
+        roads--;
     }
-    
+
     public int getOwnerID() {
         return ownerID;
     }
@@ -170,9 +167,9 @@ public class Bank {
     public void setSoldiers(int soldiers) {
         this.soldiers = soldiers;
     }
-    
+
     public void addSoldier() {
-    	this.soldiers++;
+        this.soldiers++;
     }
 
     public int getMonuments() {
@@ -182,47 +179,47 @@ public class Bank {
     public void setMonuments(int monuments) {
         this.monuments = monuments;
     }
-    
-    public void addMonument(){
-    	this.monuments++;
+
+    public void addMonument() {
+        this.monuments++;
     }
 
-	public DevCardList getUnusableDevCards() {
-		return unusableDevCards;
-	}
+    public DevCardList getUnusableDevCards() {
+        return unusableDevCards;
+    }
 
-	public void setUnusableDevCards(DevCardList unusableDevCards) {
-		this.unusableDevCards = unusableDevCards;
-	}
+    public void setUnusableDevCards(DevCardList unusableDevCards) {
+        this.unusableDevCards = unusableDevCards;
+    }
 
-	public void makeCardsUsable() {
-		int monuments = unusableDevCards.getMonument();
-		for(int i = 0; i < monuments; i++){
-			this.unusableDevCards.removeMonument();
-			this.developmentCards.addMonument();
-		}
-		int monopolies = unusableDevCards.getMonopoly();
-		for(int i = 0; i < monopolies; i++){
-			this.unusableDevCards.removeMonopoly();
-			this.developmentCards.addMonopoly();
-		}
-		int yearsOfPlenty = unusableDevCards.getYearOfPlenty();
-		for(int i = 0; i < yearsOfPlenty; i++){
-			this.unusableDevCards.removeYearOfPlenty();
-			this.developmentCards.addYearOfPlenty();
-		}
-		int roadBuildings = unusableDevCards.getRoadBuilding();
-		for(int i = 0; i < roadBuildings; i++){
-			this.unusableDevCards.removeRoadBuilding();
-			this.developmentCards.addRoadBuilding();
-		}
-		int soldiers = unusableDevCards.getSoldier();
-		for(int i = 0; i < soldiers; i++){
-			this.unusableDevCards.removeSoldier();
-			this.developmentCards.addSoldier();
-		}		
-	}
-	
+    public void makeCardsUsable() {
+        int monuments = unusableDevCards.getMonument();
+        for (int i = 0; i < monuments; i++) {
+            this.unusableDevCards.removeMonument();
+            this.developmentCards.addMonument();
+        }
+        int monopolies = unusableDevCards.getMonopoly();
+        for (int i = 0; i < monopolies; i++) {
+            this.unusableDevCards.removeMonopoly();
+            this.developmentCards.addMonopoly();
+        }
+        int yearsOfPlenty = unusableDevCards.getYearOfPlenty();
+        for (int i = 0; i < yearsOfPlenty; i++) {
+            this.unusableDevCards.removeYearOfPlenty();
+            this.developmentCards.addYearOfPlenty();
+        }
+        int roadBuildings = unusableDevCards.getRoadBuilding();
+        for (int i = 0; i < roadBuildings; i++) {
+            this.unusableDevCards.removeRoadBuilding();
+            this.developmentCards.addRoadBuilding();
+        }
+        int soldiers = unusableDevCards.getSoldier();
+        for (int i = 0; i < soldiers; i++) {
+            this.unusableDevCards.removeSoldier();
+            this.developmentCards.addSoldier();
+        }
+    }
+
     @Override
     public int hashCode() {
         int hash = 7;
@@ -249,6 +246,5 @@ public class Bank {
     public String toString() {
         return "Bank{" + "ownerID=" + ownerID + ", hasLongestRoad=" + hasLongestRoad + ", hasLargestArmy=" + hasLargestArmy + ", resourcesCards=" + resourcesCards + ", developmentCards=" + developmentCards + ", soldiers=" + soldiers + ", monuments=" + monuments + '}';
     }
-
 
 }

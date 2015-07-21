@@ -4,21 +4,23 @@
  * and open the template in the editor.
  */
 package client.data;
+
 import shared.locations.VertexDirection;
+
 /**
  *
  * @author Samuel
  */
 public class SettlementLocation {
-    
-    public void SettlementLocation(){
-    
+
+    public void SettlementLocation() {
+
     }
-    
+
     private int x;
     private int y;
     private VertexDirection direction;
-    
+
     public int getX() {
         return x;
     }
@@ -42,5 +44,5 @@ public class SettlementLocation {
     public void setDirection(VertexDirection direction) {
         this.direction = direction;
     }
-    
+
 }

@@ -15,7 +15,7 @@ public class Monopoly extends Command {
     public Monopoly(int playerIndex) {
         super("Monopoly", playerIndex);
     }
-    
+
     public ResourceType getResource() {
         return resource;
     }

@@ -3,12 +3,12 @@ package client.data;
 public class TradeOffer {
 
     private int sender;
-    private int receiver ;
+    private int receiver;
     private ResourceList offer;
 
     public TradeOffer(int sender, int receiver, ResourceList offer) {
         this.sender = sender;
-        this.receiver  = receiver;
+        this.receiver = receiver;
         this.offer = offer;
     }
 
@@ -24,7 +24,7 @@ public class TradeOffer {
         return receiver;
     }
 
-    public void getReceiver(int receiver ) {
+    public void getReceiver(int receiver) {
         this.receiver = receiver;
     }
 
@@ -40,5 +40,5 @@ public class TradeOffer {
     public String toString() {
         return "{" + "sender=" + sender + ", receiver=" + receiver + ", offer=" + offer + '}';
     }
-    
+
 }

@@ -52,28 +52,28 @@ public class Catan extends JFrame {
             public void run() {
                 new Catan();
                 CatanStateMachine catanStateMachine = new CatanStateMachine();
-                
+
                 PlayerWaitingView playerWaitingView = new PlayerWaitingView();
                 final PlayerWaitingController playerWaitingController = new PlayerWaitingController(
                         playerWaitingView);
                 playerWaitingView.setController(playerWaitingController);
-                playerWaitingController.setPlayerAction(new IAction(){
+                playerWaitingController.setPlayerAction(new IAction() {
                     @Override
                     public void execute() {
                         //((MapController)catanPanel.getMidPanel().getMapController()).initFromModel();
                         //end PlayerWaiting
-                        catanStateMachine.move((MapController)catanPanel.getMidPanel().getMapController());
+                        catanStateMachine.move((MapController) catanPanel.getMidPanel().getMapController());
                         //setup
-                        catanStateMachine.move((MapController)catanPanel.getMidPanel().getMapController());
+                        catanStateMachine.move((MapController) catanPanel.getMidPanel().getMapController());
                         //first round
-                        catanStateMachine.move((MapController)catanPanel.getMidPanel().getMapController());
-                        
+                        catanStateMachine.move((MapController) catanPanel.getMidPanel().getMapController());
+
                         //second round
-                        catanStateMachine.move((MapController)catanPanel.getMidPanel().getMapController());
-                        
+                        catanStateMachine.move((MapController) catanPanel.getMidPanel().getMapController());
+
                         //gameplay
-                        ((MapController)catanPanel.getMidPanel().getMapController()).getMapPoller().setCatanPanel(catanPanel);
-                        catanStateMachine.stay((MapController)catanPanel.getMidPanel().getMapController());
+                        ((MapController) catanPanel.getMidPanel().getMapController()).getMapPoller().setCatanPanel(catanPanel);
+                        catanStateMachine.stay((MapController) catanPanel.getMidPanel().getMapController());
                     }
                 });
                 JoinGameView joinView = new JoinGameView();

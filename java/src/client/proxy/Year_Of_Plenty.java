@@ -16,8 +16,7 @@ public class Year_Of_Plenty extends Command {
     public Year_Of_Plenty(int playerIndex) {
         super("Year_Of_Plenty", playerIndex);
     }
-    
-    
+
     public ResourceType getResource1() {
         return resource1;
     }

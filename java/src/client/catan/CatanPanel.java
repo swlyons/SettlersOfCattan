@@ -113,9 +113,8 @@ public class CatanPanel extends JPanel {
 
             }
         });
-        this.add(testButton, BorderLayout.SOUTH);
+        //this.add(testButton, BorderLayout.SOUTH);
 
-        
     }
 
     public TitlePanel getTitlePanel() {
@@ -157,10 +156,9 @@ public class CatanPanel extends JPanel {
     public void setRollController(RollController rollController) {
         this.rollController = rollController;
     }
-    
-    public DiscardController getDiscardController(){
+
+    public DiscardController getDiscardController() {
         return discardController;
     }
-    
 
 }

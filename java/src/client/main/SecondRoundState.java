@@ -49,11 +49,11 @@ public class SecondRoundState extends State {
 
             gameManager.initializeGame(gameInformation);
             version = gameInformation.getVersion();
-            if(gameInformation.getTurnTracker().getStatus().equals("FirstRound")){
-                try{
-                Thread.sleep(3000);
-                }catch(Exception e){}
-                finally{
+            if (gameInformation.getTurnTracker().getStatus().equals("FirstRound")) {
+                try {
+                    Thread.sleep(3000);
+                } catch (Exception e) {
+                } finally {
                     continue;
                 }
             }
@@ -70,19 +70,19 @@ public class SecondRoundState extends State {
 
             if (playerIndex == gameInformation.getTurnTracker().getCurrentTurn()) {
                 if (status.equals("SecondRound")) {
-                    if(((MapView) mapController.getView()).getOverlay()==null||
-                            (firstTime&&!((MapView) mapController.getView()).getOverlay().isModalShowing())){    
-                       firstTime = false;
-                       mapController.initFromModel();
-                       int settlements = 0;
-                        for(Location location : gameManager.getLocationManager().getSettledLocations()){
-                            if(playerIndex == location.getOwnerID()){
+                    if (((MapView) mapController.getView()).getOverlay() == null
+                            || (firstTime && !((MapView) mapController.getView()).getOverlay().isModalShowing())) {
+                        firstTime = false;
+                        mapController.initFromModel();
+                        int settlements = 0;
+                        for (Location location : gameManager.getLocationManager().getSettledLocations()) {
+                            if (playerIndex == location.getOwnerID()) {
                                 settlements++;
                             }
                         }
-                        if(settlements==1){
+                        if (settlements == 1) {
                             mapController.startMove(PieceType.SETTLEMENT, true, true);
-                        }else{
+                        } else {
                             mapController.startMove(PieceType.ROAD, true, true);
                         }
                     }
