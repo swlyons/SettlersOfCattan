@@ -4,16 +4,16 @@ public class Command {
 
     private String type;
     private int playerIndex;
-    
-    public Command(){
-        
+
+    public Command() {
+
     }
+
     public Command(String type, int playerIndex) {
         this.type = type;
         this.playerIndex = playerIndex;
     }
-    
-    
+
     public String getType() {
         return type;
     }

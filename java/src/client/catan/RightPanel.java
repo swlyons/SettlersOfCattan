@@ -27,8 +27,7 @@ public class RightPanel extends JPanel {
 
         this.setLayout(new BoxLayout(this, BoxLayout.LINE_AXIS));
 
-		// Initialize development card views and controller
-        //
+        // Initialize development card views and controller
         playCardView = new PlayDevCardView();
         buyCardView = new BuyDevCardView();
         IAction soldierAction = new IAction() {
@@ -48,15 +47,12 @@ public class RightPanel extends JPanel {
         playCardView.setController(devCardController);
         buyCardView.setController(devCardController);
 
-		// Initialize victory point view and controller
-        //
+        // Initialize victory point view and controller
         pointsView = new PointsView();
         finishedView = new GameFinishedView();
         pointsController = new PointsController(pointsView, finishedView);
         pointsView.setController(pointsController);
-
-		// Initialize resource bar view and controller
-        //
+        // Initialize resource bar view and controller
         resourceView = new ResourceBarView();
         resourceController = new ResourceBarController(resourceView);
         resourceController.setElementAction(ResourceBarElement.ROAD,
@@ -72,13 +68,13 @@ public class RightPanel extends JPanel {
                 new IAction() {
                     @Override
                     public void execute() {
-                        try{
+                        try {
                             ClientCommunicator.getSingleton().getGameManager().initializeGame(ClientCommunicatorFascadeSettlersOfCatan.getSingleton().getGameModel(0 + ""));
-                            if(resourceController.canBuyCard()){
+                            if (resourceController.canBuyCard()) {
                                 devCardController.startBuyCard();
                             }
-                        }catch(Exception e){
-                        	e.printStackTrace();
+                        } catch (Exception e) {
+                            e.printStackTrace();
                         }
                     }
                 });
@@ -86,13 +82,14 @@ public class RightPanel extends JPanel {
                 new IAction() {
                     @Override
                     public void execute() {
-                        try{
+                        try {
                             ClientCommunicator.getSingleton().getGameManager().initializeGame(ClientCommunicatorFascadeSettlersOfCatan.getSingleton().getGameModel(0 + ""));
-                            if(resourceController.canPlayCard()){
+                            if (resourceController.canPlayCard()) {
                                 devCardController.startPlayCard();
                             }
-                        }catch(Exception e){
-                        	e.printStackTrace();                       	
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
                         }
                     }
                 });
@@ -112,7 +109,7 @@ public class RightPanel extends JPanel {
                 boolean isFree = false;
                 boolean allowDisconnected = false;
                 boolean isAllowed = false;
-                try{
+                try {
                     ClientCommunicator.getSingleton().getGameManager().initializeGame(ClientCommunicatorFascadeSettlersOfCatan.getSingleton().getGameModel(0 + ""));
                     switch (pieceType) {
                         case ROAD:
@@ -128,11 +125,12 @@ public class RightPanel extends JPanel {
                             break;
                     }
 
-                    if(isAllowed){
+                    if (isAllowed) {
                         mapController.startMove(pieceType, isFree, allowDisconnected);
                     }
-                }catch(Exception e){
-                	e.printStackTrace();
+
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
         };

@@ -10,6 +10,7 @@ package client.proxy;
  * @author ddennis
  */
 public class LoadGameRequest {
+
     private String name;
 
     public LoadGameRequest(String name) {
@@ -23,6 +24,5 @@ public class LoadGameRequest {
     public void setName(String name) {
         this.name = name;
     }
-    
-    
+
 }

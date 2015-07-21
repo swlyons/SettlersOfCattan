@@ -28,7 +28,7 @@ public class PlayerInfo {
     private boolean discarded;
     private boolean playedDevCard;
     private int playerID;
-    
+
     public PlayerInfo() {
         setId(-1);
         setPlayerIndex(-1);
@@ -46,9 +46,9 @@ public class PlayerInfo {
         this.oldDevCards = new DevCardList();
         this.newDevCards = new DevCardList();
         this.soldiers = 0;
-        
+
     }
-    
+
     public int getPlayerID() {
         return playerID;
     }
@@ -56,8 +56,7 @@ public class PlayerInfo {
     public void setPlayerID(int playerID) {
         this.playerID = playerID;
     }
-    
-    
+
     public int getCities() {
         return cities;
     }
@@ -199,12 +198,13 @@ public class PlayerInfo {
 
         return this.id == other.id;
     }
+
     @Override
-	public String toString() {
-		return "{" + "name : " + name + ", color : " + color + ", cities : " + cities + ", settlements : " + settlements
-				+ ", roads : " + roads + ", victoryPoints : " + victoryPoints + ", resources : " + resources
-				+ ", playerIndex : " + playerIndex + ", id : " + id + ", playerID : " + playerID + ", discarded : " + discarded
-				+ ", playedDevCard : " + playedDevCard + ", monuments : " + monuments + ", oldDevCards : " + oldDevCards
-				+ ", newDevCards : " + newDevCards + ", soldiers : " + soldiers + '}';
-	}
+    public String toString() {
+        return "{" + "name : " + name + ", color : " + color + ", cities : " + cities + ", settlements : " + settlements
+                + ", roads : " + roads + ", victoryPoints : " + victoryPoints + ", resources : " + resources
+                + ", playerIndex : " + playerIndex + ", id : " + id + ", playerID : " + playerID + ", discarded : " + discarded
+                + ", playedDevCard : " + playedDevCard + ", monuments : " + monuments + ", oldDevCards : " + oldDevCards
+                + ", newDevCards : " + newDevCards + ", soldiers : " + soldiers + '}';
+    }
 }

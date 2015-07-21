@@ -10,7 +10,6 @@ import javax.swing.JPanel;
 import shared.definitions.ResourceType;
 import client.discard.DiscardController;
 import client.discard.DiscardView;
-import client.map.MapPoller;
 import client.misc.WaitView;
 import client.roll.RollController;
 import client.roll.RollResultView;
@@ -113,9 +112,8 @@ public class CatanPanel extends JPanel {
 
             }
         });
-        this.add(testButton, BorderLayout.SOUTH);
+        //this.add(testButton, BorderLayout.SOUTH);
 
-        
     }
 
     public TitlePanel getTitlePanel() {
@@ -157,10 +155,9 @@ public class CatanPanel extends JPanel {
     public void setRollController(RollController rollController) {
         this.rollController = rollController;
     }
-    
-    public DiscardController getDiscardController(){
+
+    public DiscardController getDiscardController() {
         return discardController;
     }
-    
 
 }

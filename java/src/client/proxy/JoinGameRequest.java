@@ -10,6 +10,7 @@ package client.proxy;
  * @author ddennis
  */
 public class JoinGameRequest {
+
     private int id;
     private String color;
 
@@ -33,6 +34,5 @@ public class JoinGameRequest {
     public void setColor(String color) {
         this.color = color;
     }
-    
-    
+
 }

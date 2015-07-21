@@ -3,13 +3,10 @@ package client.managers;
 import client.ClientException;
 import client.communication.ClientCommunicatorFascadeSettlersOfCatan;
 import client.data.User;
-import client.proxy.IServer;
-import client.proxy.MockServer;
-import client.proxy.ServerProxy;
 
 public class UserManager {
 
-	private ClientCommunicatorFascadeSettlersOfCatan server = ClientCommunicatorFascadeSettlersOfCatan.getSingleton();
+    private ClientCommunicatorFascadeSettlersOfCatan server = ClientCommunicatorFascadeSettlersOfCatan.getSingleton();
 
     /**
      *
@@ -25,17 +22,18 @@ public class UserManager {
         } else if (!validatePasswordsMatch(password, passwordValidate)) {
             return false;
         } else {
-			try {
-	            User credentials = new User(username, password);
-	            boolean success = server.register(credentials);
-	            if (success) {
-	            	success = server.login(credentials);
-	            }
-	            return success;
-			} catch (ClientException e) {
-            	e.printStackTrace();
-				return false;
-			}
+
+            try {
+                User credentials = new User(username, password);
+                boolean success = server.register(credentials);
+                if (success) {
+                    success = server.login(credentials);
+                }
+                return success;
+            } catch (ClientException e) {
+                e.printStackTrace();
+                return false;
+            }
         }
     }
 
@@ -51,14 +49,15 @@ public class UserManager {
         if (!validateUsername(username) || !validatePassword(password)) {
             return false;
         } else {
-        	try {
-	            User credentials = new User(username, password);
-	            boolean success = server.login(credentials);
-	            return success;
-			} catch (ClientException e) {
-            	e.printStackTrace();
-				return false;
-			}
+
+            try {
+                User credentials = new User(username, password);
+                boolean success = server.login(credentials);
+                return success;
+            } catch (ClientException e) {
+                e.printStackTrace();
+                return false;
+            }
         }
     }
 

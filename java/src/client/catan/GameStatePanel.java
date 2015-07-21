@@ -12,11 +12,14 @@ import client.base.IAction;
 public class GameStatePanel extends JPanel {
 
     private JButton button;
+    private JPanel centered;
 
     public GameStatePanel() {
-        this.setLayout(new FlowLayout());
+        this.setLayout(new GridBagLayout());
         this.setBackground(Color.white);
         this.setOpaque(true);
+
+        centered = new JPanel(new BorderLayout());
 
         button = new JButton();
 
@@ -24,9 +27,10 @@ public class GameStatePanel extends JPanel {
         Font newFont = font.deriveFont(font.getStyle(), 20);
         button.setFont(newFont);
 
-        button.setPreferredSize(new Dimension(400, 50));
-
-        this.add(button);
+        centered.setPreferredSize(new Dimension(400, 50));
+        button.setContentAreaFilled(false);
+        centered.add(button, BorderLayout.CENTER);
+        this.add(centered);
 
         updateGameState("Waiting for other players", false);
     }
@@ -35,11 +39,15 @@ public class GameStatePanel extends JPanel {
         return button;
     }
 
+    public JPanel getCentered() {
+        return centered;
+    }
+    
     public void updateGameState(String stateMessage, boolean enable) {
         button.setText(stateMessage);
         button.setEnabled(enable);
     }
-
+    
     public void setButtonAction(final IAction action) {
         ActionListener[] listeners = button.getActionListeners();
         for (ActionListener listener : listeners) {

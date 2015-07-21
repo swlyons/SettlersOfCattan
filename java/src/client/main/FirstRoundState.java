@@ -64,16 +64,16 @@ public class FirstRoundState extends State {
             if (playerIndex == gameInformation.getTurnTracker().getCurrentTurn()) {
                 if (status.equals("FirstRound")) {
                     boolean builtSettlement = false;
-                    for(Location location : gameManager.getLocationManager().getSettledLocations()){
-                        if(location.getOwnerID()==playerIndex){
+                    for (Location location : gameManager.getLocationManager().getSettledLocations()) {
+                        if (location.getOwnerID() == playerIndex) {
                             builtSettlement = true;
                         }
                     }
                     if (((MapView) mapController.getView()).getOverlay() == null) {
                         mapController.initFromModel();
-                        if(!builtSettlement){
+                        if (!builtSettlement) {
                             mapController.startMove(PieceType.SETTLEMENT, true, true);
-                        }else{
+                        } else {
                             mapController.startMove(PieceType.ROAD, true, false);
                         }
                     }

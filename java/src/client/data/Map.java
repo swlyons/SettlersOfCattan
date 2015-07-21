@@ -9,17 +9,17 @@ import java.util.List;
 import java.util.ArrayList;
 import shared.locations.HexLocation;
 
-
 /**
  *
  * @author ddennis
  */
 public class Map {
+
     private List<Hex> hexes;
     private List<Port> ports;
     private List<EdgeValue> roads;
     private List<VertexObject> settlements;
-    private List <VertexObject> cities;
+    private List<VertexObject> cities;
     private int radius;
     private HexLocation robber;
 
@@ -32,7 +32,7 @@ public class Map {
     }
 
     public ArrayList<Hex> getHexes() {
-        return (ArrayList<Hex>)hexes;
+        return (ArrayList<Hex>) hexes;
     }
 
     public void setHexes(List<Hex> hexes) {
@@ -40,7 +40,7 @@ public class Map {
     }
 
     public ArrayList<Port> getPorts() {
-        return (ArrayList<Port>)ports;
+        return (ArrayList<Port>) ports;
     }
 
     public void setPorts(List<Port> ports) {
@@ -48,7 +48,7 @@ public class Map {
     }
 
     public ArrayList<EdgeValue> getRoads() {
-        return (ArrayList<EdgeValue>)roads;
+        return (ArrayList<EdgeValue>) roads;
     }
 
     public void setRoads(List<EdgeValue> roads) {
@@ -56,7 +56,7 @@ public class Map {
     }
 
     public ArrayList<VertexObject> getSettlements() {
-        return (ArrayList<VertexObject>)settlements;
+        return (ArrayList<VertexObject>) settlements;
     }
 
     public void setSettlements(List<VertexObject> settlements) {
@@ -64,7 +64,7 @@ public class Map {
     }
 
     public ArrayList<VertexObject> getCities() {
-        return (ArrayList<VertexObject>)cities;
+        return (ArrayList<VertexObject>) cities;
     }
 
     public void setCities(List<VertexObject> cities) {
@@ -86,13 +86,11 @@ public class Map {
     public void setRobber(HexLocation robber) {
         this.robber = robber;
     }
-  
+
     @Override
     public String toString() {
-        
-       
+
         return "{" + "hexes : " + hexes + ", ports : " + ports + ", roads : " + roads + ", settlements : " + settlements + ", cities : " + cities + ", radius : " + radius + ", robber : " + robber + '}';
     }
-    
-    
+
 }

@@ -83,18 +83,14 @@ public class OverlayView extends PanelView implements IOverlayView {
         if (overlayStack.size() > 0) {
 
             // Hide the currently-visible overlay
-            
-            
-                overlayStack.peek().getOverlayPanel().setVisible(false);
-           
+            overlayStack.peek().getOverlayPanel().setVisible(false);
+
         }
 
         window.setGlassPane(overlayPanel);
-        
-            
+
         overlayPanel.setVisible(true);
-       
-        
+
         overlayStack.push(new OverlayInfo(this, overlayPanel));
     }
 
@@ -102,15 +98,19 @@ public class OverlayView extends PanelView implements IOverlayView {
      * Hides the top-most overlay
      */
     public void closeModal() {
-        /** USE FOR DEBUGGING OVERLAY ISSUES **/
+        /**
+         * USE FOR DEBUGGING OVERLAY ISSUES *
+         */
 //        System.out.println("Overlay View: Items Left In Stack: " + overlayStack.size());
 //        for(OverlayInfo overlay : overlayStack){
 //            System.out.println("\tOverlay Class: " +  overlay.getOverlayView().getClass());
 //        }
-        /***************************************/
+        /**
+         * ************************************
+         */
         assert overlayStack.size() > 0;
         assert window.getGlassPane() == overlayStack.peek().getOverlayPanel();
-        
+
         if (overlayStack.size() > 0) {
 
             overlayStack.pop().getOverlayPanel().setVisible(false);

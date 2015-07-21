@@ -1,4 +1,5 @@
 package client.data;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
@@ -6,17 +7,17 @@ import java.util.Set;
 import shared.locations.EdgeLocation;
 
 public class Edge {
- 
+
     private int ownerId;
     private Set<Integer> whoCanBuild;
     private EdgeLocation edgeLocation;
-            
-    public Edge(EdgeLocation edgeLocationStart){
-       ownerId=4;
-       whoCanBuild = new HashSet<Integer>();
-       edgeLocation = edgeLocationStart;
+
+    public Edge(EdgeLocation edgeLocationStart) {
+        ownerId = 4;
+        whoCanBuild = new HashSet<Integer>();
+        edgeLocation = edgeLocationStart;
     }
-    
+
     public int getOwnerId() {
         return ownerId;
     }
@@ -40,5 +41,5 @@ public class Edge {
     public void setEdgeLocation(EdgeLocation edgeLocation) {
         this.edgeLocation = edgeLocation;
     }
-    
+
 }

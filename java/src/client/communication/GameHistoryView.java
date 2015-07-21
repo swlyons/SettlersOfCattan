@@ -41,7 +41,7 @@ public class GameHistoryView extends PanelView implements IGameHistoryView {
     @Override
     public void setEntries(final List<LogEntry> entries) {
 
-		// Can't set entries immediately, because logPanel doesn't
+        // Can't set entries immediately, because logPanel doesn't
         // have a width or height yet, which messes up the word wrap
         // calculations in LogComponent. Therefore, we call
         // invokeLater.

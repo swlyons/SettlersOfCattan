@@ -27,6 +27,7 @@ import client.roll.RollController;
 import client.turntracker.TurnTrackerView;
 import java.util.ArrayList;
 import java.util.Date;
+import javax.swing.Icon;
 import shared.definitions.CatanColor;
 import shared.definitions.PieceType;
 
@@ -48,7 +49,6 @@ public class MapPoller extends TimerTask {
 
     public MapPoller() {
         super();
-
         discardedOnce=false;
         this.initializedPlayers = false;
         this.doneOnce = false;
@@ -75,7 +75,9 @@ public class MapPoller extends TimerTask {
                 GameHistoryView historyView = catanPanel.getLeftPanel().getHistoryView();
                 TurnTrackerView turnTrackerView = catanPanel.getLeftPanel().getTurnView();
                 RollController rollController = catanPanel.getRollController();
-//              GameStatePanel gameStatePanel = catanPanel.getMidPanel().getGameStatePanel();
+
+                GameStatePanel gameStatePanel = catanPanel.getMidPanel().getGameStatePanel();
+
                 PointsController pointsController = catanPanel.getRightPanel().getPointsController();
                 ResourceBarController resourceBarController = catanPanel.getRightPanel().getResourceController();
                 MapView mapView = (MapView) catanPanel.getMidPanel().getMapController().getView();
@@ -102,7 +104,7 @@ public class MapPoller extends TimerTask {
                         }
                     }
                 }
-                
+
                 /* Begin MapView Update */
                 // If they haven't initialized before or it isn't the client's
                 // turn
@@ -115,7 +117,6 @@ public class MapPoller extends TimerTask {
                         catanPanel.getMidPanel().getTradePanel().getDomesticController().getTradeOverlay().reset();
                     }
                 }
-
                 /* Begin Resource Bar Update */
                 for (PlayerInfo player : gameInformation.getPlayers()) {
                     if (player.getPlayerIndex() == playerIndex) {
@@ -148,6 +149,7 @@ public class MapPoller extends TimerTask {
                 }
                 /* End Resource Bar Update */
                 DiscardController dis = catanPanel.getDiscardController();
+
                 if(doneOnce && gameInformation.getTurnTracker().getCurrentTurn() == playerIndex  && rollController.getClickedOk() ){
                     if(status.equals("Discarding")&&!gameInformation.getPlayers().get(playerIndex).isDiscarded() && gameManager.getResourceManager() 
                                 .getGameBanks().get(playerIndex).getResourcesCards().getTotalResources() > 7&&!discardedOnce) {
@@ -157,7 +159,7 @@ public class MapPoller extends TimerTask {
                             discardedOnce=true;
                         }
                     }
-                    if(status.equals("Robbing")){
+                    if (status.equals("Robbing")) {
                         catanPanel.getMidPanel().getMapController().startMove(PieceType.ROBBER, true, true);
                         rollController.setClickedOk(false);
                         discardedOnce=false;
@@ -170,10 +172,10 @@ public class MapPoller extends TimerTask {
                         if (status.equals("Robbing")) {
                             catanPanel.getMidPanel().getMapController().startMove(PieceType.ROBBER, true, true);
                         }
-                        
+
                         if (status.equals("Discarding") && !gameInformation.getPlayers().get(playerIndex).isDiscarded() && gameManager.getResourceManager()
                                 .getGameBanks().get(playerIndex).getResourcesCards().getTotalResources() > 7) {
-                            
+
                             if (!dis.getDiscardView().isModalShowing()) {
                                 dis.initFromModel();
                                 dis.getDiscardView().showModal();
@@ -182,7 +184,7 @@ public class MapPoller extends TimerTask {
                     } else {
 
                         /* Begin Discard Window Update */
-                        if (status.equals("Discarding") && !gameInformation.getPlayers().get(playerIndex).isDiscarded() && gameManager.getResourceManager() 
+                        if (status.equals("Discarding") && !gameInformation.getPlayers().get(playerIndex).isDiscarded() && gameManager.getResourceManager()
                                 .getGameBanks().get(playerIndex).getResourcesCards().getTotalResources() > 7) {
                             if (!dis.getDiscardView().isModalShowing()) {
                                 dis.initFromModel();
@@ -259,7 +261,11 @@ public class MapPoller extends TimerTask {
 
                 if (status.equals("Playing") && playerIndex == gameInformation.getTurnTracker().getCurrentTurn()) {
                     enable = true;
-                    // gameStatePanel.getButton().setBackground(CatanColor.valueOf(player.getColor().toUpperCase()).getJavaColor());
+                    if (gameStatePanel.getBackground() != CatanColor.valueOf(playerColor.toUpperCase()).getJavaColor()) {
+
+                        gameStatePanel.getCentered().setBackground(CatanColor.valueOf(playerColor.toUpperCase()).getJavaColor());
+                    }
+
                     status = "Finish Turn";
                 }
 

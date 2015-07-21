@@ -507,7 +507,7 @@ public class GameManager {
 
     public boolean canPlaceRoad(EdgeLocation edgeLoc) {
         boolean canPlaceRoad = false;
-        if (locationManager.getSettledEdges().size() > 4 && locationManager.getSettledEdges().size() < 8) {            
+        if (locationManager.getSettledEdges().size() > 4 && locationManager.getSettledEdges().size() < 8) {
             Edge myEdge = null;
             ArrayList<Location> mySettledLocations = new ArrayList<Location>();
             for (Location l : locationManager.getSettledLocations()) {
@@ -520,37 +520,37 @@ public class GameManager {
                     myEdge = edge;
                 }
             }
-            
-            if(myEdge==null){
+
+            if (myEdge == null) {
                 assert false;
             }
-            
+
             EdgeLocation e1;
             EdgeLocation e2;
             EdgeLocation e3;
-            for(int i=0;i<mySettledLocations.size();i++){
-                if(mySettledLocations.get(i).getNormalizedLocation().getDir() == VertexDirection.NW){
+            for (int i = 0; i < mySettledLocations.size(); i++) {
+                if (mySettledLocations.get(i).getNormalizedLocation().getDir() == VertexDirection.NW) {
                     e1 = new EdgeLocation(mySettledLocations.get(i).getNormalizedLocation().getHexLoc(), EdgeDirection.N);
                     e2 = new EdgeLocation(mySettledLocations.get(i).getNormalizedLocation().getHexLoc(), EdgeDirection.NW);
                     e3 = new EdgeLocation(new HexLocation(mySettledLocations.get(i).getNormalizedLocation().getHexLoc().getX() - 1, mySettledLocations.get(i).getNormalizedLocation().getHexLoc().getY()), EdgeDirection.NE);
-                }else{
+                } else {
                     e1 = new EdgeLocation(mySettledLocations.get(i).getNormalizedLocation().getHexLoc(), EdgeDirection.N);
                     e2 = new EdgeLocation(mySettledLocations.get(i).getNormalizedLocation().getHexLoc(), EdgeDirection.NE);
                     e3 = new EdgeLocation(new HexLocation(mySettledLocations.get(i).getNormalizedLocation().getHexLoc().getX() + 1, mySettledLocations.get(i).getNormalizedLocation().getHexLoc().getY() - 1), EdgeDirection.NW);
                 }
-                if(myEdge.getEdgeLocation().getNormalizedLocation().equals(e1)||
-                    myEdge.getEdgeLocation().getNormalizedLocation().equals(e2)||
-                    myEdge.getEdgeLocation().getNormalizedLocation().equals(e3)){
+                if (myEdge.getEdgeLocation().getNormalizedLocation().equals(e1)
+                        || myEdge.getEdgeLocation().getNormalizedLocation().equals(e2)
+                        || myEdge.getEdgeLocation().getNormalizedLocation().equals(e3)) {
                     continue;
                 }
-                
-                if(edgeLoc.equals(e1)||
-                edgeLoc.equals(e2)||
-                edgeLoc.equals(e3)){
+
+                if (edgeLoc.equals(e1)
+                        || edgeLoc.equals(e2)
+                        || edgeLoc.equals(e3)) {
                     return true;
                 }
                 return false;
-            }            
+            }
             return false;
         } else {
             for (Edge edge : locationManager.getUnsettledEdges()) {

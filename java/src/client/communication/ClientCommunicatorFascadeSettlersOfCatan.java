@@ -127,7 +127,7 @@ public class ClientCommunicatorFascadeSettlersOfCatan {
     private static final String LIST_AI_GAME = "game/listAI";
 
     public GameInfo sendChat(SendChat sendChat) throws ClientException {
-        return  (GameInfo)ClientCommunicator.getSingleton().doPost(SEND_CHAT_MOVES, sendChat, 0).getResponseBody();
+        return (GameInfo) ClientCommunicator.getSingleton().doPost(SEND_CHAT_MOVES, sendChat, 0).getResponseBody();
     }
 
     public GameInfo rollNumber(RollNumber rollNumber) throws ClientException {

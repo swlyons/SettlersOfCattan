@@ -13,10 +13,10 @@ import client.login.LoginController;
  * @author ddennis
  */
 public class LoginState extends State {
-    
+
     @Override
     public void doAction(Controller controller) {
-        LoginController loginController = (LoginController)controller;
+        LoginController loginController = (LoginController) controller;
         System.out.println(this.toString());
     }
 

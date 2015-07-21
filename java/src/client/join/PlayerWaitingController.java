@@ -9,9 +9,10 @@ import java.util.ArrayList;
  * Implementation for the player waiting controller
  */
 public class PlayerWaitingController extends Controller implements IPlayerWaitingController {
+
     private IAction playerAction;
     private final int MAX_PLAYERS = 4;
-    
+
     public PlayerWaitingController(IPlayerWaitingView view) {
 
         super(view);
@@ -31,8 +32,7 @@ public class PlayerWaitingController extends Controller implements IPlayerWaitin
             String[] aiTypes2 = new String[aiTypes.size()];
             aiTypes.toArray(aiTypes2);
             getView().setAIChoices(aiTypes2);
-            
-            
+
         } catch (Exception e) {
         	e.printStackTrace();
         }
@@ -58,11 +58,11 @@ public class PlayerWaitingController extends Controller implements IPlayerWaitin
         }
 
     }
-    
+
     @Override
     public void ready() {
         //start the game when there are four players
-        if(getView().getPlayers().length == MAX_PLAYERS){
+        if (getView().getPlayers().length == MAX_PLAYERS) {
             playerAction.execute();
         }
     }
@@ -74,5 +74,5 @@ public class PlayerWaitingController extends Controller implements IPlayerWaitin
     public void setPlayerAction(IAction playerAction) {
         this.playerAction = playerAction;
     }
-    
+
 }

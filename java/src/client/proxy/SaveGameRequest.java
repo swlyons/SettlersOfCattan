@@ -10,6 +10,7 @@ package client.proxy;
  * @author ddennis
  */
 public class SaveGameRequest {
+
     private int id;
     private String name;
 
@@ -33,6 +34,5 @@ public class SaveGameRequest {
     public void setName(String name) {
         this.name = name;
     }
-    
-    
+
 }

@@ -15,9 +15,9 @@ import client.catan.CatanPanel;
 public class CatanStateMachine {
 
     private State[] states = {new LoginState(), new JoinGameState(), new PlayerWaitingState(),
-                                new SetupState(), new FirstRoundState(), new SecondRoundState(), new GamePlayState()};
+        new SetupState(), new FirstRoundState(), new SecondRoundState(), new GamePlayState()};
 
-    private int[][] transition = {{1, 1}, {1, 2}, {2, 3},{3,4},{4,5},{5,6}, {6,6}};
+    private int[][] transition = {{1, 1}, {1, 2}, {2, 3}, {3, 4}, {4, 5}, {5, 6}, {6, 6}};
     private int current = 0;
 
     private void next(int message) {
@@ -33,5 +33,5 @@ public class CatanStateMachine {
         states[current].doAction(controller);
         next(1);
     }
-   
+
 }

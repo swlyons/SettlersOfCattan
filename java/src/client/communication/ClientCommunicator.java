@@ -53,26 +53,25 @@ public class ClientCommunicator {
         }
         return singleton;
     }
-    
+
     private GameManager gm;
     private boolean joinedGame = false;
-    
+
     public GameManager getGameManager() {
-        if(gm == null){
+        if (gm == null) {
             gm = new GameManager();
         }
-    	return gm;
+        return gm;
     }
 
-    
-    public boolean getJoinedGame(){
+    public boolean getJoinedGame() {
         return joinedGame;
     }
-    
-    public void setJoinedGame(boolean joinedGame){
-        this.joinedGame=joinedGame;
+
+    public void setJoinedGame(boolean joinedGame) {
+        this.joinedGame = joinedGame;
     }
-    
+
     // Constructors
     /**
      * Default Constructor. Used only to create the singleton.
@@ -143,11 +142,11 @@ public class ClientCommunicator {
             connection.setRequestMethod(HTTP_GET);
             //set cookie
             if (playerID > -1) {
-                if(playerIdThisOne!=-1){
+                if (playerIdThisOne != -1) {
                     playerID = playerIdThisOne;
-                }                
+                }
                 connection.setRequestProperty("Cookie", cookies.get(playerID));
-                
+
             }
             connection.connect();
 
@@ -163,7 +162,7 @@ public class ClientCommunicator {
                         Type listType = new TypeToken<ArrayList<GameInfo>>() {
                         }.getType();
                         result.setResponseBody(model.fromJson(content, listType));
-                    } else if (commandName.equals("game/commands")){
+                    } else if (commandName.equals("game/commands")) {
                         Type listType = new TypeToken<ArrayList<Game>>() {
                         }.getType();
                         result.setResponseBody(model.fromJson(content, listType));
@@ -171,7 +170,7 @@ public class ClientCommunicator {
                         Type listType = new TypeToken<ArrayList<String>>() {
                         }.getType();
                         result.setResponseBody(model.fromJson(content, listType));
-                    }else {
+                    } else {
                         if (content.equals("\"true\"")) {
                             result.setResponseBody(new Game(content));
                         } else {
@@ -180,8 +179,8 @@ public class ClientCommunicator {
                     }
                 }
             } else {
-                 String content = "Failed"; //br.readLine();
-                    result.setResponseBody(content);
+                String content = "Failed"; //br.readLine();
+                result.setResponseBody(content);
             }
         } catch (IOException e) {
             throw new ClientException(String.format("doGet failed: %s",
@@ -205,7 +204,7 @@ public class ClientCommunicator {
 
             //set cookie by player id
             if (playerID > -1) {
-                if(playerIdThisOne!=-1){
+                if (playerIdThisOne != -1) {
                     playerID = playerIdThisOne;
                 }
                 connection.setRequestProperty("Cookie", cookies.get(playerID));
@@ -214,7 +213,7 @@ public class ClientCommunicator {
             connection.connect();
 
             String data = model.toJson(postData);
-            
+
             connection.getOutputStream().write(data.getBytes());
 
             connection.getOutputStream().close();
@@ -222,7 +221,7 @@ public class ClientCommunicator {
             result.setResponseCode(connection.getResponseCode());
             result.setResponseLength(connection.getContentLength());
             //if(commandName.equals("user/login"))
-                //System.out.println(data);
+            //System.out.println(data);
             //System.out.println(cookies.get(playerID))
             //get the content
             if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
@@ -248,9 +247,9 @@ public class ClientCommunicator {
                             //cookies.put(playerID, "");
                             cookies.put(playerID, ((cookies.get(playerID) != null) ? cookies.get(playerID) + "; " : "") + gameCookie);
                         }
-                    } else if(commandName.equals("games/create")){
+                    } else if (commandName.equals("games/create")) {
                         result.setResponseBody(model.fromJson(content, GameInfo.class));
-                    } else if(commandName.equals("game/addAI")){
+                    } else if (commandName.equals("game/addAI")) {
                         result.setResponseBody(content);
                     } else {
                         if (commandName.equals("games/save") || commandName.equals("games/load")) {
@@ -276,11 +275,11 @@ public class ClientCommunicator {
         }
         return result;
     }
-    
-     public Map<Integer, String> getCookies() {
+
+    public Map<Integer, String> getCookies() {
         return cookies;
     }
-     
+
     // Auxiliary Constants, Attributes, and Methods
     private static String SERVER_HOST = "localhost";
     private static int SERVER_PORT = 8081;
@@ -294,16 +293,14 @@ public class ClientCommunicator {
 
     private Integer playerIdThisOne = -1;
     private String name = "";
-    
-    public Integer getPlayerId(){
+
+    public Integer getPlayerId() {
         return playerIdThisOne;
     }
-    
-    public String getName(){
+
+    public String getName() {
         return name;
     }
-
-   
 
     // Singleton Instance
     private static ClientCommunicator singleton = null;

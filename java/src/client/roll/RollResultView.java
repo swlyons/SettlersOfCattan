@@ -104,5 +104,3 @@ private int rolledValue;
 	}
 
 }
-
-

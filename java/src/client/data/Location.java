@@ -13,10 +13,10 @@ public class Location {
     private VertexLocation normalizedLocation;
 
     public Location(VertexLocation vertexLocationStart) {
-        ownerID=4;
+        ownerID = 4;
         canBeSettled = true;
         isCity = false;
-        whoCanBuild = new HashSet<>();        
+        whoCanBuild = new HashSet<>();
         normalizedLocation = vertexLocationStart.getNormalizedLocation();
     }
 
@@ -27,7 +27,7 @@ public class Location {
     public void setOwnerID(int ownerID) {
         this.ownerID = ownerID;
     }
-    
+
     public Set<Integer> getWhoCanBuild() {
         return whoCanBuild;
     }
