@@ -8,7 +8,9 @@ import javax.swing.*;
 import java.util.*;
 
 import client.base.*;
+import client.communication.ClientCommunicator;
 import client.data.*;
+import client.managers.GameManager;
 import shared.definitions.CatanColor;
 
 /**
@@ -61,17 +63,22 @@ public class RobView extends OverlayView implements IRobView {
     }
 
     private ActionListener actionListener = new ActionListener() {
+
         @Override
         public void actionPerformed(ActionEvent e) {
+        	GameManager gm = ClientCommunicator.getSingleton().getGameManager();
+        	Integer playerId = ClientCommunicator.getSingleton().getPlayerId();
 
-            if (e.getSource() == defaultButton) {
-                closeModal();
+        	if (e.getSource() == defaultButton) {
+            	closeModal();
+            	getController().robPlayer(victims[gm.getPlayerIndex(playerId)]);
             } else {
 
                 for (int i = 0; i < victimButtons.size(); i++) {
                     if (e.getSource() == victimButtons.get(i)) {
                         closeModal();
                         getController().robPlayer(victims[i]);
+                        break;
                     }
                 }
 
