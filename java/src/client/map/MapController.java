@@ -441,6 +441,9 @@ public class MapController extends Controller implements IMapController {
         rp.setPlayerIndex(playerIndex);
         rp.setType("robPlayer");
         rp.setLocation(newRobberLocation);
+        if(victimIndex==4){
+            victimIndex = playerIndex;
+        }
         rp.setVictimIndex(victimIndex);
         try {
             ClientCommunicatorFascadeSettlersOfCatan.getSingleton().robPlayer(rp);
