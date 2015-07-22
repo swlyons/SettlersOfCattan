@@ -1,12 +1,12 @@
 package client.managers;
 
 import client.main.ClientException;
-import client.communication.ClientCommunicatorFascadeSettlersOfCatan;
+import client.communication.ClientFascade;
 import shared.data.User;
 
 public class UserManager {
 
-    private ClientCommunicatorFascadeSettlersOfCatan server = ClientCommunicatorFascadeSettlersOfCatan.getSingleton();
+    private ClientFascade server = ClientFascade.getSingleton();
 
     /**
      *

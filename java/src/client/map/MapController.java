@@ -20,7 +20,7 @@ import shared.model.BuildSettlement;
 import shared.model.RobPlayer;
 import shared.model.Soldier;
 import client.communication.ClientCommunicator;
-import client.communication.ClientCommunicatorFascadeSettlersOfCatan;
+import client.communication.ClientFascade;
 
 /**
  * Implementation for the map controller
@@ -222,7 +222,7 @@ public class MapController extends Controller implements IMapController {
                 br.setRoadLocation(edgeSpot);
                 br.setType("buildRoad");
                 try {
-                    ClientCommunicatorFascadeSettlersOfCatan.getSingleton().buildRoad(br);
+                    ClientFascade.getSingleton().buildRoad(br);
                     if (gm.getGame().getTurnTracker().getStatus().equals("FirstRound") || gm.getGame().getTurnTracker().getStatus().equals("SecondRound")) {
                         setEndTurn(true);
                     }
@@ -243,7 +243,7 @@ public class MapController extends Controller implements IMapController {
                     placedFirstRoadBuildingRoad = false;
                     firstRoad = null;
                     try {
-                        ClientCommunicatorFascadeSettlersOfCatan.getSingleton().roadBuilding(roadBuilding);
+                        ClientFascade.getSingleton().roadBuilding(roadBuilding);
                     } catch (Exception e) {
                     }
 
@@ -264,7 +264,7 @@ public class MapController extends Controller implements IMapController {
                 br.setRoadLocation(edgeSpot);
                 br.setType("buildRoad");
                 try {
-                    ClientCommunicatorFascadeSettlersOfCatan.getSingleton().buildRoad(br);
+                    ClientFascade.getSingleton().buildRoad(br);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -296,7 +296,7 @@ public class MapController extends Controller implements IMapController {
             build.setPlayerIndex(currentPlayer);
             build.setVertexLocation(settle);
             try {
-                ClientCommunicatorFascadeSettlersOfCatan.getSingleton().buildSettlement(build);
+                ClientFascade.getSingleton().buildSettlement(build);
                 getView().placeSettlement(vertLoc, color);
                 startMove(PieceType.ROAD, true, false);
             } catch (Exception e) {
@@ -310,7 +310,7 @@ public class MapController extends Controller implements IMapController {
                 build.setPlayerIndex(currentPlayer);
                 build.setVertexLocation(settle);
                 try {
-                    ClientCommunicatorFascadeSettlersOfCatan.getSingleton().buildSettlement(build);
+                    ClientFascade.getSingleton().buildSettlement(build);
                     getView().placeSettlement(vertLoc, color);
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -337,7 +337,7 @@ public class MapController extends Controller implements IMapController {
             build.setPlayerIndex(currentPlayer);
             build.setVertexLocation(settle);
             try {
-                ClientCommunicatorFascadeSettlersOfCatan.getSingleton().buildCity(build);
+                ClientFascade.getSingleton().buildCity(build);
                 getView().placeCity(vertLoc, color);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -455,14 +455,14 @@ public class MapController extends Controller implements IMapController {
                 s.setType("Soldier");
                 s.setVicitmIndex(victimIndex);
                 s.setLocation(newRobberLocation);
-                ClientCommunicatorFascadeSettlersOfCatan.getSingleton().soldier(s);
+                ClientFascade.getSingleton().soldier(s);
             } else {
                 RobPlayer rp = new RobPlayer();
                 rp.setPlayerIndex(playerIndex);
                 rp.setType("robPlayer");
                 rp.setLocation(newRobberLocation);
                 rp.setVictimIndex(victimIndex);
-                ClientCommunicatorFascadeSettlersOfCatan.getSingleton().robPlayer(rp);
+                ClientFascade.getSingleton().robPlayer(rp);
             }
         } catch (Exception e) {
             e.printStackTrace();

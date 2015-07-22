@@ -4,7 +4,7 @@ import java.util.Random;
 
 import client.base.*;
 import client.communication.ClientCommunicator;
-import client.communication.ClientCommunicatorFascadeSettlersOfCatan;
+import client.communication.ClientFascade;
 import client.managers.GameManager;
 import shared.model.RollNumber;
 
@@ -60,7 +60,7 @@ public class RollController extends Controller implements IRollController {
             number.setNumber(twoD6);
             number.setPlayerIndex(playerIndex);
             number.setType("rollNumber");
-            ClientCommunicatorFascadeSettlersOfCatan.getSingleton().rollNumber(number);
+            ClientFascade.getSingleton().rollNumber(number);
             getResultView().setRollValue(twoD6);
             getResultView().showModal();
         } catch (Exception e) {

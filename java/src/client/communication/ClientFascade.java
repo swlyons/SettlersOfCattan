@@ -5,46 +5,24 @@
  */
 package client.communication;
 
-import shared.model.JoinGameRequest;
-import shared.model.LoadGameRequest;
-import shared.model.CreateGameRequest;
-import shared.model.SaveGameRequest;
 import client.main.ClientException;
 import shared.data.User;
 import shared.data.GameInfo;
-import shared.model.AcceptTrade;
-import shared.model.AddAIRequest;
-import shared.model.BuildCity;
-import shared.model.BuildRoad;
-import shared.model.BuildSettlement;
-import shared.model.BuyDevCard;
-import shared.model.Command;
-import shared.model.DiscardCards;
-import shared.model.FinishMove;
-import shared.model.MaritimeTrade;
-import shared.model.Monopoly;
-import shared.model.Monument;
-import shared.model.OfferTrade;
-import shared.model.Road_Building;
-import shared.model.RobPlayer;
-import shared.model.RollNumber;
-import shared.model.SendChat;
-import shared.model.Soldier;
-import shared.model.Year_Of_Plenty;
 import java.util.ArrayList;
 import java.util.Map;
+import shared.model.*;
 
 /**
  *
  * @author ddennis
  */
-public class ClientCommunicatorFascadeSettlersOfCatan {
+public class ClientFascade implements Fascade{
 
-    public static ClientCommunicatorFascadeSettlersOfCatan fascade = null;
+    public static ClientFascade fascade = null;
 
-    public static ClientCommunicatorFascadeSettlersOfCatan getSingleton() {
+    public static ClientFascade getSingleton() {
         if (fascade == null) {
-            fascade = new ClientCommunicatorFascadeSettlersOfCatan();
+            fascade = new ClientFascade();
         }
         return fascade;
     }
@@ -52,10 +30,11 @@ public class ClientCommunicatorFascadeSettlersOfCatan {
     /**
      * Client Communicator facade constructor
      */
-    public ClientCommunicatorFascadeSettlersOfCatan() {
+    public ClientFascade() {
 
     }
 
+    @Override
     public boolean login(User credentials) throws ClientException {
         return (ClientCommunicator
                 .getSingleton()
@@ -125,14 +104,17 @@ public class ClientCommunicatorFascadeSettlersOfCatan {
     private static final String ADD_AI_GAME = "game/addAI";
     private static final String LIST_AI_GAME = "game/listAI";
 
+    @Override
     public GameInfo sendChat(SendChat sendChat) throws ClientException {
         return (GameInfo) ClientCommunicator.getSingleton().doPost(SEND_CHAT_MOVES, sendChat, 0).getResponseBody();
     }
 
+    @Override
     public GameInfo rollNumber(RollNumber rollNumber) throws ClientException {
         return (GameInfo) ClientCommunicator.getSingleton().doPost(ROLL_MOVES, rollNumber, 0).getResponseBody();
     }
 
+    @Override
     public GameInfo robPlayer(RobPlayer robPlayer) throws ClientException {
         return (GameInfo) ClientCommunicator.getSingleton().doPost(ROB_PLAYER_MOVES, robPlayer, 0).getResponseBody();
     }
@@ -141,54 +123,67 @@ public class ClientCommunicatorFascadeSettlersOfCatan {
         return (GameInfo) ClientCommunicator.getSingleton().doPost(FINISH_TURN_MOVES, finishMove, 0).getResponseBody();
     }
 
+    @Override
     public GameInfo buyDevCard(BuyDevCard buyDevCard) throws ClientException {
         return (GameInfo) ClientCommunicator.getSingleton().doPost(BUY_DEV_CARD_MOVES, buyDevCard, 0).getResponseBody();
     }
 
+    @Override
     public GameInfo year_Of_Plenty(Year_Of_Plenty year_of_plenty) throws ClientException {
         return (GameInfo) ClientCommunicator.getSingleton().doPost(YEAR_OF_PLENTY_MOVES, year_of_plenty, 0).getResponseBody();
     }
 
+    @Override
     public GameInfo roadBuilding(Road_Building roadBuilding) throws ClientException {
         return (GameInfo) ClientCommunicator.getSingleton().doPost(ROAD_BUILDING_MOVES, roadBuilding, 0).getResponseBody();
     }
 
+    @Override
     public GameInfo soldier(Soldier soldier) throws ClientException {
         return (GameInfo) ClientCommunicator.getSingleton().doPost(SOLDIER_MOVES, soldier, 0).getResponseBody();
     }
 
+    @Override
     public GameInfo monopoly(Monopoly monopoly) throws ClientException {
         return (GameInfo) ClientCommunicator.getSingleton().doPost(MONOPOLY_MOVES, monopoly, 0).getResponseBody();
     }
 
+    @Override
     public GameInfo monument(Monument monument) throws ClientException {
         return (GameInfo) ClientCommunicator.getSingleton().doPost(MONUMENT_MOVES, monument, 0).getResponseBody();
     }
 
+    @Override
     public GameInfo offerTrade(OfferTrade offerTrade) throws ClientException {
         return (GameInfo) ClientCommunicator.getSingleton().doPost(OFFER_TRADE_MOVES, offerTrade, 0).getResponseBody();
     }
 
+    @Override
     public GameInfo acceptTrade(AcceptTrade acceptTrade) throws ClientException {
         return (GameInfo) ClientCommunicator.getSingleton().doPost(ACCEPT_TRADE_MOVES, acceptTrade, 0).getResponseBody();
     }
 
+    @Override
     public GameInfo buildSettlement(BuildSettlement buildSettlement) throws ClientException {
         return (GameInfo) ClientCommunicator.getSingleton().doPost(BUILD_SETTLEMENT_MOVES, buildSettlement, 0).getResponseBody();
     }
 
+    @Override
     public GameInfo buildCity(BuildCity buildCity) throws ClientException {
         return (GameInfo) ClientCommunicator.getSingleton().doPost(BUILD_CITY_MOVES, buildCity, 0).getResponseBody();
     }
 
+    @Override
     public GameInfo buildRoad(BuildRoad buildRoad) throws ClientException {
         return (GameInfo) ClientCommunicator.getSingleton().doPost(BUILD_ROAD_MOVES, buildRoad, 0).getResponseBody();
     }
 
+    @Override
     public GameInfo maritimeTrade(MaritimeTrade maritimeTrade) throws ClientException {
         return (GameInfo) ClientCommunicator.getSingleton().doPost(MARITIME_TRADE_MOVES, maritimeTrade, 0).getResponseBody();
     }
 
+    @Override
     public GameInfo discardCards(DiscardCards discardCards) throws ClientException {
         return (GameInfo) ClientCommunicator.getSingleton().doPost(DISCARD_CARDS_MOVES, discardCards, 0).getResponseBody();
     }

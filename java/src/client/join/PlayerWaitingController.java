@@ -2,7 +2,7 @@ package client.join;
 
 import client.base.*;
 import shared.model.AddAIRequest;
-import client.communication.ClientCommunicatorFascadeSettlersOfCatan;
+import client.communication.ClientFascade;
 import java.util.ArrayList;
 
 /**
@@ -28,7 +28,7 @@ public class PlayerWaitingController extends Controller implements IPlayerWaitin
     public void start() {
         getView().showModal();
         try {
-            ArrayList<String> aiTypes = ClientCommunicatorFascadeSettlersOfCatan.getSingleton().listAITypesInGame();
+            ArrayList<String> aiTypes = ClientFascade.getSingleton().listAITypesInGame();
             String[] aiTypes2 = new String[aiTypes.size()];
             aiTypes.toArray(aiTypes2);
             getView().setAIChoices(aiTypes2);
@@ -42,7 +42,7 @@ public class PlayerWaitingController extends Controller implements IPlayerWaitin
     public void addAI() {
         AddAIRequest add = new AddAIRequest(getView().getSelectedAI());
         try {
-            if (ClientCommunicatorFascadeSettlersOfCatan.getSingleton().addAIToGame(add)) {
+            if (ClientFascade.getSingleton().addAIToGame(add)) {
                 System.out.println("AddedAI");
                 /**
                  * DO NOT REMOVE Added this to fix issue of multiple overlays

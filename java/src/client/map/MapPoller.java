@@ -12,7 +12,7 @@ import java.util.TimerTask;
 import shared.data.GameInfo;
 import client.managers.GameManager;
 import client.communication.ClientCommunicator;
-import client.communication.ClientCommunicatorFascadeSettlersOfCatan;
+import client.communication.ClientFascade;
 import client.communication.GameHistoryView;
 import client.communication.LogEntry;
 import shared.data.MessageLine;
@@ -84,7 +84,7 @@ public class MapPoller extends TimerTask {
 
                 GameManager gameManager = ClientCommunicator.getSingleton().getGameManager();
 
-                GameInfo gameInformation = ClientCommunicatorFascadeSettlersOfCatan.getSingleton()
+                GameInfo gameInformation = ClientFascade.getSingleton()
                         .getGameModel(version + "");
 
                 gameManager.initializeGame(gameInformation);

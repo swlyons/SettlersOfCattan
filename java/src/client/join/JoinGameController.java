@@ -6,7 +6,7 @@ import client.main.ClientException;
 import shared.definitions.CatanColor;
 import client.base.*;
 import client.communication.ClientCommunicator;
-import client.communication.ClientCommunicatorFascadeSettlersOfCatan;
+import client.communication.ClientFascade;
 import client.misc.*;
 import shared.model.CreateGameRequest;
 import shared.model.JoinGameRequest;
@@ -155,10 +155,10 @@ public class JoinGameController extends Controller implements IJoinGameControlle
         CreateGameRequest gameRequest = new CreateGameRequest(getNewGameView().getRandomlyPlaceHexes(), getNewGameView().getRandomlyPlaceNumbers(), getNewGameView().getUseRandomPorts(), getNewGameView().getTitle());
 
         try {
-            GameInfo gameInfo = ClientCommunicatorFascadeSettlersOfCatan.getSingleton().createGame(gameRequest);
+            GameInfo gameInfo = ClientFascade.getSingleton().createGame(gameRequest);
             JoinGameRequest joinRequest = new JoinGameRequest(gameInfo.getId(), CatanColor.WHITE.toString().toLowerCase());
-            ClientCommunicatorFascadeSettlersOfCatan.getSingleton().joinGame(joinRequest);
-            ArrayList<GameInfo> gamesOnServer = ClientCommunicatorFascadeSettlersOfCatan.getSingleton().listGames();
+            ClientFascade.getSingleton().joinGame(joinRequest);
+            ArrayList<GameInfo> gamesOnServer = ClientFascade.getSingleton().listGames();
             for (GameInfo gameInfo2 : gamesOnServer) {
                 for (int i = 0; i < gameInfo2.getPlayers().size(); i++) {
                     if (gameInfo2.getPlayers().get(i).getId() == -1) {
@@ -198,7 +198,7 @@ public class JoinGameController extends Controller implements IJoinGameControlle
         gameId = game.getId();
         ArrayList<GameInfo> activeGames = new ArrayList<>();
         try {
-            activeGames = ClientCommunicatorFascadeSettlersOfCatan.getSingleton().listGames();
+            activeGames = ClientFascade.getSingleton().listGames();
         } catch (ClientException ex) {
             ex.printStackTrace();
             Logger.getLogger(JoinGameController.class.getName()).log(Level.SEVERE, null, ex);
@@ -240,7 +240,7 @@ public class JoinGameController extends Controller implements IJoinGameControlle
         JoinGameRequest request = new JoinGameRequest(gameId, color.name().toLowerCase());
 
         try {
-            if (ClientCommunicatorFascadeSettlersOfCatan.getSingleton().joinGame(request)) {
+            if (ClientFascade.getSingleton().joinGame(request)) {
                 getJoinGameView().closeModal();
                 getSelectColorView().closeModal();
                 joinAction.execute();

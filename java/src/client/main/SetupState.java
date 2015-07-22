@@ -7,7 +7,7 @@ package client.main;
 
 import client.base.Controller;
 import client.communication.ClientCommunicator;
-import client.communication.ClientCommunicatorFascadeSettlersOfCatan;
+import client.communication.ClientFascade;
 import shared.data.GameInfo;
 import client.managers.GameManager;
 import client.map.MapController;
@@ -28,7 +28,7 @@ public class SetupState extends State {
 
         GameInfo gameInformation = null;
         try {
-            gameInformation = ClientCommunicatorFascadeSettlersOfCatan.getSingleton().getGameModel(-1 + "");
+            gameInformation = ClientFascade.getSingleton().getGameModel(-1 + "");
         } catch (ClientException ex) {
             ex.printStackTrace();
             Logger.getLogger(SetupState.class.getName()).log(Level.SEVERE, null, ex);

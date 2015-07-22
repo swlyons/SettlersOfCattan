@@ -55,7 +55,7 @@ public class ChatController extends Controller implements IChatController {
         request.setContent(message);
 
         try {
-            ClientCommunicatorFascadeSettlersOfCatan.getSingleton().sendChat(request);
+            ClientFascade.getSingleton().sendChat(request);
         } catch (ClientException ex) {
             Logger.getLogger(ChatController.class.getName()).log(Level.SEVERE, null, ex);
             ex.printStackTrace();

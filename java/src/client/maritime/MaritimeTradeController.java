@@ -3,7 +3,7 @@ package client.maritime;
 import shared.definitions.*;
 import client.base.*;
 import client.communication.ClientCommunicator;
-import client.communication.ClientCommunicatorFascadeSettlersOfCatan;
+import client.communication.ClientFascade;
 import shared.model.MaritimeTrade;
 import client.managers.GameManager;
 import shared.data.Port;
@@ -231,7 +231,7 @@ public class MaritimeTradeController extends Controller implements IMaritimeTrad
             trade.setRatio(amount);
             trade.setPlayerIndex(playerIndex);
             trade.setType("maritimeTrade");
-            ClientCommunicatorFascadeSettlersOfCatan.getSingleton().maritimeTrade(trade);
+            ClientFascade.getSingleton().maritimeTrade(trade);
 
         } catch (Exception e) {
             e.printStackTrace();

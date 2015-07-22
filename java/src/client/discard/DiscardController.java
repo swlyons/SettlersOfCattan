@@ -5,7 +5,7 @@ import client.base.*;
 import client.misc.*;
 import shared.data.ResourceList;
 import shared.model.DiscardCards;
-import client.communication.ClientCommunicatorFascadeSettlersOfCatan;
+import client.communication.ClientFascade;
 import client.communication.ClientCommunicator;
 import client.managers.GameManager;
 
@@ -217,7 +217,7 @@ public class DiscardController extends Controller implements IDiscardController 
         cards.setType("discardCards");
         cards.setDiscardedCards(resources);
         try {
-            ClientCommunicatorFascadeSettlersOfCatan.getSingleton().discardCards(cards);
+            ClientFascade.getSingleton().discardCards(cards);
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
