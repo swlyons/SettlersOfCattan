@@ -21,12 +21,13 @@ public class Database {
 			+ DATABASE_DIRECTORY + File.separator + DATABASE_FILE;
 
 	public static void initialize() throws ServerException {
-		/*try {
+		try {
 			final String driver = "org.sqlite.JDBC";
-			//Class.forName(driver);
+			Class.forName(driver);
 		} catch (ClassNotFoundException e) {
-			throw new ServerException("Could not load database driver", e);
-		}*/
+                    e.printStackTrace();
+			//throw new ServerException("Could not load database driver", e);
+		}
 	}
 
 	private Game game;
