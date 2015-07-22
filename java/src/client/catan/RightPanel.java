@@ -7,7 +7,7 @@ import client.communication.ClientCommunicator;
 import client.points.*;
 import client.resources.*;
 import client.base.*;
-import client.communication.ClientCommunicatorFascadeSettlersOfCatan;
+import client.communication.ClientFascade;
 import client.map.*;
 import client.devcards.*;
 
@@ -69,7 +69,7 @@ public class RightPanel extends JPanel {
                     @Override
                     public void execute() {
                         try {
-                            ClientCommunicator.getSingleton().getGameManager().initializeGame(ClientCommunicatorFascadeSettlersOfCatan.getSingleton().getGameModel(0 + ""));
+                            ClientCommunicator.getSingleton().getGameManager().initializeGame(ClientFascade.getSingleton().getGameModel(0 + ""));
                             if (resourceController.canBuyCard()) {
                                 devCardController.startBuyCard();
                             }
@@ -83,7 +83,7 @@ public class RightPanel extends JPanel {
                     @Override
                     public void execute() {
                         try {
-                            ClientCommunicator.getSingleton().getGameManager().initializeGame(ClientCommunicatorFascadeSettlersOfCatan.getSingleton().getGameModel(0 + ""));
+                            ClientCommunicator.getSingleton().getGameManager().initializeGame(ClientFascade.getSingleton().getGameModel(0 + ""));
                             if (resourceController.canPlayCard()) {
                                 devCardController.startPlayCard();
                             }
@@ -110,7 +110,7 @@ public class RightPanel extends JPanel {
                 boolean allowDisconnected = false;
                 boolean isAllowed = false;
                 try {
-                    ClientCommunicator.getSingleton().getGameManager().initializeGame(ClientCommunicatorFascadeSettlersOfCatan.getSingleton().getGameModel(0 + ""));
+                    ClientCommunicator.getSingleton().getGameManager().initializeGame(ClientFascade.getSingleton().getGameModel(0 + ""));
                     switch (pieceType) {
                         case ROAD:
                             isAllowed = resourceController.canBuildRoad();

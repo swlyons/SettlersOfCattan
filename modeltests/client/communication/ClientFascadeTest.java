@@ -9,7 +9,6 @@ import shared.model.LoadGameRequest;
 import shared.model.JoinGameRequest;
 import shared.model.CreateGameRequest;
 import shared.model.SaveGameRequest;
-import client.communication.ClientCommunicator;
 import shared.data.Game;
 import shared.data.GameInfo;
 import shared.data.SettlementLocation;
@@ -32,8 +31,6 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
 import java.util.UUID;
 
@@ -42,16 +39,14 @@ import shared.definitions.ResourceType;
 import shared.locations.EdgeDirection;
 import shared.locations.EdgeLocation;
 import shared.locations.HexLocation;
-import shared.locations.VertexDirection;
-import shared.locations.VertexLocation;
 
 /**
  *
  * @author ddennis
  */
-public class ClientCommunicatorFascadeSettlersOfCatanTest {
+public class ClientFascadeTest {
 
-    public ClientCommunicatorFascadeSettlersOfCatanTest() {
+    public ClientFascadeTest() {
     }
     
     @BeforeClass
@@ -72,7 +67,7 @@ public class ClientCommunicatorFascadeSettlersOfCatanTest {
     }
 
     /**
-     * Test of login method, of class ClientCommunicatorFascadeSettlersOfCatan.
+     * Test of login method, of class ClientFascade.
      *
      * @throws java.lang.Exception
      */
@@ -80,7 +75,7 @@ public class ClientCommunicatorFascadeSettlersOfCatanTest {
     public void testLogin() throws Exception {
         System.out.print("login");
         User credentials = new User("Sam", "sam");
-        ClientCommunicatorFascadeSettlersOfCatan instance = new ClientCommunicatorFascadeSettlersOfCatan();
+        ClientFascade instance = new ClientFascade();
         boolean expResult = true;
         boolean result = instance.login(credentials);
         assertEquals(expResult, result);
@@ -97,13 +92,13 @@ public class ClientCommunicatorFascadeSettlersOfCatanTest {
 
     /**
      * Test of register method, of class
-     * ClientCommunicatorFascadeSettlersOfCatan.
+ ClientFascade.
      */
     @Test
     public void testRegister() throws Exception {
         System.out.print("register");
         User credentials = new User("Sam", "sam");
-        ClientCommunicatorFascadeSettlersOfCatan instance = new ClientCommunicatorFascadeSettlersOfCatan();
+        ClientFascade instance = new ClientFascade();
         boolean expResult = false;
         boolean result = instance.register(credentials);
         assertEquals(expResult, result);
@@ -124,13 +119,13 @@ public class ClientCommunicatorFascadeSettlersOfCatanTest {
 
     /**
      * Test of listGames method, of class
-     * ClientCommunicatorFascadeSettlersOfCatan.
+ ClientFascade.
      */
     @Test
     public void testListGames() throws Exception {
         System.out.print("listGames");
         // test games for Sam
-        ClientCommunicatorFascadeSettlersOfCatan instance = new ClientCommunicatorFascadeSettlersOfCatan();
+        ClientFascade instance = new ClientFascade();
         String expResult = "Sam";
         ArrayList<GameInfo> result = instance.listGames();
 
@@ -147,13 +142,13 @@ public class ClientCommunicatorFascadeSettlersOfCatanTest {
 
     /**
      * Test of createGame method, of class
-     * ClientCommunicatorFascadeSettlersOfCatan.
+ ClientFascade.
      * @throws java.lang.Exception
      */
     @Test
     public void testCreateGame() throws Exception {
         System.out.print("createGame");
-        ClientCommunicatorFascadeSettlersOfCatan instance = new ClientCommunicatorFascadeSettlersOfCatan();
+        ClientFascade instance = new ClientFascade();
         String expResult = "Dubbs";
         CreateGameRequest createGameRequest = new CreateGameRequest(true, false, true, "Dubbs");
         GameInfo result = instance.createGame(createGameRequest);
@@ -165,12 +160,12 @@ public class ClientCommunicatorFascadeSettlersOfCatanTest {
 
     /**
      * Test of joinGame method, of class
-     * ClientCommunicatorFascadeSettlersOfCatan.
+ ClientFascade.
      */
     @Test
     public void testJoinGame() throws Exception {
         System.out.print("joinGame");
-        ClientCommunicatorFascadeSettlersOfCatan instance = new ClientCommunicatorFascadeSettlersOfCatan();
+        ClientFascade instance = new ClientFascade();
         boolean expResult = true;
         boolean result = instance.joinGame(new JoinGameRequest(0, "red"));
         assertEquals(expResult, result);
@@ -185,12 +180,12 @@ public class ClientCommunicatorFascadeSettlersOfCatanTest {
 
     /**
      * Test of saveGame method, of class
-     * ClientCommunicatorFascadeSettlersOfCatan.
+ ClientFascade.
      */
     @Test
     public void testSaveGame() throws Exception {
         System.out.print("saveGame");
-        ClientCommunicatorFascadeSettlersOfCatan instance = new ClientCommunicatorFascadeSettlersOfCatan();
+        ClientFascade instance = new ClientFascade();
         boolean expResult = false;
         SaveGameRequest saveGameRequest = new SaveGameRequest(0, "gameBuggySam");
         boolean result = instance.saveGame(saveGameRequest);
@@ -202,12 +197,12 @@ public class ClientCommunicatorFascadeSettlersOfCatanTest {
 
     /**
      * Test of loadGame method, of class
-     * ClientCommunicatorFascadeSettlersOfCatan.
+ ClientFascade.
      */
     @Test
     public void testLoadGame() throws Exception {
         System.out.print("loadGame");
-        ClientCommunicatorFascadeSettlersOfCatan instance = new ClientCommunicatorFascadeSettlersOfCatan();
+        ClientFascade instance = new ClientFascade();
         boolean expResult = false;
         LoadGameRequest loadGameRequest = new LoadGameRequest("gameBuggySam");
         boolean result = instance.loadGame(loadGameRequest);
@@ -218,12 +213,12 @@ public class ClientCommunicatorFascadeSettlersOfCatanTest {
     }
 
     /**
-     * Test of getGameModel method, of class ClientCommunicatorFascadeSettlersOfCatan.
+     * Test of getGameModel method, of class ClientFascade.
      */
     @Test
     public void testGetGameModel() throws Exception {
         System.out.print("getGameModel");
-        ClientCommunicatorFascadeSettlersOfCatan instance = new ClientCommunicatorFascadeSettlersOfCatan();
+        ClientFascade instance = new ClientFascade();
         String expResult = "Sam";
         
         //login
@@ -247,13 +242,13 @@ public class ClientCommunicatorFascadeSettlersOfCatanTest {
     }
 
     /**
-     * Test of resetGame method, of class ClientCommunicatorFascadeSettlersOfCatan.
+     * Test of resetGame method, of class ClientFascade.
      * @throws java.lang.Exception
      */
     @Test
     public void testResetGame() throws Exception {
         System.out.print("resetGame");
-        ClientCommunicatorFascadeSettlersOfCatan instance = new ClientCommunicatorFascadeSettlersOfCatan();
+        ClientFascade instance = new ClientFascade();
         int expResult = 108;
         //must login and join a game first
         instance.login(new User("Sam", "sam"));
@@ -268,12 +263,12 @@ public class ClientCommunicatorFascadeSettlersOfCatanTest {
     }
 
     /**
-     * Test of getGameCommands method, of class ClientCommunicatorFascadeSettlersOfCatan.
+     * Test of getGameCommands method, of class ClientFascade.
      */
     @Test
     public void testGetGameCommands() throws Exception {
         System.out.print("getGameCommands");
-        ClientCommunicatorFascadeSettlersOfCatan instance = new ClientCommunicatorFascadeSettlersOfCatan();
+        ClientFascade instance = new ClientFascade();
         int expResult = 2;
         //must login and join a game first
         instance.login(new User("Sam", "sam"));
@@ -286,12 +281,12 @@ public class ClientCommunicatorFascadeSettlersOfCatanTest {
     }
 
     /**
-     * Test of executeGameCommand method, of class ClientCommunicatorFascadeSettlersOfCatan.
+     * Test of executeGameCommand method, of class ClientFascade.
      */
     @Test
     public void testExecuteGameCommands() throws Exception {
         System.out.print("executeGameCommand");
-        ClientCommunicatorFascadeSettlersOfCatan instance = new ClientCommunicatorFascadeSettlersOfCatan();
+        ClientFascade instance = new ClientFascade();
         String expResult = "Sam";
         //must login and join a game first
         instance.login(new User("Sam", "sam"));
@@ -312,12 +307,12 @@ public class ClientCommunicatorFascadeSettlersOfCatanTest {
     }
 
     /**
-     * Test of addAIToGame method, of class ClientCommunicatorFascadeSettlersOfCatan.
+     * Test of addAIToGame method, of class ClientFascade.
      */
     @Test
     public void testAddAIToGame() throws Exception {
         System.out.print("addAIToGame");
-        ClientCommunicatorFascadeSettlersOfCatan instance = new ClientCommunicatorFascadeSettlersOfCatan();
+        ClientFascade instance = new ClientFascade();
         //Game expResult = null;
         //only LARGEST_ARMY Works for now
         instance.login(new User("Sam", "sam"));
@@ -332,12 +327,12 @@ public class ClientCommunicatorFascadeSettlersOfCatanTest {
     }
 
     /**
-     * Test of listAITypesInGame method, of class ClientCommunicatorFascadeSettlersOfCatan.
+     * Test of listAITypesInGame method, of class ClientFascade.
      */
     @Test
     public void testListAITypesInGame() throws Exception {
         System.out.print("listAITypesInGame");
-        ClientCommunicatorFascadeSettlersOfCatan instance = new ClientCommunicatorFascadeSettlersOfCatan();
+        ClientFascade instance = new ClientFascade();
         String expResult = "LARGEST_ARMY";
         instance.login(new User("Sam", "sam"));
         instance.joinGame(new JoinGameRequest(0, "red"));
@@ -349,12 +344,12 @@ public class ClientCommunicatorFascadeSettlersOfCatanTest {
     }
 
     /**
-     * Test of sendChat method, of class ClientCommunicatorFascadeSettlersOfCatan.
+     * Test of sendChat method, of class ClientFascade.
      */
     @Test
     public void testSendChat() throws Exception {
         System.out.println("sendChat");
-        ClientCommunicatorFascadeSettlersOfCatan instance = new ClientCommunicatorFascadeSettlersOfCatan();
+        ClientFascade instance = new ClientFascade();
         String expResult = "Hey, let's trade for some wheat";
         SendChat chat = new SendChat(0);
         chat.setContent(expResult);
@@ -368,14 +363,14 @@ public class ClientCommunicatorFascadeSettlersOfCatanTest {
     }
 
     /**
-     * Test of rollNumber method, of class ClientCommunicatorFascadeSettlersOfCatan.
+     * Test of rollNumber method, of class ClientFascade.
      */
     @Test
     public void testRollNumber() throws Exception {
         System.out.println("rollNumber");
         RollNumber rollNumber = new RollNumber();
         rollNumber.setNumber(8);
-        ClientCommunicatorFascadeSettlersOfCatan instance = new ClientCommunicatorFascadeSettlersOfCatan();
+        ClientFascade instance = new ClientFascade();
         int expResult = 9;
         instance.login(new User("Sam", "sam"));
         instance.joinGame(new JoinGameRequest(0, "red"));
@@ -389,12 +384,12 @@ public class ClientCommunicatorFascadeSettlersOfCatanTest {
     }
 
     /**
-     * Test of finishMove method, of class ClientCommunicatorFascadeSettlersOfCatan.
+     * Test of finishMove method, of class ClientFascade.
      */
     @Test
     public void testFinishMove() throws Exception {
         System.out.println("finishMove");
-        ClientCommunicatorFascadeSettlersOfCatan instance = new ClientCommunicatorFascadeSettlersOfCatan();
+        ClientFascade instance = new ClientFascade();
         String expResult = "Sam's turn just ended";
         instance.login(new User("Sam", "sam"));
         instance.joinGame(new JoinGameRequest(0, "red"));
@@ -409,12 +404,12 @@ public class ClientCommunicatorFascadeSettlersOfCatanTest {
     }
 
     /**
-     * Test of buyDevCard method, of class ClientCommunicatorFascadeSettlersOfCatan.
+     * Test of buyDevCard method, of class ClientFascade.
      */
     @Test
     public void testBuyDevCard() throws Exception {
         System.out.println("buyDevCard");
-        ClientCommunicatorFascadeSettlersOfCatan instance = new ClientCommunicatorFascadeSettlersOfCatan();
+        ClientFascade instance = new ClientFascade();
         int expResult = 111;
         instance.login(new User("Sam", "sam"));
         instance.joinGame(new JoinGameRequest(0, "red"));
@@ -428,7 +423,7 @@ public class ClientCommunicatorFascadeSettlersOfCatanTest {
     }
 
     /**
-     * Test of year_Of_Plenty method, of class ClientCommunicatorFascadeSettlersOfCatan.
+     * Test of year_Of_Plenty method, of class ClientFascade.
      */
     @Test
     public void testYear_Of_Plenty() throws Exception {
@@ -437,7 +432,7 @@ public class ClientCommunicatorFascadeSettlersOfCatanTest {
         year_of_plenty.setResource1(ResourceType.wood);
         year_of_plenty.setResource2(ResourceType.wood);
         
-        ClientCommunicatorFascadeSettlersOfCatan instance = new ClientCommunicatorFascadeSettlersOfCatan();
+        ClientFascade instance = new ClientFascade();
         boolean expResult = true;
         instance.login(new User("Sam", "sam"));
         instance.joinGame(new JoinGameRequest(0, "red"));
@@ -451,7 +446,7 @@ public class ClientCommunicatorFascadeSettlersOfCatanTest {
     }
 
     /**
-     * Test of roadBuilding method, of class ClientCommunicatorFascadeSettlersOfCatan.
+     * Test of roadBuilding method, of class ClientFascade.
      */
     @Test
     public void testRoadBuilding() throws Exception {
@@ -460,7 +455,7 @@ public class ClientCommunicatorFascadeSettlersOfCatanTest {
         roadBuilding.setSpot1(new EdgeLocation(new HexLocation(0,0), EdgeDirection.N));
         roadBuilding.setSpot2(new EdgeLocation(new HexLocation(0,1), EdgeDirection.NE));
         
-        ClientCommunicatorFascadeSettlersOfCatan instance = new ClientCommunicatorFascadeSettlersOfCatan();
+        ClientFascade instance = new ClientFascade();
         Game expResult = null;
         instance.login(new User("Sam", "sam"));
         instance.joinGame(new JoinGameRequest(0, "red"));
@@ -473,7 +468,7 @@ public class ClientCommunicatorFascadeSettlersOfCatanTest {
 
 
     /**
-     * Test of monopoly method, of class ClientCommunicatorFascadeSettlersOfCatan.
+     * Test of monopoly method, of class ClientFascade.
      */
     @Test
     public void testMonopoly() throws Exception {
@@ -481,7 +476,7 @@ public class ClientCommunicatorFascadeSettlersOfCatanTest {
         Monopoly monopoly = new Monopoly(0);
         monopoly.setResource(ResourceType.wood);
         
-        ClientCommunicatorFascadeSettlersOfCatan instance = new ClientCommunicatorFascadeSettlersOfCatan();
+        ClientFascade instance = new ClientFascade();
         Game expResult = null;
         instance.login(new User("Sam", "sam"));
         instance.joinGame(new JoinGameRequest(0, "red"));

@@ -5,7 +5,7 @@ import shared.definitions.ResourceType;
 import client.base.*;
 import shared.model.BuyDevCard;
 import client.communication.ClientCommunicator;
-import client.communication.ClientCommunicatorFascadeSettlersOfCatan;
+import client.communication.ClientFascade;
 import client.managers.GameManager;
 import shared.model.BuyDevCard;
 import shared.model.Monopoly;
@@ -76,7 +76,7 @@ public class DevCardController extends Controller implements IDevCardController 
         }
         BuyDevCard card = new BuyDevCard(playerIndex);
         try {
-            ClientCommunicatorFascadeSettlersOfCatan.getSingleton().buyDevCard(card);
+            ClientFascade.getSingleton().buyDevCard(card);
             gm.buyDevCard();
         } catch (Exception e) {
             e.printStackTrace();
@@ -129,7 +129,7 @@ public class DevCardController extends Controller implements IDevCardController 
         Monopoly m = new Monopoly(gm.getPlayerIndex(playerId));
         m.setResource(resource);
         try {
-            ClientCommunicatorFascadeSettlersOfCatan.getSingleton().monopoly(m);
+            ClientFascade.getSingleton().monopoly(m);
             gm.useMonopoly(resource);
             getPlayCardView().closeModal();
         } catch (Exception e) {
@@ -157,7 +157,7 @@ public class DevCardController extends Controller implements IDevCardController 
         m.setType("Monument");
         m.setPlayerIndex(gm.getPlayerIndex(playerId));
         try {
-            ClientCommunicatorFascadeSettlersOfCatan.getSingleton().monument(m);
+            ClientFascade.getSingleton().monument(m);
             gm.useMonument();
             getPlayCardView().closeModal();
         } catch (Exception e) {
@@ -218,7 +218,7 @@ public class DevCardController extends Controller implements IDevCardController 
         y.setResource1(resource1);
         y.setResource2(resource2);
         try {
-            ClientCommunicatorFascadeSettlersOfCatan.getSingleton().year_Of_Plenty(y);
+            ClientFascade.getSingleton().year_Of_Plenty(y);
             gm.useYearOfPlenty(resource1, resource2);
             getPlayCardView().closeModal();
         } catch (Exception e) {

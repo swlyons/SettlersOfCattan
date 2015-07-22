@@ -3,7 +3,7 @@ package client.domestic;
 import shared.definitions.*;
 import client.base.*;
 import client.communication.ClientCommunicator;
-import client.communication.ClientCommunicatorFascadeSettlersOfCatan;
+import client.communication.ClientFascade;
 import client.managers.GameManager;
 import shared.data.PlayerInfo;
 import shared.data.ResourceList;
@@ -266,7 +266,7 @@ public class DomesticTradeController extends Controller implements IDomesticTrad
         trade.setReceiver(tradeWithIndex);
 
         try {
-            ClientCommunicatorFascadeSettlersOfCatan.getSingleton().offerTrade(trade);
+            ClientFascade.getSingleton().offerTrade(trade);
             getWaitOverlay().showModal();
             getWaitOverlay().setMessage("Waiting for Trade to Go Through");
             waitingForOffer = true;
@@ -461,7 +461,7 @@ public class DomesticTradeController extends Controller implements IDomesticTrad
         acceptTrade.setType("acceptTrade");
         acceptTrade.setWillAccept(willAccept);
         try {
-            ClientCommunicatorFascadeSettlersOfCatan.getSingleton().acceptTrade(acceptTrade);
+            ClientFascade.getSingleton().acceptTrade(acceptTrade);
         } catch (Exception e) {
         } finally {
             getAcceptOverlay().closeModal();

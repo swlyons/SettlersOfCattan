@@ -7,7 +7,7 @@ package client.join;
 
 import client.main.ClientException;
 import client.communication.ClientCommunicator;
-import client.communication.ClientCommunicatorFascadeSettlersOfCatan;
+import client.communication.ClientFascade;
 import shared.data.GameInfo;
 import shared.data.PlayerInfo;
 import java.util.ArrayList;
@@ -44,7 +44,7 @@ public class JoinGameViewPoller extends TimerTask {
         ArrayList<GameInfo> activeGames = new ArrayList();
 
         try {
-            activeGames = ClientCommunicatorFascadeSettlersOfCatan.getSingleton().listGames();
+            activeGames = ClientFascade.getSingleton().listGames();
 
             //
         } catch (ClientException ex) {

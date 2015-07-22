@@ -15,9 +15,7 @@ import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.sun.net.httpserver.Headers;
 import server.dao.Database;
-import shared.data.User;
 
 public class Server {
 
@@ -29,12 +27,12 @@ public class Server {
 
     private HttpServer server;
     private Gson model = new GsonBuilder().create();
-
+    Map<String, String> games;
     /**
      * Server constructor
      */
     private Server() {
-        return;
+        games = new HashMap<>();
     }
 
     /**
@@ -159,7 +157,7 @@ public class Server {
     private HttpHandler registerHandler = new HttpHandler() {
         @Override
         public void handle(HttpExchange exchange) throws IOException {
-            exchange.getResponseHeaders().add("Content-Type", "application/json");
+            exchange.getResponseHeaders().add("Content-Type", "text/html");
             //TODO: check that the user can register
 
             exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, 0);
@@ -179,7 +177,7 @@ public class Server {
             //TODO: return the list of games running on the server
 
             exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, 0);
-            exchange.getResponseBody().write("Success".getBytes());
+            exchange.getResponseBody().write("[{'title':'Default Game', 'id' :'0'}]".getBytes());
             exchange.getResponseBody().close();
         }
     };
@@ -207,7 +205,7 @@ public class Server {
 
         @Override
         public void handle(HttpExchange exchange) throws IOException {
-            exchange.getResponseHeaders().add("Content-Type", "application/json");
+            exchange.getResponseHeaders().add("Content-Type", "text/html");
             //TODO: join a game
 
             exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, 0);
@@ -360,7 +358,7 @@ public class Server {
         public void handle(HttpExchange exchange) throws IOException {
             exchange.getResponseHeaders().add("Content-Type", "application/json");
             //TODO: accept a trade from another player
-
+            
             exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, 0);
             exchange.getResponseBody().write("Success".getBytes());
             exchange.getResponseBody().close();
@@ -436,17 +434,16 @@ public class Server {
      *
      * NOTE: THIS REPLACES ALL THE COMMUNICATION INPUT CLASSES!!!
      */
-    public Map<String, String> queryToMap(String query) {
-        Map<String, String> result = new HashMap<String, String>();
-        for (String param : query.split("&")) {
+    public Map<String, String> saveGameToMap() {
+       /* for (String param : query.split("&")) {
             String pair[] = param.split("=");
             if (pair.length > 1) {
                 result.put(pair[0], pair[1]);
             } else {
                 result.put(pair[0], "");
             }
-        }
-        return result;
+        }*/
+        return games;
     }
 
     /**

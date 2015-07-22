@@ -3,7 +3,7 @@ package client.turntracker;
 import shared.definitions.CatanColor;
 import client.base.*;
 import client.communication.ClientCommunicator;
-import client.communication.ClientCommunicatorFascadeSettlersOfCatan;
+import client.communication.ClientFascade;
 import shared.model.FinishMove;
 import client.managers.GameManager;
 
@@ -42,7 +42,7 @@ public class TurnTrackerController extends Controller implements ITurnTrackerCon
         fm.setPlayerIndex(playerIndex);
 
         try {
-            gm.initializeGame(ClientCommunicatorFascadeSettlersOfCatan.getSingleton().finishMove(fm));
+            gm.initializeGame(ClientFascade.getSingleton().finishMove(fm));
             getView().updateGameState("Waiting for other players", false);
         } catch (Exception e) {
             System.out.println("Couldn't end turn");

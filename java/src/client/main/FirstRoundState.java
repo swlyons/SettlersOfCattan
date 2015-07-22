@@ -7,7 +7,7 @@ package client.main;
 
 import client.base.Controller;
 import client.communication.ClientCommunicator;
-import client.communication.ClientCommunicatorFascadeSettlersOfCatan;
+import client.communication.ClientFascade;
 import shared.data.GameInfo;
 import shared.data.Location;
 import client.managers.GameManager;
@@ -40,7 +40,7 @@ public class FirstRoundState extends State {
 
             GameInfo gameInformation = null;
             try {
-                gameInformation = ClientCommunicatorFascadeSettlersOfCatan.getSingleton()
+                gameInformation = ClientFascade.getSingleton()
                         .getGameModel(version + "");
             } catch (ClientException ex) {
                 ex.printStackTrace();
@@ -86,7 +86,7 @@ public class FirstRoundState extends State {
                 fm.setType("finishTurn");
                 fm.setPlayerIndex(playerIndex);
                 try {
-                    gameManager.initializeGame(ClientCommunicatorFascadeSettlersOfCatan.getSingleton().finishMove(fm));
+                    gameManager.initializeGame(ClientFascade.getSingleton().finishMove(fm));
                 } catch (ClientException ex) {
                     ex.printStackTrace();
                     Logger.getLogger(FirstRoundState.class.getName()).log(Level.SEVERE, null, ex);
