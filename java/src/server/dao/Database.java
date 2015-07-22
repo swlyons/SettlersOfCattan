@@ -10,13 +10,13 @@ import java.sql.Statement;
 
 import org.sqlite.SQLiteConfig;
 
-import server.ServerException;
+import server.main.ServerException;
 
 /** Represents the structure of the SQL database */
 public class Database {
 
 	private static final String DATABASE_DIRECTORY = "database";
-	private static final String DATABASE_FILE = "recordindexer.db";
+	private static final String DATABASE_FILE = "catan.db";
 	private static final String DATABASE_URL = "jdbc:sqlite:"
 			+ DATABASE_DIRECTORY + File.separator + DATABASE_FILE;
 
@@ -25,7 +25,8 @@ public class Database {
 			final String driver = "org.sqlite.JDBC";
 			Class.forName(driver);
 		} catch (ClassNotFoundException e) {
-			throw new ServerException("Could not load database driver", e);
+                    e.printStackTrace();
+			//throw new ServerException("Could not load database driver", e);
 		}
 	}
 

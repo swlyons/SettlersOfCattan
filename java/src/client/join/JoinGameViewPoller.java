@@ -5,7 +5,7 @@
  */
 package client.join;
 
-import client.ClientException;
+import client.main.ClientException;
 import client.communication.ClientCommunicator;
 import client.communication.ClientCommunicatorFascadeSettlersOfCatan;
 import shared.data.GameInfo;

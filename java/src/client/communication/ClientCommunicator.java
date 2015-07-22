@@ -5,7 +5,7 @@
  */
 package client.communication;
 
-import client.ClientException;
+import client.main.ClientException;
 import shared.data.Game;
 import shared.data.GameInfo;
 import client.managers.GameManager;
@@ -86,7 +86,7 @@ public class ClientCommunicator {
      * @param location the location of the file to download.
      * @return the response generated during an http communication. The response
      * object is user defined and not part the java api.
-     * @throws client.ClientException
+     * @throws client.main.ClientException
      */
     public HttpURLResponse download(String location) throws ClientException {
         assert location != null && location.length() > 0;
@@ -124,7 +124,7 @@ public class ClientCommunicator {
      * @param playerID
      * @return the response generated during an http communication. The response
      * object is user defined and not part the java api.
-     * @throws client.ClientException
+     * @throws client.main.ClientException
      */
     public HttpURLResponse doGet(String commandName, String params, int playerID)
             throws ClientException {

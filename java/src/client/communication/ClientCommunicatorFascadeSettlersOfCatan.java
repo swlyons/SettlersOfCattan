@@ -9,7 +9,7 @@ import shared.model.JoinGameRequest;
 import shared.model.LoadGameRequest;
 import shared.model.CreateGameRequest;
 import shared.model.SaveGameRequest;
-import client.ClientException;
+import client.main.ClientException;
 import shared.data.User;
 import shared.data.GameInfo;
 import shared.model.AcceptTrade;
