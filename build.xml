@@ -134,6 +134,9 @@
             <fileset dir="${java.docs}">
                 <include name="**"/>
             </fileset>
+            <fileset dir="${java.docs}">
+                <include name="favicon.ico"/>
+            </fileset>
         </copy>
         <jar jarfile="${java.dist}/catan-client.jar" basedir="${java.build}">
             <manifest>

@@ -69,28 +69,28 @@ public class Server {
         server.createContext("/user/register", registerHandler);
 
         // Game contexts
-        server.createContext("/game/list", listHandler);
-        server.createContext("/game/create", createHandler);
-        server.createContext("/game/join", joinHandler);
-        server.createContext("/game/model", modelHandler);
+        server.createContext("/games/list", listHandler);
+        server.createContext("/games/create", createHandler);
+        server.createContext("/games/join", joinHandler);
+        server.createContext("/games/model", modelHandler);
 
         // Move contexts
-        server.createContext("/games/sendChat", sendChatHandler);
-        server.createContext("/games/rollNumber", rollNumberHandler);
-        server.createContext("/games/robPlayer", robPlayerHandler);
-        server.createContext("/games/finishTurn", finishTurnHandler);
-        server.createContext("/games/buyDevCard", buyDevCardHandler);
-        server.createContext("/games/Year_Of_Plenty", year_of_plentyHandler);
-        server.createContext("/games/Road_Building", road_buildingHandler);
-        server.createContext("/games/Soldier", soldierHandler);
-        server.createContext("/games/Monument", monumentHandler);
-        server.createContext("/games/offerTrade", offerTradeHandler);
-        server.createContext("/games/acceptTrade", acceptTradeHandler);
-        server.createContext("/games/buildSettlement", buildSettlementHandler);
-        server.createContext("/games/buildCity", buildCityHandler);
-        server.createContext("/games/buildRoad", buildRoadHandler);
-        server.createContext("/games/maritimeTrade", maritimeTradeHandler);
-        server.createContext("/games/discardCards", discardCardsHandler);
+        server.createContext("/game/sendChat", sendChatHandler);
+        server.createContext("/game/rollNumber", rollNumberHandler);
+        server.createContext("/game/robPlayer", robPlayerHandler);
+        server.createContext("/game/finishTurn", finishTurnHandler);
+        server.createContext("/game/buyDevCard", buyDevCardHandler);
+        server.createContext("/game/Year_Of_Plenty", year_of_plentyHandler);
+        server.createContext("/game/Road_Building", road_buildingHandler);
+        server.createContext("/game/Soldier", soldierHandler);
+        server.createContext("/game/Monument", monumentHandler);
+        server.createContext("/game/offerTrade", offerTradeHandler);
+        server.createContext("/game/acceptTrade", acceptTradeHandler);
+        server.createContext("/game/buildSettlement", buildSettlementHandler);
+        server.createContext("/game/buildCity", buildCityHandler);
+        server.createContext("/game/buildRoad", buildRoadHandler);
+        server.createContext("/game/maritimeTrade", maritimeTradeHandler);
+        server.createContext("/game/discardCards", discardCardsHandler);
         
         // Empty (good for testing if service is working)
         server.createContext("/", downloadHandler);
@@ -110,8 +110,8 @@ public class Server {
         @Override
         public void handle(HttpExchange exchange) throws IOException {
             String[] pathParts = exchange.getRequestURI().getPath().split("/");
-            String path = new File(".").getCanonicalPath() + File.separator
-                    + "importdata";
+            String path = new File(".").getCanonicalPath(); //+ File.separator;
+                   // + "importdata";
             for (String part : pathParts) {
                 if (!part.equals("")) {
                     path += (File.separator + part);
