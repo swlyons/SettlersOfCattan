@@ -9,7 +9,7 @@ package server.receiver;
  */
 public class GameReceiver {
 
-    GameReceiver(Database db) {
+    public GameReceiver() {
        
     }
     

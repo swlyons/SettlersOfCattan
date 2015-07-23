@@ -8,7 +8,7 @@ package server.receiver;
  * @author ddennis
  */
 public class MovesReceiver {
-    public MovesReceiver(Database db) {
+    public MovesReceiver() {
        
     }
 }

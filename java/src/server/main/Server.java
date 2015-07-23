@@ -17,7 +17,8 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import server.command.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import server.receiver.*;
 import shared.data.*;
 
@@ -32,7 +33,7 @@ public class Server {
     private HttpServer server;
     private Gson model = new GsonBuilder().create();
     Map<String, String> games;
-    Agent agent = new Agent();
+    
 
     /**
      * Server constructor
@@ -142,7 +143,7 @@ public class Server {
     /**
      * Handler to login a user
      */
-    UserReceiver userReceiver = new UserReceiver();
+    
     private HttpHandler loginHandler = new HttpHandler() {
 
         @Override
@@ -152,13 +153,17 @@ public class Server {
             Reader reader = new InputStreamReader(exchange.getRequestBody(), "UTF-8");
             User user = model.fromJson(reader, User.class);
             
-            //Command Pattern
-            userReceiver.setUser(user);
-            LoginCommand loginCommand = new LoginCommand(userReceiver);
-            agent.sendCommand(loginCommand);
+            //call the appropriate fascade (real or mock)
+            boolean result = false;
+            try {
+                result = ServerFascade.getSingleton().login(user);
+                //result = MockServerFascade.getSingleton().login(user);
+            } catch (ServerException ex) {
+                Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
+            }
             
             //re-package and return the data
-            if (userReceiver.isSuccess()) {
+            if (result) {
                 String message = model.toJson("Success", String.class);
                 exchange.getResponseHeaders().set("Content-Type", "application/json");
                 exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, message.length());
@@ -187,13 +192,17 @@ public class Server {
             Reader reader = new InputStreamReader(exchange.getRequestBody(), "UTF-8");
             User user = model.fromJson(reader, User.class);
             
-            //Command Pattern
-            userReceiver.setUser(user);
-            RegisterCommand registerCommand = new RegisterCommand(userReceiver);
-            agent.sendCommand(registerCommand);
+            //call the appropriate fascade (real or mock)
+            boolean result = false;
+            try {
+                result = ServerFascade.getSingleton().register(user);
+                //result = MockServerFascade.getSingleton().register(user);
+            } catch (ServerException ex) {
+                Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
+            }
             
             //re-package and return the data
-            if (userReceiver.isSuccess()) {
+            if (result) {
                 String message = "Success";
                 exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, message.length());
                 exchange.getResponseBody().write(message.getBytes());
