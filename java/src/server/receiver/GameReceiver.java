@@ -1,15 +1,15 @@
 /*
  * This will house the database access queries for game/* (see swagger).
  */
-package server.dao;
+package server.receiver;
 
 /**
  *
  * @author ddennis
  */
-public class Game {
+public class GameReceiver {
 
-    Game(Database db) {
+    GameReceiver(Database db) {
        
     }
     
