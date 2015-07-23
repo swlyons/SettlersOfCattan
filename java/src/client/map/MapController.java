@@ -212,23 +212,24 @@ public class MapController extends Controller implements IMapController {
                 CatanColor color = CatanColor
                         .valueOf(gm.getGame().getPlayers().get(currentPlayer).getColor().toUpperCase());
                 getView().placeRoad(edgeLoc, color);
-                BuildRoad br = new BuildRoad();
-                br.setFree(true);
-                br.setPlayerIndex(currentPlayer);
                 XYEdgeLocation edgeSpot = new XYEdgeLocation();
                 edgeSpot.setDirection(edgeLoc.getDir());
                 edgeSpot.setX(edgeLoc.getHexLoc().getX());
                 edgeSpot.setY(edgeLoc.getHexLoc().getY());
-                br.setRoadLocation(edgeSpot);
-                br.setType("buildRoad");
-                try {
-                    ClientFascade.getSingleton().buildRoad(br);
-                    if (gm.getGame().getTurnTracker().getStatus().equals("FirstRound") || gm.getGame().getTurnTracker().getStatus().equals("SecondRound")) {
-                        setEndTurn(true);
+                if (!playedRoadBuilding) {
+                    BuildRoad br = new BuildRoad();
+                    br.setFree(true);
+                    br.setPlayerIndex(currentPlayer);
+                    br.setRoadLocation(edgeSpot);
+                    br.setType("buildRoad");
+                    try {
+                        ClientFascade.getSingleton().buildRoad(br);
+                        if (gm.getGame().getTurnTracker().getStatus().equals("FirstRound") || gm.getGame().getTurnTracker().getStatus().equals("SecondRound")) {
+                            setEndTurn(true);
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
-
-                } catch (Exception e) {
-                    e.printStackTrace();
                 }
             }
             if (playedRoadBuilding) {
