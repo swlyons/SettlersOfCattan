@@ -17,8 +17,10 @@ import shared.model.*;
  *
  * @author ddennis
  */
-public class MockServerFascade implements Fascade{
+public class MockServerFascade implements Fascade {
+
     //<editor-fold desc="JSON canned game string to pass back">
+
     String jsonGameString = "{\n"
             + "  \"deck\": {\n"
             + "    \"yearOfPlenty\": 2,\n"
@@ -331,26 +333,34 @@ public class MockServerFascade implements Fascade{
             + "  \"version\": 0\n"
             + "}";
     //</editor-fold>
-    
-    private final Gson model = new GsonBuilder().create(); 
-    
-     @Override
+
+    private final Gson model = new GsonBuilder().create();
+    public static MockServerFascade fascade = null;
+
+    public static MockServerFascade getSingleton() {
+        if (fascade == null) {
+            fascade = new MockServerFascade();
+        }
+        return fascade;
+    }
+
+    @Override
     public boolean login(User credentials) throws ServerException {
         return true;
 
     }
-    
+
     @Override
     public boolean register(User credentials) throws ServerException {
         return true;
     }
-    
+
     @Override
     public ArrayList<GameInfo> listGames() throws ServerException {
         ArrayList<GameInfo> games = new ArrayList<>();
-        
+
         GameInfo game = new GameInfo("Default Game");
-        
+
         //Canned Response
         game.setId(0);
         PlayerInfo player = new PlayerInfo();
@@ -370,62 +380,62 @@ public class MockServerFascade implements Fascade{
         player.setName("Mark");
         player.setId(11);
         game.getPlayers().add(player);
-        
+
         games.add(game);
-        
+
         return games;
     }
-    
+
     @Override
     public GameInfo createGame(CreateGameRequest createGameRequest) throws ServerException {
         GameInfo game = new GameInfo("Ha");
-        
+
         //Canned Response
         game.setId(3);
- 
+
         return game;
     }
-    
+
     @Override
     public boolean joinGame(JoinGameRequest joinGameRequest) throws ServerException {
         return true;
     }
-    
+
     @Override
     public boolean saveGame(SaveGameRequest saveGameRequest) throws ServerException {
         return true;
     }
-    
+
     @Override
     public boolean loadGame(LoadGameRequest loadGameRequest) throws ServerException {
         return true;
     }
-    
+
     @Override
     public GameInfo getGameModel(String version) throws ServerException {
-        return ((GameInfo)model.fromJson(jsonGameString, GameInfo.class));
+        return ((GameInfo) model.fromJson(jsonGameString, GameInfo.class));
     }
-    
+
     @Override
     public GameInfo resetGame() throws ServerException {
-        return ((GameInfo)model.fromJson(jsonGameString, GameInfo.class));
+        return ((GameInfo) model.fromJson(jsonGameString, GameInfo.class));
     }
-    
+
     @Override
     public ArrayList getGameCommands() throws ServerException {
         return new ArrayList();
     }
-    
+
     @Override
     public GameInfo executeGameCommands(ArrayList<Command> commands) throws ServerException {
-        return ((GameInfo)model.fromJson(jsonGameString, GameInfo.class));
+        return ((GameInfo) model.fromJson(jsonGameString, GameInfo.class));
     }
-    
+
     @Override
     public boolean addAIToGame(AddAIRequest addAIRequest) throws ServerException {
         return true;
     }
-    
+
     @Override
     public ArrayList<String> listAITypesInGame() throws ServerException {
         ArrayList<String> AITypes = new ArrayList<>();
@@ -435,86 +445,86 @@ public class MockServerFascade implements Fascade{
 
     @Override
     public GameInfo sendChat(SendChat sendChat) throws ServerException {
-        return ((GameInfo)model.fromJson(jsonGameString, GameInfo.class));
+        return ((GameInfo) model.fromJson(jsonGameString, GameInfo.class));
     }
 
     @Override
     public GameInfo rollNumber(RollNumber rollNumber) throws ServerException {
-        return ((GameInfo)model.fromJson(jsonGameString, GameInfo.class));
+        return ((GameInfo) model.fromJson(jsonGameString, GameInfo.class));
     }
 
     @Override
     public GameInfo robPlayer(RobPlayer robPlayer) throws ServerException {
-        return ((GameInfo)model.fromJson(jsonGameString, GameInfo.class));
+        return ((GameInfo) model.fromJson(jsonGameString, GameInfo.class));
     }
 
     @Override
     public GameInfo finishMove(FinishMove finishMove) throws ServerException {
-        return ((GameInfo)model.fromJson(jsonGameString, GameInfo.class));
+        return ((GameInfo) model.fromJson(jsonGameString, GameInfo.class));
     }
 
     @Override
     public GameInfo buyDevCard(BuyDevCard buyDevCard) throws ServerException {
-       return ((GameInfo)model.fromJson(jsonGameString, GameInfo.class));
+        return ((GameInfo) model.fromJson(jsonGameString, GameInfo.class));
     }
 
     @Override
     public GameInfo year_Of_Plenty(Year_Of_Plenty year_of_plenty) throws ServerException {
-        return ((GameInfo)model.fromJson(jsonGameString, GameInfo.class));
+        return ((GameInfo) model.fromJson(jsonGameString, GameInfo.class));
     }
 
     @Override
     public GameInfo roadBuilding(Road_Building roadBuilding) throws ServerException {
-        return ((GameInfo)model.fromJson(jsonGameString, GameInfo.class));
+        return ((GameInfo) model.fromJson(jsonGameString, GameInfo.class));
     }
 
     @Override
     public GameInfo soldier(Soldier soldier) throws ServerException {
-        return ((GameInfo)model.fromJson(jsonGameString, GameInfo.class));
+        return ((GameInfo) model.fromJson(jsonGameString, GameInfo.class));
     }
 
     @Override
     public GameInfo monopoly(Monopoly monopoly) throws ServerException {
-        return ((GameInfo)model.fromJson(jsonGameString, GameInfo.class));
+        return ((GameInfo) model.fromJson(jsonGameString, GameInfo.class));
     }
 
     @Override
     public GameInfo monument(Monument monument) throws ServerException {
-        return ((GameInfo)model.fromJson(jsonGameString, GameInfo.class));
+        return ((GameInfo) model.fromJson(jsonGameString, GameInfo.class));
     }
 
     @Override
     public GameInfo offerTrade(OfferTrade offerTrade) throws ServerException {
-        return ((GameInfo)model.fromJson(jsonGameString, GameInfo.class));
+        return ((GameInfo) model.fromJson(jsonGameString, GameInfo.class));
     }
 
     @Override
     public GameInfo acceptTrade(AcceptTrade acceptTrade) throws ServerException {
-        return ((GameInfo)model.fromJson(jsonGameString, GameInfo.class));
+        return ((GameInfo) model.fromJson(jsonGameString, GameInfo.class));
     }
 
     @Override
     public GameInfo buildSettlement(BuildSettlement buildSettlement) throws ServerException {
-        return ((GameInfo)model.fromJson(jsonGameString, GameInfo.class));
+        return ((GameInfo) model.fromJson(jsonGameString, GameInfo.class));
     }
 
     @Override
     public GameInfo buildCity(BuildCity buildCity) throws ServerException {
-        return ((GameInfo)model.fromJson(jsonGameString, GameInfo.class));
+        return ((GameInfo) model.fromJson(jsonGameString, GameInfo.class));
     }
 
     @Override
     public GameInfo buildRoad(BuildRoad buildRoad) throws ServerException {
-        return ((GameInfo)model.fromJson(jsonGameString, GameInfo.class));
+        return ((GameInfo) model.fromJson(jsonGameString, GameInfo.class));
     }
 
     @Override
     public GameInfo maritimeTrade(MaritimeTrade maritimeTrade) throws ServerException {
-        return ((GameInfo)model.fromJson(jsonGameString, GameInfo.class));
+        return ((GameInfo) model.fromJson(jsonGameString, GameInfo.class));
     }
 
     @Override
     public GameInfo discardCards(DiscardCards discardCards) throws ServerException {
-        return ((GameInfo)model.fromJson(jsonGameString, GameInfo.class));
+        return ((GameInfo) model.fromJson(jsonGameString, GameInfo.class));
     }
 }

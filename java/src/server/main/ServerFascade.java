@@ -6,6 +6,8 @@
 package server.main;
 
 import java.util.ArrayList;
+import server.command.*;
+import server.receiver.*;
 import shared.data.GameInfo;
 import shared.data.User;
 import shared.model.*;
@@ -22,15 +24,38 @@ import shared.model.*;
  *
  */
 public class ServerFascade implements Fascade {
+    private UserReceiver userReceiver = new UserReceiver();
+    private GameReceiver gameReceiver = new GameReceiver();
+    private GamesReceiver gamesReceiver = new GamesReceiver();
+    private MovesReceiver movesReceiver = new MovesReceiver();
+    private Agent agent = new Agent();
+    
+    public static ServerFascade fascade = null;
 
+    public static ServerFascade getSingleton() {
+        if (fascade == null) {
+            fascade = new ServerFascade();
+        }
+        return fascade;
+    }
+    
     @Override
     public boolean login(User credentials) throws ServerException {
-        return true;
+        //Command Pattern
+        userReceiver.setUser(credentials);
+        LoginCommand loginCommand = new LoginCommand(userReceiver);
+        agent.sendCommand(loginCommand);
+        return userReceiver.isSuccess();
     }
 
     @Override
     public boolean register(User credentials) throws ServerException {
-        return true;
+        //Command Pattern
+        userReceiver.setUser(credentials);
+        RegisterCommand registerCommand = new RegisterCommand(userReceiver);
+        agent.sendCommand(registerCommand);
+        
+        return userReceiver.isSuccess();
     }
 
     @Override
@@ -74,7 +99,7 @@ public class ServerFascade implements Fascade {
     }
 
     @Override
-    public GameInfo executeGameCommands(ArrayList<Command> commands) throws ServerException {
+    public GameInfo executeGameCommands(ArrayList<shared.model.Command> commands) throws ServerException {
         return new GameInfo("Default Game");
     }
 
