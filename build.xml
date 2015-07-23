@@ -146,7 +146,7 @@
             <manifest>
                 <attribute name="Main-Class" value="server.main.Server"/>
                 <attribute name="Class-Path" 
-                           value="lib/gson-2.2.4.jar" />
+                           value="lib/gson-2.2.4.jar lib/sqlite-jdbc-3.8.10.1.jar" />
             </manifest>
         </jar>
     </target>
