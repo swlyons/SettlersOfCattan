@@ -1,4 +1,4 @@
-package server.dao;
+package server.receiver;
 
 import java.io.File;
 import java.sql.Connection;
@@ -30,58 +30,11 @@ public class Database {
 		}
 	}
 
-	private Game game;
-	private Games games;
-	private Moves moves;
-	private User user;
 	private Connection connection;
 
 	/** Creates new instances of all the tables in the database */
 	public Database() {
-		game = new Game(this);
-		games = new Games(this);
-		moves = new Moves(this);
-		user = new User(this);
 		connection = null;
-	}
-
-	/**
-	 * Gets the users table form the database
-	 *
-	 * @return instance of Users Table for running operations on the Users Table
-	 */
-	public User getUsers() {
-		return user;
-	}
-
-	/**
-	 * Gets the fields table form the database
-	 *
-	 * @return instance of Fields Table for running operations on the Fields
-	 *         Table
-	 */
-	public Games getGames() {
-		return games;
-	}
-
-	/**
-	 * Gets the images table form the database
-	 *
-	 * @return instance of Images Table for running operations on the Images
-	 *         Table
-	 */
-	public Game getGame() {
-		return game;
-	}
-
-	/**
-	 * Gets the records table form the database
-	 *
-	 * @return instance of Records Table for running operations on the Records
-	 *         Table
-	 */
-	public Moves getMoves() {
-		return moves;
 	}
 
 	public Connection getConnection() {

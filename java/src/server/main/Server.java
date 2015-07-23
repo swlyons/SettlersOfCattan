@@ -15,7 +15,11 @@ import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import server.dao.Database;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import server.command.*;
+import server.receiver.*;
+import shared.data.*;
 
 public class Server {
 
@@ -28,6 +32,8 @@ public class Server {
     private HttpServer server;
     private Gson model = new GsonBuilder().create();
     Map<String, String> games;
+    Agent agent = new Agent();
+
     /**
      * Server constructor
      */
@@ -62,7 +68,7 @@ public class Server {
 
         server.setExecutor(null); // use the default executor
 
-        // User contexts
+        // UserReceiver contexts
         server.createContext("/user/login", loginHandler);
         server.createContext("/user/register", registerHandler);
 
@@ -89,14 +95,13 @@ public class Server {
         server.createContext("/game/buildRoad", buildRoadHandler);
         server.createContext("/game/maritimeTrade", maritimeTradeHandler);
         server.createContext("/game/discardCards", discardCardsHandler);
-        
-        // Empty (good for testing if service is working)
-        server.createContext("/", downloadHandler);
 
         //swagger
         server.createContext("/docs/api/data", new Handlers.JSONAppender(""));
         server.createContext("/docs/api/view", new Handlers.BasicFile(""));
-
+        
+         // Empty (good for testing if service is working)
+        server.createContext("/", downloadHandler);
         //start the server
         server.start();
     }
@@ -109,7 +114,7 @@ public class Server {
         public void handle(HttpExchange exchange) throws IOException {
             String[] pathParts = exchange.getRequestURI().getPath().split("/");
             String path = new File(".").getCanonicalPath(); //+ File.separator;
-                   // + "importdata";
+            // + "importdata";
             for (String part : pathParts) {
                 if (!part.equals("")) {
                     path += (File.separator + part);
@@ -135,39 +140,76 @@ public class Server {
     };
 
     /**
-     * Handler to get all projects
+     * Handler to login a user
      */
+    UserReceiver userReceiver = new UserReceiver();
     private HttpHandler loginHandler = new HttpHandler() {
 
         @Override
         public void handle(HttpExchange exchange) throws IOException {
-            exchange.getResponseHeaders().add("Content-Type", "application/json");
-            //TODO: Check that the user can login
             
+            //un-package the data
+            Reader reader = new InputStreamReader(exchange.getRequestBody(), "UTF-8");
+            User user = model.fromJson(reader, User.class);
             
-            exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, 0);
-            exchange.getResponseBody().write(model.toJson("Success", String.class).getBytes());
-            exchange.getResponseBody().close();
+            //Command Pattern
+            userReceiver.setUser(user);
+            LoginCommand loginCommand = new LoginCommand(userReceiver);
+            agent.sendCommand(loginCommand);
+            
+            //re-package and return the data
+            if (userReceiver.isSuccess()) {
+                String message = model.toJson("Success", String.class);
+                exchange.getResponseHeaders().set("Content-Type", "application/json");
+                exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, message.length());
+                exchange.getResponseBody().write(message.getBytes());
+                exchange.getResponseBody().close();
+            } else {
+                
+                String message = "Failed to login - bad username or password.";
+                exchange.getResponseHeaders().set("Content-Type", "text/html");
+                exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                exchange.getResponseBody().write(message.getBytes());
+                exchange.getResponseBody().close();
+            }
         }
     };
 
     /**
-     * Handler to validate a User
+     * Handler to register a user
      */
     private HttpHandler registerHandler = new HttpHandler() {
         @Override
         public void handle(HttpExchange exchange) throws IOException {
-            exchange.getResponseHeaders().add("Content-Type", "text/html");
-            //TODO: check that the user can register
-
-            exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, 0);
-            exchange.getResponseBody().write("Success".getBytes());
-            exchange.getResponseBody().close();
+            exchange.getResponseHeaders().add("Content-Type", "text/xml");
+            
+            //un-package the data
+            Reader reader = new InputStreamReader(exchange.getRequestBody(), "UTF-8");
+            User user = model.fromJson(reader, User.class);
+            
+            //Command Pattern
+            userReceiver.setUser(user);
+            RegisterCommand registerCommand = new RegisterCommand(userReceiver);
+            agent.sendCommand(registerCommand);
+            
+            //re-package and return the data
+            if (userReceiver.isSuccess()) {
+                String message = "Success";
+                exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, message.length());
+                exchange.getResponseBody().write(message.getBytes());
+                exchange.getResponseBody().close();
+            } else {
+                
+                String message = "Failed to register - bad username or password.";
+                exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                exchange.getResponseBody().write(message.getBytes());
+                exchange.getResponseBody().close();
+            }
         }
     };
 
     /**
-     * Handler to get all Fields
+     * Handler to list all games
      */
     private HttpHandler listHandler = new HttpHandler() {
 
@@ -176,14 +218,14 @@ public class Server {
             exchange.getResponseHeaders().add("Content-Type", "application/json");
             //TODO: return the list of games running on the server
 
-            exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, 0);
-            exchange.getResponseBody().write("[{'title':'Default Game', 'id' :'0'}]".getBytes());
+            exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, "[{\"title\":\"Default Game\", \"id\":\"0\"}]".length());
+            exchange.getResponseBody().write("[{\"title\":\"Default Game\", \"id\":\"0\"}]".getBytes());
             exchange.getResponseBody().close();
         }
     };
 
     /**
-     * Handler to delete a specific field in the Fields Table
+     * Handler to create a game
      */
     private HttpHandler createHandler = new HttpHandler() {
 
@@ -199,7 +241,7 @@ public class Server {
     };
 
     /**
-     * Handler to get a sample Image for a project
+     * Handler to join a game
      */
     private HttpHandler joinHandler = new HttpHandler() {
 
@@ -214,9 +256,8 @@ public class Server {
         }
     };
 
-    
     /**
-     * Handler to download an Image for a project
+     * Handler to get a the game model
      */
     private HttpHandler modelHandler = new HttpHandler() {
 
@@ -231,6 +272,9 @@ public class Server {
         }
     };
     
+    /**
+     * Handler to send a chat message
+     */
     private HttpHandler sendChatHandler = new HttpHandler() {
 
         @Override
@@ -243,6 +287,9 @@ public class Server {
             exchange.getResponseBody().close();
         }
     };
+    /**
+     * Handler to get roll a number
+     */
     private HttpHandler rollNumberHandler = new HttpHandler() {
 
         @Override
@@ -255,6 +302,9 @@ public class Server {
             exchange.getResponseBody().close();
         }
     };
+    /**
+     * Handler to rob a player
+     */
     private HttpHandler robPlayerHandler = new HttpHandler() {
 
         @Override
@@ -267,6 +317,9 @@ public class Server {
             exchange.getResponseBody().close();
         }
     };
+    /**
+     * Handler to finish a turn
+     */
     private HttpHandler finishTurnHandler = new HttpHandler() {
 
         @Override
@@ -279,6 +332,9 @@ public class Server {
             exchange.getResponseBody().close();
         }
     };
+    /**
+     * Handler to buy a development card
+     */
     private HttpHandler buyDevCardHandler = new HttpHandler() {
 
         @Override
@@ -291,6 +347,9 @@ public class Server {
             exchange.getResponseBody().close();
         }
     };
+    /**
+     * Handler to use a year of plenty card
+     */
     private HttpHandler year_of_plentyHandler = new HttpHandler() {
 
         @Override
@@ -303,6 +362,9 @@ public class Server {
             exchange.getResponseBody().close();
         }
     };
+    /**
+     * Handler to use a road building card
+     */
     private HttpHandler road_buildingHandler = new HttpHandler() {
 
         @Override
@@ -315,6 +377,9 @@ public class Server {
             exchange.getResponseBody().close();
         }
     };
+    /**
+     * Handler to use a soldier card
+     */
     private HttpHandler soldierHandler = new HttpHandler() {
 
         @Override
@@ -327,7 +392,9 @@ public class Server {
             exchange.getResponseBody().close();
         }
     };
-   
+    /**
+     * Handler to user a monument card
+     */
     private HttpHandler monumentHandler = new HttpHandler() {
 
         @Override
@@ -340,6 +407,9 @@ public class Server {
             exchange.getResponseBody().close();
         }
     };
+    /**
+     * Handler to offer a trade
+     */
     private HttpHandler offerTradeHandler = new HttpHandler() {
 
         @Override
@@ -352,18 +422,24 @@ public class Server {
             exchange.getResponseBody().close();
         }
     };
+    /**
+     * Handler to accept a trade
+     */
     private HttpHandler acceptTradeHandler = new HttpHandler() {
 
         @Override
         public void handle(HttpExchange exchange) throws IOException {
             exchange.getResponseHeaders().add("Content-Type", "application/json");
             //TODO: accept a trade from another player
-            
+
             exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, 0);
             exchange.getResponseBody().write("Success".getBytes());
             exchange.getResponseBody().close();
         }
     };
+    /**
+     * Handler to build a settlement
+     */
     private HttpHandler buildSettlementHandler = new HttpHandler() {
 
         @Override
@@ -376,6 +452,9 @@ public class Server {
             exchange.getResponseBody().close();
         }
     };
+    /**
+     * Handler to build a city
+     */
     private HttpHandler buildCityHandler = new HttpHandler() {
 
         @Override
@@ -388,6 +467,9 @@ public class Server {
             exchange.getResponseBody().close();
         }
     };
+    /**
+     * Handler to build a road
+     */
     private HttpHandler buildRoadHandler = new HttpHandler() {
 
         @Override
@@ -400,6 +482,9 @@ public class Server {
             exchange.getResponseBody().close();
         }
     };
+    /**
+     * Handler to do a maritime trade
+     */
     private HttpHandler maritimeTradeHandler = new HttpHandler() {
 
         @Override
@@ -412,6 +497,9 @@ public class Server {
             exchange.getResponseBody().close();
         }
     };
+    /**
+     * Handler to discard cards
+     */
     private HttpHandler discardCardsHandler = new HttpHandler() {
 
         @Override
@@ -435,14 +523,14 @@ public class Server {
      * NOTE: THIS REPLACES ALL THE COMMUNICATION INPUT CLASSES!!!
      */
     public Map<String, String> saveGameToMap() {
-       /* for (String param : query.split("&")) {
-            String pair[] = param.split("=");
-            if (pair.length > 1) {
-                result.put(pair[0], pair[1]);
-            } else {
-                result.put(pair[0], "");
-            }
-        }*/
+        /* for (String param : query.split("&")) {
+         String pair[] = param.split("=");
+         if (pair.length > 1) {
+         result.put(pair[0], pair[1]);
+         } else {
+         result.put(pair[0], "");
+         }
+         }*/
         return games;
     }
 
