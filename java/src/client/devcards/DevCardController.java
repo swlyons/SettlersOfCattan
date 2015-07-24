@@ -113,7 +113,8 @@ public class DevCardController extends Controller implements IDevCardController 
 
     private boolean canPlayMonopolyCard(Integer playerId, Integer playerIndex) {
         GameManager gm = ClientCommunicator.getSingleton().getGameManager();
-        boolean canBuild = gm.canUseMonopoly() && gm.getGame().getTurnTracker().getCurrentTurn() == gm.getPlayerIndex(playerId);
+        boolean playedDevCard = ClientCommunicator.getSingleton().getGameManager().getGame().getPlayers().get(playerIndex).isPlayedDevCard();
+        boolean canBuild = gm.canUseMonopoly() && gm.getGame().getTurnTracker().getCurrentTurn() == gm.getPlayerIndex(playerId) && !playedDevCard;
         int cardsInHand = gm.getGame().getPlayers().get(playerIndex).getNewDevCards().getMonopoly()
                 + gm.getGame().getPlayers().get(playerIndex).getOldDevCards().getMonopoly();
         getPlayCardView().setCardAmount(DevCardType.MONOPOLY, cardsInHand);
@@ -125,6 +126,13 @@ public class DevCardController extends Controller implements IDevCardController 
     public void playMonopolyCard(ResourceType resource) {
         GameManager gm = ClientCommunicator.getSingleton().getGameManager();
         Integer playerId = ClientCommunicator.getSingleton().getPlayerId();
+        Integer playerIndex = -1;
+        for (int i = 0; i < gm.getGame().getPlayers().size(); i++) {
+            if (gm.getGame().getPlayers().get(i).getPlayerID() == playerId) {
+                playerIndex = i;
+                break;
+            }
+        }
 
         Monopoly m = new Monopoly(gm.getPlayerIndex(playerId));
         m.setResource(resource);
@@ -141,7 +149,8 @@ public class DevCardController extends Controller implements IDevCardController 
 
     private boolean canPlayMonumentCard(Integer playerId, Integer playerIndex) {
         GameManager gm = ClientCommunicator.getSingleton().getGameManager();
-        boolean canBuild = gm.canUseMonument() && gm.getGame().getTurnTracker().getCurrentTurn() == gm.getPlayerIndex(playerId);
+        boolean playedDevCard = ClientCommunicator.getSingleton().getGameManager().getGame().getPlayers().get(playerIndex).isPlayedDevCard();
+        boolean canBuild = gm.canUseMonument() && gm.getGame().getTurnTracker().getCurrentTurn() == gm.getPlayerIndex(playerId) && !playedDevCard;
         int cardsInHand = gm.getGame().getPlayers().get(playerIndex).getNewDevCards().getMonument()
                 + gm.getGame().getPlayers().get(playerIndex).getOldDevCards().getMonument();
         getPlayCardView().setCardAmount(DevCardType.MONUMENT, cardsInHand);
@@ -153,6 +162,13 @@ public class DevCardController extends Controller implements IDevCardController 
     public void playMonumentCard() {
         GameManager gm = ClientCommunicator.getSingleton().getGameManager();
         Integer playerId = ClientCommunicator.getSingleton().getPlayerId();
+        Integer playerIndex = -1;
+        for (int i = 0; i < gm.getGame().getPlayers().size(); i++) {
+            if (gm.getGame().getPlayers().get(i).getPlayerID() == playerId) {
+                playerIndex = i;
+                break;
+            }
+        }
 
         Monument m = new Monument();
         m.setType("Monument");
@@ -170,7 +186,8 @@ public class DevCardController extends Controller implements IDevCardController 
 
     private boolean canPlayRoadBuildCard(Integer playerId, Integer playerIndex) {
         GameManager gm = ClientCommunicator.getSingleton().getGameManager();
-        boolean canBuild = gm.canUseRoadBuilding() && gm.getGame().getTurnTracker().getCurrentTurn() == gm.getPlayerIndex(playerId);
+        boolean playedDevCard = ClientCommunicator.getSingleton().getGameManager().getGame().getPlayers().get(playerIndex).isPlayedDevCard();
+        boolean canBuild = gm.canUseRoadBuilding() && gm.getGame().getTurnTracker().getCurrentTurn() == gm.getPlayerIndex(playerId) && !playedDevCard;
         int cardsInHand = gm.getGame().getPlayers().get(playerIndex).getNewDevCards().getRoadBuilding()
                 + gm.getGame().getPlayers().get(playerIndex).getOldDevCards().getRoadBuilding();
         getPlayCardView().setCardAmount(DevCardType.ROAD_BUILD, cardsInHand);
@@ -180,14 +197,26 @@ public class DevCardController extends Controller implements IDevCardController 
 
     @Override
     public void playRoadBuildCard() {
+        GameManager gm = ClientCommunicator.getSingleton().getGameManager();
+    	Integer playerId = ClientCommunicator.getSingleton().getPlayerId();
+        Integer playerIndex = -1;
+        for (int i = 0; i < gm.getGame().getPlayers().size(); i++) {
+            if (gm.getGame().getPlayers().get(i).getPlayerID() == playerId) {
+                playerIndex = i;
+                break;
+            }
+        }
+        
         roadAction.execute();
+        
         if (getPlayCardView().isModalShowing())
         	getPlayCardView().closeModal();
     }
 
     private boolean canPlaySoldierCard(Integer playerId, Integer playerIndex) {
         GameManager gm = ClientCommunicator.getSingleton().getGameManager();
-        boolean canBuild = gm.canUseSoldier() && gm.getGame().getTurnTracker().getCurrentTurn() == gm.getPlayerIndex(playerId);
+        boolean playedDevCard = ClientCommunicator.getSingleton().getGameManager().getGame().getPlayers().get(playerIndex).isPlayedDevCard();
+        boolean canBuild = gm.canUseSoldier() && gm.getGame().getTurnTracker().getCurrentTurn() == gm.getPlayerIndex(playerId) && !playedDevCard;
         int cardsInHand = gm.getGame().getPlayers().get(playerIndex).getNewDevCards().getSoldier()
                 + gm.getGame().getPlayers().get(playerIndex).getOldDevCards().getSoldier();
         getPlayCardView().setCardAmount(DevCardType.SOLDIER, cardsInHand);
@@ -197,14 +226,26 @@ public class DevCardController extends Controller implements IDevCardController 
 
     @Override
     public void playSoldierCard() {
+        GameManager gm = ClientCommunicator.getSingleton().getGameManager();
+    	Integer playerId = ClientCommunicator.getSingleton().getPlayerId();
+        Integer playerIndex = -1;
+        for (int i = 0; i < gm.getGame().getPlayers().size(); i++) {
+            if (gm.getGame().getPlayers().get(i).getPlayerID() == playerId) {
+                playerIndex = i;
+                break;
+            }
+        }
+        
         soldierAction.execute();
+        
         if (getPlayCardView().isModalShowing())
         	getPlayCardView().closeModal();
     }
 
     private boolean canPlayYearOfPlentyCard(Integer playerId, Integer playerIndex) {
         GameManager gm = ClientCommunicator.getSingleton().getGameManager();
-        boolean canBuild = gm.canUseYearOfPlenty() && gm.getGame().getTurnTracker().getCurrentTurn() == gm.getPlayerIndex(playerId);
+        boolean playedDevCard = ClientCommunicator.getSingleton().getGameManager().getGame().getPlayers().get(playerIndex).isPlayedDevCard();
+        boolean canBuild = gm.canUseYearOfPlenty() && gm.getGame().getTurnTracker().getCurrentTurn() == gm.getPlayerIndex(playerId) && !playedDevCard;
         int cardsInHand = gm.getGame().getPlayers().get(playerIndex).getNewDevCards().getYearOfPlenty()
                 + gm.getGame().getPlayers().get(playerIndex).getOldDevCards().getYearOfPlenty();
         getPlayCardView().setCardAmount(DevCardType.YEAR_OF_PLENTY, cardsInHand);
@@ -216,6 +257,13 @@ public class DevCardController extends Controller implements IDevCardController 
     public void playYearOfPlentyCard(ResourceType resource1, ResourceType resource2) {
         GameManager gm = ClientCommunicator.getSingleton().getGameManager();
         Integer playerId = ClientCommunicator.getSingleton().getPlayerId();
+        Integer playerIndex = -1;
+        for (int i = 0; i < gm.getGame().getPlayers().size(); i++) {
+            if (gm.getGame().getPlayers().get(i).getPlayerID() == playerId) {
+                playerIndex = i;
+                break;
+            }
+        }
 
         Year_Of_Plenty y = new Year_Of_Plenty(gm.getPlayerIndex(playerId));
         y.setType("Year_of_Plenty");
