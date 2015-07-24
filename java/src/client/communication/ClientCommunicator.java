@@ -6,7 +6,6 @@
 package client.communication;
 
 import client.main.ClientException;
-import shared.data.Game;
 import shared.data.GameInfo;
 import client.managers.GameManager;
 
@@ -161,7 +160,7 @@ public class ClientCommunicator {
                         }.getType();
                         result.setResponseBody(model.fromJson(content, listType));
                     } else if (commandName.equals("game/commands")) {
-                        Type listType = new TypeToken<ArrayList<Game>>() {
+                        Type listType = new TypeToken<ArrayList<GameInfo>>() {
                         }.getType();
                         result.setResponseBody(model.fromJson(content, listType));
                     } else if (commandName.equals("game/listAI")) {
@@ -170,7 +169,7 @@ public class ClientCommunicator {
                         result.setResponseBody(model.fromJson(content, listType));
                     } else {
                         if (content.equals("\"true\"")) {
-                            result.setResponseBody(new Game(content));
+                            result.setResponseBody(new GameInfo(content));
                         } else {
                             result.setResponseBody(model.fromJson(content, GameInfo.class));
                         }

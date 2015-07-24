@@ -82,7 +82,7 @@ public class Hex {
 
     @Override
     public String toString() {
-        return "{" + "location : " + location + ", resource : " + resource + ", number : " + number + '}';
+        return "{" + "\"location\" : " + location + ", \"resource\" : " + resource + ", \"number\" : " + number + "\"}";
     }
 
 }

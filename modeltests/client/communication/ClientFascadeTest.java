@@ -9,7 +9,6 @@ import shared.model.LoadGameRequest;
 import shared.model.JoinGameRequest;
 import shared.model.CreateGameRequest;
 import shared.model.SaveGameRequest;
-import shared.data.Game;
 import shared.data.GameInfo;
 import shared.data.SettlementLocation;
 import shared.data.User;
@@ -456,7 +455,7 @@ public class ClientFascadeTest {
         roadBuilding.setSpot2(new EdgeLocation(new HexLocation(0,1), EdgeDirection.NE));
         
         ClientFascade instance = new ClientFascade();
-        Game expResult = null;
+        GameInfo expResult = null;
         instance.login(new User("Sam", "sam"));
         instance.joinGame(new JoinGameRequest(0, "red"));
         GameInfo result = instance.roadBuilding(roadBuilding);
@@ -477,7 +476,7 @@ public class ClientFascadeTest {
         monopoly.setResource(ResourceType.wood);
         
         ClientFascade instance = new ClientFascade();
-        Game expResult = null;
+        GameInfo expResult = null;
         instance.login(new User("Sam", "sam"));
         instance.joinGame(new JoinGameRequest(0, "red"));
         GameInfo result = instance.monopoly(monopoly);

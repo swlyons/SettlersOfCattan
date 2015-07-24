@@ -313,8 +313,7 @@ public class MapPoller extends TimerTask {
                     /* End Points Controller Update */
 
                 }
-                turnTrackerView.updateGameState(status, status.equalsIgnoreCase("Finish Turn"));
-                initializedPlayers = false;
+                
                 /* End Turn Tracker Update */
 
                 /* Begin Chat View Update */
@@ -343,7 +342,7 @@ public class MapPoller extends TimerTask {
                 int oldHistorySize = historyView.getEntries().size();
                 int newHistorySize = gameInformation.getLog().getLines().size();
                 CatanColor colorHistory = CatanColor.WHITE;
-
+                System.out.println("Map Poller Old Size: " + oldHistorySize + " New Size: " + newHistorySize);
                 if (oldHistorySize != newHistorySize || (newHistorySize == 0)) {
                     ArrayList<LogEntry> newHistoryEntries = new ArrayList<>();
                     for (MessageLine messageLine : gameInformation.getLog().getLines()) {
@@ -360,7 +359,8 @@ public class MapPoller extends TimerTask {
                     historyView.setEntries(newHistoryEntries);
                 }
                 /* End Game History View Update */
-
+                turnTrackerView.updateGameState(status, status.equalsIgnoreCase("Finish Turn"));
+                initializedPlayers = false;
             } catch (Exception e) {
                 e.printStackTrace();
             }

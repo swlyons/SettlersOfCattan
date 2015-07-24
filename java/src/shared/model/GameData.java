@@ -2,7 +2,7 @@ package shared.model;
 
 import java.util.List;
 
-import shared.data.Player;
+import shared.data.PlayerInfo;
 
 /**
  * Contains basic game information for the join game screen.
@@ -28,14 +28,14 @@ public class GameData {
         this.gameId = gameId;
     }
 
-    public List<Player> getPlayers() {
+    public List<PlayerInfo> getPlayers() {
         return players;
     }
 
-    public void setPlayers(List<Player> players) {
+    public void setPlayers(List<PlayerInfo> players) {
         this.players = players;
     }
     private String gameTitle;
     private int gameId;
-    private List<Player> players;
+    private List<PlayerInfo> players;
 }

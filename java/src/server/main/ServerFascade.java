@@ -24,11 +24,11 @@ import shared.model.*;
  *
  */
 public class ServerFascade implements Fascade {
-    private UserReceiver userReceiver = new UserReceiver();
-    private GameReceiver gameReceiver = new GameReceiver();
-    private GamesReceiver gamesReceiver = new GamesReceiver();
-    private MovesReceiver movesReceiver = new MovesReceiver();
-    private Agent agent = new Agent();
+    private final UserReceiver userReceiver = new UserReceiver();
+    private final GameReceiver gameReceiver = new GameReceiver();
+    private final GamesReceiver gamesReceiver = new GamesReceiver();
+    private final MovesReceiver movesReceiver = new MovesReceiver();
+    private final Agent agent = new Agent();
     
     public static ServerFascade fascade = null;
 

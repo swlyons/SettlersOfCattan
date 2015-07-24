@@ -123,6 +123,6 @@ public class GameInfo {
 
     @Override
     public String toString() {
-        return "{" + "title : " + title + ", id : " + id + ", bank : " + bank + ", chat : " + chat + ", log : " + log + ", map : " + map + ", players : " + players + ", tradeOffer : " + tradeOffer + ", turnTracker : " + turnTracker + ", version : " + version + ", winner : " + winner + '}';
+        return "{" + "\"title\" : \"" + title + "\" , \"id\" : " + id + ", \"bank\" : " + bank + ", \"chat\" : " + chat + ", \"log\" : " + log + ", \"map\" : " + map + ", \"players\" : " + players + ", \"tradeOffer\" : " + tradeOffer + ", \"turnTracker\" : " + turnTracker + ", \"version\" : " + version + ", \"winner\" : " + winner + "}";
     }
 }

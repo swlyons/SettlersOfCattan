@@ -21,7 +21,7 @@ public class MessageList {
     @Override
     public String toString() {
 
-        String messageLines = "{lines : [";
+        String messageLines = "{\"lines\" : [";
 
         for (MessageLine line : lines) {
             messageLines += line.toString() + ",";
