@@ -107,7 +107,7 @@ public class RightPanel extends JPanel {
             @Override
             public void execute() {
                 boolean isFree = false;
-                boolean allowDisconnected = false;
+                boolean allowCancel = true;
                 boolean isAllowed = false;
                 try {
                     ClientCommunicator.getSingleton().getGameManager().initializeGame(ClientFascade.getSingleton().getGameModel(0 + ""));
@@ -126,7 +126,7 @@ public class RightPanel extends JPanel {
                     }
 
                     if (isAllowed) {
-                        mapController.startMove(pieceType, isFree, allowDisconnected);
+                        mapController.startMove(pieceType, isFree, allowCancel);
                     }
 
                 } catch (Exception e) {
