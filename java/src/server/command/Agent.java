@@ -20,9 +20,9 @@ public class Agent {
         commandQueue = new ArrayList();
     }
 
-    public void sendCommand(Command command) {
+    public boolean sendCommand(Command command) {
         commandQueue.add(command);
-        command.execute();
+        return(command.execute());
     }
 
     public ArrayList getCommandQueue() {

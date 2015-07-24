@@ -20,7 +20,6 @@ import java.io.Reader;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import server.receiver.*;
-import server.receiver.AllOfOurInformation;
 import shared.data.*;
 
 public class Server {
