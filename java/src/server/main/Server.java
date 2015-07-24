@@ -158,8 +158,7 @@ public class Server {
 
             //re-package and return the data
             if (id!=-1) {
-                String cookie = "";
-                
+                String cookie = "catan.user=";
 //                cookie+="{\"name\":\""+AllOfOurInformation.getSingleton().getUsers().get(id).getUsername()+"\",";
 //                cookie+="\"password\":\""+AllOfOurInformation.getSingleton().getUsers().get(id).getPassword()+"\",";
 //                cookie+="\"playerID\":" +id+"}";
@@ -168,9 +167,10 @@ public class Server {
                 cookie+="playerID:" +id+"}";
                 
                 cookie += ";Path=/;";
-                String message = model.toJson("Success", String.class);
-                exchange.getResponseHeaders().set("Content-Type", "application/json");
-                exchange.getResponseHeaders().set("Set-cookie", cookie);
+//                String message = model.toJson("Success", String.class);
+                String message = "Success";
+                exchange.getResponseHeaders().set("Content-Type", "application/json");                
+                exchange.getResponseHeaders().set("Set-Cookie", cookie);
                 exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, message.length());
                 exchange.getResponseBody().write(message.getBytes());
                 exchange.getResponseBody().close();
