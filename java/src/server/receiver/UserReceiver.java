@@ -19,7 +19,7 @@ public class UserReceiver {
     }
 
     public void login() {
-        setSuccess(loginSuccessful());
+//        setSuccess(loginSuccessful());
     }
 
     public void register() {
@@ -50,14 +50,13 @@ public class UserReceiver {
         return false;
     }
 
-    private boolean loginSuccessful() {
-
-        for (User existingUser : AllOfOurInformation.getSingleton().getUsers()) {
-            if (user.getUsername().equals(existingUser.getUsername()) && user.getPassword().equals(existingUser.getPassword())) {
-                return true;
+    private int  loginSuccessful() {
+        for (int i=0;i<AllOfOurInformation.getSingleton().getUsers().size();i++) {
+            if (user.getUsername().equals(AllOfOurInformation.getSingleton().getUsers().get(i).getUsername()) && user.getPassword().equals(AllOfOurInformation.getSingleton().getUsers().get(i).getPassword())) {
+                return i;
             }
         }
-        return false;
+        return -1;
     }
 
     public boolean isSuccess() {

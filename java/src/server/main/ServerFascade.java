@@ -42,10 +42,21 @@ public class ServerFascade implements Fascade {
     @Override
     public boolean login(User credentials) throws ServerException {
         //Command Pattern
-        userReceiver.setUser(credentials);
-        LoginCommand loginCommand = new LoginCommand(userReceiver);
-        agent.sendCommand(loginCommand);
-        return userReceiver.isSuccess();
+//        userReceiver.setUser(credentials);
+//        LoginCommand loginCommand = new LoginCommand(userReceiver);
+//        agent.sendCommand(loginCommand);
+//        return userReceiver.isSuccess();
+        return false;
+    }
+    
+    public int getLoginId(User credentials){
+        int id=-1;
+        for (int i=0;i<AllOfOurInformation.getSingleton().getUsers().size();i++) {
+            if (credentials.getUsername().equals(AllOfOurInformation.getSingleton().getUsers().get(i).getUsername()) && credentials.getPassword().equals(AllOfOurInformation.getSingleton().getUsers().get(i).getPassword())) {
+                id = i;
+            }
+        }
+        return id;
     }
 
     @Override
