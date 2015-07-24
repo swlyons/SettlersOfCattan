@@ -21,6 +21,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import server.receiver.*;
 import shared.data.*;
+import shared.model.*;
+import sun.font.CreatedFontTracker;
 
 public class Server {
 
@@ -212,7 +214,6 @@ public class Server {
                 exchange.getResponseBody().write(message.getBytes());
                 exchange.getResponseBody().close();
             } else {
-
                 String message = "Failed to register - bad username or password.";
                 exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
                 exchange.getResponseBody().write(message.getBytes());
@@ -245,11 +246,26 @@ public class Server {
         @Override
         public void handle(HttpExchange exchange) throws IOException {
             exchange.getResponseHeaders().add("Content-Type", "application/json");
-            //TODO: create a game
+            
+            Reader reader = new InputStreamReader(exchange.getRequestBody(), "UTF-8");
+            CreateGameRequest createGame = model.fromJson(reader, CreateGameRequest.class);
+            GameInfo gameInfo = null;
+            try{
+                gameInfo = ServerFascade.getSingleton().createGame(createGame);
+            }catch(Exception e){
+            
+            }
+            if (gameInfo!=null) {
+                exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, gameInfo.toString().length());
+                exchange.getResponseBody().write(gameInfo.toString().getBytes());
+                exchange.getResponseBody().close();
+            } else {
 
-            exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, 0);
-            exchange.getResponseBody().write("Success".getBytes());
-            exchange.getResponseBody().close();
+                String message = "Failed to createGame - need a name.";
+                exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                exchange.getResponseBody().write(message.getBytes());
+                exchange.getResponseBody().close();
+            }
         }
     };
 
