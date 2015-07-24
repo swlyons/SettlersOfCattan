@@ -230,7 +230,6 @@ public class ClientCommunicator {
                     if (commandName.contains("user")) {
                         result.setResponseBody(content);
                         if (commandName.equals("user/login") && content.equals("Success")) {
-
                             String userCookie = connection.getHeaderField("Set-Cookie").split(";")[0];
                             String decodedCookie = URLDecoder.decode(userCookie.split("=")[1], "UTF-8");
                             playerIdThisOne = model.fromJson(decodedCookie, CookieModel.class).getPlayerID();
