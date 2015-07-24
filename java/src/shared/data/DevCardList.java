@@ -176,8 +176,8 @@ public class DevCardList {
 
     @Override
     public String toString() {
-        return "{" + "monopoly : " + monopoly + ", monument : " + monument + ", roadBuilding : " + roadBuilding
-                + ", soldier : " + soldier + ", yearOfPlenty : " + yearOfPlenty + '}';
+        return "{" + "\"monopoly\" : " + monopoly + ", \"monument\" : " + monument + ", \"roadBuilding\" : " + roadBuilding
+                + ", \"soldier\" : " + soldier + ", \"yearOfPlenty\" : " + yearOfPlenty + "}";
     }
 
 }

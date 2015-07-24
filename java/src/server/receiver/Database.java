@@ -25,8 +25,7 @@ public class Database {
 			final String driver = "org.sqlite.JDBC";
 			Class.forName(driver);
 		} catch (ClassNotFoundException e) {
-                    e.printStackTrace();
-			//throw new ServerException("Could not load database driver", e);
+                    throw new ServerException("Could not load database driver", e);
 		}
 	}
 

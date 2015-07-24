@@ -33,7 +33,6 @@ public class Server {
     private HttpServer server;
     private Gson model = new GsonBuilder().create();
     Map<String, String> games;
-    
 
     /**
      * Server constructor
@@ -77,9 +76,9 @@ public class Server {
         server.createContext("/games/list", listHandler);
         server.createContext("/games/create", createHandler);
         server.createContext("/games/join", joinHandler);
-        server.createContext("/games/model", modelHandler);
 
         // Move contexts
+        server.createContext("/game/model", modelHandler);
         server.createContext("/game/sendChat", sendChatHandler);
         server.createContext("/game/rollNumber", rollNumberHandler);
         server.createContext("/game/robPlayer", robPlayerHandler);
@@ -100,8 +99,8 @@ public class Server {
         //swagger
         server.createContext("/docs/api/data", new Handlers.JSONAppender(""));
         server.createContext("/docs/api/view", new Handlers.BasicFile(""));
-        
-         // Empty (good for testing if service is working)
+
+        // Empty (good for testing if service is working)
         server.createContext("/", downloadHandler);
         //start the server
         server.start();
@@ -143,16 +142,15 @@ public class Server {
     /**
      * Handler to login a user
      */
-    
     private HttpHandler loginHandler = new HttpHandler() {
 
         @Override
         public void handle(HttpExchange exchange) throws IOException {
-            
+
             //un-package the data
             Reader reader = new InputStreamReader(exchange.getRequestBody(), "UTF-8");
             User user = model.fromJson(reader, User.class);
-            
+
             //call the appropriate fascade (real or mock)
             boolean result = false;
             try {
@@ -161,7 +159,7 @@ public class Server {
             } catch (ServerException ex) {
                 Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
             }
-            
+
             //re-package and return the data
             if (result) {
                 String message = model.toJson("Success", String.class);
@@ -170,7 +168,7 @@ public class Server {
                 exchange.getResponseBody().write(message.getBytes());
                 exchange.getResponseBody().close();
             } else {
-                
+
                 String message = "Failed to login - bad username or password.";
                 exchange.getResponseHeaders().set("Content-Type", "text/html");
                 exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
@@ -187,11 +185,11 @@ public class Server {
         @Override
         public void handle(HttpExchange exchange) throws IOException {
             exchange.getResponseHeaders().add("Content-Type", "text/xml");
-            
+
             //un-package the data
             Reader reader = new InputStreamReader(exchange.getRequestBody(), "UTF-8");
             User user = model.fromJson(reader, User.class);
-            
+
             //call the appropriate fascade (real or mock)
             boolean result = false;
             try {
@@ -200,7 +198,7 @@ public class Server {
             } catch (ServerException ex) {
                 Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
             }
-            
+
             //re-package and return the data
             if (result) {
                 String message = "Success";
@@ -208,7 +206,7 @@ public class Server {
                 exchange.getResponseBody().write(message.getBytes());
                 exchange.getResponseBody().close();
             } else {
-                
+
                 String message = "Failed to register - bad username or password.";
                 exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
                 exchange.getResponseBody().write(message.getBytes());
@@ -273,14 +271,25 @@ public class Server {
         @Override
         public void handle(HttpExchange exchange) throws IOException {
             exchange.getResponseHeaders().add("Content-Type", "application/json");
-            //TODO: return the game model(GET)
+            
+            //call the appropriate fascade (real or mock)
+            GameInfo result = null;
+            try {
+                result = ServerFascade.getSingleton().getGameModel("");
+                //result = MockServerFascade.getSingleton().getModel("");
+            } catch (ServerException ex) {
+                Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
+            }
 
-            exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, 0);
-            exchange.getResponseBody().write("Success".getBytes());
+            //re-package and return the data
+            //TODO: All toString methods need to have quotes around the json fields and values
+            String message = result.toString();
+            exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, message.length());
+            exchange.getResponseBody().write(message.getBytes());
             exchange.getResponseBody().close();
         }
     };
-    
+
     /**
      * Handler to send a chat message
      */

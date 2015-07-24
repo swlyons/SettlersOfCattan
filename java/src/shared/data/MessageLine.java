@@ -27,7 +27,7 @@ public class MessageLine {
 
     @Override
     public String toString() {
-        return "{" + "source : " + source + ", message : " + message + '}';
+        return "{" + "\"source\" : \"" + source + "\", \"message\" : \"" + message + "\"}";
     }
 
 }

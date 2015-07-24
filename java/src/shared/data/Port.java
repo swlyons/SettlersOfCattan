@@ -41,7 +41,7 @@ public class Port {
 
     @Override
     public String toString() {
-        return "{" + "resource : " + resource + ", location : " + location + ", ratio : " + ratio + '}';
+        return "{" + "\"resource\" : " + resource + ", \"location\" : " + location + ", \"ratio\" : " + ratio + "}";
     }
 
 }

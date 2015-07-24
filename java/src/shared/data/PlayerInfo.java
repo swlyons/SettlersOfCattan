@@ -28,7 +28,11 @@ public class PlayerInfo {
     private boolean discarded;
     private boolean playedDevCard;
     private int playerID;
-
+    private int monuments;
+    private DevCardList oldDevCards;
+    private DevCardList newDevCards;
+    private int soldiers;
+    
     public PlayerInfo() {
         setId(-1);
         setPlayerIndex(-1);
@@ -144,10 +148,6 @@ public class PlayerInfo {
     public void setSoldiers(int soldiers) {
         this.soldiers = soldiers;
     }
-    private int monuments;
-    private DevCardList oldDevCards;
-    private DevCardList newDevCards;
-    private int soldiers;
 
     public int getId() {
         return id;
@@ -201,10 +201,10 @@ public class PlayerInfo {
 
     @Override
     public String toString() {
-        return "{" + "name : " + name + ", color : " + color + ", cities : " + cities + ", settlements : " + settlements
-                + ", roads : " + roads + ", victoryPoints : " + victoryPoints + ", resources : " + resources
-                + ", playerIndex : " + playerIndex + ", id : " + id + ", playerID : " + playerID + ", discarded : " + discarded
-                + ", playedDevCard : " + playedDevCard + ", monuments : " + monuments + ", oldDevCards : " + oldDevCards
-                + ", newDevCards : " + newDevCards + ", soldiers : " + soldiers + '}';
+        return "{" + "\"name\" : \"" + name + "\", \"color\" : " + color + ", \"cities\" : " + cities + ", \"settlements\" : " + settlements
+                + ", \"roads\" : " + roads + ", \"victoryPoints\" : " + victoryPoints + ", \"resources\" : " + resources
+                + ", \"playerIndex\" : " + playerIndex + ", \"id\" : " + id + ", \"playerID\" : " + playerID + ", \"discarded\" : \"" + discarded
+                + "\", \"playedDevCard\" : \"" + playedDevCard + "\", \"monuments\" : " + monuments + ", \"oldDevCards\" : " + oldDevCards
+                + ", \"newDevCards\" : " + newDevCards + ", \"soldiers\" : " + soldiers + "}";
     }
 }

@@ -49,7 +49,7 @@ public class VertexObject {
 
     @Override
     public String toString() {
-        return "{" + "owner : " + owner + ", location : " + location + '}';
+        return "{" + "\"owner\" : " + owner + " , \"location\" : " + location + "}";
     }
 
 }

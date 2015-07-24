@@ -90,7 +90,7 @@ public class Map {
     @Override
     public String toString() {
 
-        return "{" + "hexes : " + hexes + ", ports : " + ports + ", roads : " + roads + ", settlements : " + settlements + ", cities : " + cities + ", radius : " + radius + ", robber : " + robber + '}';
+        return "{" + "\"hexes\" : " + hexes + ", \"ports\" : " + ports + ", \"roads\" : " + roads + ", \"settlements\" : " + settlements + ", \"cities\" : " + cities + ", \"radius\" : " + radius + ", \"robber\" : " + robber + "}";
     }
 
 }

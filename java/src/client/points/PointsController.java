@@ -5,7 +5,6 @@ import java.util.Map;
 import client.base.*;
 import client.communication.ClientCommunicator;
 import shared.data.GameInfo;
-import shared.data.Player;
 import client.managers.GameManager;
 
 /**
