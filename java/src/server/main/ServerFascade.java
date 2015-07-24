@@ -64,7 +64,12 @@ public class ServerFascade implements Fascade {
 
     @Override
     public GameInfo createGame(CreateGameRequest createGameRequest) throws ServerException {
-        return new GameInfo("Default Game");
+        CreateGameCommand createGame = new CreateGameCommand(createGameRequest.isRandomTiles(),createGameRequest.isRandomNumbers(),createGameRequest.isRandomPorts(),createGameRequest.getName());
+        GameInfo gi = null;
+        if(agent.sendCommand(createGame)){
+            gi = AllOfOurInformation.getSingleton().getGames().get(createGame.getGameId()).getGame();
+        }
+        return gi;
     }
 
     @Override
