@@ -131,7 +131,8 @@ public class DevCardController extends Controller implements IDevCardController 
         try {
             ClientFascade.getSingleton().monopoly(m);
             gm.useMonopoly(resource);
-            getPlayCardView().closeModal();
+            if (getPlayCardView().isModalShowing())
+            	getPlayCardView().closeModal();
         } catch (Exception e) {
 //            e.printStackTrace();
             //Shouldn't happen
@@ -159,7 +160,8 @@ public class DevCardController extends Controller implements IDevCardController 
         try {
             ClientFascade.getSingleton().monument(m);
             gm.useMonument();
-            getPlayCardView().closeModal();
+            if (getPlayCardView().isModalShowing())
+            	getPlayCardView().closeModal();
         } catch (Exception e) {
 //            e.printStackTrace();
             //Shouldn't happen
@@ -178,8 +180,9 @@ public class DevCardController extends Controller implements IDevCardController 
 
     @Override
     public void playRoadBuildCard() {
-
         roadAction.execute();
+        if (getPlayCardView().isModalShowing())
+        	getPlayCardView().closeModal();
     }
 
     private boolean canPlaySoldierCard(Integer playerId, Integer playerIndex) {
@@ -195,6 +198,8 @@ public class DevCardController extends Controller implements IDevCardController 
     @Override
     public void playSoldierCard() {
         soldierAction.execute();
+        if (getPlayCardView().isModalShowing())
+        	getPlayCardView().closeModal();
     }
 
     private boolean canPlayYearOfPlentyCard(Integer playerId, Integer playerIndex) {
@@ -220,7 +225,8 @@ public class DevCardController extends Controller implements IDevCardController 
         try {
             ClientFascade.getSingleton().year_Of_Plenty(y);
             gm.useYearOfPlenty(resource1, resource2);
-            getPlayCardView().closeModal();
+            if (getPlayCardView().isModalShowing())
+            	getPlayCardView().closeModal();
         } catch (Exception e) {
             e.printStackTrace();
             //Shouldn't happen
