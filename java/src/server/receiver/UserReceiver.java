@@ -5,7 +5,7 @@ package server.receiver;
 
 import java.util.ArrayList;
 import shared.data.User;
-
+import server.receiver.AllOfOurInformation;
 /**
  *
  * @author ddennis
@@ -14,10 +14,8 @@ public class UserReceiver {
 
     private boolean success;
     private User user;
-    private ArrayList<User> users;
-
-    public UserReceiver() {
-        users = new ArrayList<>();
+    
+    public UserReceiver() {        
     }
 
     public void login() {
@@ -36,7 +34,7 @@ public class UserReceiver {
                     return;
                 }
             }
-            users.add(user);
+            AllOfOurInformation.getSingleton().getUsers().add(user);
             setSuccess(true);
         } else {
             setSuccess(false);
@@ -44,7 +42,7 @@ public class UserReceiver {
     }
 
     private boolean userAlreadyExists() {
-        for (User existingUser : users) {
+        for (User existingUser : AllOfOurInformation.getSingleton().getUsers()) {
             if (user.getUsername().equals(existingUser.getUsername())) {
                 return true;
             }
@@ -54,7 +52,7 @@ public class UserReceiver {
 
     private boolean loginSuccessful() {
 
-        for (User existingUser : users) {
+        for (User existingUser : AllOfOurInformation.getSingleton().getUsers()) {
             if (user.getUsername().equals(existingUser.getUsername()) && user.getPassword().equals(existingUser.getPassword())) {
                 return true;
             }
