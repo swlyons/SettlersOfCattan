@@ -7,10 +7,10 @@ package server.main;
 
 import java.util.ArrayList;
 import server.command.*;
-import server.receiver.*;
 import shared.data.GameInfo;
 import shared.data.User;
 import shared.model.*;
+import server.receiver.AllOfOurInformation;
 
 /**
  * For Implementation See:
@@ -24,10 +24,6 @@ import shared.model.*;
  *
  */
 public class ServerFascade implements Fascade {
-    private final UserReceiver userReceiver = new UserReceiver();
-    private final GameReceiver gameReceiver = new GameReceiver();
-    private final GamesReceiver gamesReceiver = new GamesReceiver();
-    private final MovesReceiver movesReceiver = new MovesReceiver();
     private final Agent agent = new Agent();
     
     public static ServerFascade fascade = null;
@@ -41,21 +37,24 @@ public class ServerFascade implements Fascade {
     
     @Override
     public boolean login(User credentials) throws ServerException {
-        //Command Pattern
-        userReceiver.setUser(credentials);
-        LoginCommand loginCommand = new LoginCommand(userReceiver);
-        agent.sendCommand(loginCommand);
-        return userReceiver.isSuccess();
+        return false;
+    }
+    
+    public int getLoginId(User credentials){
+        int id=-1;
+        for (int i=0;i<AllOfOurInformation.getSingleton().getUsers().size();i++) {
+            if (credentials.getUsername().equals(AllOfOurInformation.getSingleton().getUsers().get(i).getUsername()) && credentials.getPassword().equals(AllOfOurInformation.getSingleton().getUsers().get(i).getPassword())) {
+                id = i;
+            }
+        }
+        return id;
     }
 
     @Override
     public boolean register(User credentials) throws ServerException {
         //Command Pattern
-        userReceiver.setUser(credentials);
-        RegisterCommand registerCommand = new RegisterCommand(userReceiver);
-        agent.sendCommand(registerCommand);
-        
-        return userReceiver.isSuccess();
+        RegisterCommand registerCommand = new RegisterCommand(credentials);
+        return agent.sendCommand(registerCommand);
     }
 
     @Override

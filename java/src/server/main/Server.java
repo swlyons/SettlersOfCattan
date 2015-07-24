@@ -152,18 +152,24 @@ public class Server {
             User user = model.fromJson(reader, User.class);
 
             //call the appropriate fascade (real or mock)
-            boolean result = false;
-            try {
-                result = ServerFascade.getSingleton().login(user);
+            int id = ServerFascade.getSingleton().getLoginId(user);
                 //result = MockServerFascade.getSingleton().login(user);
-            } catch (ServerException ex) {
-                Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
-            }
 
             //re-package and return the data
-            if (result) {
-                String message = model.toJson("Success", String.class);
-                exchange.getResponseHeaders().set("Content-Type", "application/json");
+            if (id!=-1) {
+                String cookie = "catan.user=";
+//                cookie+="{\"name\":\""+AllOfOurInformation.getSingleton().getUsers().get(id).getUsername()+"\",";
+//                cookie+="\"password\":\""+AllOfOurInformation.getSingleton().getUsers().get(id).getPassword()+"\",";
+//                cookie+="\"playerID\":" +id+"}";
+                cookie+="{name:"+AllOfOurInformation.getSingleton().getUsers().get(id).getUsername()+",";
+                cookie+="password:"+AllOfOurInformation.getSingleton().getUsers().get(id).getPassword()+",";
+                cookie+="playerID:" +id+"}";
+                
+                cookie += ";Path=/;";
+//                String message = model.toJson("Success", String.class);
+                String message = "Success";
+                exchange.getResponseHeaders().set("Content-Type", "application/json");                
+                exchange.getResponseHeaders().set("Set-Cookie", cookie);
                 exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, message.length());
                 exchange.getResponseBody().write(message.getBytes());
                 exchange.getResponseBody().close();
