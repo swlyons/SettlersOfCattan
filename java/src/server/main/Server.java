@@ -275,7 +275,7 @@ public class Server {
             //call the appropriate fascade (real or mock)
             GameInfo result = null;
             try {
-                result = ServerFascade.getSingleton().getGameModel("");
+                result = ServerFascade.getSingleton().getGameModel("?version=" + 0);
                 //result = MockServerFascade.getSingleton().getModel("");
             } catch (ServerException ex) {
                 Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);

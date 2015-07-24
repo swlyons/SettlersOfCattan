@@ -69,7 +69,7 @@ public class RightPanel extends JPanel {
                     @Override
                     public void execute() {
                         try {
-                            ClientCommunicator.getSingleton().getGameManager().initializeGame(ClientFascade.getSingleton().getGameModel(0 + ""));
+                            ClientCommunicator.getSingleton().getGameManager().initializeGame(ClientFascade.getSingleton().getGameModel("?version=" + 0));
                             if (resourceController.canBuyCard()) {
                                 devCardController.startBuyCard();
                             }
@@ -83,7 +83,7 @@ public class RightPanel extends JPanel {
                     @Override
                     public void execute() {
                         try {
-                            ClientCommunicator.getSingleton().getGameManager().initializeGame(ClientFascade.getSingleton().getGameModel(0 + ""));
+                            ClientCommunicator.getSingleton().getGameManager().initializeGame(ClientFascade.getSingleton().getGameModel("?version=" + 0));
                             if (resourceController.canPlayCard()) {
                                 devCardController.startPlayCard();
                             }
@@ -110,7 +110,7 @@ public class RightPanel extends JPanel {
                 boolean allowDisconnected = false;
                 boolean isAllowed = false;
                 try {
-                    ClientCommunicator.getSingleton().getGameManager().initializeGame(ClientFascade.getSingleton().getGameModel(0 + ""));
+                    ClientCommunicator.getSingleton().getGameManager().initializeGame(ClientFascade.getSingleton().getGameModel("?version=" + 0));
                     switch (pieceType) {
                         case ROAD:
                             isAllowed = resourceController.canBuildRoad();

@@ -20,6 +20,8 @@ import shared.data.PlayerInfo;
 import shared.data.ResourceList;
 import client.discard.DiscardController;
 import client.domestic.DomesticTradeController;
+import client.main.ClientException;
+import client.main.FirstRoundState;
 import client.points.PointsController;
 import client.resources.ResourceBarController;
 import client.resources.ResourceBarElement;
@@ -27,9 +29,12 @@ import client.roll.RollController;
 import client.turntracker.TurnTrackerView;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.Icon;
 import shared.definitions.CatanColor;
 import shared.definitions.PieceType;
+import shared.model.FinishMove;
 
 /**
  *
@@ -67,7 +72,6 @@ public class MapPoller extends TimerTask {
     }
 
     public void run() {
-        Date time1 = new Date();
         if (ClientCommunicator.getSingleton().getJoinedGame()) {
 
             try {
@@ -83,17 +87,11 @@ public class MapPoller extends TimerTask {
                 MapView mapView = (MapView) catanPanel.getMidPanel().getMapController().getView();
 
                 GameManager gameManager = ClientCommunicator.getSingleton().getGameManager();
-
+                String status = "";
                 GameInfo gameInformation = ClientFascade.getSingleton()
-                        .getGameModel(version + "");
-
-                gameManager.initializeGame(gameInformation);
-                version = gameInformation.getVersion();
-
-                String status = gameInformation.getTurnTracker().getStatus();
-
-                mapView.getController().initFromModel();
-
+                        .getGameModel("?version=" + (gameManager.getGame().getVersion() - 1));
+                status = gameInformation.getTurnTracker().getStatus();
+                
                 if (playerIndex == -1) {
                     Integer playerId = ClientCommunicator.getSingleton().getPlayerId();
                     for (int i = 0; i < gameManager.getGame().getPlayers().size(); i++) {
@@ -104,150 +102,214 @@ public class MapPoller extends TimerTask {
                         }
                     }
                 }
+                if (version != gameManager.getGame().getVersion()) {
 
-                /* Begin MapView Update */
-                // If they haven't initialized before or it isn't the client's
-                // turn
-                if (gameManager.getGame().getTradeOffer() == null) {
-                    seenTrade = false;
-                    if (catanPanel.getMidPanel().getTradePanel().getDomesticController().getWaitingForOffer()) {
-                        catanPanel.getMidPanel().getTradePanel().getDomesticController().setWaitingForOffer(false);
-                        catanPanel.getMidPanel().getTradePanel().getDomesticController().getWaitOverlay().closeModal();
-                        catanPanel.getMidPanel().getTradePanel().getDomesticController().getTradeOverlay().closeModal();
-                        catanPanel.getMidPanel().getTradePanel().getDomesticController().getTradeOverlay().reset();
-                    }
+                    gameManager.initializeGame(gameInformation);
+                    version = gameInformation.getVersion();
+
+                    System.out.println("Map Poller Version: " + version);
+
+                    mapView.getController().initFromModel();
+
+                    
+                    
+                    /* Begin MapView Update */
+                    // If they haven't initialized before or it isn't the client's
+                    // turn
+//                    if (gameManager.getGame().getTradeOffer() == null) {
+//                        seenTrade = false;
+//                        if (catanPanel.getMidPanel().getTradePanel().getDomesticController().getWaitingForOffer()) {
+//                            catanPanel.getMidPanel().getTradePanel().getDomesticController().setWaitingForOffer(false);
+//                            catanPanel.getMidPanel().getTradePanel().getDomesticController().getWaitOverlay().closeModal();
+//                            catanPanel.getMidPanel().getTradePanel().getDomesticController().getTradeOverlay().closeModal();
+//                            catanPanel.getMidPanel().getTradePanel().getDomesticController().getTradeOverlay().reset();
+//                        }
+//                    }
+//                    /* Begin Resource Bar Update */
+//                    for (PlayerInfo player : gameInformation.getPlayers()) {
+//                        if (player.getPlayerIndex() == playerIndex) {
+//                            int sumCards = player.getRoads() + player.getCities() + player.getSettlements()
+//                                    + player.getSoldiers();
+//                            // TODO: add logic to only update when they are
+//                            // different
+//                            resourceBarController.getView().setElementAmount(ResourceBarElement.BRICK,
+//                                    player.getResources().getBrick());
+//                            resourceBarController.getView().setElementAmount(ResourceBarElement.ORE,
+//                                    player.getResources().getOre());
+//                            resourceBarController.getView().setElementAmount(ResourceBarElement.SHEEP,
+//                                    player.getResources().getSheep());
+//                            resourceBarController.getView().setElementAmount(ResourceBarElement.WHEAT,
+//                                    player.getResources().getWheat());
+//                            resourceBarController.getView().setElementAmount(ResourceBarElement.WOOD,
+//                                    player.getResources().getWood());
+//                            resourceBarController.getView().setElementAmount(ResourceBarElement.ROAD, player.getRoads());
+//                            resourceBarController.getView().setElementAmount(ResourceBarElement.CITY, player.getCities());
+//                            resourceBarController.getView().setElementAmount(ResourceBarElement.SETTLEMENT,
+//                                    player.getSettlements());
+//                            resourceBarController.getView().setElementAmount(ResourceBarElement.SOLDIERS,
+//                                    player.getSoldiers());
+//                            resourceBarController.canBuildCity();
+//                            resourceBarController.canBuyCard();
+//                            resourceBarController.canBuildSettlement();
+//                            resourceBarController.canBuildRoad();
+//                            resourceBarController.canPlayCard();
+//                        }
+//                    }
+//                    /* End Resource Bar Update */
+//                    DiscardController dis = catanPanel.getDiscardController();
+//
+//                    if (doneOnce && gameInformation.getTurnTracker().getCurrentTurn() == playerIndex && rollController.getClickedOk()) {
+//                        if (status.equals("Discarding") && !gameInformation.getPlayers().get(playerIndex).isDiscarded() && gameManager.getResourceManager()
+//                                .getGameBanks().get(playerIndex).getResourcesCards().getTotalResources() > 7 && !discardedOnce) {
+//                            if (!dis.getDiscardView().isModalShowing()) {
+//                                dis.initFromModel();
+//                                dis.getDiscardView().showModal();
+//                                discardedOnce = true;
+//                            }
+//                        }
+//                        if (status.equals("Robbing")) {
+//                            catanPanel.getMidPanel().getMapController().startMove(PieceType.ROBBER, true, true);
+//                            rollController.setClickedOk(false);
+//                            discardedOnce = false;
+//                        }
+//                    }
+//
+//                    if (!doneOnce || gameInformation.getTurnTracker().getCurrentTurn() != playerIndex) {
+//                        doneOnce = true;
+//                        if (gameInformation.getTurnTracker().getCurrentTurn() == playerIndex) {
+//                            if (status.equals("Robbing")) {
+//                                catanPanel.getMidPanel().getMapController().startMove(PieceType.ROBBER, true, true);
+//                            }
+//
+//                            if (status.equals("Discarding") && !gameInformation.getPlayers().get(playerIndex).isDiscarded() && gameManager.getResourceManager()
+//                                    .getGameBanks().get(playerIndex).getResourcesCards().getTotalResources() > 7) {
+//
+//                                if (!dis.getDiscardView().isModalShowing()) {
+//                                    dis.initFromModel();
+//                                    dis.getDiscardView().showModal();
+//                                }
+//                            }
+//                        } else {
+//
+//                            /* Begin Discard Window Update */
+//                            if (status.equals("Discarding") && !gameInformation.getPlayers().get(playerIndex).isDiscarded() && gameManager.getResourceManager()
+//                                    .getGameBanks().get(playerIndex).getResourcesCards().getTotalResources() > 7) {
+//                                if (!dis.getDiscardView().isModalShowing()) {
+//                                    dis.initFromModel();
+//                                    dis.getDiscardView().showModal();
+//                                }
+//                            }
+//                            /* End Discard Window Update */
+//
+//                            /* Begin tradeWindow Update */
+//                            if (gameManager.getGame().getTradeOffer() != null
+//                                    && !catanPanel.getMidPanel().getTradePanel().getDomesticController().getWaitingForOffer()) {
+//                                if (!seenTrade) {
+//                                    seenTrade = true;
+//                                    if (gameManager.getGame().getTradeOffer().getReceiver() == playerIndex) {
+//                                        DomesticTradeController domesticController = catanPanel.getMidPanel().getTradePanel()
+//                                                .getDomesticController();
+//                                        boolean canAccept = true;
+//
+//                                        ResourceList resourcesPlayerHas = gameManager.getResourceManager().getGameBanks()
+//                                                .get(playerIndex).getResourcesCards();
+//
+//                                        if (resourcesPlayerHas.getBrick()
+//                                                + gameManager.getGame().getTradeOffer().getOffer().getBrick() < 0
+//                                                || resourcesPlayerHas.getOre()
+//                                                + gameManager.getGame().getTradeOffer().getOffer().getOre() < 0
+//                                                || resourcesPlayerHas.getSheep()
+//                                                + gameManager.getGame().getTradeOffer().getOffer().getSheep() < 0
+//                                                || resourcesPlayerHas.getWheat()
+//                                                + gameManager.getGame().getTradeOffer().getOffer().getWheat() < 0
+//                                                || resourcesPlayerHas.getWood()
+//                                                + gameManager.getGame().getTradeOffer().getOffer().getWood() < 0) {
+//                                            canAccept = false;
+//                                        }
+//                                        if (!domesticController.getAcceptOverlay().isModalShowing()) {
+//                                            domesticController.getAcceptOverlay().showModal();
+//                                            domesticController.getAcceptOverlay().setAcceptEnabled(canAccept);
+//                                        }
+//                                    } else {
+//                                        if (gameManager.getGame().getTradeOffer().getSender() == playerIndex) {
+//                                            catanPanel.getMidPanel().getTradePanel().getDomesticController()
+//                                                    .setWaitingForOffer(true);
+//                                            catanPanel.getMidPanel().getTradePanel().getDomesticController().startTrade();
+//                                            if (!catanPanel.getMidPanel().getTradePanel().getDomesticController()
+//                                                    .getWaitOverlay().isModalShowing()) {
+//                                                catanPanel.getMidPanel().getTradePanel().getDomesticController()
+//                                                        .getWaitOverlay().showModal();
+//                                                catanPanel.getMidPanel().getTradePanel().getDomesticController()
+//                                                        .getWaitOverlay().setMessage("Waiting for Trade to Go Through");
+//                                            }
+//                                        }
+//                                    }
+//                                }
+//                            }
+//                            /* End tradeWindow Update */
+//                        }
+//                    }
+//
+//                    /* Begin Turn Tracker Update */
+//                    
+//                    // TODO: need to figure out which statuses need to be disable or
+//                    // enabled
+//                    /* Begin Roll Update */
+//                    // every turn starts with a roll
+//                    /* Begin Chat View Update */
+//                    int oldChatSize = chatView.getEntries().size();
+//                    int newChatSize = gameInformation.getChat().getLines().size();
+//                    CatanColor color = CatanColor.WHITE;
+//
+//                    if (oldChatSize != newChatSize || (newChatSize == 0)) {
+//                        ArrayList<LogEntry> newChatEntries = new ArrayList<>();
+//                        for (MessageLine messageLine : gameInformation.getChat().getLines()) {
+//                            // get the color
+//                            for (PlayerInfo player : gameInformation.getPlayers()) {
+//                                if (player.getName().equals(messageLine.getSource())) {
+//                                    color = CatanColor.valueOf(player.getColor().toUpperCase());
+//                                    break;
+//                                }
+//                            }
+//                            LogEntry logEntry = new LogEntry(color, messageLine.getMessage());
+//                            newChatEntries.add(logEntry);
+//                        }
+//                        chatView.setEntries(newChatEntries);
+//                    }
+//                    /* End Chat View Update */
+//
+//                    /* Begin Game History View Update */
+//                    int oldHistorySize = historyView.getEntries().size();
+//                    int newHistorySize = gameInformation.getLog().getLines().size();
+//                    CatanColor colorHistory = CatanColor.WHITE;
+//
+//                    if (oldHistorySize != newHistorySize || (newHistorySize == 0)) {
+//                        ArrayList<LogEntry> newHistoryEntries = new ArrayList<>();
+//                        for (MessageLine messageLine : gameInformation.getLog().getLines()) {
+//                            // get the color
+//                            for (PlayerInfo player : gameInformation.getPlayers()) {
+//                                if (player.getName().equals(messageLine.getSource())) {
+//                                    colorHistory = CatanColor.valueOf(player.getColor().toUpperCase());
+//                                    break;
+//                                }
+//                            }
+//                            LogEntry logEntry = new LogEntry(colorHistory, messageLine.getMessage());
+//                            newHistoryEntries.add(logEntry);
+//                        }
+//                        historyView.setEntries(newHistoryEntries);
+//                    }
                 }
-                /* Begin Resource Bar Update */
-                for (PlayerInfo player : gameInformation.getPlayers()) {
-                    if (player.getPlayerIndex() == playerIndex) {
-                        int sumCards = player.getRoads() + player.getCities() + player.getSettlements()
-                                + player.getSoldiers();
-                        // TODO: add logic to only update when they are
-                        // different
-                        resourceBarController.getView().setElementAmount(ResourceBarElement.BRICK,
-                                player.getResources().getBrick());
-                        resourceBarController.getView().setElementAmount(ResourceBarElement.ORE,
-                                player.getResources().getOre());
-                        resourceBarController.getView().setElementAmount(ResourceBarElement.SHEEP,
-                                player.getResources().getSheep());
-                        resourceBarController.getView().setElementAmount(ResourceBarElement.WHEAT,
-                                player.getResources().getWheat());
-                        resourceBarController.getView().setElementAmount(ResourceBarElement.WOOD,
-                                player.getResources().getWood());
-                        resourceBarController.getView().setElementAmount(ResourceBarElement.ROAD, player.getRoads());
-                        resourceBarController.getView().setElementAmount(ResourceBarElement.CITY, player.getCities());
-                        resourceBarController.getView().setElementAmount(ResourceBarElement.SETTLEMENT,
-                                player.getSettlements());
-                        resourceBarController.getView().setElementAmount(ResourceBarElement.SOLDIERS,
-                                player.getSoldiers());
-                        resourceBarController.canBuildCity();
-                        resourceBarController.canBuyCard();
-                        resourceBarController.canBuildSettlement();
-                        resourceBarController.canBuildRoad();
-                        resourceBarController.canPlayCard();
+                /* End Game History View Update */
+
+                if (status.equals("Playing") && playerIndex == gameInformation.getTurnTracker().getCurrentTurn()) {
+                    //update the game state panel
+                    if (gameStatePanel.getBackground() != CatanColor.valueOf(playerColor.toUpperCase()).getJavaColor()) {
+
+                        gameStatePanel.getCentered().setBackground(CatanColor.valueOf(playerColor.toUpperCase()).getJavaColor());
                     }
+                    gameStatePanel.setPlayerIndex(playerIndex);
+                    status = "Finish Turn";
                 }
-                /* End Resource Bar Update */
-                DiscardController dis = catanPanel.getDiscardController();
-
-                if (doneOnce && gameInformation.getTurnTracker().getCurrentTurn() == playerIndex && rollController.getClickedOk()) {
-                    if (status.equals("Discarding") && !gameInformation.getPlayers().get(playerIndex).isDiscarded() && gameManager.getResourceManager()
-                            .getGameBanks().get(playerIndex).getResourcesCards().getTotalResources() > 7 && !discardedOnce) {
-                        if (!dis.getDiscardView().isModalShowing()) {
-                            dis.initFromModel();
-                            dis.getDiscardView().showModal();
-                            discardedOnce = true;
-                        }
-                    }
-                    if (status.equals("Robbing")) {
-                        catanPanel.getMidPanel().getMapController().startMove(PieceType.ROBBER, true, true);
-                        rollController.setClickedOk(false);
-                        discardedOnce = false;
-                    }
-                }
-
-                if (!doneOnce || gameInformation.getTurnTracker().getCurrentTurn() != playerIndex) {
-                    doneOnce = true;
-                    if (gameInformation.getTurnTracker().getCurrentTurn() == playerIndex) {
-                        if (status.equals("Robbing")) {
-                            catanPanel.getMidPanel().getMapController().startMove(PieceType.ROBBER, true, true);
-                        }
-
-                        if (status.equals("Discarding") && !gameInformation.getPlayers().get(playerIndex).isDiscarded() && gameManager.getResourceManager()
-                                .getGameBanks().get(playerIndex).getResourcesCards().getTotalResources() > 7) {
-
-                            if (!dis.getDiscardView().isModalShowing()) {
-                                dis.initFromModel();
-                                dis.getDiscardView().showModal();
-                            }
-                        }
-                    } else {
-
-                        /* Begin Discard Window Update */
-                        if (status.equals("Discarding") && !gameInformation.getPlayers().get(playerIndex).isDiscarded() && gameManager.getResourceManager()
-                                .getGameBanks().get(playerIndex).getResourcesCards().getTotalResources() > 7) {
-                            if (!dis.getDiscardView().isModalShowing()) {
-                                dis.initFromModel();
-                                dis.getDiscardView().showModal();
-                            }
-                        }
-                        /* End Discard Window Update */
-
-                        /* Begin tradeWindow Update */
-                        if (gameManager.getGame().getTradeOffer() != null
-                                && !catanPanel.getMidPanel().getTradePanel().getDomesticController().getWaitingForOffer()) {
-                            if (!seenTrade) {
-                                seenTrade = true;
-                                if (gameManager.getGame().getTradeOffer().getReceiver() == playerIndex) {
-                                    DomesticTradeController domesticController = catanPanel.getMidPanel().getTradePanel()
-                                            .getDomesticController();
-                                    boolean canAccept = true;
-
-                                    ResourceList resourcesPlayerHas = gameManager.getResourceManager().getGameBanks()
-                                            .get(playerIndex).getResourcesCards();
-
-                                    if (resourcesPlayerHas.getBrick()
-                                            + gameManager.getGame().getTradeOffer().getOffer().getBrick() < 0
-                                            || resourcesPlayerHas.getOre()
-                                            + gameManager.getGame().getTradeOffer().getOffer().getOre() < 0
-                                            || resourcesPlayerHas.getSheep()
-                                            + gameManager.getGame().getTradeOffer().getOffer().getSheep() < 0
-                                            || resourcesPlayerHas.getWheat()
-                                            + gameManager.getGame().getTradeOffer().getOffer().getWheat() < 0
-                                            || resourcesPlayerHas.getWood()
-                                            + gameManager.getGame().getTradeOffer().getOffer().getWood() < 0) {
-                                        canAccept = false;
-                                    }
-                                    if (!domesticController.getAcceptOverlay().isModalShowing()) {
-                                        domesticController.getAcceptOverlay().showModal();
-                                        domesticController.getAcceptOverlay().setAcceptEnabled(canAccept);
-                                    }
-                                } else {
-                                    if (gameManager.getGame().getTradeOffer().getSender() == playerIndex) {
-                                        catanPanel.getMidPanel().getTradePanel().getDomesticController()
-                                                .setWaitingForOffer(true);
-                                        catanPanel.getMidPanel().getTradePanel().getDomesticController().startTrade();
-                                        if (!catanPanel.getMidPanel().getTradePanel().getDomesticController()
-                                                .getWaitOverlay().isModalShowing()) {
-                                            catanPanel.getMidPanel().getTradePanel().getDomesticController()
-                                                    .getWaitOverlay().showModal();
-                                            catanPanel.getMidPanel().getTradePanel().getDomesticController()
-                                                    .getWaitOverlay().setMessage("Waiting for Trade to Go Through");
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        /* End tradeWindow Update */
-                    }
-                }
-
-                /* Begin Turn Tracker Update */
-                // TODO: need to figure out which statuses need to be disable or
-                // enabled
-                boolean enable = false;
-                /* Begin Roll Update */
-                // every turn starts with a roll
                 if (status.equals("Rolling") && playerIndex == gameInformation.getTurnTracker().getCurrentTurn()) {
 
                     if (!rollController.getRollView().isModalShowing()) {
@@ -255,22 +317,10 @@ public class MapPoller extends TimerTask {
                         rollController.getRollView().getRollTimer().start();
                         rollController.setClickedOk(false);
                     }
-
+                    //enable = true;
                 }
                 /* End Roll Update */
-
-                if (status.equals("Playing") && playerIndex == gameInformation.getTurnTracker().getCurrentTurn()) {
-                    enable = true;
-                    if (gameStatePanel.getBackground() != CatanColor.valueOf(playerColor.toUpperCase()).getJavaColor()) {
-
-                        gameStatePanel.getCentered().setBackground(CatanColor.valueOf(playerColor.toUpperCase()).getJavaColor());
-                    }
-
-                    status = "Finish Turn";
-                }
-
-                /* Begin turnTracker Update */
-                turnTrackerView.updateGameState(status, enable);
+                /*Begin Turn Track Update */
                 for (PlayerInfo player : gameInformation.getPlayers()) {
                     boolean longestRoad = false;
                     boolean largestArmy = false;
@@ -313,54 +363,15 @@ public class MapPoller extends TimerTask {
                     /* End Points Controller Update */
 
                 }
-                
                 /* End Turn Tracker Update */
-
-                /* Begin Chat View Update */
-                int oldChatSize = chatView.getEntries().size();
-                int newChatSize = gameInformation.getChat().getLines().size();
-                CatanColor color = CatanColor.WHITE;
-
-                if (oldChatSize != newChatSize || (newChatSize == 0)) {
-                    ArrayList<LogEntry> newChatEntries = new ArrayList<>();
-                    for (MessageLine messageLine : gameInformation.getChat().getLines()) {
-                        // get the color
-                        for (PlayerInfo player : gameInformation.getPlayers()) {
-                            if (player.getName().equals(messageLine.getSource())) {
-                                color = CatanColor.valueOf(player.getColor().toUpperCase());
-                                break;
-                            }
-                        }
-                        LogEntry logEntry = new LogEntry(color, messageLine.getMessage());
-                        newChatEntries.add(logEntry);
-                    }
-                    chatView.setEntries(newChatEntries);
-                }
-                /* End Chat View Update */
-
-                /* Begin Game History View Update */
-                int oldHistorySize = historyView.getEntries().size();
-                int newHistorySize = gameInformation.getLog().getLines().size();
-                CatanColor colorHistory = CatanColor.WHITE;
-                System.out.println("Map Poller Old Size: " + oldHistorySize + " New Size: " + newHistorySize);
-                if (oldHistorySize != newHistorySize || (newHistorySize == 0)) {
-                    ArrayList<LogEntry> newHistoryEntries = new ArrayList<>();
-                    for (MessageLine messageLine : gameInformation.getLog().getLines()) {
-                        // get the color
-                        for (PlayerInfo player : gameInformation.getPlayers()) {
-                            if (player.getName().equals(messageLine.getSource())) {
-                                colorHistory = CatanColor.valueOf(player.getColor().toUpperCase());
-                                break;
-                            }
-                        }
-                        LogEntry logEntry = new LogEntry(colorHistory, messageLine.getMessage());
-                        newHistoryEntries.add(logEntry);
-                    }
-                    historyView.setEntries(newHistoryEntries);
-                }
-                /* End Game History View Update */
                 turnTrackerView.updateGameState(status, status.equalsIgnoreCase("Finish Turn"));
-                initializedPlayers = false;
+
+                // Finish your turn
+                if (mapView.getController().isEndTurn()) {
+
+                    mapView.getController().setEndTurn(false);
+                    mapView.getController().initFromModel();
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             }
