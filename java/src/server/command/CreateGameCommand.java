@@ -7,8 +7,8 @@ package server.command;
 
 /**
  *
- * @author ddennis
+ * @author Samuel
  */
-public interface Command {
-    public abstract boolean execute();
+public class CreateGameCommand {
+    
 }
