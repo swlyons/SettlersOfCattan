@@ -94,7 +94,7 @@ public class ServerFascade implements Fascade {
 
     @Override
     public GameInfo getGameModel(String version) throws ServerException {
-        return new GameInfo("Default Game");
+        return null;
     }
 
     @Override

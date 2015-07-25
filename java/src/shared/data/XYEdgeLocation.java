@@ -43,4 +43,9 @@ public class XYEdgeLocation {
     public void setDirection(EdgeDirection direction) {
         this.direction = direction;
     }
+    
+    @Override
+    public String toString() {
+        return "{" + "\"x\":" + x + ", \"y\":" + y +",\"direction\":\""+direction.toString().toUpperCase()+"\"}";
+    }
 }

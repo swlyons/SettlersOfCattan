@@ -24,6 +24,7 @@ public class GameInfo {
     private List<PlayerInfo> players;
     private TradeOffer tradeOffer;
     private TurnTracker turnTracker;
+    private DevCardList deck;
     private int version;
     private int winner;
 
@@ -117,12 +118,29 @@ public class GameInfo {
         this.title = title;
     }
 
+    public DevCardList getDeck() {
+        return deck;
+    }
+
+    public void setDeck(DevCardList deck) {
+        this.deck = deck;
+    }
+
     public void addPlayer(PlayerInfo newPlayer) {
         players.add(newPlayer);
     }
 
     @Override
     public String toString() {
-        return "{" + "\"title\" : \"" + title + "\" , \"id\" : " + id + ", \"bank\" : " + bank + ", \"chat\" : " + chat + ", \"log\" : " + log + ", \"map\" : " + map + ", \"players\" : " + players + ", \"tradeOffer\" : " + tradeOffer + ", \"turnTracker\" : " + turnTracker + ", \"version\" : " + version + ", \"winner\" : " + winner + "}";
+        return "{\"deck\":"+deck.toString()+
+                ",\"map\":"+map.toString()+
+                ",\"players\":"+players.toString()+ 
+                ", \"bank\" : " + bank.toString() + 
+                ", \"chat\" : " + chat.toString() + 
+                ", \"log\" : " + log.toString()+
+                ", \"turnTracker\" : " + turnTracker.toString() + 
+                ", \"version\" : " + version + ", \"winner\" : " + winner + "}";
+//        return "{" + "\"title\" : \"" + title + "\" , \"id\" : " + id + ", \"bank\" : " + bank + ", \"chat\" : " + chat + ", \"log\" : " + log + ", \"map\" : " + map + ", \"players\" : " + players + ", \"tradeOffer\" : " + tradeOffer + ", \"turnTracker\" : " + turnTracker + ", \"version\" : " + version + ", \"winner\" : " + winner + "}";
     }
+
 }

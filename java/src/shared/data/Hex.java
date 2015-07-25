@@ -11,7 +11,6 @@ public class Hex {
 
     private HexLocation location;
     private ArrayList<EdgeLocation> edgeLocations;
-    private int rollValue;
     private ResourceType resource;
     private HexType type;
     private boolean hasRobber;
@@ -19,7 +18,7 @@ public class Hex {
 
     public Hex(HexLocation hexStart, int rollValueStart, ResourceType resourceTypeStart) {
         location = hexStart;
-        rollValue = rollValueStart;
+        number = rollValueStart;
         resource = resourceTypeStart;
         hasRobber = false;
     }
@@ -32,13 +31,6 @@ public class Hex {
         this.edgeLocations = edgeLocations;
     }
 
-    public int getRollValue() {
-        return rollValue;
-    }
-
-    public void setRollValue(int rollValue) {
-        this.rollValue = rollValue;
-    }
 
     public boolean getHasRobber() {
         return hasRobber;
@@ -82,7 +74,12 @@ public class Hex {
 
     @Override
     public String toString() {
-        return "{" + "\"location\" : " + location + ", \"resource\" : " + resource + ", \"number\" : " + number + "\"}";
+        if(resource==null){
+            return "{" + "\"location\" : " + location.toString() + ", \"resource\" : null, \"number\" : " + number + "}";
+        }else{
+            return "{" + "\"location\" : " + location.toString() + ", \"resource\" : \"" + resource.toString().toLowerCase() + "\", \"number\" : " + number + "}";
+        
+        }
     }
 
 }

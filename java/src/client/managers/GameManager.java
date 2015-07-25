@@ -269,9 +269,9 @@ public class GameManager {
                     getRandomHex = randomness.nextInt(19);
                 }
 
-                int originalNumber = hexes.get(i).getRollValue();
-                hexes.get(i).setRollValue(hexes.get(getRandomHex).getRollValue());
-                hexes.get(getRandomHex).setRollValue(originalNumber);
+                int originalNumber = hexes.get(i).getNumber();
+                hexes.get(i).setNumber(hexes.get(getRandomHex).getNumber());
+                hexes.get(getRandomHex).setNumber(originalNumber);
 
             }
 
