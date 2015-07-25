@@ -199,7 +199,7 @@ public class Server {
     private HttpHandler registerHandler = new HttpHandler() {
         @Override
         public void handle(HttpExchange exchange) throws IOException {
-            exchange.getResponseHeaders().add("Content-Type", "text/html");
+            exchange.getResponseHeaders().set("Content-Type", "text/html");
 
             //un-package the data
             Reader reader = new InputStreamReader(exchange.getRequestBody(), "UTF-8");
@@ -265,13 +265,13 @@ public class Server {
                 }
                 response += "]";
 
-                exchange.getResponseHeaders().add("Content-Type", "application/json");
+                exchange.getResponseHeaders().set("Content-Type", "application/json");
                 exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, response.length());
                 exchange.getResponseBody().write(response.getBytes());
                 exchange.getResponseBody().close();
             } catch (Exception e) {
                 String message = "Failed to list Games.";
-                exchange.getResponseHeaders().add("Content-Type", "text/html");
+                exchange.getResponseHeaders().set("Content-Type", "text/html");
                 exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
                 exchange.getResponseBody().write(message.getBytes());
                 exchange.getResponseBody().close();
@@ -297,7 +297,7 @@ public class Server {
 
             }
             if (gameInfo != null) {
-                exchange.getResponseHeaders().add("Content-Type", "application/json");
+                exchange.getResponseHeaders().set("Content-Type", "application/json");
                 String message = "{";
                 message += "\"title\"" + ":\"" + gameInfo.getTitle() + "\",";
                 message += "\"id\"" + ":" + gameInfo.getId() + ",";
@@ -307,7 +307,7 @@ public class Server {
                 exchange.getResponseBody().write(message.getBytes());
                 exchange.getResponseBody().close();
             } else {
-                exchange.getResponseHeaders().add("Content-Type", "text/html");
+                exchange.getResponseHeaders().set("Content-Type", "text/html");
                 String message = "Failed to createGame - need a name.";
                 exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
                 exchange.getResponseBody().write(message.getBytes());
@@ -346,8 +346,10 @@ public class Server {
                 return;
             }
 
-
             String decodedCookie = URLDecoder.decode(userCookie.split("=")[1], "UTF-8");
+            if(decodedCookie.indexOf(";")!=-1){
+                decodedCookie=decodedCookie.split(";")[0];
+            }
             Integer playerIdThisOne = model.fromJson(decodedCookie, CookieModel.class).getPlayerID();
             String name = model.fromJson(decodedCookie, CookieModel.class).getName();
 
@@ -416,7 +418,7 @@ public class Server {
 
         @Override
         public void handle(HttpExchange exchange) throws IOException {
-            exchange.getResponseHeaders().add("Content-Type", "application/json");
+            exchange.getResponseHeaders().set("Content-Type", "application/json");
 
             //call the appropriate fascade (real or mock)
             GameInfo result = null;
@@ -443,7 +445,7 @@ public class Server {
 
         @Override
         public void handle(HttpExchange exchange) throws IOException {
-            exchange.getResponseHeaders().add("Content-Type", "application/json");
+            exchange.getResponseHeaders().set("Content-Type", "application/json");
             //TODO: send a chat move
 
             exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, 0);
@@ -458,7 +460,7 @@ public class Server {
 
         @Override
         public void handle(HttpExchange exchange) throws IOException {
-            exchange.getResponseHeaders().add("Content-Type", "application/json");
+            exchange.getResponseHeaders().set("Content-Type", "application/json");
             //TODO: roll a number
 
             exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, 0);
@@ -473,7 +475,7 @@ public class Server {
 
         @Override
         public void handle(HttpExchange exchange) throws IOException {
-            exchange.getResponseHeaders().add("Content-Type", "application/json");
+            exchange.getResponseHeaders().set("Content-Type", "application/json");
             //TODO: rob a player
 
             exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, 0);
@@ -488,7 +490,7 @@ public class Server {
 
         @Override
         public void handle(HttpExchange exchange) throws IOException {
-            exchange.getResponseHeaders().add("Content-Type", "application/json");
+            exchange.getResponseHeaders().set("Content-Type", "application/json");
             //TODO: finish the current player's turn
 
             exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, 0);
@@ -503,7 +505,7 @@ public class Server {
 
         @Override
         public void handle(HttpExchange exchange) throws IOException {
-            exchange.getResponseHeaders().add("Content-Type", "application/json");
+            exchange.getResponseHeaders().set("Content-Type", "application/json");
             //TODO: buy a development card
 
             exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, 0);
@@ -518,7 +520,7 @@ public class Server {
 
         @Override
         public void handle(HttpExchange exchange) throws IOException {
-            exchange.getResponseHeaders().add("Content-Type", "application/json");
+            exchange.getResponseHeaders().set("Content-Type", "application/json");
             //TODO: use year of plenty card
 
             exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, 0);
@@ -533,7 +535,7 @@ public class Server {
 
         @Override
         public void handle(HttpExchange exchange) throws IOException {
-            exchange.getResponseHeaders().add("Content-Type", "application/json");
+            exchange.getResponseHeaders().set("Content-Type", "application/json");
             //TODO: use the road building card
 
             exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, 0);
@@ -548,7 +550,7 @@ public class Server {
 
         @Override
         public void handle(HttpExchange exchange) throws IOException {
-            exchange.getResponseHeaders().add("Content-Type", "application/json");
+            exchange.getResponseHeaders().set("Content-Type", "application/json");
             //TODO: use the soldier card
 
             exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, 0);
@@ -563,7 +565,7 @@ public class Server {
 
         @Override
         public void handle(HttpExchange exchange) throws IOException {
-            exchange.getResponseHeaders().add("Content-Type", "application/json");
+            exchange.getResponseHeaders().set("Content-Type", "application/json");
             //TODO: use monument card
 
             exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, 0);
@@ -578,7 +580,7 @@ public class Server {
 
         @Override
         public void handle(HttpExchange exchange) throws IOException {
-            exchange.getResponseHeaders().add("Content-Type", "application/json");
+            exchange.getResponseHeaders().set("Content-Type", "application/json");
             //TODO: offer a trade to another player
 
             exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, 0);
@@ -593,7 +595,7 @@ public class Server {
 
         @Override
         public void handle(HttpExchange exchange) throws IOException {
-            exchange.getResponseHeaders().add("Content-Type", "application/json");
+            exchange.getResponseHeaders().set("Content-Type", "application/json");
             //TODO: accept a trade from another player
 
             exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, 0);
@@ -608,7 +610,7 @@ public class Server {
 
         @Override
         public void handle(HttpExchange exchange) throws IOException {
-            exchange.getResponseHeaders().add("Content-Type", "application/json");
+            exchange.getResponseHeaders().set("Content-Type", "application/json");
             //TODO: build a settlement
 
             exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, 0);
@@ -623,7 +625,7 @@ public class Server {
 
         @Override
         public void handle(HttpExchange exchange) throws IOException {
-            exchange.getResponseHeaders().add("Content-Type", "application/json");
+            exchange.getResponseHeaders().set("Content-Type", "application/json");
             //TODO: build a city
 
             exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, 0);
@@ -638,7 +640,7 @@ public class Server {
 
         @Override
         public void handle(HttpExchange exchange) throws IOException {
-            exchange.getResponseHeaders().add("Content-Type", "application/json");
+            exchange.getResponseHeaders().set("Content-Type", "application/json");
             //TODO: build a road
 
             exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, 0);
@@ -653,7 +655,7 @@ public class Server {
 
         @Override
         public void handle(HttpExchange exchange) throws IOException {
-            exchange.getResponseHeaders().add("Content-Type", "application/json");
+            exchange.getResponseHeaders().set("Content-Type", "application/json");
             //TODO: perform a maritime trade
 
             exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, 0);
@@ -668,7 +670,7 @@ public class Server {
 
         @Override
         public void handle(HttpExchange exchange) throws IOException {
-            exchange.getResponseHeaders().add("Content-Type", "application/json");
+            exchange.getResponseHeaders().set("Content-Type", "application/json");
             //TODO: discard cards
 
             exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, 0);
