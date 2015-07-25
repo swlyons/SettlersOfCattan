@@ -21,7 +21,6 @@ public class GameStatePanel extends JPanel {
 
     private JButton button;
     private JPanel centered;
-    private int playerIndex;
 
     public GameStatePanel() {
         this.setLayout(new GridBagLayout());
@@ -67,27 +66,8 @@ public class GameStatePanel extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 action.execute();
-                GameManager gameManager = ClientCommunicator.getSingleton().getGameManager();
-                FinishMove fm = new FinishMove(gameManager.getGame().getTurnTracker().getCurrentTurn());
-                fm.setType("finishTurn");
-                fm.setPlayerIndex(playerIndex);
-                try {
-                    gameManager.initializeGame(ClientFascade.getSingleton().finishMove(fm));
-                } catch (ClientException ex) {
-                    ex.printStackTrace();
-                    Logger.getLogger(FirstRoundState.class.getName()).log(Level.SEVERE, null, ex);
-                }
             }
         };
         button.addActionListener(actionListener);
     }
-
-    public int getPlayerIndex() {
-        return playerIndex;
-    }
-
-    public void setPlayerIndex(int playerIndex) {
-        this.playerIndex = playerIndex;
-    }
-
 }
