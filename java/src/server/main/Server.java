@@ -25,10 +25,12 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import server.receiver.*;
 import server.receiver.AllOfOurInformation;
+import server.main.GameIdAndPlayerId;
 import shared.data.*;
 import shared.model.*;
 import sun.font.CreatedFontTracker;
 import client.communication.CookieModel;
+import client.managers.GameManager;
 import java.util.Set;
 
 public class Server {
@@ -347,23 +349,27 @@ public class Server {
             }
 
             String decodedCookie = URLDecoder.decode(userCookie.split("=")[1], "UTF-8");
-            if(decodedCookie.indexOf(";")!=-1){
-                decodedCookie=decodedCookie.split(";")[0];
+            if (decodedCookie.indexOf(";") != -1) {
+                decodedCookie = decodedCookie.split(";")[0];
             }
             Integer playerIdThisOne = model.fromJson(decodedCookie, CookieModel.class).getPlayerID();
             String name = model.fromJson(decodedCookie, CookieModel.class).getName();
 
             boolean found = false;
+            boolean finished = false;
 
             for (int i = 0; i < 4; i++) {
-                if(i>=AllOfOurInformation.getSingleton().getGames().get(joinGameRequest.getId()).getGame().getPlayers().size()){
+                if (AllOfOurInformation.getSingleton().getGames().get(joinGameRequest.getId()).getGame().getPlayers().get(i)==null) {
                     break;
                 }
+                
                 if (AllOfOurInformation.getSingleton().getGames().get(joinGameRequest.getId()).getGame().getPlayers().get(i).getId() == playerIdThisOne) {
                     found = true;
                     AllOfOurInformation.getSingleton().getGames().get(joinGameRequest.getId()).getGame().getPlayers().get(i).setColor(joinGameRequest.getColor());
                     break;
                 }
+                
+                finished = true;
             }
 
             if (found) {
@@ -376,7 +382,7 @@ public class Server {
                 exchange.getResponseBody().write(message.getBytes());
                 exchange.getResponseBody().close();
             } else {
-                if (4 <= AllOfOurInformation.getSingleton().getGames().get(joinGameRequest.getId()).getGame().getPlayers().size() ) {
+                if (finished) {
                     String message = "Already full.";
                     exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
                     exchange.getResponseBody().write(message.getBytes());
@@ -387,8 +393,15 @@ public class Server {
                     player.setPlayerID(playerIdThisOne);
                     player.setName(name);
                     player.setColor(joinGameRequest.getColor());
-                    AllOfOurInformation.getSingleton().getGames().get(joinGameRequest.getId()).getGame().getPlayers().add(player);
+                    
+                    for(int i=0;i<4;i++){
+                        if(AllOfOurInformation.getSingleton().getGames().get(joinGameRequest.getId()).getGame().getPlayers().get(i)==null){
+                            AllOfOurInformation.getSingleton().getGames().get(joinGameRequest.getId()).getGame().getPlayers().set(i, player);
+                        }
+                    }
+                    
                     int spot = AllOfOurInformation.getSingleton().getGames().get(joinGameRequest.getId()).getGame().getPlayers().indexOf(player);
+                    
                     if (spot == -1 || 3 < spot) {
                         AllOfOurInformation.getSingleton().getGames().get(joinGameRequest.getId()).getGame().getPlayers().remove(player);
                         String message = "Already full.";
@@ -418,23 +431,34 @@ public class Server {
 
         @Override
         public void handle(HttpExchange exchange) throws IOException {
-            exchange.getResponseHeaders().set("Content-Type", "application/json");
-
-            //call the appropriate fascade (real or mock)
-            GameInfo result = null;
             try {
-                result = ServerFascade.getSingleton().getGameModel("");
-                //result = MockServerFascade.getSingleton().getModel("");
-            } catch (ServerException ex) {
-                Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
+                GameIdAndPlayerId gameAndPlayer = verifyPlayer(exchange);
+                
+                if (gameAndPlayer==null) {
+                    exchange.getResponseHeaders().set("Content-Type", "text/html");
+                    String message = "Need to login and join a valid game.";
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                    exchange.getResponseBody().write(message.getBytes());
+                    exchange.getResponseBody().close();
+                    return;
+                }
+                exchange.getResponseHeaders().set("Content-Type", "application/json");
+                
+                //call the appropriate fascade (real or mock)
+                String result = AllOfOurInformation.getSingleton().getGames().get(gameAndPlayer.getGameId()).getGame().toString();
+                                
+                //re-package and return the data
+                exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, result.length());
+                exchange.getResponseBody().write(result.getBytes());
+                exchange.getResponseBody().close();
+            } catch (Exception e) {
+                exchange.getResponseHeaders().set("Content-Type", "text/html");
+                String message = "Unable to grab model.";
+                exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                exchange.getResponseBody().write(message.getBytes());
+                exchange.getResponseBody().close();
+                return;
             }
-
-            //re-package and return the data
-            //TODO: All toString methods need to have quotes around the json fields and values
-            String message = result.toString();
-            exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, message.length());
-            exchange.getResponseBody().write(message.getBytes());
-            exchange.getResponseBody().close();
         }
     };
 
@@ -678,6 +702,41 @@ public class Server {
             exchange.getResponseBody().close();
         }
     };
+    
+    private GameIdAndPlayerId verifyPlayer(HttpExchange exchange){
+        try{
+        String userCookie = exchange.getRequestHeaders().getFirst("Cookie");
+        GameIdAndPlayerId gameAndPlayer = null;
+        if (userCookie == null || userCookie.equals("")) {
+            return gameAndPlayer;
+        }
+
+        String decodedCookie = URLDecoder.decode(userCookie.split("=")[1], "UTF-8");
+        Integer playerIdThisOne = model.fromJson(decodedCookie.split(";")[0], CookieModel.class).getPlayerID();
+        Integer gameId = Integer.parseInt(URLDecoder.decode(userCookie.split("=")[2], "UTF-8"));
+        
+        boolean found = false;
+        
+        for(GameManager gm : AllOfOurInformation.getSingleton().getGames()){
+            if(gm.getGame().getId()==gameId){
+                for(int i=0;i<gm.getGame().getPlayers().size();i++){
+                    if(gm.getGame().getPlayers().get(i).getId()==playerIdThisOne){
+                        found = true;
+                        break;
+                    }
+                }
+                break;
+            }
+        }
+        
+        if(found){
+            gameAndPlayer = new GameIdAndPlayerId(playerIdThisOne, gameId);
+        }
+        return gameAndPlayer;
+        } catch(Exception e){
+            return null;
+        }        
+    }
 
     /**
      * Maps each parameter to it's value

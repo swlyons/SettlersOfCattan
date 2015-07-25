@@ -41,7 +41,12 @@ public class Port {
 
     @Override
     public String toString() {
-        return "{" + "\"resource\" : " + resource + ", \"location\" : " + location + ", \"ratio\" : " + ratio + "}";
+        if(ratio==2){
+            return "{" + "\"resource\" : \"" + resource.toString().toLowerCase() + "\", \"location\" : " + location.toString() + ", \"ratio\" : " + ratio + ",\"direction\":\"N\"}";
+        }else{
+            return "{" + "\"location\" : " + location.toString() + ", \"ratio\" : " + ratio + ",\"direction\":\"N\"}";
+        }
+        
     }
 
 }

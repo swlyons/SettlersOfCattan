@@ -44,5 +44,11 @@ public class SettlementLocation {
     public void setDirection(VertexDirection direction) {
         this.direction = direction;
     }
+    
+    @Override
+    public String toString() {
+        return "{" + "\"x\":" + x + ", \"y\":" + y +",\"direction\":\""+direction.toString().toUpperCase()+"\"}";
+    }
+
 
 }
