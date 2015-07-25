@@ -7,8 +7,7 @@ package server.main;
 
 import java.util.ArrayList;
 import server.command.*;
-import shared.data.GameInfo;
-import shared.data.User;
+import shared.data.*;
 import shared.model.*;
 import server.receiver.AllOfOurInformation;
 
@@ -49,7 +48,7 @@ public class ServerFascade implements Fascade {
         }
         return id;
     }
-
+    
     @Override
     public boolean register(User credentials) throws ServerException {
         //Command Pattern
@@ -78,8 +77,10 @@ public class ServerFascade implements Fascade {
 
     @Override
     public boolean joinGame(JoinGameRequest joinGameRequest) throws ServerException {
-        return true;
+        return false;
     }
+    
+    
 
     @Override
     public boolean saveGame(SaveGameRequest saveGameRequest) throws ServerException {
