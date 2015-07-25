@@ -15,23 +15,18 @@ import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.sun.net.httpserver.Headers;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.URLDecoder;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import server.receiver.*;
 import server.receiver.AllOfOurInformation;
-import server.main.GameIdAndPlayerId;
 import shared.data.*;
 import shared.model.*;
-import sun.font.CreatedFontTracker;
 import client.communication.CookieModel;
 import client.managers.GameManager;
-import java.util.Set;
 
 public class Server {
 
