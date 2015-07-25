@@ -292,9 +292,9 @@ public class Server {
             if (gameInfo != null) {
                 exchange.getResponseHeaders().add("Content-Type", "application/json");
                 String message ="{";
-                message += model.toJson("title", String.class)+":" + model.toJson(gameInfo.getTitle(), String.class) + ",";
-                message += model.toJson("id", String.class)+":" + gameInfo.getId() + ",";
-                message += model.toJson("players", String.class)+": [{},{},{},{}]";
+                message += "\"title\""+":\"" + gameInfo.getTitle() + "\",";
+                message += "\"id\""+":" + gameInfo.getId() + ",";
+                message += "\"players\""+": [{},{},{},{}]";
                 message+="}";
                 exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, message.length());
                 exchange.getResponseBody().write(message.getBytes());
