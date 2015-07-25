@@ -241,34 +241,35 @@ public class Server {
             try {
                 gamesList = ServerFascade.getSingleton().listGames();
                 if (!gamesList.isEmpty()) {
-                    response += "{";
                     for (GameInfo gameInfo : gamesList) {
-                        response += "\"title\":\"" + gameInfo.getTitle() + "\",";
+                        response += "{\"title\":\"" + gameInfo.getTitle() + "\",";
                         response += "\"id\":" + gameInfo.getId() + ",";
                         response += "\"players\": [";
+                        
                         for (int i = 0; i < gameInfo.getPlayers().size(); i++) {
-                            response += "{";
-                            response += "\"color\":\"" + gameInfo.getPlayers().get(i).getColor() + "\",";
-                            response += "\"name\":\"" + gameInfo.getPlayers().get(i).getName() + "\",";
-                            response += "\"id\":" + gameInfo.getPlayers().get(i).getId();
-                            response += "},";
+                            if (gameInfo.getPlayers().get(i) != null) {
+                                response += "{";
+                                response += "\"color\":\"" + gameInfo.getPlayers().get(i).getColor() + "\",";
+                                response += "\"name\":\"" + gameInfo.getPlayers().get(i).getName() + "\",";
+                                response += "\"id\":" + gameInfo.getPlayers().get(i).getId();
+                                response += "},";
+                            } else {
+                                response += (i == (gameInfo.getPlayers().size() - 1)) ? "{}" : "{},";
+                            }
                         }
-                        int blanks = 4 - gameInfo.getPlayers().size();
-                        for (int i = 0; i < blanks; i++) {
-                            response += "{},";
-                        }
-                        response = response.substring(0, response.length() - 1);
-                        response += "]";
+                        response += "]},";
                     }
-                    response += "}";
+                    response = response.substring(0, response.length() - 1);
                 }
                 response += "]";
-
+                
+                System.out.println("Response: " + response);
                 exchange.getResponseHeaders().set("Content-Type", "application/json");
                 exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, response.length());
                 exchange.getResponseBody().write(response.getBytes());
                 exchange.getResponseBody().close();
             } catch (Exception e) {
+                e.printStackTrace();
                 String message = "Failed to list Games.";
                 exchange.getResponseHeaders().set("Content-Type", "text/html");
                 exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
@@ -322,7 +323,8 @@ public class Server {
                 message += "\"id\"" + ":" + gameInfo.getId() + ",";
                 message += "\"players\"" + ": [{},{},{},{}]";
                 message += "}";
-
+                
+                
                 exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, message.length());
                 exchange.getResponseBody().write(message.getBytes());
                 exchange.getResponseBody().close();
