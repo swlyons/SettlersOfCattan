@@ -15,16 +15,21 @@ import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.sun.net.httpserver.Headers;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import server.receiver.*;
+import server.receiver.AllOfOurInformation;
 import shared.data.*;
 import shared.model.*;
 import sun.font.CreatedFontTracker;
+import client.communication.CookieModel;
+import java.util.Set;
 
 public class Server {
 
@@ -236,8 +241,8 @@ public class Server {
             String response = "[";
             try {
                 gamesList = ServerFascade.getSingleton().listGames();
-                if(!gamesList.isEmpty()){
-                    response+="{";
+                if (!gamesList.isEmpty()) {
+                    response += "{";
                     for (GameInfo gameInfo : gamesList) {
                         response += "\"title\":\"" + gameInfo.getTitle() + "\",";
                         response += "\"id\":" + gameInfo.getId() + ",";
@@ -256,7 +261,7 @@ public class Server {
                         response = response.substring(0, response.length() - 1);
                         response += "]";
                     }
-                    response+="}";
+                    response += "}";
                 }
                 response += "]";
 
@@ -293,11 +298,11 @@ public class Server {
             }
             if (gameInfo != null) {
                 exchange.getResponseHeaders().add("Content-Type", "application/json");
-                String message ="{";
-                message += "\"title\""+":\"" + gameInfo.getTitle() + "\",";
-                message += "\"id\""+":" + gameInfo.getId() + ",";
-                message += "\"players\""+": [{},{},{},{}]";
-                message+="}";
+                String message = "{";
+                message += "\"title\"" + ":\"" + gameInfo.getTitle() + "\",";
+                message += "\"id\"" + ":" + gameInfo.getId() + ",";
+                message += "\"players\"" + ": [{},{},{},{}]";
+                message += "}";
                 exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, message.length());
                 exchange.getResponseBody().write(message.getBytes());
                 exchange.getResponseBody().close();
@@ -318,12 +323,89 @@ public class Server {
 
         @Override
         public void handle(HttpExchange exchange) throws IOException {
-            exchange.getResponseHeaders().add("Content-Type", "text/html");
-            //TODO: join a game
+            //un-package the data
+            Reader reader = new InputStreamReader(exchange.getRequestBody(), "UTF-8");
+            JoinGameRequest joinGameRequest = model.fromJson(reader, JoinGameRequest.class);
+            exchange.getResponseHeaders().set("Content-Type", "text/html");
 
-            exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, 0);
-            exchange.getResponseBody().write("Success".getBytes());
-            exchange.getResponseBody().close();
+            String userCookie = exchange.getRequestHeaders().getFirst("Cookie");
+
+            if (userCookie == null || userCookie.equals("")) {
+                String message = "Need to login first.";
+                exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                exchange.getResponseBody().write(message.getBytes());
+                exchange.getResponseBody().close();
+                return;
+            }
+
+            if (joinGameRequest.getId() < 0 || AllOfOurInformation.getSingleton().getGames().size() <= joinGameRequest.getId()) {
+                String message = "Invalid Game Id.";
+                exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                exchange.getResponseBody().write(message.getBytes());
+                exchange.getResponseBody().close();
+                return;
+            }
+
+
+            String decodedCookie = URLDecoder.decode(userCookie.split("=")[1], "UTF-8");
+            Integer playerIdThisOne = model.fromJson(decodedCookie, CookieModel.class).getPlayerID();
+            String name = model.fromJson(decodedCookie, CookieModel.class).getName();
+
+            boolean found = false;
+
+            for (int i = 0; i < 4; i++) {
+                if(i>=AllOfOurInformation.getSingleton().getGames().get(joinGameRequest.getId()).getGame().getPlayers().size()){
+                    break;
+                }
+                if (AllOfOurInformation.getSingleton().getGames().get(joinGameRequest.getId()).getGame().getPlayers().get(i).getId() == playerIdThisOne) {
+                    found = true;
+                    AllOfOurInformation.getSingleton().getGames().get(joinGameRequest.getId()).getGame().getPlayers().get(i).setColor(joinGameRequest.getColor());
+                    break;
+                }
+            }
+
+            if (found) {
+                String cookie = "catan.game=";
+                cookie += joinGameRequest.getId();
+                cookie += ";Path=/;";
+                String message = "Success";
+                exchange.getResponseHeaders().set("Set-Cookie", cookie);
+                exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, message.length());
+                exchange.getResponseBody().write(message.getBytes());
+                exchange.getResponseBody().close();
+            } else {
+                if (4 <= AllOfOurInformation.getSingleton().getGames().get(joinGameRequest.getId()).getGame().getPlayers().size() ) {
+                    String message = "Already full.";
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                    exchange.getResponseBody().write(message.getBytes());
+                    exchange.getResponseBody().close();
+                } else {
+                    PlayerInfo player = new PlayerInfo();
+                    player.setId(playerIdThisOne);
+                    player.setPlayerID(playerIdThisOne);
+                    player.setName(name);
+                    player.setColor(joinGameRequest.getColor());
+                    AllOfOurInformation.getSingleton().getGames().get(joinGameRequest.getId()).getGame().getPlayers().add(player);
+                    int spot = AllOfOurInformation.getSingleton().getGames().get(joinGameRequest.getId()).getGame().getPlayers().indexOf(player);
+                    if (spot == -1 || 3 < spot) {
+                        AllOfOurInformation.getSingleton().getGames().get(joinGameRequest.getId()).getGame().getPlayers().remove(player);
+                        String message = "Already full.";
+                        exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                        exchange.getResponseBody().write(message.getBytes());
+                        exchange.getResponseBody().close();
+                    } else {
+                        String cookie = "catan.game=";
+                        cookie += joinGameRequest.getId();
+                        cookie += ";Path=/;";
+                        String message = "Success";
+                        exchange.getResponseHeaders().set("Set-Cookie", cookie);
+                        exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, message.length());
+                        exchange.getResponseBody().write(message.getBytes());
+                        exchange.getResponseBody().close();
+                        //Error, someone joining the same game twice simeltaneously. (Twice at the same time)
+                    }
+                }
+            }
         }
     };
 
