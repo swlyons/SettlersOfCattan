@@ -8,7 +8,6 @@ import client.join.*;
 import client.misc.*;
 import client.base.*;
 import client.communication.ClientCommunicator;
-import shared.data.GameInfo;
 import client.map.MapController;
 
 /**
@@ -51,7 +50,6 @@ public class Catan extends JFrame {
         SwingUtilities.invokeLater(new Runnable() {
 
             public void run() {
-                System.out.println(args[0]);
                 // set the host and port for the client to run on
                 ClientCommunicator.getSingleton().setSERVER_HOST(args[0]);
                 ClientCommunicator.getSingleton().setSERVER_PORT(
