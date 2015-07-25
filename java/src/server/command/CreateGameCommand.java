@@ -4,13 +4,10 @@
  * and open the template in the editor.
  */
 package server.command;
-import server.command.Command;
 import server.receiver.AllOfOurInformation;
 import client.managers.GameManager;
 import java.util.ArrayList;
-import java.util.List;
 import shared.data.*;
-import shared.model.*;
 /**
  *
  * @author Samuel

@@ -27,6 +27,8 @@ import shared.data.*;
 import shared.model.*;
 import client.communication.CookieModel;
 import client.managers.GameManager;
+import java.io.BufferedReader;
+import java.util.Scanner;
 
 public class Server {
 
@@ -284,28 +286,50 @@ public class Server {
 
         @Override
         public void handle(HttpExchange exchange) throws IOException {
-
             Reader reader = new InputStreamReader(exchange.getRequestBody(), "UTF-8");
-            CreateGameRequest createGame = model.fromJson(reader, CreateGameRequest.class);
-            GameInfo gameInfo = null;
-            try {
-                gameInfo = ServerFascade.getSingleton().createGame(createGame);
-            } catch (Exception e) {
+            String messageBody = "";
 
+            //check that the booleans are actually booleans for the swagger
+            //<editor-fold desc="Check Booleans">
+            BufferedReader br = new BufferedReader(reader);
+            Scanner sc = new Scanner(br);
+            boolean validRandomValues = true;
+            while (sc.hasNextLine()) {
+                String line = sc.next();
+                if (line.contains(",")) {
+                    if (!line.contains("true") && !line.contains("false")) {
+                        //invalid request
+                        validRandomValues = false;
+                        break;
+                    }
+                }
+                messageBody += line;
             }
-            if (gameInfo != null) {
+            //</editor-fold>
+            GameInfo gameInfo = null;
+            if (validRandomValues) {
+                CreateGameRequest createGame = model.fromJson(messageBody, CreateGameRequest.class);
+                try {
+                    gameInfo = ServerFascade.getSingleton().createGame(createGame);
+                } catch (Exception e) {
+
+                }
+            }
+            if (gameInfo != null && validRandomValues) {
                 exchange.getResponseHeaders().set("Content-Type", "application/json");
                 String message = "{";
                 message += "\"title\"" + ":\"" + gameInfo.getTitle() + "\",";
                 message += "\"id\"" + ":" + gameInfo.getId() + ",";
                 message += "\"players\"" + ": [{},{},{},{}]";
                 message += "}";
+
                 exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, message.length());
                 exchange.getResponseBody().write(message.getBytes());
                 exchange.getResponseBody().close();
             } else {
                 exchange.getResponseHeaders().set("Content-Type", "text/html");
-                String message = "Failed to createGame - need a name.";
+
+                String message = validRandomValues ? "Failed to createGame - need a name." : "Failed to create game - all random values (i.e. randomTiles) must be \"true\" or \"false\"";
                 exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
                 exchange.getResponseBody().write(message.getBytes());
                 exchange.getResponseBody().close();
