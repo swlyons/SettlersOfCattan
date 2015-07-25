@@ -66,6 +66,10 @@ public class SendChatCommand implements Command {
 
             game.getChat().getLines().add(messageLine);
             
+            //update the game version
+            int oldVersion = game.getVersion();
+            game.setVersion(oldVersion++);
+            
             //return success if we made it this far
             successful = true;
         } catch (ArrayIndexOutOfBoundsException aio) {
