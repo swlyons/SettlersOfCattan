@@ -80,29 +80,31 @@ public class Server {
         server.createContext("/user/login", loginHandler);
         server.createContext("/user/register", registerHandler);
 
-        // Game contexts
+        // Games contexts
         server.createContext("/games/list", listHandler);
         server.createContext("/games/create", createHandler);
         server.createContext("/games/join", joinHandler);
 
-        // Move contexts
+        // Game contexts
         server.createContext("/game/model", modelHandler);
-        server.createContext("/game/sendChat", sendChatHandler);
-        server.createContext("/game/rollNumber", rollNumberHandler);
-        server.createContext("/game/robPlayer", robPlayerHandler);
-        server.createContext("/game/finishTurn", finishTurnHandler);
-        server.createContext("/game/buyDevCard", buyDevCardHandler);
-        server.createContext("/game/Year_Of_Plenty", year_of_plentyHandler);
-        server.createContext("/game/Road_Building", road_buildingHandler);
-        server.createContext("/game/Soldier", soldierHandler);
-        server.createContext("/game/Monument", monumentHandler);
-        server.createContext("/game/offerTrade", offerTradeHandler);
-        server.createContext("/game/acceptTrade", acceptTradeHandler);
-        server.createContext("/game/buildSettlement", buildSettlementHandler);
-        server.createContext("/game/buildCity", buildCityHandler);
-        server.createContext("/game/buildRoad", buildRoadHandler);
-        server.createContext("/game/maritimeTrade", maritimeTradeHandler);
-        server.createContext("/game/discardCards", discardCardsHandler);
+
+        // Moves contexts
+        server.createContext("/moves/sendChat", sendChatHandler);
+        server.createContext("/moves/rollNumber", rollNumberHandler);
+        server.createContext("/moves/robPlayer", robPlayerHandler);
+        server.createContext("/moves/finishTurn", finishTurnHandler);
+        server.createContext("/moves/buyDevCard", buyDevCardHandler);
+        server.createContext("/moves/Year_Of_Plenty", year_of_plentyHandler);
+        server.createContext("/moves/Road_Building", road_buildingHandler);
+        server.createContext("/moves/Soldier", soldierHandler);
+        server.createContext("/moves/Monument", monumentHandler);
+        server.createContext("/moves/offerTrade", offerTradeHandler);
+        server.createContext("/moves/acceptTrade", acceptTradeHandler);
+        server.createContext("/moves/buildSettlement", buildSettlementHandler);
+        server.createContext("/moves/buildCity", buildCityHandler);
+        server.createContext("/moves/buildRoad", buildRoadHandler);
+        server.createContext("/moves/maritimeTrade", maritimeTradeHandler);
+        server.createContext("/moves/discardCards", discardCardsHandler);
 
         //swagger
         server.createContext("/docs/api/data", new Handlers.JSONAppender(""));
@@ -505,12 +507,66 @@ public class Server {
 
         @Override
         public void handle(HttpExchange exchange) throws IOException {
-            exchange.getResponseHeaders().set("Content-Type", "application/json");
-            //TODO: send a chat move
+            try {
+                exchange.getResponseHeaders().set("Content-Type", "text/html");
+                Reader reader = new InputStreamReader(exchange.getRequestBody(), "UTF-8");
+                boolean invalidIndex = false;
+                boolean notLoggedIn = false;
 
-            exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, 0);
-            exchange.getResponseBody().write("Success".getBytes());
-            exchange.getResponseBody().close();
+                //make sure the player index is valid (a number that gson can parse)
+                SendChat sendChatRequest = null;
+                try {
+                    sendChatRequest = model.fromJson(reader, SendChat.class);
+                } catch (com.google.gson.JsonSyntaxException jse) {
+                    invalidIndex = true;
+                }
+
+                //get the cookie from the header
+                String userCookie = exchange.getRequestHeaders().getFirst("Cookie");
+
+                //make sure the user is logged in
+                if (userCookie == null || userCookie.equals("")) {
+                    notLoggedIn = true;
+                }
+                
+                //pass in the game id 
+                GameIdAndPlayerId gameAndPlayerId = verifyPlayer(exchange);
+                if ((gameAndPlayerId != null) && (sendChatRequest != null)) {
+                    
+                    sendChatRequest.setContent(sendChatRequest.getContent() + ";" + gameAndPlayerId.getGameId());
+                }
+                else{
+                    notLoggedIn = true;
+                }
+
+                //make sure there is a cookie
+                if (invalidIndex || notLoggedIn) {
+                    String message = invalidIndex ? "Invalid command.  ['playerIndex' field has an invalid value.]" : "Need to login first.";
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                    exchange.getResponseBody().write(message.getBytes());
+                    exchange.getResponseBody().close();
+                } else {
+                    // call the appropriate facade
+                    GameInfo result = null;
+                    try{
+                    result = ServerFascade.getSingleton().sendChat(sendChatRequest);
+                    }
+                    catch(NullPointerException npe){
+                        String message = "For the specified game there is no player with the index: " + sendChatRequest.getPlayerIndex();
+                        exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                        exchange.getResponseBody().write(message.getBytes());
+                        exchange.getResponseBody().close();
+                        return;
+                    }
+
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, 0);
+                    exchange.getResponseBody().write(result.toString().getBytes());
+                    exchange.getResponseBody().close();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
         }
     };
     /**
