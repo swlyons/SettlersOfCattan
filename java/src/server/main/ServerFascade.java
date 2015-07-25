@@ -7,8 +7,7 @@ package server.main;
 
 import java.util.ArrayList;
 import server.command.*;
-import shared.data.GameInfo;
-import shared.data.User;
+import shared.data.*;
 import shared.model.*;
 import server.receiver.AllOfOurInformation;
 
@@ -49,7 +48,7 @@ public class ServerFascade implements Fascade {
         }
         return id;
     }
-
+    
     @Override
     public boolean register(User credentials) throws ServerException {
         //Command Pattern
@@ -59,18 +58,29 @@ public class ServerFascade implements Fascade {
 
     @Override
     public ArrayList<GameInfo> listGames() throws ServerException {
-        return new ArrayList<GameInfo>();
+        ArrayList<GameInfo> games = new ArrayList<GameInfo>();
+        for(int i=0;i<AllOfOurInformation.getSingleton().getGames().size();i++){
+            games.add(AllOfOurInformation.getSingleton().getGames().get(i).getGame());
+        }        
+        return games;
     }
 
     @Override
     public GameInfo createGame(CreateGameRequest createGameRequest) throws ServerException {
-        return new GameInfo("Default Game");
+        CreateGameCommand createGame = new CreateGameCommand(createGameRequest.isRandomTiles(),createGameRequest.isRandomNumbers(),createGameRequest.isRandomPorts(),createGameRequest.getName());
+        GameInfo gi = null;
+        if(agent.sendCommand(createGame)){
+            gi = AllOfOurInformation.getSingleton().getGames().get(createGame.getGameId()).getGame();
+        }
+        return gi;
     }
 
     @Override
     public boolean joinGame(JoinGameRequest joinGameRequest) throws ServerException {
-        return true;
+        return false;
     }
+    
+    
 
     @Override
     public boolean saveGame(SaveGameRequest saveGameRequest) throws ServerException {
@@ -84,7 +94,7 @@ public class ServerFascade implements Fascade {
 
     @Override
     public GameInfo getGameModel(String version) throws ServerException {
-        return new GameInfo("Default Game");
+        return null;
     }
 
     @Override

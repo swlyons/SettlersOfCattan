@@ -242,8 +242,11 @@ public class ResourceList {
 
     @Override
     public String toString() {
-        return "{" + "\"brick\" : " + brick + ", \"ore\" : " + ore + ", \"sheep\" : " + sheep + ", \"wheat\" : " + wheat + ", \"wood\" : "
-                + wood + "}";
+        return "{" + "\"brick\" : " + brick + 
+                ", \"ore\" : " + ore + 
+                ", \"sheep\" : " + sheep + 
+                ", \"wheat\" : " + wheat + 
+                ", \"wood\" : " + wood + "}";
     }
 
 }

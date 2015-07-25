@@ -201,10 +201,11 @@ public class PlayerInfo {
 
     @Override
     public String toString() {
-        return "{" + "\"name\" : \"" + name + "\", \"color\" : " + color + ", \"cities\" : " + cities + ", \"settlements\" : " + settlements
-                + ", \"roads\" : " + roads + ", \"victoryPoints\" : " + victoryPoints + ", \"resources\" : " + resources
+        return "{" + "\"name\" : \"" + name + "\", \"color\" : \"" + color.toLowerCase() + "\", \"cities\" : " + cities + ", \"settlements\" : " + settlements
+                + ", \"roads\" : " + roads + ", \"victoryPoints\" : " + victoryPoints + ", \"resources\" : " + resources.toString()
                 + ", \"playerIndex\" : " + playerIndex + ", \"id\" : " + id + ", \"playerID\" : " + playerID + ", \"discarded\" : \"" + discarded
-                + "\", \"playedDevCard\" : \"" + playedDevCard + "\", \"monuments\" : " + monuments + ", \"oldDevCards\" : " + oldDevCards
-                + ", \"newDevCards\" : " + newDevCards + ", \"soldiers\" : " + soldiers + "}";
+                + "\", \"playedDevCard\" : \"" + playedDevCard + "\", \"monuments\" : " + monuments + ", \"oldDevCards\" : " + oldDevCards.toString()
+                + ", \"newDevCards\" : " + newDevCards.toString() + ", \"soldiers\" : " + soldiers + "}";
     }
+
 }

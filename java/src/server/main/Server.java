@@ -15,12 +15,23 @@ import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.sun.net.httpserver.Headers;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.net.URLDecoder;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import server.receiver.*;
+import server.receiver.AllOfOurInformation;
+import server.main.GameIdAndPlayerId;
 import shared.data.*;
+import shared.model.*;
+import sun.font.CreatedFontTracker;
+import client.communication.CookieModel;
+import client.managers.GameManager;
+import java.util.Set;
 
 public class Server {
 
@@ -156,19 +167,19 @@ public class Server {
                 //result = MockServerFascade.getSingleton().login(user);
 
             //re-package and return the data
-            if (id!=-1) {
+            if (id != -1) {
                 String cookie = "catan.user=";
 //                cookie+="{\"name\":\""+AllOfOurInformation.getSingleton().getUsers().get(id).getUsername()+"\",";
 //                cookie+="\"password\":\""+AllOfOurInformation.getSingleton().getUsers().get(id).getPassword()+"\",";
 //                cookie+="\"playerID\":" +id+"}";
-                cookie+="{name:"+AllOfOurInformation.getSingleton().getUsers().get(id).getUsername()+",";
-                cookie+="password:"+AllOfOurInformation.getSingleton().getUsers().get(id).getPassword()+",";
-                cookie+="playerID:" +id+"}";
-                
+                cookie += "{name:" + AllOfOurInformation.getSingleton().getUsers().get(id).getUsername() + ",";
+                cookie += "password:" + AllOfOurInformation.getSingleton().getUsers().get(id).getPassword() + ",";
+                cookie += "playerID:" + id + "}";
+
                 cookie += ";Path=/;";
 //                String message = model.toJson("Success", String.class);
                 String message = "Success";
-                exchange.getResponseHeaders().set("Content-Type", "application/json");                
+                exchange.getResponseHeaders().set("Content-Type", "text/html");
                 exchange.getResponseHeaders().set("Set-Cookie", cookie);
                 exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, message.length());
                 exchange.getResponseBody().write(message.getBytes());
@@ -190,7 +201,7 @@ public class Server {
     private HttpHandler registerHandler = new HttpHandler() {
         @Override
         public void handle(HttpExchange exchange) throws IOException {
-            exchange.getResponseHeaders().add("Content-Type", "text/xml");
+            exchange.getResponseHeaders().set("Content-Type", "text/html");
 
             //un-package the data
             Reader reader = new InputStreamReader(exchange.getRequestBody(), "UTF-8");
@@ -212,7 +223,6 @@ public class Server {
                 exchange.getResponseBody().write(message.getBytes());
                 exchange.getResponseBody().close();
             } else {
-
                 String message = "Failed to register - bad username or password.";
                 exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
                 exchange.getResponseBody().write(message.getBytes());
@@ -228,12 +238,47 @@ public class Server {
 
         @Override
         public void handle(HttpExchange exchange) throws IOException {
-            exchange.getResponseHeaders().add("Content-Type", "application/json");
-            //TODO: return the list of games running on the server
 
-            exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, "[{\"title\":\"Default Game\", \"id\":\"0\"}]".length());
-            exchange.getResponseBody().write("[{\"title\":\"Default Game\", \"id\":\"0\"}]".getBytes());
-            exchange.getResponseBody().close();
+            ArrayList<GameInfo> gamesList = new ArrayList<GameInfo>();
+            String response = "[";
+            try {
+                gamesList = ServerFascade.getSingleton().listGames();
+                if (!gamesList.isEmpty()) {
+                    response += "{";
+                    for (GameInfo gameInfo : gamesList) {
+                        response += "\"title\":\"" + gameInfo.getTitle() + "\",";
+                        response += "\"id\":" + gameInfo.getId() + ",";
+                        response += "\"players\": [";
+                        for (int i = 0; i < gameInfo.getPlayers().size(); i++) {
+                            response += "{";
+                            response += "\"color\":\"" + gameInfo.getPlayers().get(i).getColor() + "\",";
+                            response += "\"name\":\"" + gameInfo.getPlayers().get(i).getName() + "\",";
+                            response += "\"id\":" + gameInfo.getPlayers().get(i).getId();
+                            response += "},";
+                        }
+                        int blanks = 4 - gameInfo.getPlayers().size();
+                        for (int i = 0; i < blanks; i++) {
+                            response += "{},";
+                        }
+                        response = response.substring(0, response.length() - 1);
+                        response += "]";
+                    }
+                    response += "}";
+                }
+                response += "]";
+
+                exchange.getResponseHeaders().set("Content-Type", "application/json");
+                exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, response.length());
+                exchange.getResponseBody().write(response.getBytes());
+                exchange.getResponseBody().close();
+            } catch (Exception e) {
+                String message = "Failed to list Games.";
+                exchange.getResponseHeaders().set("Content-Type", "text/html");
+                exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                exchange.getResponseBody().write(message.getBytes());
+                exchange.getResponseBody().close();
+            }
+
         }
     };
 
@@ -244,12 +289,32 @@ public class Server {
 
         @Override
         public void handle(HttpExchange exchange) throws IOException {
-            exchange.getResponseHeaders().add("Content-Type", "application/json");
-            //TODO: create a game
 
-            exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, 0);
-            exchange.getResponseBody().write("Success".getBytes());
-            exchange.getResponseBody().close();
+            Reader reader = new InputStreamReader(exchange.getRequestBody(), "UTF-8");
+            CreateGameRequest createGame = model.fromJson(reader, CreateGameRequest.class);
+            GameInfo gameInfo = null;
+            try {
+                gameInfo = ServerFascade.getSingleton().createGame(createGame);
+            } catch (Exception e) {
+
+            }
+            if (gameInfo != null) {
+                exchange.getResponseHeaders().set("Content-Type", "application/json");
+                String message = "{";
+                message += "\"title\"" + ":\"" + gameInfo.getTitle() + "\",";
+                message += "\"id\"" + ":" + gameInfo.getId() + ",";
+                message += "\"players\"" + ": [{},{},{},{}]";
+                message += "}";
+                exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, message.length());
+                exchange.getResponseBody().write(message.getBytes());
+                exchange.getResponseBody().close();
+            } else {
+                exchange.getResponseHeaders().set("Content-Type", "text/html");
+                String message = "Failed to createGame - need a name.";
+                exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                exchange.getResponseBody().write(message.getBytes());
+                exchange.getResponseBody().close();
+            }
         }
     };
 
@@ -260,12 +325,102 @@ public class Server {
 
         @Override
         public void handle(HttpExchange exchange) throws IOException {
-            exchange.getResponseHeaders().add("Content-Type", "text/html");
-            //TODO: join a game
+            //un-package the data
+            Reader reader = new InputStreamReader(exchange.getRequestBody(), "UTF-8");
+            JoinGameRequest joinGameRequest = model.fromJson(reader, JoinGameRequest.class);
+            exchange.getResponseHeaders().set("Content-Type", "text/html");
 
-            exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, 0);
-            exchange.getResponseBody().write("Success".getBytes());
-            exchange.getResponseBody().close();
+            String userCookie = exchange.getRequestHeaders().getFirst("Cookie");
+
+            if (userCookie == null || userCookie.equals("")) {
+                String message = "Need to login first.";
+                exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                exchange.getResponseBody().write(message.getBytes());
+                exchange.getResponseBody().close();
+                return;
+            }
+
+            if (joinGameRequest.getId() < 0 || AllOfOurInformation.getSingleton().getGames().size() <= joinGameRequest.getId()) {
+                String message = "Invalid Game Id.";
+                exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                exchange.getResponseBody().write(message.getBytes());
+                exchange.getResponseBody().close();
+                return;
+            }
+
+            String decodedCookie = URLDecoder.decode(userCookie.split("=")[1], "UTF-8");
+            if (decodedCookie.indexOf(";") != -1) {
+                decodedCookie = decodedCookie.split(";")[0];
+            }
+            Integer playerIdThisOne = model.fromJson(decodedCookie, CookieModel.class).getPlayerID();
+            String name = model.fromJson(decodedCookie, CookieModel.class).getName();
+
+            boolean found = false;
+            boolean finished = false;
+
+            for (int i = 0; i < 4; i++) {
+                if (AllOfOurInformation.getSingleton().getGames().get(joinGameRequest.getId()).getGame().getPlayers().get(i) == null) {
+                    break;
+                }
+
+                if (AllOfOurInformation.getSingleton().getGames().get(joinGameRequest.getId()).getGame().getPlayers().get(i).getId() == playerIdThisOne) {
+                    found = true;
+                    AllOfOurInformation.getSingleton().getGames().get(joinGameRequest.getId()).getGame().getPlayers().get(i).setColor(joinGameRequest.getColor());
+                    break;
+                }
+
+                finished = true;
+            }
+
+            if (found) {
+                String cookie = "catan.game=";
+                cookie += joinGameRequest.getId();
+                cookie += ";Path=/;";
+                String message = "Success";
+                exchange.getResponseHeaders().set("Set-Cookie", cookie);
+                exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, message.length());
+                exchange.getResponseBody().write(message.getBytes());
+                exchange.getResponseBody().close();
+            } else {
+                if (finished) {
+                    String message = "Already full.";
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                    exchange.getResponseBody().write(message.getBytes());
+                    exchange.getResponseBody().close();
+                } else {
+                    PlayerInfo player = new PlayerInfo();
+                    player.setId(playerIdThisOne);
+                    player.setPlayerID(playerIdThisOne);
+                    player.setName(name);
+                    player.setColor(joinGameRequest.getColor());
+
+                    for (int i = 0; i < 4; i++) {
+                        if (AllOfOurInformation.getSingleton().getGames().get(joinGameRequest.getId()).getGame().getPlayers().get(i) == null) {
+                            AllOfOurInformation.getSingleton().getGames().get(joinGameRequest.getId()).getGame().getPlayers().set(i, player);
+                        }
+                    }
+
+                    int spot = AllOfOurInformation.getSingleton().getGames().get(joinGameRequest.getId()).getGame().getPlayers().indexOf(player);
+
+                    if (spot == -1 || 3 < spot) {
+                        AllOfOurInformation.getSingleton().getGames().get(joinGameRequest.getId()).getGame().getPlayers().remove(player);
+                        String message = "Already full.";
+                        exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                        exchange.getResponseBody().write(message.getBytes());
+                        exchange.getResponseBody().close();
+                    } else {
+                        String cookie = "catan.game=";
+                        cookie += joinGameRequest.getId();
+                        cookie += ";Path=/;";
+                        String message = "Success";
+                        exchange.getResponseHeaders().set("Set-Cookie", cookie);
+                        exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, message.length());
+                        exchange.getResponseBody().write(message.getBytes());
+                        exchange.getResponseBody().close();
+                        //Error, someone joining the same game twice simeltaneously. (Twice at the same time)
+                    }
+                }
+            }
         }
     };
 
@@ -276,23 +431,34 @@ public class Server {
 
         @Override
         public void handle(HttpExchange exchange) throws IOException {
-            exchange.getResponseHeaders().add("Content-Type", "application/json");
-            
-            //call the appropriate fascade (real or mock)
-            GameInfo result = null;
             try {
-                result = ServerFascade.getSingleton().getGameModel("?version=" + 0);
-                //result = MockServerFascade.getSingleton().getModel("");
-            } catch (ServerException ex) {
-                Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
-            }
 
-            //re-package and return the data
-            //TODO: All toString methods need to have quotes around the json fields and values
-            String message = result.toString();
-            exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, message.length());
-            exchange.getResponseBody().write(message.getBytes());
-            exchange.getResponseBody().close();
+                GameIdAndPlayerId gameAndPlayer = verifyPlayer(exchange);
+
+                if (gameAndPlayer == null) {
+                    exchange.getResponseHeaders().set("Content-Type", "text/html");
+                    String message = "Need to login and join a valid game.";
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                    exchange.getResponseBody().write(message.getBytes());
+                    exchange.getResponseBody().close();
+                    return;
+                }
+                exchange.getResponseHeaders().set("Content-Type", "application/json");
+
+                //call the appropriate fascade (real or mock)
+                String result = AllOfOurInformation.getSingleton().getGames().get(gameAndPlayer.getGameId()).getGame().toString();
+
+                //re-package and return the data
+                exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, result.length());
+                exchange.getResponseBody().write(result.getBytes());
+                exchange.getResponseBody().close();
+            } catch (Exception e) {
+                exchange.getResponseHeaders().set("Content-Type", "text/html");
+                String message = "Unable to grab model.";
+                exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                exchange.getResponseBody().write(message.getBytes());
+                exchange.getResponseBody().close();
+            }
         }
     };
 
@@ -303,7 +469,7 @@ public class Server {
 
         @Override
         public void handle(HttpExchange exchange) throws IOException {
-            exchange.getResponseHeaders().add("Content-Type", "application/json");
+            exchange.getResponseHeaders().set("Content-Type", "application/json");
             //TODO: send a chat move
 
             exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, 0);
@@ -318,7 +484,7 @@ public class Server {
 
         @Override
         public void handle(HttpExchange exchange) throws IOException {
-            exchange.getResponseHeaders().add("Content-Type", "application/json");
+            exchange.getResponseHeaders().set("Content-Type", "application/json");
             //TODO: roll a number
 
             exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, 0);
@@ -333,7 +499,7 @@ public class Server {
 
         @Override
         public void handle(HttpExchange exchange) throws IOException {
-            exchange.getResponseHeaders().add("Content-Type", "application/json");
+            exchange.getResponseHeaders().set("Content-Type", "application/json");
             //TODO: rob a player
 
             exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, 0);
@@ -348,7 +514,7 @@ public class Server {
 
         @Override
         public void handle(HttpExchange exchange) throws IOException {
-            exchange.getResponseHeaders().add("Content-Type", "application/json");
+            exchange.getResponseHeaders().set("Content-Type", "application/json");
             //TODO: finish the current player's turn
 
             exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, 0);
@@ -363,7 +529,7 @@ public class Server {
 
         @Override
         public void handle(HttpExchange exchange) throws IOException {
-            exchange.getResponseHeaders().add("Content-Type", "application/json");
+            exchange.getResponseHeaders().set("Content-Type", "application/json");
             //TODO: buy a development card
 
             exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, 0);
@@ -378,7 +544,7 @@ public class Server {
 
         @Override
         public void handle(HttpExchange exchange) throws IOException {
-            exchange.getResponseHeaders().add("Content-Type", "application/json");
+            exchange.getResponseHeaders().set("Content-Type", "application/json");
             //TODO: use year of plenty card
 
             exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, 0);
@@ -393,7 +559,7 @@ public class Server {
 
         @Override
         public void handle(HttpExchange exchange) throws IOException {
-            exchange.getResponseHeaders().add("Content-Type", "application/json");
+            exchange.getResponseHeaders().set("Content-Type", "application/json");
             //TODO: use the road building card
 
             exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, 0);
@@ -408,7 +574,7 @@ public class Server {
 
         @Override
         public void handle(HttpExchange exchange) throws IOException {
-            exchange.getResponseHeaders().add("Content-Type", "application/json");
+            exchange.getResponseHeaders().set("Content-Type", "application/json");
             //TODO: use the soldier card
 
             exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, 0);
@@ -423,7 +589,7 @@ public class Server {
 
         @Override
         public void handle(HttpExchange exchange) throws IOException {
-            exchange.getResponseHeaders().add("Content-Type", "application/json");
+            exchange.getResponseHeaders().set("Content-Type", "application/json");
             //TODO: use monument card
 
             exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, 0);
@@ -438,7 +604,7 @@ public class Server {
 
         @Override
         public void handle(HttpExchange exchange) throws IOException {
-            exchange.getResponseHeaders().add("Content-Type", "application/json");
+            exchange.getResponseHeaders().set("Content-Type", "application/json");
             //TODO: offer a trade to another player
 
             exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, 0);
@@ -453,7 +619,7 @@ public class Server {
 
         @Override
         public void handle(HttpExchange exchange) throws IOException {
-            exchange.getResponseHeaders().add("Content-Type", "application/json");
+            exchange.getResponseHeaders().set("Content-Type", "application/json");
             //TODO: accept a trade from another player
 
             exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, 0);
@@ -468,7 +634,7 @@ public class Server {
 
         @Override
         public void handle(HttpExchange exchange) throws IOException {
-            exchange.getResponseHeaders().add("Content-Type", "application/json");
+            exchange.getResponseHeaders().set("Content-Type", "application/json");
             //TODO: build a settlement
 
             exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, 0);
@@ -483,7 +649,7 @@ public class Server {
 
         @Override
         public void handle(HttpExchange exchange) throws IOException {
-            exchange.getResponseHeaders().add("Content-Type", "application/json");
+            exchange.getResponseHeaders().set("Content-Type", "application/json");
             //TODO: build a city
 
             exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, 0);
@@ -498,7 +664,7 @@ public class Server {
 
         @Override
         public void handle(HttpExchange exchange) throws IOException {
-            exchange.getResponseHeaders().add("Content-Type", "application/json");
+            exchange.getResponseHeaders().set("Content-Type", "application/json");
             //TODO: build a road
 
             exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, 0);
@@ -513,7 +679,7 @@ public class Server {
 
         @Override
         public void handle(HttpExchange exchange) throws IOException {
-            exchange.getResponseHeaders().add("Content-Type", "application/json");
+            exchange.getResponseHeaders().set("Content-Type", "application/json");
             //TODO: perform a maritime trade
 
             exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, 0);
@@ -528,7 +694,7 @@ public class Server {
 
         @Override
         public void handle(HttpExchange exchange) throws IOException {
-            exchange.getResponseHeaders().add("Content-Type", "application/json");
+            exchange.getResponseHeaders().set("Content-Type", "application/json");
             //TODO: discard cards
 
             exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, 0);
@@ -536,6 +702,41 @@ public class Server {
             exchange.getResponseBody().close();
         }
     };
+
+    private GameIdAndPlayerId verifyPlayer(HttpExchange exchange) {
+        try {
+            String userCookie = exchange.getRequestHeaders().getFirst("Cookie");
+            GameIdAndPlayerId gameAndPlayer = null;
+            if (userCookie == null || userCookie.equals("")) {
+                return gameAndPlayer;
+            }
+
+            String decodedCookie = URLDecoder.decode(userCookie.split("=")[1], "UTF-8");
+            Integer playerIdThisOne = model.fromJson(decodedCookie.split(";")[0], CookieModel.class).getPlayerID();
+            Integer gameId = Integer.parseInt(URLDecoder.decode(userCookie.split("=")[2], "UTF-8"));
+
+            boolean found = false;
+
+            for (GameManager gm : AllOfOurInformation.getSingleton().getGames()) {
+                if (gm.getGame().getId() == gameId) {
+                    for (int i = 0; i < gm.getGame().getPlayers().size(); i++) {
+                        if (gm.getGame().getPlayers().get(i).getId() == playerIdThisOne) {
+                            found = true;
+                            break;
+                        }
+                    }
+                    break;
+                }
+            }
+
+            if (found) {
+                gameAndPlayer = new GameIdAndPlayerId(playerIdThisOne, gameId);
+            }
+            return gameAndPlayer;
+        } catch (Exception e) {
+            return null;
+        }
+    }
 
     /**
      * Maps each parameter to it's value

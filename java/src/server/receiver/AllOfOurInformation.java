@@ -8,7 +8,7 @@ package server.receiver;
 import java.util.ArrayList;
 import java.util.List;
 import shared.data.User;
-
+import client.managers.GameManager;
 
 /**
  *
@@ -18,13 +18,19 @@ public class AllOfOurInformation {
     
     public static AllOfOurInformation allInfo = null;
     private static List<User> users;
+    private static List<GameManager> games;
     
     public static AllOfOurInformation getSingleton() {
         if (allInfo == null) {
             allInfo = new AllOfOurInformation();
             users = new ArrayList<User>();
+            games = new ArrayList<GameManager>();
         }
         return allInfo;
+    }
+    
+    public List<GameManager> getGames(){
+        return games;
     }
     
     public List<User> getUsers(){

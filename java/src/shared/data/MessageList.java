@@ -7,7 +7,7 @@ public class MessageList {
     private ArrayList<MessageLine> lines;
 
     public MessageList() {
-
+        lines = new ArrayList<MessageLine>();
     }
 
     public ArrayList<MessageLine> getLines() {

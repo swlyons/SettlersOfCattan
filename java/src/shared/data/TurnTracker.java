@@ -47,8 +47,9 @@ public class TurnTracker {
 
     @Override
     public String toString() {
-        return "{, \"status\" : \"" + status + "\" , \"longestRoad\" : "
-                + longestRoad + ", \"largestArmy\" : " + largestArmy + "}";
+        return "{\"status\" : \"" + status + "\" , \"longestRoad\" : "
+                + longestRoad + ", \"largestArmy\" : " + largestArmy + 
+                ",\"currentTurn\":"+currentTurn+"}";
     }
 
 }
