@@ -59,7 +59,11 @@ public class ServerFascade implements Fascade {
 
     @Override
     public ArrayList<GameInfo> listGames() throws ServerException {
-        return new ArrayList<GameInfo>();
+        ArrayList<GameInfo> games = new ArrayList<GameInfo>();
+        for(int i=0;i<AllOfOurInformation.getSingleton().getGames().size();i++){
+            games.add(AllOfOurInformation.getSingleton().getGames().get(i).getGame());
+        }        
+        return games;
     }
 
     @Override
