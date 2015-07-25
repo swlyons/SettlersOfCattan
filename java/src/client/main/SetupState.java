@@ -28,7 +28,7 @@ public class SetupState extends State {
 
         GameInfo gameInformation = null;
         try {
-            gameInformation = ClientFascade.getSingleton().getGameModel(-1 + "");
+            gameInformation = ClientFascade.getSingleton().getGameModel("?version=" + -1);
         } catch (ClientException ex) {
             ex.printStackTrace();
             Logger.getLogger(SetupState.class.getName()).log(Level.SEVERE, null, ex);

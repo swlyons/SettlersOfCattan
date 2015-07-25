@@ -20,6 +20,8 @@ import shared.data.PlayerInfo;
 import shared.data.ResourceList;
 import client.discard.DiscardController;
 import client.domestic.DomesticTradeController;
+import client.main.ClientException;
+import client.main.FirstRoundState;
 import client.points.PointsController;
 import client.resources.ResourceBarController;
 import client.resources.ResourceBarElement;
@@ -27,9 +29,12 @@ import client.roll.RollController;
 import client.turntracker.TurnTrackerView;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.Icon;
 import shared.definitions.CatanColor;
 import shared.definitions.PieceType;
+import shared.model.FinishMove;
 
 /**
  *
@@ -67,7 +72,6 @@ public class MapPoller extends TimerTask {
     }
 
     public void run() {
-        Date time1 = new Date();
         if (ClientCommunicator.getSingleton().getJoinedGame()) {
 
             try {
@@ -75,7 +79,7 @@ public class MapPoller extends TimerTask {
                 GameHistoryView historyView = catanPanel.getLeftPanel().getHistoryView();
                 TurnTrackerView turnTrackerView = catanPanel.getLeftPanel().getTurnView();
                 RollController rollController = catanPanel.getRollController();
-
+                DiscardController dis = catanPanel.getDiscardController();
                 GameStatePanel gameStatePanel = catanPanel.getMidPanel().getGameStatePanel();
 
                 PointsController pointsController = catanPanel.getRightPanel().getPointsController();
@@ -83,17 +87,23 @@ public class MapPoller extends TimerTask {
                 MapView mapView = (MapView) catanPanel.getMidPanel().getMapController().getView();
 
                 GameManager gameManager = ClientCommunicator.getSingleton().getGameManager();
-
+                String status = "";
                 GameInfo gameInformation = ClientFascade.getSingleton()
-                        .getGameModel(version + "");
+                        .getGameModel("?version=" + (gameManager.getGame().getVersion() - 1));
+                status = gameInformation.getTurnTracker().getStatus();
 
-                gameManager.initializeGame(gameInformation);
-                version = gameInformation.getVersion();
+                //only do these updates when the version changes
+                //<editor-fold desc="Version Dependent">
+                if (version != gameManager.getGame().getVersion()) {
+                    gameManager.initializeGame(gameInformation);
+                    version = gameInformation.getVersion();
+                    mapView.getController().initFromModel();
+                }
+                //</editor-fold>
 
-                String status = gameInformation.getTurnTracker().getStatus();
-
-                mapView.getController().initFromModel();
-
+                //these must be done whether the version changes or not
+                // <editor-fold desc="Version Independent">
+                /*  ---------- BEGIN ----------THESE UPDATES WILL BE DONE WHETHER THE VERSION CHANGES OR NOT */
                 if (playerIndex == -1) {
                     Integer playerId = ClientCommunicator.getSingleton().getPlayerId();
                     for (int i = 0; i < gameManager.getGame().getPlayers().size(); i++) {
@@ -104,10 +114,142 @@ public class MapPoller extends TimerTask {
                         }
                     }
                 }
+                //update the button color to match whomever the current player is
+                if (gameStatePanel.getBackground() != CatanColor.valueOf(gameInformation.getPlayers().get(gameInformation.getTurnTracker().getCurrentTurn()).getColor().toUpperCase()).getJavaColor()) {
 
-                /* Begin MapView Update */
-                // If they haven't initialized before or it isn't the client's
-                // turn
+                    gameStatePanel.getCentered().setBackground(CatanColor.valueOf(gameInformation.getPlayers().get(gameInformation.getTurnTracker().getCurrentTurn()).getColor().toUpperCase()).getJavaColor());
+                }
+
+                // Toggle the button to Finish Turn (this ultimately controls whether the button is enable or not)
+                if (status.equals("Playing") && playerIndex == gameInformation.getTurnTracker().getCurrentTurn()) {
+                    status = "Finish Turn";
+                }
+                // <editor-fold desc="Roll Update">
+                /* Begin Roll Update */
+                if (status.equals("Rolling") && playerIndex == gameInformation.getTurnTracker().getCurrentTurn()) {
+
+                    if (!rollController.getRollView().isModalShowing()) {
+                        rollController.getRollView().showModal();
+                        rollController.getRollView().getRollTimer().start();
+                        rollController.setClickedOk(false);
+                    }
+                    //enable = true;
+                }
+                /* End Roll Update */
+                // </editor-fold>
+
+                // <editor-fold desc="Turn Tracker Update">
+                /**
+                 * ******* Begin Turn Tracker Update ********
+                 */
+                /* Begin Turn Tracker Initialization */
+                for (PlayerInfo player : gameInformation.getPlayers()) {
+                    if (!initializedPlayers) {
+                        turnTrackerView.initializePlayer(player.getPlayerIndex(), player.getName(),
+                                CatanColor.valueOf(player.getColor().toUpperCase()));
+
+                    }
+                }
+                //only initialize the players once (multiple times creates garbled data)
+                initializedPlayers = true;
+                /* End Turn Tracker Initialization */
+                for (PlayerInfo player : gameInformation.getPlayers()) {
+                    if (initializedPlayers) {
+                        boolean longestRoad = false;
+                        boolean largestArmy = false;
+                        boolean highlight = false;
+                        int index = player.getPlayerIndex();
+                        // only update local player color for local player
+                        if (player.getPlayerID() == ClientCommunicator.getSingleton().getPlayerId()) {
+                            turnTrackerView.setLocalPlayerColor(CatanColor.valueOf(player.getColor().toUpperCase()));
+                            pointsController.getPointsView().setPoints(player.getVictoryPoints());
+                        }
+                        // decide the awards
+                        if (gameInformation.getTurnTracker().getLargestArmy() == index) {
+                            largestArmy = true;
+                        }
+                        if (gameInformation.getTurnTracker().getLongestRoad() == index) {
+                            longestRoad = true;
+                        }
+                        // decide who is current player
+                        if (gameInformation.getTurnTracker().getCurrentTurn() == index) {
+                            highlight = true;
+                        }
+
+                        turnTrackerView.updatePlayer(index, player.getVictoryPoints(), highlight, largestArmy,
+                                longestRoad);
+
+                        /* Begin Points Controller Update */
+                        if (player.getVictoryPoints() == MAX_POINTS) {
+                            pointsController.getFinishedView().setWinner(player.getName(),
+                                    (player.getPlayerIndex() == index));
+                            if (!pointsController.getFinishedView().isModalShowing()) {
+                                pointsController.getFinishedView().showModal();
+                            }
+                        }
+                        /* End Points Controller Update */
+                    }
+
+                }
+                /**
+                 * ******* End Turn Track Update ********
+                 */
+                // </editor-fold>
+
+                //updates the game state panel with the new status
+                turnTrackerView.updateGameState(status, status.equalsIgnoreCase("Finish Turn"));
+
+                //<editor-fold desc="Chat View Update">
+                /* Begin Chat View Update */
+                int oldChatSize = chatView.getEntries().size();
+                int newChatSize = gameInformation.getChat().getLines().size();
+                CatanColor color = CatanColor.WHITE;
+
+                if (oldChatSize != newChatSize || (newChatSize == 0)) {
+                    ArrayList<LogEntry> newChatEntries = new ArrayList<>();
+                    for (MessageLine messageLine : gameInformation.getChat().getLines()) {
+                        // get the color
+                        for (PlayerInfo player : gameInformation.getPlayers()) {
+                            if (player.getName().equals(messageLine.getSource())) {
+                                color = CatanColor.valueOf(player.getColor().toUpperCase());
+                                break;
+                            }
+                        }
+                        LogEntry logEntry = new LogEntry(color, messageLine.getMessage());
+                        newChatEntries.add(logEntry);
+                    }
+                    chatView.setEntries(newChatEntries);
+                }
+                /* End Chat View Update */
+                //</editor-fold>
+
+                //<editor-fold desc="Game History Update">
+                /* Begin Game History View Update */
+                int oldHistorySize = historyView.getEntries().size();
+                int newHistorySize = gameInformation.getLog().getLines().size();
+                CatanColor colorHistory = CatanColor.WHITE;
+
+                if (oldHistorySize != newHistorySize || (newHistorySize == 0)) {
+                    ArrayList<LogEntry> newHistoryEntries = new ArrayList<>();
+                    for (MessageLine messageLine : gameInformation.getLog().getLines()) {
+                        // get the color
+                        for (PlayerInfo player : gameInformation.getPlayers()) {
+                            if (player.getName().equals(messageLine.getSource())) {
+                                colorHistory = CatanColor.valueOf(player.getColor().toUpperCase());
+                                break;
+                            }
+                        }
+                        LogEntry logEntry = new LogEntry(colorHistory, messageLine.getMessage());
+                        newHistoryEntries.add(logEntry);
+                    }
+                    historyView.setEntries(newHistoryEntries);
+                }
+                /* End Game History View Update */
+                // </editor-fold>
+
+                //<editor-fold desc="Trade Panel Update">
+                // If they haven't initialized before or it isn't the client's turn
+                /* Begin Trade Panel Update */
                 if (gameManager.getGame().getTradeOffer() == null) {
                     seenTrade = false;
                     if (catanPanel.getMidPanel().getTradePanel().getDomesticController().getWaitingForOffer()) {
@@ -117,6 +259,10 @@ public class MapPoller extends TimerTask {
                         catanPanel.getMidPanel().getTradePanel().getDomesticController().getTradeOverlay().reset();
                     }
                 }
+                /* End Domestic Trade Panel Update */
+                // </editor-fold>
+
+                //<editor-fold desc="Resource Bar Update">
                 /* Begin Resource Bar Update */
                 for (PlayerInfo player : gameInformation.getPlayers()) {
                     if (player.getPlayerIndex() == playerIndex) {
@@ -148,8 +294,10 @@ public class MapPoller extends TimerTask {
                     }
                 }
                 /* End Resource Bar Update */
-                DiscardController dis = catanPanel.getDiscardController();
+                // </editor-fold>
 
+                //<editor-fold desc="Discard Controller">
+                /* Begin Discard Controller */
                 if (doneOnce && gameInformation.getTurnTracker().getCurrentTurn() == playerIndex && rollController.getClickedOk()) {
                     if (status.equals("Discarding") && !gameInformation.getPlayers().get(playerIndex).isDiscarded() && gameManager.getResourceManager()
                             .getGameBanks().get(playerIndex).getResourcesCards().getTotalResources() > 7 && !discardedOnce) {
@@ -160,17 +308,22 @@ public class MapPoller extends TimerTask {
                         }
                     }
                     if (status.equals("Robbing")) {
-                        catanPanel.getMidPanel().getMapController().startMove(PieceType.ROBBER, true, true);
+                        mapView.getController().startMove(PieceType.ROBBER, true, true);
                         rollController.setClickedOk(false);
                         discardedOnce = false;
                     }
                 }
+                /* End Discard Controller */
+                //</editor-fold>
 
+                //<editor-fold desc="Updated Not Your Turn">
+                /* Begin Updated Not Your Turn */
+                // Things need updating when it's not the current player's turn
                 if (!doneOnce || gameInformation.getTurnTracker().getCurrentTurn() != playerIndex) {
                     doneOnce = true;
                     if (gameInformation.getTurnTracker().getCurrentTurn() == playerIndex) {
                         if (status.equals("Robbing")) {
-                            catanPanel.getMidPanel().getMapController().startMove(PieceType.ROBBER, true, true);
+                            mapView.getController().startMove(PieceType.ROBBER, true, true);
                         }
 
                         if (status.equals("Discarding") && !gameInformation.getPlayers().get(playerIndex).isDiscarded() && gameManager.getResourceManager()
@@ -183,6 +336,7 @@ public class MapPoller extends TimerTask {
                         }
                     } else {
 
+                        //<editor-fold desc="Discard Window Update">
                         /* Begin Discard Window Update */
                         if (status.equals("Discarding") && !gameInformation.getPlayers().get(playerIndex).isDiscarded() && gameManager.getResourceManager()
                                 .getGameBanks().get(playerIndex).getResourcesCards().getTotalResources() > 7) {
@@ -192,7 +346,9 @@ public class MapPoller extends TimerTask {
                             }
                         }
                         /* End Discard Window Update */
+                        // </editor-fold>
 
+                        //<editor-fold desc="Trade Window Update">
                         /* Begin tradeWindow Update */
                         if (gameManager.getGame().getTradeOffer() != null
                                 && !catanPanel.getMidPanel().getTradePanel().getDomesticController().getWaitingForOffer()) {
@@ -239,128 +395,13 @@ public class MapPoller extends TimerTask {
                             }
                         }
                         /* End tradeWindow Update */
+                        // </editor-fold>
                     }
                 }
+                // </editor-fold>
 
-                /* Begin Turn Tracker Update */
-                // TODO: need to figure out which statuses need to be disable or
-                // enabled
-                boolean enable = false;
-                /* Begin Roll Update */
-                // every turn starts with a roll
-                if (status.equals("Rolling") && playerIndex == gameInformation.getTurnTracker().getCurrentTurn()) {
-
-                    if (!rollController.getRollView().isModalShowing()) {
-                        rollController.getRollView().showModal();
-                        rollController.getRollView().getRollTimer().start();
-                        rollController.setClickedOk(false);
-                    }
-
-                }
-                /* End Roll Update */
-
-                if (status.equals("Playing") && playerIndex == gameInformation.getTurnTracker().getCurrentTurn()) {
-                    enable = true;
-                    if (gameStatePanel.getBackground() != CatanColor.valueOf(playerColor.toUpperCase()).getJavaColor()) {
-
-                        gameStatePanel.getCentered().setBackground(CatanColor.valueOf(playerColor.toUpperCase()).getJavaColor());
-                    }
-
-                    status = "Finish Turn";
-                }
-
-                /* Begin turnTracker Update */
-                turnTrackerView.updateGameState(status, enable);
-                for (PlayerInfo player : gameInformation.getPlayers()) {
-                    boolean longestRoad = false;
-                    boolean largestArmy = false;
-                    boolean highlight = false;
-                    int currentPlayerIndex = player.getPlayerIndex();
-
-                    if (!initializedPlayers) {
-                        turnTrackerView.initializePlayer(currentPlayerIndex, player.getName(),
-                                CatanColor.valueOf(player.getColor().toUpperCase()));
-                    }
-
-                    // only update local player color for local player
-                    if (player.getPlayerID() == ClientCommunicator.getSingleton().getPlayerId()) {
-                        turnTrackerView.setLocalPlayerColor(CatanColor.valueOf(player.getColor().toUpperCase()));
-                        pointsController.getPointsView().setPoints(player.getVictoryPoints());
-                    }
-                    // decide the awards
-                    if (gameInformation.getTurnTracker().getLargestArmy() == currentPlayerIndex) {
-                        largestArmy = true;
-                    }
-                    if (gameInformation.getTurnTracker().getLongestRoad() == currentPlayerIndex) {
-                        longestRoad = true;
-                    }
-                    // decide who is current player
-                    if (gameInformation.getTurnTracker().getCurrentTurn() == currentPlayerIndex) {
-                        highlight = true;
-                    }
-
-                    turnTrackerView.updatePlayer(currentPlayerIndex, player.getVictoryPoints(), highlight, largestArmy,
-                            longestRoad);
-
-                    /* Begin Points Controller Update */
-                    if (player.getVictoryPoints() == MAX_POINTS) {
-                        pointsController.getFinishedView().setWinner(player.getName(),
-                                (player.getPlayerIndex() == playerIndex));
-                        if (!pointsController.getFinishedView().isModalShowing()) {
-                            pointsController.getFinishedView().showModal();
-                        }
-                    }
-                    /* End Points Controller Update */
-
-                }
-                
-                /* End Turn Tracker Update */
-
-                /* Begin Chat View Update */
-                int oldChatSize = chatView.getEntries().size();
-                int newChatSize = gameInformation.getChat().getLines().size();
-                CatanColor color = CatanColor.WHITE;
-
-                if (oldChatSize != newChatSize || (newChatSize == 0)) {
-                    ArrayList<LogEntry> newChatEntries = new ArrayList<>();
-                    for (MessageLine messageLine : gameInformation.getChat().getLines()) {
-                        // get the color
-                        for (PlayerInfo player : gameInformation.getPlayers()) {
-                            if (player.getName().equals(messageLine.getSource())) {
-                                color = CatanColor.valueOf(player.getColor().toUpperCase());
-                                break;
-                            }
-                        }
-                        LogEntry logEntry = new LogEntry(color, messageLine.getMessage());
-                        newChatEntries.add(logEntry);
-                    }
-                    chatView.setEntries(newChatEntries);
-                }
-                /* End Chat View Update */
-
-                /* Begin Game History View Update */
-                int oldHistorySize = historyView.getEntries().size();
-                int newHistorySize = gameInformation.getLog().getLines().size();
-                CatanColor colorHistory = CatanColor.WHITE;
-                System.out.println("Map Poller Old Size: " + oldHistorySize + " New Size: " + newHistorySize);
-                if (oldHistorySize != newHistorySize || (newHistorySize == 0)) {
-                    ArrayList<LogEntry> newHistoryEntries = new ArrayList<>();
-                    for (MessageLine messageLine : gameInformation.getLog().getLines()) {
-                        // get the color
-                        for (PlayerInfo player : gameInformation.getPlayers()) {
-                            if (player.getName().equals(messageLine.getSource())) {
-                                colorHistory = CatanColor.valueOf(player.getColor().toUpperCase());
-                                break;
-                            }
-                        }
-                        LogEntry logEntry = new LogEntry(colorHistory, messageLine.getMessage());
-                        newHistoryEntries.add(logEntry);
-                    }
-                    historyView.setEntries(newHistoryEntries);
-                }
-                /* End Game History View Update */
-                turnTrackerView.updateGameState(status, status.equalsIgnoreCase("Finish Turn"));
-                initializedPlayers = false;
+                /* ---------- END ----------THESE UPDATES WILL BE DONE WHETHER THE VERSION CHANGES OR NOT */
+                // </editor-fold>
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -368,5 +409,4 @@ public class MapPoller extends TimerTask {
         }
 
     }
-
 }

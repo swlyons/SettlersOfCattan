@@ -15,23 +15,20 @@ import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.sun.net.httpserver.Headers;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.URLDecoder;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import server.receiver.*;
 import server.receiver.AllOfOurInformation;
-import server.main.GameIdAndPlayerId;
 import shared.data.*;
 import shared.model.*;
-import sun.font.CreatedFontTracker;
 import client.communication.CookieModel;
 import client.managers.GameManager;
-import java.util.Set;
+import java.io.BufferedReader;
+import java.util.Scanner;
 
 public class Server {
 
@@ -289,28 +286,50 @@ public class Server {
 
         @Override
         public void handle(HttpExchange exchange) throws IOException {
-
             Reader reader = new InputStreamReader(exchange.getRequestBody(), "UTF-8");
-            CreateGameRequest createGame = model.fromJson(reader, CreateGameRequest.class);
-            GameInfo gameInfo = null;
-            try {
-                gameInfo = ServerFascade.getSingleton().createGame(createGame);
-            } catch (Exception e) {
+            String messageBody = "";
 
+            //check that the booleans are actually booleans for the swagger
+            //<editor-fold desc="Check Booleans">
+            BufferedReader br = new BufferedReader(reader);
+            Scanner sc = new Scanner(br);
+            boolean validRandomValues = true;
+            while (sc.hasNextLine()) {
+                String line = sc.next();
+                if (line.contains(",")) {
+                    if (!line.contains("true") && !line.contains("false")) {
+                        //invalid request
+                        validRandomValues = false;
+                        break;
+                    }
+                }
+                messageBody += line;
             }
-            if (gameInfo != null) {
+            //</editor-fold>
+            GameInfo gameInfo = null;
+            if (validRandomValues) {
+                CreateGameRequest createGame = model.fromJson(messageBody, CreateGameRequest.class);
+                try {
+                    gameInfo = ServerFascade.getSingleton().createGame(createGame);
+                } catch (Exception e) {
+
+                }
+            }
+            if (gameInfo != null && validRandomValues) {
                 exchange.getResponseHeaders().set("Content-Type", "application/json");
                 String message = "{";
                 message += "\"title\"" + ":\"" + gameInfo.getTitle() + "\",";
                 message += "\"id\"" + ":" + gameInfo.getId() + ",";
                 message += "\"players\"" + ": [{},{},{},{}]";
                 message += "}";
+
                 exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, message.length());
                 exchange.getResponseBody().write(message.getBytes());
                 exchange.getResponseBody().close();
             } else {
                 exchange.getResponseHeaders().set("Content-Type", "text/html");
-                String message = "Failed to createGame - need a name.";
+
+                String message = validRandomValues ? "Failed to createGame - need a name." : "Failed to create game - all random values (i.e. randomTiles) must be \"true\" or \"false\"";
                 exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
                 exchange.getResponseBody().write(message.getBytes());
                 exchange.getResponseBody().close();
@@ -359,16 +378,16 @@ public class Server {
             boolean finished = false;
 
             for (int i = 0; i < 4; i++) {
-                if (AllOfOurInformation.getSingleton().getGames().get(joinGameRequest.getId()).getGame().getPlayers().get(i)==null) {
+                if (AllOfOurInformation.getSingleton().getGames().get(joinGameRequest.getId()).getGame().getPlayers().get(i) == null) {
                     break;
                 }
-                
+
                 if (AllOfOurInformation.getSingleton().getGames().get(joinGameRequest.getId()).getGame().getPlayers().get(i).getId() == playerIdThisOne) {
                     found = true;
                     AllOfOurInformation.getSingleton().getGames().get(joinGameRequest.getId()).getGame().getPlayers().get(i).setColor(joinGameRequest.getColor());
                     break;
                 }
-                
+
                 finished = true;
             }
 
@@ -393,15 +412,15 @@ public class Server {
                     player.setPlayerID(playerIdThisOne);
                     player.setName(name);
                     player.setColor(joinGameRequest.getColor());
-                    
-                    for(int i=0;i<4;i++){
-                        if(AllOfOurInformation.getSingleton().getGames().get(joinGameRequest.getId()).getGame().getPlayers().get(i)==null){
+
+                    for (int i = 0; i < 4; i++) {
+                        if (AllOfOurInformation.getSingleton().getGames().get(joinGameRequest.getId()).getGame().getPlayers().get(i) == null) {
                             AllOfOurInformation.getSingleton().getGames().get(joinGameRequest.getId()).getGame().getPlayers().set(i, player);
                         }
                     }
-                    
+
                     int spot = AllOfOurInformation.getSingleton().getGames().get(joinGameRequest.getId()).getGame().getPlayers().indexOf(player);
-                    
+
                     if (spot == -1 || 3 < spot) {
                         AllOfOurInformation.getSingleton().getGames().get(joinGameRequest.getId()).getGame().getPlayers().remove(player);
                         String message = "Already full.";
@@ -432,9 +451,10 @@ public class Server {
         @Override
         public void handle(HttpExchange exchange) throws IOException {
             try {
+
                 GameIdAndPlayerId gameAndPlayer = verifyPlayer(exchange);
-                
-                if (gameAndPlayer==null) {
+
+                if (gameAndPlayer == null) {
                     exchange.getResponseHeaders().set("Content-Type", "text/html");
                     String message = "Need to login and join a valid game.";
                     exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
@@ -443,10 +463,10 @@ public class Server {
                     return;
                 }
                 exchange.getResponseHeaders().set("Content-Type", "application/json");
-                
+
                 //call the appropriate fascade (real or mock)
                 String result = AllOfOurInformation.getSingleton().getGames().get(gameAndPlayer.getGameId()).getGame().toString();
-                                
+
                 //re-package and return the data
                 exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, result.length());
                 exchange.getResponseBody().write(result.getBytes());
@@ -457,7 +477,6 @@ public class Server {
                 exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
                 exchange.getResponseBody().write(message.getBytes());
                 exchange.getResponseBody().close();
-                return;
             }
         }
     };
@@ -702,40 +721,40 @@ public class Server {
             exchange.getResponseBody().close();
         }
     };
-    
-    private GameIdAndPlayerId verifyPlayer(HttpExchange exchange){
-        try{
-        String userCookie = exchange.getRequestHeaders().getFirst("Cookie");
-        GameIdAndPlayerId gameAndPlayer = null;
-        if (userCookie == null || userCookie.equals("")) {
-            return gameAndPlayer;
-        }
 
-        String decodedCookie = URLDecoder.decode(userCookie.split("=")[1], "UTF-8");
-        Integer playerIdThisOne = model.fromJson(decodedCookie.split(";")[0], CookieModel.class).getPlayerID();
-        Integer gameId = Integer.parseInt(URLDecoder.decode(userCookie.split("=")[2], "UTF-8"));
-        
-        boolean found = false;
-        
-        for(GameManager gm : AllOfOurInformation.getSingleton().getGames()){
-            if(gm.getGame().getId()==gameId){
-                for(int i=0;i<gm.getGame().getPlayers().size();i++){
-                    if(gm.getGame().getPlayers().get(i).getId()==playerIdThisOne){
-                        found = true;
-                        break;
-                    }
-                }
-                break;
+    private GameIdAndPlayerId verifyPlayer(HttpExchange exchange) {
+        try {
+            String userCookie = exchange.getRequestHeaders().getFirst("Cookie");
+            GameIdAndPlayerId gameAndPlayer = null;
+            if (userCookie == null || userCookie.equals("")) {
+                return gameAndPlayer;
             }
-        }
-        
-        if(found){
-            gameAndPlayer = new GameIdAndPlayerId(playerIdThisOne, gameId);
-        }
-        return gameAndPlayer;
-        } catch(Exception e){
+
+            String decodedCookie = URLDecoder.decode(userCookie.split("=")[1], "UTF-8");
+            Integer playerIdThisOne = model.fromJson(decodedCookie.split(";")[0], CookieModel.class).getPlayerID();
+            Integer gameId = Integer.parseInt(URLDecoder.decode(userCookie.split("=")[2], "UTF-8"));
+
+            boolean found = false;
+
+            for (GameManager gm : AllOfOurInformation.getSingleton().getGames()) {
+                if (gm.getGame().getId() == gameId) {
+                    for (int i = 0; i < gm.getGame().getPlayers().size(); i++) {
+                        if (gm.getGame().getPlayers().get(i).getId() == playerIdThisOne) {
+                            found = true;
+                            break;
+                        }
+                    }
+                    break;
+                }
+            }
+
+            if (found) {
+                gameAndPlayer = new GameIdAndPlayerId(playerIdThisOne, gameId);
+            }
+            return gameAndPlayer;
+        } catch (Exception e) {
             return null;
-        }        
+        }
     }
 
     /**

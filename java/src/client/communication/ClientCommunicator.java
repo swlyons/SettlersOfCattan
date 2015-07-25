@@ -134,6 +134,10 @@ public class ClientCommunicator {
 
         try {
             URL url = new URL(URL_PREFIX + "/" + commandName + params);
+
+            if (commandName.contains("model")) {
+                System.out.println(url);
+            }
             HttpURLConnection connection = (HttpURLConnection) url
                     .openConnection();
             connection.setRequestMethod(HTTP_GET);

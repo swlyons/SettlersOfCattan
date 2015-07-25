@@ -7,6 +7,14 @@ import java.awt.event.ActionListener;
 import javax.swing.*;
 
 import client.base.IAction;
+import client.communication.ClientCommunicator;
+import client.communication.ClientFascade;
+import client.main.ClientException;
+import client.main.FirstRoundState;
+import client.managers.GameManager;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import shared.model.FinishMove;
 
 @SuppressWarnings("serial")
 public class GameStatePanel extends JPanel {

@@ -6,6 +6,7 @@ import java.awt.event.*;
 import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JPanel;
+import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 
 /**
@@ -82,6 +83,8 @@ public class ChatView extends PanelView implements IChatView {
     @Override
     public void setEntries(final List<LogEntry> entries) {
         chatPanel.setEntries(entries);
+        JScrollBar vertical = chatScrollPane.getVerticalScrollBar();
+        vertical.setValue(vertical.getMaximum());
     }
 
     /**
@@ -91,7 +94,6 @@ public class ChatView extends PanelView implements IChatView {
         String message = chatTextInput.getText();
         if (!message.isEmpty()) {
             getController().sendMessage(message);
-
             // Clear the text area so we are ready for the next message
             chatTextInput.setText("");
         }

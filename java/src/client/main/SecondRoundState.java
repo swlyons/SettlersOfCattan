@@ -37,59 +37,57 @@ public class SecondRoundState extends State {
         System.out.println(this.toString());
         while (status.equals("SecondRound")) {
             GameManager gameManager = ClientCommunicator.getSingleton().getGameManager();
-
-            GameInfo gameInformation = null;
             try {
-                gameInformation = ClientFascade.getSingleton()
-                        .getGameModel(0 + "");
-            } catch (ClientException ex) {
-                ex.printStackTrace();
-                Logger.getLogger(FirstRoundState.class.getName()).log(Level.SEVERE, null, ex);
-            }
+                GameInfo gameInformation = gameInformation = ClientFascade.getSingleton()
+                        .getGameModel("?version=" + -1);
+                gameManager.initializeGame(gameInformation);
+                version = gameInformation.getVersion();
 
-            gameManager.initializeGame(gameInformation);
-            version = gameInformation.getVersion();
+                if (gameInformation.getTurnTracker().getStatus().equals("FirstRound")) {
+                    try {
+                        Thread.sleep(3000);
+                        continue;
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        continue;
 
-            if (gameInformation.getTurnTracker().getStatus().equals("FirstRound")) {
-                try {
-                    Thread.sleep(3000);
-                    continue;
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    continue;
-
+                    }
                 }
-            }
-            status = gameInformation.getTurnTracker().getStatus();
+                status = gameInformation.getTurnTracker().getStatus();
 
-            Integer playerId = ClientCommunicator.getSingleton().getPlayerId();
-            int size = gameManager.getGame().getPlayers().size();
-            for (int i = 0; i < size; i++) {
-                if (gameManager.getGame().getPlayers().get(i).getPlayerID() == playerId) {
-                    playerIndex = gameManager.getGame().getPlayers().get(i).getPlayerIndex();
-                    break;
+                Integer playerId = ClientCommunicator.getSingleton().getPlayerId();
+                int size = gameManager.getGame().getPlayers().size();
+                for (int i = 0; i < size; i++) {
+                    if (gameManager.getGame().getPlayers().get(i).getPlayerID() == playerId) {
+                        playerIndex = gameManager.getGame().getPlayers().get(i).getPlayerIndex();
+                        break;
+                    }
                 }
-            }
 
-            if (playerIndex == gameInformation.getTurnTracker().getCurrentTurn()) {
-                if (status.equals("SecondRound")) {
-                    if (((MapView) mapController.getView()).getOverlay() == null
-                            || (firstTime && !((MapView) mapController.getView()).getOverlay().isModalShowing())) {
-                        firstTime = false;
-                        mapController.initFromModel();
-                        int settlements = 0;
-                        for (Location location : gameManager.getLocationManager().getSettledLocations()) {
-                            if (playerIndex == location.getOwnerID()) {
-                                settlements++;
+                if (playerIndex == gameInformation.getTurnTracker().getCurrentTurn()) {
+                    if (status.equals("SecondRound")) {
+                        if (((MapView) mapController.getView()).getOverlay() == null
+                                || (firstTime && !((MapView) mapController.getView()).getOverlay().isModalShowing())) {
+                            firstTime = false;
+                            mapController.initFromModel();
+                            int settlements = 0;
+                            for (Location location : gameManager.getLocationManager().getSettledLocations()) {
+                                if (playerIndex == location.getOwnerID()) {
+                                    settlements++;
+                                }
                             }
-                        }
-                        if (settlements == 1) {
-                            mapController.startMove(PieceType.SETTLEMENT, true, true);
-                        } else {
-                            mapController.startMove(PieceType.ROAD, true, true);
+                            if (settlements == 1) {
+                                mapController.startMove(PieceType.SETTLEMENT, true, true);
+                            } else {
+                                mapController.startMove(PieceType.ROAD, true, true);
+                            }
                         }
                     }
                 }
+
+            } catch (ClientException ex) {
+                ex.printStackTrace();
+                Logger.getLogger(FirstRoundState.class.getName()).log(Level.SEVERE, null, ex);
             }
 
             //end your turn
