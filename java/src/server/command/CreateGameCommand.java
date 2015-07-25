@@ -51,6 +51,7 @@ public class CreateGameCommand implements Command{
         for(int i=0;i<AllOfOurInformation.getSingleton().getGames().size();i++){
             if(gm.equals(AllOfOurInformation.getSingleton().getGames().get(i))){
                 gameId = i;
+                break;
             }
         }
         

@@ -17,6 +17,8 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import server.receiver.*;
@@ -158,19 +160,19 @@ public class Server {
                 //result = MockServerFascade.getSingleton().login(user);
 
             //re-package and return the data
-            if (id!=-1) {
+            if (id != -1) {
                 String cookie = "catan.user=";
 //                cookie+="{\"name\":\""+AllOfOurInformation.getSingleton().getUsers().get(id).getUsername()+"\",";
 //                cookie+="\"password\":\""+AllOfOurInformation.getSingleton().getUsers().get(id).getPassword()+"\",";
 //                cookie+="\"playerID\":" +id+"}";
-                cookie+="{name:"+AllOfOurInformation.getSingleton().getUsers().get(id).getUsername()+",";
-                cookie+="password:"+AllOfOurInformation.getSingleton().getUsers().get(id).getPassword()+",";
-                cookie+="playerID:" +id+"}";
-                
+                cookie += "{name:" + AllOfOurInformation.getSingleton().getUsers().get(id).getUsername() + ",";
+                cookie += "password:" + AllOfOurInformation.getSingleton().getUsers().get(id).getPassword() + ",";
+                cookie += "playerID:" + id + "}";
+
                 cookie += ";Path=/;";
 //                String message = model.toJson("Success", String.class);
                 String message = "Success";
-                exchange.getResponseHeaders().set("Content-Type", "application/json");                
+                exchange.getResponseHeaders().set("Content-Type", "text/html");
                 exchange.getResponseHeaders().set("Set-Cookie", cookie);
                 exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, message.length());
                 exchange.getResponseBody().write(message.getBytes());
@@ -192,7 +194,7 @@ public class Server {
     private HttpHandler registerHandler = new HttpHandler() {
         @Override
         public void handle(HttpExchange exchange) throws IOException {
-            exchange.getResponseHeaders().add("Content-Type", "text/xml");
+            exchange.getResponseHeaders().add("Content-Type", "text/html");
 
             //un-package the data
             Reader reader = new InputStreamReader(exchange.getRequestBody(), "UTF-8");
@@ -230,11 +232,44 @@ public class Server {
         @Override
         public void handle(HttpExchange exchange) throws IOException {
             exchange.getResponseHeaders().add("Content-Type", "application/json");
-            //TODO: return the list of games running on the server
 
-            exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, "[{\"title\":\"Default Game\", \"id\":\"0\"}]".length());
-            exchange.getResponseBody().write("[{\"title\":\"Default Game\", \"id\":\"0\"}]".getBytes());
-            exchange.getResponseBody().close();
+            ArrayList<GameInfo> gamesList = new ArrayList<GameInfo>();
+            String response = "[";
+            try {
+                gamesList = ServerFascade.getSingleton().listGames();
+                if(!gamesList.isEmpty()){
+                    response+="{";
+                    for (GameInfo gameInfo : gamesList) {
+                        response += "title:" + gameInfo.getTitle() + ",";
+                        response += "id:" + gameInfo.getId() + ",";
+                        response += "players: [";
+                        for (int i = 0; i < gameInfo.getPlayers().size(); i++) {
+                            response += "{";
+                            response += "color:" + gameInfo.getPlayers().get(i).getColor() + ",";
+                            response += "name:" + gameInfo.getPlayers().get(i).getName() + ",";
+                            response += "id:" + gameInfo.getPlayers().get(i).getId();
+                            response += "},";
+                        }
+                        int blanks = 4 - gameInfo.getPlayers().size();
+                        for (int i = 0; i < blanks; i++) {
+                            response += "{},";
+                        }
+                        response = response.substring(0, response.length() - 1);
+                    }
+                    response+="}";
+                }
+                response += "]";
+
+                exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, response.length());
+                exchange.getResponseBody().write(response.getBytes());
+                exchange.getResponseBody().close();
+            } catch (Exception e) {
+                String message = "Failed to list Games.";
+                exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                exchange.getResponseBody().write(message.getBytes());
+                exchange.getResponseBody().close();
+            }
+
         }
     };
 
@@ -245,22 +280,27 @@ public class Server {
 
         @Override
         public void handle(HttpExchange exchange) throws IOException {
-            exchange.getResponseHeaders().add("Content-Type", "application/json");
-            
+
             Reader reader = new InputStreamReader(exchange.getRequestBody(), "UTF-8");
             CreateGameRequest createGame = model.fromJson(reader, CreateGameRequest.class);
             GameInfo gameInfo = null;
-            try{
+            try {
                 gameInfo = ServerFascade.getSingleton().createGame(createGame);
-            }catch(Exception e){
-            
+            } catch (Exception e) {
+
             }
-            if (gameInfo!=null) {
-                exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, gameInfo.toString().length());
-                exchange.getResponseBody().write(gameInfo.toString().getBytes());
+            if (gameInfo != null) {
+                exchange.getResponseHeaders().add("Content-Type", "application/json");
+                String message ="{";
+                message += model.toJson("title", String.class)+":" + model.toJson(gameInfo.getTitle(), String.class) + ",";
+                message += model.toJson("id", String.class)+":" + gameInfo.getId() + ",";
+                message += model.toJson("players", String.class)+": [{},{},{},{}]";
+                message+="}";
+                exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, message.length());
+                exchange.getResponseBody().write(message.getBytes());
                 exchange.getResponseBody().close();
             } else {
-
+                exchange.getResponseHeaders().add("Content-Type", "text/html");
                 String message = "Failed to createGame - need a name.";
                 exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
                 exchange.getResponseBody().write(message.getBytes());
@@ -293,7 +333,7 @@ public class Server {
         @Override
         public void handle(HttpExchange exchange) throws IOException {
             exchange.getResponseHeaders().add("Content-Type", "application/json");
-            
+
             //call the appropriate fascade (real or mock)
             GameInfo result = null;
             try {
