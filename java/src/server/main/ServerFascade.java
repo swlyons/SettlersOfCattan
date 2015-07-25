@@ -5,6 +5,8 @@
  */
 package server.main;
 
+import client.communication.CookieModel;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import server.command.*;
 import shared.data.*;
@@ -124,7 +126,17 @@ public class ServerFascade implements Fascade {
 
     @Override
     public GameInfo sendChat(SendChat sendChat) throws ServerException {
-        return new GameInfo("Default Game");
+        int playerIndex = sendChat.getPlayerIndex();
+        String content = sendChat.getContent().split(";")[0];
+        int gameId = Integer.parseInt(sendChat.getContent().split(";")[1]);
+        
+        SendChatCommand sendChatCommand = new SendChatCommand(playerIndex, content, gameId);
+        
+        GameInfo gameInformation = null;
+        if(agent.sendCommand(sendChatCommand)){
+            gameInformation = AllOfOurInformation.getSingleton().getGames().get(sendChatCommand.getGameId()).getGame();
+        }
+        return gameInformation;
     }
 
     @Override
