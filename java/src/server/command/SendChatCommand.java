@@ -5,6 +5,7 @@
  */
 package server.command;
 
+import client.managers.GameManager;
 import server.receiver.AllOfOurInformation;
 import shared.data.GameInfo;
 import shared.data.MessageLine;
@@ -54,22 +55,23 @@ public class SendChatCommand implements Command {
         boolean successful = false;
         try {
             //return true if the chat entry was successfully added
-            GameInfo game = AllOfOurInformation.getSingleton().getGames().get(gameId).getGame();
-
+            GameManager gameManager = AllOfOurInformation.getSingleton().getGames().get(gameId);
+            GameInfo game = gameManager.getGame();
             //get the player name
             String playerName = game.getPlayers().get(playerIndex).getName();
 
             //create the message line for the chat
             MessageLine messageLine = new MessageLine();
             messageLine.setSource(playerName);
-            messageLine.setSource(content);
+            messageLine.setMessage(content);
 
             game.getChat().getLines().add(messageLine);
             
             //update the game version
             int oldVersion = game.getVersion();
-            game.setVersion(oldVersion++);
+            game.setVersion(oldVersion + 1);
             
+            gameManager.setGame(game);
             //return success if we made it this far
             successful = true;
         } catch (ArrayIndexOutOfBoundsException aio) {

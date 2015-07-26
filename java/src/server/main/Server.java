@@ -540,7 +540,7 @@ public class Server {
 
                 //make sure there is a cookie
                 if (invalidIndex || notLoggedIn) {
-                    String message = invalidIndex ? "Invalid command.  ['playerIndex' field has an invalid value.]" : "Need to login first.";
+                    String message = invalidIndex ? "Invalid command.  ['playerIndex' field has an invalid value.]" : "Need to login and join a game first.";
                     exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
                     exchange.getResponseBody().write(message.getBytes());
                     exchange.getResponseBody().close();
