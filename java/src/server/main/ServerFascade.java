@@ -141,7 +141,12 @@ public class ServerFascade implements Fascade {
 
     @Override
     public GameInfo rollNumber(RollNumber rollNumber) throws ServerException {
-        return new GameInfo("Default Game");
+        RollNumberCommand rollNumberCommand = new RollNumberCommand(rollNumber);
+        GameInfo gi = null;
+        if(agent.sendCommand(rollNumberCommand)){
+            gi = AllOfOurInformation.getSingleton().getGames().get(rollNumber.getGameId()).getGame();
+        }
+        return gi;
     }
 
     @Override
