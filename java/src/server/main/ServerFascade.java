@@ -155,7 +155,12 @@ public class ServerFascade implements Fascade {
     }
 
     public GameInfo finishMove(FinishMove finishMove) throws ServerException {
-        return new GameInfo("Default Game");
+        FinishTurnCommand finishMoveCommand = new FinishTurnCommand(finishMove);
+        GameInfo gi = null;
+        if(agent.sendCommand(finishMoveCommand)){
+            gi = AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).getGame();
+        }
+        return gi;
     }
 
     @Override
