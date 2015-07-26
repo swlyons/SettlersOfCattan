@@ -87,6 +87,7 @@ public class Server {
 
         // Game contexts
         server.createContext("/game/model", modelHandler);
+        server.createContext("/game/listAI", listAIHandler);
 
         // Moves contexts
         server.createContext("/moves/sendChat", sendChatHandler);
@@ -504,8 +505,6 @@ public class Server {
                     return;
                 }
 
-                exchange.getResponseHeaders().set("Content-Type", "application/json");
-
                 //call the appropriate fascade (real or mock)
                 String result;
 
@@ -516,6 +515,7 @@ public class Server {
                 }
 
                 //re-package and return the data
+                exchange.getResponseHeaders().set("Content-Type", "application/json");
                 exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, result.length());
                 exchange.getResponseBody().write(result.getBytes());
                 exchange.getResponseBody().close();
@@ -526,6 +526,21 @@ public class Server {
                 exchange.getResponseBody().write(message.getBytes());
                 exchange.getResponseBody().close();
             }
+        }
+    };
+
+    /**
+     * Handler to get a the listAI model
+     */
+    private HttpHandler listAIHandler = new HttpHandler() {
+
+        @Override
+        public void handle(HttpExchange exchange) throws IOException {
+            exchange.getResponseHeaders().set("Content-Type", "application/json");
+            String message = "[\"DO NOT ADD A COMPUTER PLAYER\"]";
+            exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, message.length());
+            exchange.getResponseBody().write(message.getBytes());
+            exchange.getResponseBody().close();
         }
     };
 
@@ -681,7 +696,6 @@ public class Server {
                 exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, result.length());
                 exchange.getResponseBody().write(result.getBytes());
                 exchange.getResponseBody().close();
-
             }
 
         }
