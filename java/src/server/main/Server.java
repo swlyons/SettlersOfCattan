@@ -641,7 +641,7 @@ public class Server {
                     return;
                 }
 
-                if(rollNumber.getPlayerIndex()<0||rollNumber.getPlayerIndex()<4||rollNumber.getPlayerIndex()!=gameAndPlayer.getPlayerIndex()){
+                if(rollNumber.getPlayerIndex()!=gameAndPlayer.getPlayerIndex()){
                     exchange.getResponseHeaders().set("Content-Type", "text/html");
                     String message = "Incorrect playerIndex.";
                     exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
@@ -650,7 +650,9 @@ public class Server {
                     return;
                 }
                 
-                if(gameAndPlayer.getPlayerIndex()!=AllOfOurInformation.getSingleton().getGames().get(gameAndPlayer.getGameId()).getGame().getTurnTracker().getCurrentTurn()){
+                GameInfo gi = AllOfOurInformation.getSingleton().getGames().get(gameAndPlayer.getGameId()).getGame();
+                
+                if(gameAndPlayer.getPlayerIndex()!=gi.getTurnTracker().getCurrentTurn()){
                     exchange.getResponseHeaders().set("Content-Type", "text/html");
                     String message = "Not your turn.";
                     exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
@@ -659,7 +661,7 @@ public class Server {
                     return;
                 }
                 
-                if(!AllOfOurInformation.getSingleton().getGames().get(gameAndPlayer.getGameId()).getGame().getTurnTracker().getStatus().equals("Rolling")){
+                if(!gi.getTurnTracker().getStatus().equals("Rolling")){
                     exchange.getResponseHeaders().set("Content-Type", "text/html");
                     String message = "Not Rolling status in turn tracker.";
                     exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
@@ -723,12 +725,118 @@ public class Server {
         
         @Override
         public void handle(HttpExchange exchange) throws IOException {
-            exchange.getResponseHeaders().set("Content-Type", "application/json");
-            //TODO: finish the current player's turn
+            GameIdPlayerIdAndPlayerIndex gameAndPlayer = verifyPlayer(exchange);
+                
+                if (gameAndPlayer == null) {
+                    exchange.getResponseHeaders().set("Content-Type", "text/html");
+                    String message = "Need to login and join a valid game.";
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                    exchange.getResponseBody().write(message.getBytes());
+                    exchange.getResponseBody().close();
+                    return;
+                }
+            Reader reader = new InputStreamReader(exchange.getRequestBody(), "UTF-8");
+            FinishMove finishMove = model.fromJson(reader, FinishMove.class);
+            
+            if(!finishMove.getType().equals("finishTurn")){
+                    exchange.getResponseHeaders().set("Content-Type", "text/html");
+                    String message = "Incorrect type.";
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                    exchange.getResponseBody().write(message.getBytes());
+                    exchange.getResponseBody().close();
+                    return;
+                }
 
-            exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, 0);
-            exchange.getResponseBody().write("Success".getBytes());
-            exchange.getResponseBody().close();
+                if(finishMove.getPlayerIndex()!=finishMove.getPlayerIndex()){
+                    exchange.getResponseHeaders().set("Content-Type", "text/html");
+                    String message = "Incorrect playerIndex.";
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                    exchange.getResponseBody().write(message.getBytes());
+                    exchange.getResponseBody().close();
+                    return;
+                }
+                
+                GameInfo gi = AllOfOurInformation.getSingleton().getGames().get(gameAndPlayer.getGameId()).getGame();
+                if(gameAndPlayer.getPlayerIndex()!=gi.getTurnTracker().getCurrentTurn()){
+                    exchange.getResponseHeaders().set("Content-Type", "text/html");
+                    String message = "Not your turn.";
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                    exchange.getResponseBody().write(message.getBytes());
+                    exchange.getResponseBody().close();
+                    return;
+                }
+            
+                String status = gi.getTurnTracker().getStatus();
+                if(status.equals("Rolling")){
+                    exchange.getResponseHeaders().set("Content-Type", "text/html");
+                    String message = "Must Roll first.";
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                    exchange.getResponseBody().write(message.getBytes());
+                    exchange.getResponseBody().close();
+                    return;
+                }
+                if(status.equals("Robbing")){
+                    exchange.getResponseHeaders().set("Content-Type", "text/html");
+                    String message = "Must rob first.";
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                    exchange.getResponseBody().write(message.getBytes());
+                    exchange.getResponseBody().close();
+                    return;
+                }
+                if(status.equals("Discarding")){
+                    exchange.getResponseHeaders().set("Content-Type", "text/html");
+                    String message = "Must discard first.";
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                    exchange.getResponseBody().write(message.getBytes());
+                    exchange.getResponseBody().close();
+                    return;
+                }
+                
+                PlayerInfo currentPlayer = gi.getPlayers().get(gameAndPlayer.getPlayerIndex());
+                if(status.equals("FirstRound")){
+                    if(currentPlayer.getSettlements()!=4||currentPlayer.getRoads()!=14){
+                        exchange.getResponseHeaders().set("Content-Type", "text/html");
+                        String message = "Must play only 1 road and 1 settlement in first round.";
+                        exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                        exchange.getResponseBody().write(message.getBytes());
+                        exchange.getResponseBody().close();
+                        return;                        
+                    }
+                }
+                
+                if(status.equals("SecondRound")){
+                    if(currentPlayer.getSettlements()!=3||currentPlayer.getRoads()!=13){
+                        exchange.getResponseHeaders().set("Content-Type", "text/html");
+                        String message = "Must play only 1 road and 1 settlement in second round.";
+                        exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                        exchange.getResponseBody().write(message.getBytes());
+                        exchange.getResponseBody().close();
+                        return;                        
+                    }
+                }
+                
+                    
+                finishMove.setGameId(gameAndPlayer.getGameId());
+                GameInfo game;
+                try{
+                    game = ServerFascade.getSingleton().finishMove(finishMove);
+                } catch(Exception e){
+                    game = null;
+                }
+                String result;
+                if(game!=null){
+                    result = game.toString();
+                    exchange.getResponseHeaders().set("Content-Type", "application/json");
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, result.length());
+                    exchange.getResponseBody().write(result.getBytes());
+                    exchange.getResponseBody().close();
+                }else{
+                    result = "ERROR in finishing turn";
+                    exchange.getResponseHeaders().set("Content-Type", "text/html");
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, result.length());
+                    exchange.getResponseBody().write(result.getBytes());
+                    exchange.getResponseBody().close();
+                }
         }
     };
     /**
