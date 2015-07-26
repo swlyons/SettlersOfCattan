@@ -661,17 +661,31 @@ public class Server {
                     return;
                 }
                 
-                AllOfOurInformation.getSingleton().getGames().get(gameAndPlayer.getGameId()).rollDice(rollNumber.getNumber());
-                AllOfOurInformation.getSingleton().getGames().get(gameAndPlayer.getGameId()).getGame().setVersion(AllOfOurInformation.getSingleton().getGames().get(gameAndPlayer.getGameId()).getGame().getVersion()+1);
+                rollNumber.setGameId(gameAndPlayer.getGameId());
+
+                GameInfo game;
+                try{
+                game = ServerFascade.getSingleton().rollNumber(rollNumber);
+                } catch(Exception e){
+                    game = null;
+                }
+                String result;
+                if(game!=null){
+                    result = game.toString();
+                    exchange.getResponseHeaders().set("Content-Type", "application/json");
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, result.length());
+                    exchange.getResponseBody().write(result.getBytes());
+                    exchange.getResponseBody().close();
+                }else{
+                    result = "ERROR in rolling number";
+                    exchange.getResponseHeaders().set("Content-Type", "text/html");
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, result.length());
+                    exchange.getResponseBody().write(result.getBytes());
+                    exchange.getResponseBody().close();
+
+                }
                 
-                String result = AllOfOurInformation.getSingleton().getGames().get(gameAndPlayer.getGameId()).getGame().toString();
-                
-            exchange.getResponseHeaders().set("Content-Type", "application/json");
-            //TODO: roll a number
             
-            exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, result.length());
-            exchange.getResponseBody().write(result.getBytes());
-            exchange.getResponseBody().close();
         }
     };
     /**
