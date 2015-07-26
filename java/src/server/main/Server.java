@@ -471,7 +471,7 @@ public class Server {
         public void handle(HttpExchange exchange) throws IOException {
             try {
                 
-                GameIdAndPlayerId gameAndPlayer = verifyPlayer(exchange);
+                GameIdPlayerIdAndPlayerIndex gameAndPlayer = verifyPlayer(exchange);
                 
                 if (gameAndPlayer == null) {
                     exchange.getResponseHeaders().set("Content-Type", "text/html");
@@ -481,10 +481,39 @@ public class Server {
                     exchange.getResponseBody().close();
                     return;
                 }
+                
+                Integer version = exchange.getRequestURI().toString().indexOf("version=");
+                
+                if(version==-1){
+                    exchange.getResponseHeaders().set("Content-Type", "text/html");
+                    String message = "Need to provide a version parameter.";
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                    exchange.getResponseBody().write(message.getBytes());
+                    exchange.getResponseBody().close();
+                    return;
+                }
+                
+                try{
+                    version = Integer.parseInt(exchange.getRequestURI().toString().substring(version+8));
+                }catch(Exception e){
+                    exchange.getResponseHeaders().set("Content-Type", "text/html");
+                    String message = "Had trouble parsing version parameter.";
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                    exchange.getResponseBody().write(message.getBytes());
+                    exchange.getResponseBody().close();
+                    return;
+                }
+                
                 exchange.getResponseHeaders().set("Content-Type", "application/json");
 
                 //call the appropriate fascade (real or mock)
-                String result = AllOfOurInformation.getSingleton().getGames().get(gameAndPlayer.getGameId()).getGame().toString();
+                String result;
+                
+                if(version < AllOfOurInformation.getSingleton().getGames().get(gameAndPlayer.getGameId()).getGame().getVersion()){
+                    result = AllOfOurInformation.getSingleton().getGames().get(gameAndPlayer.getGameId()).getGame().toString();
+                }else{
+                    result = "\"true\"";
+                }
 
                 //re-package and return the data
                 exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, result.length());
@@ -530,7 +559,7 @@ public class Server {
                 }
 
                 //pass in the game id 
-                GameIdAndPlayerId gameAndPlayerId = verifyPlayer(exchange);
+                GameIdPlayerIdAndPlayerIndex gameAndPlayerId = verifyPlayer(exchange);
                 if ((gameAndPlayerId != null) && (sendChatRequest != null)) {
                     
                     sendChatRequest.setContent(sendChatRequest.getContent() + ";" + gameAndPlayerId.getGameId());
@@ -558,7 +587,7 @@ public class Server {
                     }
                     
                     
-                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, 0);
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, result.toString().length());
                     exchange.getResponseBody().write(result.toString().getBytes());
                     exchange.getResponseBody().close();
                 }
@@ -575,11 +604,73 @@ public class Server {
         
         @Override
         public void handle(HttpExchange exchange) throws IOException {
+            GameIdPlayerIdAndPlayerIndex gameAndPlayer = verifyPlayer(exchange);
+                
+                if (gameAndPlayer == null) {
+                    exchange.getResponseHeaders().set("Content-Type", "text/html");
+                    String message = "Need to login and join a valid game.";
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                    exchange.getResponseBody().write(message.getBytes());
+                    exchange.getResponseBody().close();
+                    return;
+                }
+            Reader reader = new InputStreamReader(exchange.getRequestBody(), "UTF-8");
+            RollNumber rollNumber = model.fromJson(reader, RollNumber.class);
+                if(!rollNumber.getType().equals("rollNumber")){
+                    exchange.getResponseHeaders().set("Content-Type", "text/html");
+                    String message = "Incorrect type.";
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                    exchange.getResponseBody().write(message.getBytes());
+                    exchange.getResponseBody().close();
+                    return;
+                }
+
+                if(rollNumber.getPlayerIndex()<0||rollNumber.getPlayerIndex()<4||rollNumber.getPlayerIndex()!=gameAndPlayer.getPlayerIndex()){
+                    exchange.getResponseHeaders().set("Content-Type", "text/html");
+                    String message = "Incorrect playerIndex.";
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                    exchange.getResponseBody().write(message.getBytes());
+                    exchange.getResponseBody().close();
+                    return;
+                }
+                
+                if(gameAndPlayer.getPlayerIndex()!=AllOfOurInformation.getSingleton().getGames().get(gameAndPlayer.getGameId()).getGame().getTurnTracker().getCurrentTurn()){
+                    exchange.getResponseHeaders().set("Content-Type", "text/html");
+                    String message = "Not your turn.";
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                    exchange.getResponseBody().write(message.getBytes());
+                    exchange.getResponseBody().close();
+                    return;
+                }
+                
+                if(!AllOfOurInformation.getSingleton().getGames().get(gameAndPlayer.getGameId()).getGame().getTurnTracker().getStatus().equals("Rolling")){
+                    exchange.getResponseHeaders().set("Content-Type", "text/html");
+                    String message = "Not Rolling status in turn tracker.";
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                    exchange.getResponseBody().write(message.getBytes());
+                    exchange.getResponseBody().close();
+                    return;                
+                }
+            
+                if(rollNumber.getNumber()<2||12<rollNumber.getNumber()){
+                    exchange.getResponseHeaders().set("Content-Type", "text/html");
+                    String message = "Invalid number to roll.";
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                    exchange.getResponseBody().write(message.getBytes());
+                    exchange.getResponseBody().close();
+                    return;
+                }
+                
+                AllOfOurInformation.getSingleton().getGames().get(gameAndPlayer.getGameId()).rollDice(rollNumber.getNumber());
+                AllOfOurInformation.getSingleton().getGames().get(gameAndPlayer.getGameId()).getGame().setVersion(AllOfOurInformation.getSingleton().getGames().get(gameAndPlayer.getGameId()).getGame().getVersion()+1);
+                
+                String result = AllOfOurInformation.getSingleton().getGames().get(gameAndPlayer.getGameId()).getGame().toString();
+                
             exchange.getResponseHeaders().set("Content-Type", "application/json");
             //TODO: roll a number
             
-            exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, 0);
-            exchange.getResponseBody().write("Success".getBytes());
+            exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, result.length());
+            exchange.getResponseBody().write(result.getBytes());
             exchange.getResponseBody().close();
         }
     };
@@ -794,10 +885,10 @@ public class Server {
         }
     };
     
-    private GameIdAndPlayerId verifyPlayer(HttpExchange exchange) {
+    private GameIdPlayerIdAndPlayerIndex verifyPlayer(HttpExchange exchange) {
         try {
             String userCookie = exchange.getRequestHeaders().getFirst("Cookie");
-            GameIdAndPlayerId gameAndPlayer = null;
+            GameIdPlayerIdAndPlayerIndex gameAndPlayer = null;
             if (userCookie == null || userCookie.equals("")) {
                 return gameAndPlayer;
             }
@@ -805,7 +896,7 @@ public class Server {
             String decodedCookie = URLDecoder.decode(userCookie.split("=")[1], "UTF-8");
             Integer playerIdThisOne = model.fromJson(decodedCookie.split(";")[0], CookieModel.class).getPlayerID();
             Integer gameId = Integer.parseInt(URLDecoder.decode(userCookie.split("=")[2], "UTF-8"));
-            
+            int playerIndex = -1;
             boolean found = false;
             
             for (GameManager gm : AllOfOurInformation.getSingleton().getGames()) {
@@ -813,6 +904,7 @@ public class Server {
                     for (int i = 0; i < gm.getGame().getPlayers().size(); i++) {
                         if (gm.getGame().getPlayers().get(i).getId() == playerIdThisOne) {
                             found = true;
+                            playerIndex=i;
                             break;
                         }
                     }
@@ -821,13 +913,14 @@ public class Server {
             }
             
             if (found) {
-                gameAndPlayer = new GameIdAndPlayerId(playerIdThisOne, gameId);
+                gameAndPlayer = new GameIdPlayerIdAndPlayerIndex(playerIdThisOne, gameId, playerIndex);
             }
             return gameAndPlayer;
         } catch (Exception e) {
             return null;
         }
     }
+    
     /**
      * Maps each parameter to it's value
      *
