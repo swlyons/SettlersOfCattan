@@ -77,21 +77,21 @@ public class Server {
         server.setExecutor(null); // use the default executor
 
         // UserReceiver contexts
-        server.createContext("/user/login", loginHandler);
-        server.createContext("/user/register", registerHandler);
+        server.createContext("/user/login", loginHandler);//worked on
+        server.createContext("/user/register", registerHandler);//worked on
 
         // Games contexts
-        server.createContext("/games/list", listHandler);
-        server.createContext("/games/create", createHandler);
-        server.createContext("/games/join", joinHandler);
+        server.createContext("/games/list", listHandler);//worked on
+        server.createContext("/games/create", createHandler);//worked on
+        server.createContext("/games/join", joinHandler);//worked on
 
         // Game contexts
-        server.createContext("/game/model", modelHandler);
-        server.createContext("/game/listAI", listAIHandler);
+        server.createContext("/game/model", modelHandler);//worked on
+        server.createContext("/game/listAI", listAIHandler);//worked on
 
         // Moves contexts
-        server.createContext("/moves/sendChat", sendChatHandler);
-        server.createContext("/moves/rollNumber", rollNumberHandler);
+        server.createContext("/moves/sendChat", sendChatHandler);//worked on
+        server.createContext("/moves/rollNumber", rollNumberHandler);//worked on
         server.createContext("/moves/robPlayer", robPlayerHandler);
         server.createContext("/moves/finishTurn", finishTurnHandler);
         server.createContext("/moves/buyDevCard", buyDevCardHandler);
