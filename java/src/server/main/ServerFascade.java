@@ -170,7 +170,12 @@ public class ServerFascade implements Fascade {
 
     @Override
     public GameInfo buyDevCard(BuyDevCard buyDevCard) throws ServerException {
-        return new GameInfo("Default Game");
+        BuyDevCardCommand buyDevCardCommand = new BuyDevCardCommand(buyDevCard);
+        GameInfo gi = null;
+        if(agent.sendCommand(buyDevCardCommand)){
+            gi = AllOfOurInformation.getSingleton().getGames().get(buyDevCard.getGameId()).getGame();
+        }
+        return gi;
     }
 
     @Override
