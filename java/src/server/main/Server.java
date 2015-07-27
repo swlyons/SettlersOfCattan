@@ -102,8 +102,8 @@ public class Server {
         server.createContext("/moves/Monument", monumentHandler);
         server.createContext("/moves/offerTrade", offerTradeHandler);
         server.createContext("/moves/acceptTrade", acceptTradeHandler);
-        server.createContext("/moves/buildSettlement", buildSettlementHandler);
-        server.createContext("/moves/buildCity", buildCityHandler);
+        server.createContext("/moves/buildSettlement", buildSettlementHandler);//worked on
+        server.createContext("/moves/buildCity", buildCityHandler);//worked on
         server.createContext("/moves/buildRoad", buildRoadHandler);// worked on
         server.createContext("/moves/maritimeTrade", maritimeTradeHandler);
         server.createContext("/moves/discardCards", discardCardsHandler);
