@@ -8,31 +8,31 @@ package shared.model;
  */
 public class RollNumber extends Command {
 
-    private int number;
-    private int gameId;
+    private Integer number;
+    private Integer gameId;
     
     
     public RollNumber() {
         gameId = -1;
     }
 
-    public RollNumber(int number) {
+    public RollNumber(Integer number) {
         this.number = number;
     }
 
-    public int getNumber() {
+    public Integer getNumber() {
         return number;
     }
 
-    public void setNumber(int number) {
+    public void setNumber(Integer number) {
         this.number = number;
     }
     
-    public void setGameId(int gameId){
+    public void setGameId(Integer gameId){
         this.gameId = gameId;
     }
     
-    public int getGameId(){
+    public Integer getGameId(){
         return gameId;
     }
     

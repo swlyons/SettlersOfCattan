@@ -12,13 +12,13 @@ public class FinishMove extends Command {
         super("finishTurn", playerIndex);
     }
 
-    private int gameId;
+    private Integer gameId;
     
-    public void setGameId(int gameId){
+    public void setGameId(Integer gameId){
         this.gameId = gameId;
     }
     
-    public int getGameId(){
+    public Integer getGameId(){
         return gameId;
     }
 }

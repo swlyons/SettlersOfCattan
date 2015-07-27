@@ -1,6 +1,8 @@
 package shared.data;
 
 import shared.definitions.ResourceType;
+import java.util.Date;
+import java.util.Random;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -13,11 +15,11 @@ import shared.definitions.ResourceType;
  */
 public class ResourceList {
 
-    private int brick;
-    private int ore;
-    private int sheep;
-    private int wheat;
-    private int wood;
+    private Integer brick;
+    private Integer ore;
+    private Integer sheep;
+    private Integer wheat;
+    private Integer wood;
 
     public ResourceList() {
         brick = 0;
@@ -71,95 +73,128 @@ public class ResourceList {
         }
     }
 
-    public ResourceList(int brick, int ore, int sheep, int wheat, int wood) {
+    public ResourceList(Integer brick, Integer ore, Integer sheep, Integer wheat, Integer wood) {
         this.brick = brick;
         this.ore = ore;
         this.sheep = sheep;
         this.wheat = wheat;
         this.wood = wood;
     }
+    
+    public ResourceList getRandomResourceAvailable(){
+        Integer total = getTotalResources();
+        if(total<=0){
+            return null;
+        }
+        Random r = new Random();
+        r.setSeed((new Date()).getTime());
+        
+        Integer resourceNumber = r.nextInt(total);
+        
+        resourceNumber-=brick;
+        if(resourceNumber<0){
+            return new ResourceList(1,0,0,0,0);
+        }
+        
+        resourceNumber-=ore;
+        if(resourceNumber<0){
+            return new ResourceList(0,1,0,0,0);
+        }
+        
+        resourceNumber-=sheep;
+        if(resourceNumber<0){
+            return new ResourceList(0,0,1,0,0);
+        }
+        
+        resourceNumber-=wheat;
+        if(resourceNumber<0){
+            return new ResourceList(0,0,0,1,0);
+        }
+            return new ResourceList(0,0,0,0,1);
+        
+    }
 
-    public int getBrick() {
+    public Integer getBrick() {
         return brick;
     }
 
-    public void setBrick(int brick) {
+    public void setBrick(Integer brick) {
         this.brick = brick;
     }
 
-    public void addBrick(int amount) {
+    public void addBrick(Integer amount) {
         this.brick += amount;
     }
 
-    public void removeBrick(int amount) {
+    public void removeBrick(Integer amount) {
         this.brick -= amount;
     }
 
-    public int getOre() {
+    public Integer getOre() {
         return ore;
     }
 
-    public void setOre(int ore) {
+    public void setOre(Integer ore) {
         this.ore = ore;
     }
 
-    public void addOre(int amount) {
+    public void addOre(Integer amount) {
         this.ore += amount;
     }
 
-    public void removeOre(int amount) {
+    public void removeOre(Integer amount) {
         this.ore -= amount;
     }
 
-    public int getSheep() {
+    public Integer getSheep() {
         return sheep;
     }
 
-    public void setSheep(int sheep) {
+    public void setSheep(Integer sheep) {
         this.sheep = sheep;
     }
 
-    public void addSheep(int amount) {
+    public void addSheep(Integer amount) {
         this.sheep += amount;
     }
 
-    public void removeSheep(int amount) {
+    public void removeSheep(Integer amount) {
         this.sheep -= amount;
     }
 
-    public int getWheat() {
+    public Integer getWheat() {
         return wheat;
     }
 
-    public void setWheat(int wheat) {
+    public void setWheat(Integer wheat) {
         this.wheat = wheat;
     }
 
-    public void addWheat(int amount) {
+    public void addWheat(Integer amount) {
         this.wheat += amount;
     }
 
-    public void removeWheat(int amount) {
+    public void removeWheat(Integer amount) {
         this.wheat -= amount;
     }
 
-    public int getWood() {
+    public Integer getWood() {
         return wood;
     }
 
-    public void setWood(int wood) {
+    public void setWood(Integer wood) {
         this.wood = wood;
     }
 
-    public void addWood(int amount) {
+    public void addWood(Integer amount) {
         this.wood += amount;
     }
 
-    public void removeWood(int amount) {
+    public void removeWood(Integer amount) {
         this.wood -= amount;
     }
 
-    public void add(ResourceType type, int amount) {
+    public void add(ResourceType type, Integer amount) {
         switch (type) {
             case brick:
                 this.brick += amount;
@@ -194,7 +229,7 @@ public class ResourceList {
      * @post returns a sum of all the resources in the current resource list
      *
      */
-    public int getTotalResources() {
+    public Integer getTotalResources() {
         return (brick + ore + sheep + wood + wheat);
     }
 

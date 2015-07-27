@@ -10,18 +10,27 @@ import shared.locations.HexLocation;
  */
 public class Soldier extends Command {
 
-    private int victimIndex;
+    private Integer victimIndex;
     private HexLocation location;
-
+    private Integer gameId;
+    
     public Soldier(int playerIndex) {
         super("Soldier", playerIndex);
     }
 
-    public int getVicitmIndex() {
+    public Integer getGameId(){
+        return gameId;
+    }
+    
+    public void setGameId(Integer gameId){
+        this.gameId = gameId;
+    }
+    
+    public Integer getVicitmIndex() {
         return victimIndex;
     }
 
-    public void setVicitmIndex(int victimIndex) {
+    public void setVicitmIndex(Integer victimIndex) {
         this.victimIndex = victimIndex;
     }
 

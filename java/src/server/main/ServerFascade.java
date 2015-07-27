@@ -151,7 +151,12 @@ public class ServerFascade implements Fascade {
 
     @Override
     public GameInfo robPlayer(RobPlayer robPlayer) throws ServerException {
-        return new GameInfo("Default Game");
+        RobPlayerCommand robPlayerCommand = new RobPlayerCommand(robPlayer);
+        GameInfo gi = null;
+        if(agent.sendCommand(robPlayerCommand)){
+            gi = AllOfOurInformation.getSingleton().getGames().get(robPlayer.getGameId()).getGame();
+        }
+        return gi;
     }
 
     public GameInfo finishMove(FinishMove finishMove) throws ServerException {
@@ -205,17 +210,32 @@ public class ServerFascade implements Fascade {
 
     @Override
     public GameInfo buildSettlement(BuildSettlement buildSettlement) throws ServerException {
-        return new GameInfo("Default Game");
+        BuildSettlementCommand buildSettlementCommand = new BuildSettlementCommand(buildSettlement);
+        GameInfo gi = null;
+        if(agent.sendCommand(buildSettlementCommand)){
+            gi = AllOfOurInformation.getSingleton().getGames().get(buildSettlement.getGameId()).getGame();
+        }
+        return gi;
     }
 
     @Override
     public GameInfo buildCity(BuildCity buildCity) throws ServerException {
-        return new GameInfo("Default Game");
+        BuildCityCommand buildCityCommand = new BuildCityCommand(buildCity);
+        GameInfo gi = null;
+        if(agent.sendCommand(buildCityCommand)){
+            gi = AllOfOurInformation.getSingleton().getGames().get(buildCity.getGameId()).getGame();
+        }
+        return gi;
     }
 
     @Override
     public GameInfo buildRoad(BuildRoad buildRoad) throws ServerException {
-        return new GameInfo("Default Game");
+        BuildRoadCommand buildRoadCommand = new BuildRoadCommand(buildRoad);
+        GameInfo gi = null;
+        if(agent.sendCommand(buildRoadCommand)){
+            gi = AllOfOurInformation.getSingleton().getGames().get(buildRoad.getGameId()).getGame();
+        }
+        return gi;
     }
 
     @Override
@@ -225,7 +245,13 @@ public class ServerFascade implements Fascade {
 
     @Override
     public GameInfo discardCards(DiscardCards discardCards) throws ServerException {
-        return new GameInfo("Default Game");
+        DiscardCardsCommand discardCardsCommand = new DiscardCardsCommand(discardCards);
+        GameInfo gi = null;
+        if(agent.sendCommand(discardCardsCommand)){
+            gi = AllOfOurInformation.getSingleton().getGames().get(discardCards.getGameId()).getGame();
+        }
+        return gi;
+
     }
 
 }

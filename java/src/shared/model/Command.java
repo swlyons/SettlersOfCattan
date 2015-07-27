@@ -3,13 +3,13 @@ package shared.model;
 public class Command {
 
     private String type;
-    private int playerIndex;
+    private Integer playerIndex;
 
     public Command() {
 
     }
 
-    public Command(String type, int playerIndex) {
+    public Command(String type, Integer playerIndex) {
         this.type = type;
         this.playerIndex = playerIndex;
     }
@@ -22,11 +22,11 @@ public class Command {
         this.type = type;
     }
 
-    public int getPlayerIndex() {
+    public Integer getPlayerIndex() {
         return playerIndex;
     }
 
-    public void setPlayerIndex(int playerIndex) {
+    public void setPlayerIndex(Integer playerIndex) {
         this.playerIndex = playerIndex;
     }
 

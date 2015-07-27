@@ -5,27 +5,27 @@ package shared.locations;
  */
 public class HexLocation {
 
-    private int x;
-    private int y;
+    private Integer x;
+    private Integer y;
 
-    public HexLocation(int x, int y) {
+    public HexLocation(Integer x, Integer y) {
         setX(x);
         setY(y);
     }
     
-    public int getX() {
+    public Integer getX() {
         return x;
     }
 
-    public void setX(int x) {
+    public void setX(Integer x) {
         this.x = x;
     }
 
-    public int getY() {
+    public Integer getY() {
         return y;
     }
 
-    public void setY(int y) {
+    public void setY(Integer y) {
         this.y = y;
     }
 

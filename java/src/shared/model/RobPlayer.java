@@ -10,17 +10,18 @@ import shared.locations.HexLocation;
  */
 public class RobPlayer extends Command {
 
-    private int victimIndex;
+    private Integer victimIndex;
     private HexLocation location;
-
+    private Integer gameId;
+    
     public RobPlayer() {
     }
 
-    public int getVictimIndex() {
+    public Integer getVictimIndex() {
         return victimIndex;
     }
 
-    public void setVictimIndex(int victimIndex) {
+    public void setVictimIndex(Integer victimIndex) {
         this.victimIndex = victimIndex;
     }
 
@@ -30,5 +31,13 @@ public class RobPlayer extends Command {
 
     public void setLocation(HexLocation location) {
         this.location = location;
+    }
+    
+    public Integer getGameId(){
+        return gameId;
+    }
+    
+    public void setGameId(Integer gameId){
+        this.gameId = gameId;
     }
 }
