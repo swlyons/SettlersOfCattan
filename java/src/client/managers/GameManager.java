@@ -392,26 +392,6 @@ public class GameManager {
 
     private void saveResourcesIntoGame(){
             for(int i=0;i<game.getPlayers().size();i++){
-                boolean someoneHasLargestArmy = false;
-                if(resourceManager.getGameBanks().get(i).HasLargestArmy()){
-                    game.getTurnTracker().setLargestArmy(i);
-                    someoneHasLargestArmy = true;
-                }
-                
-                if(!someoneHasLargestArmy){
-                    game.getTurnTracker().setLargestArmy(-1);
-                }
-                
-                boolean someoneHasLongestRoad = false;
-                if(resourceManager.getGameBanks().get(i).HasLongestRoad()){
-                    game.getTurnTracker().setLongestRoad(i);
-                    someoneHasLongestRoad = true;
-                }
-                
-                if(!someoneHasLongestRoad){
-                    game.getTurnTracker().setLongestRoad(-1);
-                }
-                
                 game.getPlayers().get(i).setResources(resourceManager.getGameBanks().get(i).getResourcesCards());
                 game.getPlayers().get(i).setOldDevCards(resourceManager.getGameBanks().get(i).getDevelopmentCards());
                 game.getPlayers().get(i).setNewDevCards(resourceManager.getGameBanks().get(i).getUnusableDevCards());
@@ -648,6 +628,19 @@ public class GameManager {
             resourceManager.transferResourceCard(currentPlayer, mainBankIndex, cost);
             resourceManager.placedRoad(currentPlayer);
             boolean builtRoad = locationManager.settleEdge(edge, currentPlayer);
+
+            if(game.getTurnTracker().getLongestRoad()==-1){
+                if(5<=14-resourceManager.getGameBanks().get(currentPlayer).getRoads()){
+                    game.getTurnTracker().setLongestRoad(currentPlayer);
+                }
+            }else{
+                int roadsPreviousHolderHas = resourceManager.getGameBanks().get(game.getTurnTracker().getLongestRoad()).getRoads();
+                int roadsCurrentPlayerHas = resourceManager.getGameBanks().get(currentPlayer).getRoads();
+                if(roadsCurrentPlayerHas<roadsPreviousHolderHas){
+                    game.getTurnTracker().setLongestRoad(currentPlayer);
+                }
+            }
+
             saveResourcesIntoGame();
             return builtRoad;
         } else {
