@@ -12,6 +12,7 @@ public class BuildSettlement extends Command {
 
     private SettlementLocation vertexLocation;
     private Boolean free;
+    private Integer gameId;
 
     public SettlementLocation getVertexLocation() {
         return vertexLocation;
@@ -27,5 +28,13 @@ public class BuildSettlement extends Command {
 
     public void setFree(Boolean free) {
         this.free = free;
+    }
+    
+    public Integer getGameId(){
+        return gameId;
+    }
+    
+    public void setGameId(Integer gameId){
+        this.gameId = gameId;
     }
 }
