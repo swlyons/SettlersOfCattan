@@ -391,7 +391,7 @@ public class GameManager {
         locationManager.setUnsettledEdges(unsettledEdges);
     }
 
-    private void saveResourcesIntoGame() {
+    public void saveResourcesIntoGame() {
         for (int i = 0; i < game.getPlayers().size(); i++) {
             game.getPlayers().get(i).setResources(resourceManager.getGameBanks().get(i).getResourcesCards());
             game.getPlayers().get(i).setOldDevCards(resourceManager.getGameBanks().get(i).getDevelopmentCards());
