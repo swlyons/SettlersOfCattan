@@ -29,11 +29,10 @@ public class BuildCityCommand implements Command {
     @Override
     public boolean execute() {
         try {
-            GameManager gm = AllOfOurInformation.getSingleton().getGames().get(buildCity.getGameId());
             HexLocation hexSpot = new HexLocation(buildCity.getVertexLocation().getX(), buildCity.getVertexLocation().getY());
             VertexDirection vertexDirection = buildCity.getVertexLocation().getDirection();
             VertexLocation vertexLocation = new VertexLocation(hexSpot, vertexDirection);
-            if (gm.buildStructure(PieceType.CITY, vertexLocation)) {
+            if (AllOfOurInformation.getSingleton().getGames().get(buildCity.getGameId()).buildStructure(PieceType.CITY, vertexLocation)) {
                 AllOfOurInformation.getSingleton().getGames().get(buildCity.getGameId()).getGame().setVersion(AllOfOurInformation.getSingleton().getGames().get(buildCity.getGameId()).getGame().getVersion() + 1);
                 return true;
             } else {

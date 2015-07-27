@@ -28,11 +28,10 @@ public class BuildRoadCommand implements Command {
     @Override
     public boolean execute() {
         try {
-            GameManager gm = AllOfOurInformation.getSingleton().getGames().get(buildRoad.getGameId());
             HexLocation hexSpot = new HexLocation(buildRoad.getRoadLocation().getX(), buildRoad.getRoadLocation().getY());
             EdgeDirection edgeDirection = buildRoad.getRoadLocation().getDirection();
             EdgeLocation edgeLocation = new EdgeLocation(hexSpot, edgeDirection);
-            if (gm.buildRoad(edgeLocation)) {
+            if (AllOfOurInformation.getSingleton().getGames().get(buildRoad.getGameId()).buildRoad(edgeLocation)) {
                 AllOfOurInformation.getSingleton().getGames().get(buildRoad.getGameId()).getGame().setVersion(AllOfOurInformation.getSingleton().getGames().get(buildRoad.getGameId()).getGame().getVersion() + 1);
                 return true;
             } else {

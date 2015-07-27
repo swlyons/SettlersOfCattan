@@ -820,12 +820,67 @@ public class Server {
 
         @Override
         public void handle(HttpExchange exchange) throws IOException {
-            exchange.getResponseHeaders().set("Content-Type", "application/json");
-            //TODO: rob a player
+            try{
+                GameIdPlayerIdAndPlayerIndex gameAndPlayer = verifyPlayer(exchange);
 
-            exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, 0);
-            exchange.getResponseBody().write("Success".getBytes());
-            exchange.getResponseBody().close();
+                if (gameAndPlayer == null) {
+                    exchange.getResponseHeaders().set("Content-Type", "text/html");
+                    String message = "Need to login and join a valid game.";
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                    exchange.getResponseBody().write(message.getBytes());
+                    exchange.getResponseBody().close();
+                    return;
+                }
+
+                Reader reader = new InputStreamReader(exchange.getRequestBody(), "UTF-8");
+                RobPlayer robPlayer = model.fromJson(reader, RobPlayer.class);
+
+                if (robPlayer.getType()==null||!robPlayer.getType().equals("robPlayer")) {
+                    exchange.getResponseHeaders().set("Content-Type", "text/html");
+                    String message = "Incorrect type.";
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                    exchange.getResponseBody().write(message.getBytes());
+                    exchange.getResponseBody().close();
+                    return;
+                }
+
+                if (robPlayer.getPlayerIndex() == null) {
+                    exchange.getResponseHeaders().set("Content-Type", "text/html");
+                    String message = "playerIndex can't be null.";
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                    exchange.getResponseBody().write(message.getBytes());
+                    exchange.getResponseBody().close();
+                    return;
+                }
+
+                if (robPlayer.getPlayerIndex() != robPlayer.getPlayerIndex()) {
+                    exchange.getResponseHeaders().set("Content-Type", "text/html");
+                    String message = "Incorrect playerIndex.";
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                    exchange.getResponseBody().write(message.getBytes());
+                    exchange.getResponseBody().close();
+                    return;
+                }
+                
+                GameInfo gi = AllOfOurInformation.getSingleton().getGames().get(gameAndPlayer.getGameId()).getGame();
+                if (gameAndPlayer.getPlayerIndex() != gi.getTurnTracker().getCurrentTurn()) {
+                    exchange.getResponseHeaders().set("Content-Type", "text/html");
+                    String message = "Not your turn.";
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                    exchange.getResponseBody().write(message.getBytes());
+                    exchange.getResponseBody().close();
+                    return;
+                }
+                
+//                Not done yet
+                
+            }catch(Exception e){
+                String error = "ERROR in rob player";
+                exchange.getResponseHeaders().set("Content-Type", "text/html");
+                exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, error.length());
+                exchange.getResponseBody().write(error.getBytes());
+                exchange.getResponseBody().close();
+            }
         }
     };
     /**
