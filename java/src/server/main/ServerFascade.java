@@ -215,7 +215,12 @@ public class ServerFascade implements Fascade {
 
     @Override
     public GameInfo buildCity(BuildCity buildCity) throws ServerException {
-        return new GameInfo("Default Game");
+        BuildCityCommand buildCityCommand = new BuildCityCommand(buildCity);
+        GameInfo gi = null;
+        if(agent.sendCommand(buildCityCommand)){
+            gi = AllOfOurInformation.getSingleton().getGames().get(buildCity.getGameId()).getGame();
+        }
+        return gi;
     }
 
     @Override
