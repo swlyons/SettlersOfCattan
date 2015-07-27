@@ -151,7 +151,12 @@ public class ServerFascade implements Fascade {
 
     @Override
     public GameInfo robPlayer(RobPlayer robPlayer) throws ServerException {
-        return new GameInfo("Default Game");
+        RobPlayerCommand robPlayerCommand = new RobPlayerCommand(robPlayer);
+        GameInfo gi = null;
+        if(agent.sendCommand(robPlayerCommand)){
+            gi = AllOfOurInformation.getSingleton().getGames().get(robPlayer.getGameId()).getGame();
+        }
+        return gi;
     }
 
     public GameInfo finishMove(FinishMove finishMove) throws ServerException {

@@ -1,6 +1,8 @@
 package shared.data;
 
 import shared.definitions.ResourceType;
+import java.util.Date;
+import java.util.Random;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -77,6 +79,39 @@ public class ResourceList {
         this.sheep = sheep;
         this.wheat = wheat;
         this.wood = wood;
+    }
+    
+    public ResourceList getRandomResourceAvailable(){
+        int total = getTotalResources();
+        if(total<=0){
+            return null;
+        }
+        Random r = new Random();
+        r.setSeed((new Date()).getTime());
+        
+        int resourceNumber = r.nextInt(total);
+        
+        resourceNumber-=brick;
+        if(resourceNumber<0){
+            return new ResourceList(1,0,0,0,0);
+        }
+        
+        resourceNumber-=ore;
+        if(resourceNumber<0){
+            return new ResourceList(0,1,0,0,0);
+        }
+        
+        resourceNumber-=sheep;
+        if(resourceNumber<0){
+            return new ResourceList(0,0,1,0,0);
+        }
+        
+        resourceNumber-=wheat;
+        if(resourceNumber<0){
+            return new ResourceList(0,0,0,1,0);
+        }
+            return new ResourceList(0,0,0,0,1);
+        
     }
 
     public int getBrick() {

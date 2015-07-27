@@ -861,9 +861,18 @@ public class Server {
                     exchange.getResponseBody().close();
                     return;
                 }
+
+                if (robPlayer.getVictimIndex()==null||robPlayer.getVictimIndex()<-1||3<robPlayer.getVictimIndex()||robPlayer.getVictimIndex()==robPlayer.getPlayerIndex()) {
+                    exchange.getResponseHeaders().set("Content-Type", "text/html");
+                    String message = "Victim index isn't valid.";
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                    exchange.getResponseBody().write(message.getBytes());
+                    exchange.getResponseBody().close();
+                    return;
+                }
                 
-                GameInfo gi = AllOfOurInformation.getSingleton().getGames().get(gameAndPlayer.getGameId()).getGame();
-                if (gameAndPlayer.getPlayerIndex() != gi.getTurnTracker().getCurrentTurn()) {
+                GameManager gm = AllOfOurInformation.getSingleton().getGames().get(gameAndPlayer.getGameId());
+                if (gameAndPlayer.getPlayerIndex() != gm.getGame().getTurnTracker().getCurrentTurn()) {
                     exchange.getResponseHeaders().set("Content-Type", "text/html");
                     String message = "Not your turn.";
                     exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
@@ -872,7 +881,55 @@ public class Server {
                     return;
                 }
                 
-//                Not done yet
+                if(!gm.getGame().getTurnTracker().getStatus().equals("Robbing")){
+                    exchange.getResponseHeaders().set("Content-Type", "text/html");
+                    String message = "Turn tracker status must be \"Robbing\".";
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                    exchange.getResponseBody().write(message.getBytes());
+                    exchange.getResponseBody().close();
+                    return;
+                }
+                
+                if(!gm.canPlaceRobber(robPlayer.getLocation())){
+                    exchange.getResponseHeaders().set("Content-Type", "text/html");
+                    String message = "Cannot place robber there";
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                    exchange.getResponseBody().write(message.getBytes());
+                    exchange.getResponseBody().close();
+                    return;
+                }
+//                HexLocation hexLoc, int playerId
+                if(!gm.canRobPlayer(robPlayer.getLocation(),robPlayer.getVictimIndex())){
+                    exchange.getResponseHeaders().set("Content-Type", "text/html");
+                    String message = "Cannot rob that player";
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                    exchange.getResponseBody().write(message.getBytes());
+                    exchange.getResponseBody().close();
+                    return;
+                }
+                
+                robPlayer.setGameId(gameAndPlayer.getGameId());
+                
+                GameInfo game;
+                try {
+                    game = ServerFascade.getSingleton().robPlayer(robPlayer);
+                } catch (Exception e) {
+                    game = null;
+                }
+                String result;
+                if (game != null) {
+                    result = game.toString();
+                    exchange.getResponseHeaders().set("Content-Type", "application/json");
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, result.length());
+                    exchange.getResponseBody().write(result.getBytes());
+                    exchange.getResponseBody().close();
+                } else {
+                    result = "Couldn't grab game in rob player";
+                    exchange.getResponseHeaders().set("Content-Type", "text/html");
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, result.length());
+                    exchange.getResponseBody().write(result.getBytes());
+                    exchange.getResponseBody().close();
+                }
                 
             }catch(Exception e){
                 String error = "ERROR in rob player";
