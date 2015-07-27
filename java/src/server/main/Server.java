@@ -1904,16 +1904,17 @@ public class Server {
             if (userCookie == null || userCookie.equals("")) {
                 return gameAndPlayer;
             }
-
+            
+            
             String decodedCookie = URLDecoder.decode(userCookie.split("=")[1], "UTF-8");
             Integer playerIdThisOne = model.fromJson(decodedCookie.split(";")[0], CookieModel.class).getPlayerID();
             Integer gameId = Integer.parseInt(URLDecoder.decode(userCookie.split("=")[2], "UTF-8"));
             int playerIndex = -1;
             boolean found = false;
-
+            System.out.println("Server Players: " + AllOfOurInformation.getSingleton().getGames().get(gameId).getGame().getPlayers());
             for (GameManager gm : AllOfOurInformation.getSingleton().getGames()) {
                 if (gm.getGame().getId() == gameId) {
-                    System.out.println("Players: " + gm.getGame().getPlayers());
+                    
                     for (int i = 0; i < gm.getGame().getPlayers().size(); i++) {
                         if (gm.getGame().getPlayers().get(i).getId() == playerIdThisOne) {
                             found = true;
