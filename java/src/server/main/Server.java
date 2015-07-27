@@ -1272,6 +1272,7 @@ public class Server {
                 }
 
                 if (status.equals("FirstRound") || status.equals("SecondRound")) {
+                    
                     if (!buildSettlement.isFree()) {
                         exchange.getResponseHeaders().set("Content-Type", "text/html");
                         String message = "Building a settlement must be free in the first two rounds.";
@@ -1280,6 +1281,42 @@ public class Server {
                         exchange.getResponseBody().close();
                         return;
                     }
+                    
+                    if(status.equals("FirstRound")){
+                        for(int i=0;i<gm.getGame().getPlayers().size();i++){
+                            if(gm.getGame().getPlayers().get(i)==null){
+                                exchange.getResponseHeaders().set("Content-Type", "text/html");
+                                String message = "Need 4 players first.";
+                                exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                                exchange.getResponseBody().write(message.getBytes());
+                                exchange.getResponseBody().close();
+                                return;
+                            }
+                        }
+                        
+                        if(gm.getGame().getPlayers().get(gameAndPlayer.getPlayerIndex()).getSettlements()!=5){
+                            exchange.getResponseHeaders().set("Content-Type", "text/html");
+                            String message = "Incorrect number of settlements.";
+                            exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                            exchange.getResponseBody().write(message.getBytes());
+                            exchange.getResponseBody().close();
+                            return;
+                        }
+                        
+                    }
+                    
+                    if(status.equals("SecondRound")){
+                        if(gm.getGame().getPlayers().get(gameAndPlayer.getPlayerIndex()).getSettlements()!=4){
+                            exchange.getResponseHeaders().set("Content-Type", "text/html");
+                            String message = "Incorrect number of settlements.";
+                            exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                            exchange.getResponseBody().write(message.getBytes());
+                            exchange.getResponseBody().close();
+                            return;
+                        }
+                    
+                    }
+                    
                 }
 
                 if (!buildSettlement.isFree()) {
@@ -1567,6 +1604,47 @@ public class Server {
                         exchange.getResponseBody().write(message.getBytes());
                         exchange.getResponseBody().close();
                         return;
+                    }
+                    
+                    if(status.equals("FirstRound")){
+                        if(gm.getGame().getPlayers().get(gameAndPlayer.getPlayerIndex()).getSettlements()!=4){
+                            exchange.getResponseHeaders().set("Content-Type", "text/html");
+                            String message = "Place exactly 1 settlement first.";
+                            exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                            exchange.getResponseBody().write(message.getBytes());
+                            exchange.getResponseBody().close();
+                            return;
+                        }
+                        
+                        if(gm.getGame().getPlayers().get(gameAndPlayer.getPlayerIndex()).getRoads()!=15){
+                            exchange.getResponseHeaders().set("Content-Type", "text/html");
+                            String message = "Incorrect number of roads";
+                            exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                            exchange.getResponseBody().write(message.getBytes());
+                            exchange.getResponseBody().close();
+                            return;
+                        }
+
+                    }
+                    
+                    if(status.equals("SecondRound")){
+                        if(gm.getGame().getPlayers().get(gameAndPlayer.getPlayerIndex()).getSettlements()!=3){
+                            exchange.getResponseHeaders().set("Content-Type", "text/html");
+                            String message = "Place exactly 1 settlement first in the second round (you should have 3).";
+                            exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                            exchange.getResponseBody().write(message.getBytes());
+                            exchange.getResponseBody().close();
+                            return;
+                        }
+                        
+                        if(gm.getGame().getPlayers().get(gameAndPlayer.getPlayerIndex()).getRoads()!=14){
+                            exchange.getResponseHeaders().set("Content-Type", "text/html");
+                            String message = "Incorrect number of roads";
+                            exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                            exchange.getResponseBody().write(message.getBytes());
+                            exchange.getResponseBody().close();
+                            return;
+                        }
                     }
                 }
 
