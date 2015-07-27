@@ -1173,8 +1173,8 @@ public class Server {
             }
             
 
-            GameInfo gi = AllOfOurInformation.getSingleton().getGames().get(gameAndPlayer.getGameId()).getGame();
-            if (gameAndPlayer.getPlayerIndex() != gi.getTurnTracker().getCurrentTurn()) {
+            GameManager gm = AllOfOurInformation.getSingleton().getGames().get(gameAndPlayer.getGameId());
+            if (gameAndPlayer.getPlayerIndex() != gm.getGame().getTurnTracker().getCurrentTurn()) {
                 exchange.getResponseHeaders().set("Content-Type", "text/html");
                 String message = "Not your turn.";
                 exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
@@ -1183,12 +1183,24 @@ public class Server {
                 return;
             }
 
-            String status = gi.getTurnTracker().getStatus();
+            String status = gm.getGame().getTurnTracker().getStatus();
             
             if(status.equals("FirstRound")||status.equals("SecondRound")){
-                
+                if(!buildRoad.isFree()){
+                    exchange.getResponseHeaders().set("Content-Type", "text/html");
+                    String message = "Building a road must be free in the first two rounds.";
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                    exchange.getResponseBody().write(message.getBytes());
+                    exchange.getResponseBody().close();
+                    return;
+                }
             }
             
+            if(!buildRoad.isFree()){
+                if(gm.canBuildRoad()){
+                
+                }
+            }
             
             exchange.getResponseHeaders().set("Content-Type", "application/json");
             //TODO: build a road
