@@ -94,11 +94,11 @@ public class Server {
         server.createContext("/moves/sendChat", sendChatHandler);//worked on
         server.createContext("/moves/rollNumber", rollNumberHandler);//worked on
         server.createContext("/moves/robPlayer", robPlayerHandler);//worked on
-        server.createContext("/moves/finishTurn", finishTurnHandler);// worked on
+        server.createContext("/moves/finishTurn", finishTurnHandler);//worked on
         server.createContext("/moves/buyDevCard", buyDevCardHandler);
         server.createContext("/moves/Year_Of_Plenty", year_of_plentyHandler);
         server.createContext("/moves/Road_Building", road_buildingHandler);
-        server.createContext("/moves/Soldier", soldierHandler);
+        server.createContext("/moves/Soldier", soldierHandler);//worked on
         server.createContext("/moves/Monument", monumentHandler);
         server.createContext("/moves/offerTrade", offerTradeHandler);
         server.createContext("/moves/acceptTrade", acceptTradeHandler);
@@ -1130,12 +1130,133 @@ public class Server {
 
         @Override
         public void handle(HttpExchange exchange) throws IOException {
-            exchange.getResponseHeaders().set("Content-Type", "application/json");
-            //TODO: use the soldier card
+            try {
+                GameIdPlayerIdAndPlayerIndex gameAndPlayer = verifyPlayer(exchange);
 
-            exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, 0);
-            exchange.getResponseBody().write("Success".getBytes());
-            exchange.getResponseBody().close();
+                if (gameAndPlayer == null) {
+                    exchange.getResponseHeaders().set("Content-Type", "text/html");
+                    String message = "Need to login and join a valid game.";
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                    exchange.getResponseBody().write(message.getBytes());
+                    exchange.getResponseBody().close();
+                    return;
+                }
+
+                Reader reader = new InputStreamReader(exchange.getRequestBody(), "UTF-8");
+                Soldier soldier = model.fromJson(reader, Soldier.class);
+
+                if (soldier.getType() == null || !soldier.getType().equals("Soldier")) {
+                    exchange.getResponseHeaders().set("Content-Type", "text/html");
+                    String message = "Incorrect type.";
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                    exchange.getResponseBody().write(message.getBytes());
+                    exchange.getResponseBody().close();
+                    return;
+                }
+
+                if (soldier.getPlayerIndex() == null) {
+                    exchange.getResponseHeaders().set("Content-Type", "text/html");
+                    String message = "playerIndex can't be null.";
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                    exchange.getResponseBody().write(message.getBytes());
+                    exchange.getResponseBody().close();
+                    return;
+                }
+
+                if (soldier.getPlayerIndex() != soldier.getPlayerIndex()) {
+                    exchange.getResponseHeaders().set("Content-Type", "text/html");
+                    String message = "Incorrect playerIndex.";
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                    exchange.getResponseBody().write(message.getBytes());
+                    exchange.getResponseBody().close();
+                    return;
+                }
+
+                if (soldier.getVictimIndex() == null || soldier.getVictimIndex() < -1 || 3 < soldier.getVictimIndex() || soldier.getVictimIndex() == soldier.getPlayerIndex()) {
+                    exchange.getResponseHeaders().set("Content-Type", "text/html");
+                    String message = "Victim index isn't valid.";
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                    exchange.getResponseBody().write(message.getBytes());
+                    exchange.getResponseBody().close();
+                    return;
+                }
+
+                GameManager gm = AllOfOurInformation.getSingleton().getGames().get(gameAndPlayer.getGameId());
+                if (gameAndPlayer.getPlayerIndex() != gm.getGame().getTurnTracker().getCurrentTurn()) {
+                    exchange.getResponseHeaders().set("Content-Type", "text/html");
+                    String message = "Not your turn.";
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                    exchange.getResponseBody().write(message.getBytes());
+                    exchange.getResponseBody().close();
+                    return;
+                }
+
+                if (!gm.getGame().getTurnTracker().getStatus().equals("Playing")) {
+                    exchange.getResponseHeaders().set("Content-Type", "text/html");
+                    String message = "Turn tracker status must be \"Playing\".";
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                    exchange.getResponseBody().write(message.getBytes());
+                    exchange.getResponseBody().close();
+                    return;
+                }
+
+                if (!gm.canUseSoldier()) {
+                    exchange.getResponseHeaders().set("Content-Type", "text/html");
+                    String message = "Cannot play soldier card";
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                    exchange.getResponseBody().write(message.getBytes());
+                    exchange.getResponseBody().close();
+                    return;
+                }
+                
+                if (!gm.canPlaceRobber(soldier.getLocation())) {
+                    exchange.getResponseHeaders().set("Content-Type", "text/html");
+                    String message = "Cannot place robber there";
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                    exchange.getResponseBody().write(message.getBytes());
+                    exchange.getResponseBody().close();
+                    return;
+                }
+
+                if (!gm.canRobPlayer(soldier.getLocation(), soldier.getVictimIndex())) {
+                    exchange.getResponseHeaders().set("Content-Type", "text/html");
+                    String message = "Cannot rob that player";
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                    exchange.getResponseBody().write(message.getBytes());
+                    exchange.getResponseBody().close();
+                    return;
+                }
+
+                soldier.setGameId(gameAndPlayer.getGameId());
+
+                GameInfo game;
+                try {
+                    game = ServerFascade.getSingleton().soldier(soldier);
+                } catch (Exception e) {
+                    game = null;
+                }
+                String result;
+                if (game != null) {
+                    result = game.toString();
+                    exchange.getResponseHeaders().set("Content-Type", "application/json");
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, result.length());
+                    exchange.getResponseBody().write(result.getBytes());
+                    exchange.getResponseBody().close();
+                } else {
+                    result = "Couldn't grab game in soldier";
+                    exchange.getResponseHeaders().set("Content-Type", "text/html");
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, result.length());
+                    exchange.getResponseBody().write(result.getBytes());
+                    exchange.getResponseBody().close();
+                }
+
+            } catch (Exception e) {
+                String error = "ERROR in soldier";
+                exchange.getResponseHeaders().set("Content-Type", "text/html");
+                exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, error.length());
+                exchange.getResponseBody().write(error.getBytes());
+                exchange.getResponseBody().close();
+            }
         }
     };
     /**

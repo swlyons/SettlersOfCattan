@@ -185,7 +185,13 @@ public class ServerFascade implements Fascade {
 
     @Override
     public GameInfo soldier(Soldier soldier) throws ServerException {
-        return new GameInfo("Default Game");
+        SoldierCommand soldierCommand = new SoldierCommand(soldier);
+        GameInfo gi = null;
+        if(agent.sendCommand(soldierCommand)){
+            gi = AllOfOurInformation.getSingleton().getGames().get(soldier.getGameId()).getGame();
+        }
+        return gi;
+
     }
 
     @Override
