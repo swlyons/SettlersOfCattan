@@ -21,8 +21,8 @@ public class RollNumberCommand implements Command{
     @Override
     public boolean execute() {
         try{
-        AllOfOurInformation.getSingleton().getGames().get(rollNumber.getGameId()).rollDice(rollNumber.getNumber());
-        AllOfOurInformation.getSingleton().getGames().get(rollNumber.getGameId()).getGame().setVersion(AllOfOurInformation.getSingleton().getGames().get(rollNumber.getGameId()).getGame().getVersion()+1);
+            AllOfOurInformation.getSingleton().getGames().get(rollNumber.getGameId()).rollDice(rollNumber.getNumber());
+            AllOfOurInformation.getSingleton().getGames().get(rollNumber.getGameId()).getGame().setVersion(AllOfOurInformation.getSingleton().getGames().get(rollNumber.getGameId()).getGame().getVersion()+1);
             return true;
         }catch(Exception e){
             return false;
