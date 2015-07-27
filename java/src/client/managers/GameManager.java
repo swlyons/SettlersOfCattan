@@ -78,12 +78,6 @@ public class GameManager {
 
             // our game
             setGame(game);
-            if (game.getTurnTracker().getLargestArmy() == -1) {
-                game.getTurnTracker().setLargestArmy(4);
-            }
-            if (game.getTurnTracker().getLongestRoad() == -1) {
-                game.getTurnTracker().setLongestRoad(4);
-            }
 
             Map map = game.getMap();
 
@@ -170,8 +164,8 @@ public class GameManager {
             }
 
             DevCardList mainBankDevCards = new DevCardList(game.getPlayers());
-            boolean hasLargestArmy = (mainBankIndex == game.getTurnTracker().getLargestArmy());
-            boolean hasLongestRoad = (mainBankIndex == game.getTurnTracker().getLongestRoad());
+            boolean hasLargestArmy = (-1 == game.getTurnTracker().getLargestArmy());
+            boolean hasLongestRoad = (-1 == game.getTurnTracker().getLongestRoad());
             gameBanks.add(new Bank(game.getBank(), mainBankDevCards, hasLargestArmy, hasLongestRoad));
             if (resourceManager == null) {
                 resourceManager = new ResourceManager();
@@ -630,11 +624,14 @@ public class GameManager {
                 if (game.getTurnTracker().getLongestRoad() == -1) {
                     if (5 <= 14 - resourceManager.getGameBanks().get(currentPlayer).getRoads()) {
                         game.getTurnTracker().setLongestRoad(currentPlayer);
+                        game.getPlayers().get(currentPlayer).setVictoryPoints(game.getPlayers().get(currentPlayer).getVictoryPoints()+2);
                     }
                 } else {
                     int roadsPreviousHolderHas = resourceManager.getGameBanks().get(game.getTurnTracker().getLongestRoad()).getRoads();
                     int roadsCurrentPlayerHas = resourceManager.getGameBanks().get(currentPlayer).getRoads();
                     if (roadsCurrentPlayerHas < roadsPreviousHolderHas) {
+                        game.getPlayers().get(currentPlayer).setVictoryPoints(game.getPlayers().get(currentPlayer).getVictoryPoints()+2);
+                        game.getPlayers().get(game.getTurnTracker().getLongestRoad()).setVictoryPoints(game.getPlayers().get(game.getTurnTracker().getLongestRoad()).getVictoryPoints()-2);
                         game.getTurnTracker().setLongestRoad(currentPlayer);
                     }
                 }
@@ -719,6 +716,7 @@ public class GameManager {
                         settlementLocation.setX(v.getHexLoc().getX());
                         settlementLocation.setY(v.getHexLoc().getY());
                         game.getMap().getSettlements().add(vertexObject);
+                        game.getPlayers().get(currentPlayer).setVictoryPoints(game.getPlayers().get(currentPlayer).getVictoryPoints()+1);
                         saveResourcesIntoGame();
                     }
                     return builtSettlement;
@@ -738,6 +736,7 @@ public class GameManager {
                         settlementLocation.setX(v.getHexLoc().getX());
                         settlementLocation.setY(v.getHexLoc().getY());
                         game.getMap().getSettlements().add(vertexObject);
+                        game.getPlayers().get(currentPlayer).setVictoryPoints(game.getPlayers().get(currentPlayer).getVictoryPoints()+1);
                         saveResourcesIntoGame();
                     }
                     return builtCity;
@@ -946,6 +945,19 @@ public class GameManager {
     public void useSoldier() {
         int currentPlayer = game.getTurnTracker().getCurrentTurn();
         resourceManager.soldierUsed(currentPlayer);
+        
+        if(game.getTurnTracker().getLargestArmy()==-1){
+            if(3<=resourceManager.getGameBanks().get(currentPlayer).getSoldiers()){
+                game.getPlayers().get(currentPlayer).setVictoryPoints(game.getPlayers().get(currentPlayer).getVictoryPoints()+2);
+                game.getTurnTracker().setLargestArmy(currentPlayer);
+            }
+        }else{
+            if(resourceManager.getGameBanks().get(game.getTurnTracker().getLargestArmy()).getSoldiers()<resourceManager.getGameBanks().get(currentPlayer).getSoldiers()){
+                game.getPlayers().get(currentPlayer).setVictoryPoints(game.getPlayers().get(currentPlayer).getVictoryPoints()+2);
+                game.getPlayers().get(game.getTurnTracker().getLargestArmy()).setVictoryPoints(game.getPlayers().get(game.getTurnTracker().getLargestArmy()).getVictoryPoints()-2);
+                game.getTurnTracker().setLargestArmy(currentPlayer);
+            }
+        }
     }
 
     /**
