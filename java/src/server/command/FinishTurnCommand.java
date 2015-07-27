@@ -52,8 +52,18 @@ public class FinishTurnCommand implements Command {
             }
 
             AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).endTurn();
+            while (AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).getGame().getPlayers().get(1).getId() < -1) {
+                if (status.equals("SecondRound")) {
+                    currentTurn--;
+                } else {
+                    currentTurn++;
+                    if (currentTurn == 4) {
+                        currentTurn = 0;
+                    }
+                }
+            }
             AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).getGame().getTurnTracker().setCurrentTurn(currentTurn);
-            AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).getGame().setVersion(AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).getGame().getVersion()+1);
+            AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).getGame().setVersion(AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).getGame().getVersion() + 1);
             return true;
         } catch (Exception e) {
             return false;

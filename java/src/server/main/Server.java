@@ -89,6 +89,7 @@ public class Server {
         // Game contexts
         server.createContext("/game/model", modelHandler);//worked on
         server.createContext("/game/listAI", listAIHandler);//worked on
+        server.createContext("/game/addAI", addAIHandler);//worked on
 
         // Moves contexts
         server.createContext("/moves/sendChat", sendChatHandler);//worked on
@@ -617,6 +618,64 @@ public class Server {
         }
     };
 
+    private HttpHandler addAIHandler = new HttpHandler() {
+
+        @Override
+        public void handle(HttpExchange exchange) throws IOException {
+            try {
+
+                GameIdPlayerIdAndPlayerIndex gameAndPlayer = verifyPlayer(exchange);
+
+                if (gameAndPlayer == null) {
+                    exchange.getResponseHeaders().set("Content-Type", "text/html");
+                    String message = "Need to login and join a valid game.";
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                    exchange.getResponseBody().write(message.getBytes());
+                    exchange.getResponseBody().close();
+                    return;
+                }
+                
+                
+                for(int i=0;i<AllOfOurInformation.getSingleton().getGames().get(gameAndPlayer.getGameId()).getGame().getPlayers().size();i++){
+                    if(AllOfOurInformation.getSingleton().getGames().get(gameAndPlayer.getGameId()).getGame().getPlayers().get(i)==null){
+                        PlayerInfo aiPlayer = new PlayerInfo();
+                        
+                        aiPlayer.setId(-1-i);
+                        aiPlayer.setPlayerID(-1-i);
+                        aiPlayer.setName("AI "+i);
+                        if(i==1){
+                            aiPlayer.setColor("red");
+                        }
+                        if(i==2){
+                            aiPlayer.setColor("blue");
+                        }
+                        if(i==3){
+                            aiPlayer.setColor("yellow");
+                        }
+                        AllOfOurInformation.getSingleton().getGames().get(gameAndPlayer.getGameId()).getGame().getPlayers().set(i, aiPlayer);
+                        break;
+                    }
+                }
+                
+                    String message = "Success";
+                    exchange.getResponseHeaders().set("Content-Type", "text/html");
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, message.length());
+                    exchange.getResponseBody().write(message.getBytes());
+                    exchange.getResponseBody().close();
+                
+            } catch (Exception e) {
+                exchange.getResponseHeaders().set("Content-Type", "text/html");
+                String message = "ERROR in adding AI.";
+                exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                exchange.getResponseBody().write(message.getBytes());
+                exchange.getResponseBody().close();
+            }
+
+        }
+    };
+
+    
+    
     /**
      * Handler to send a chat message
      */
