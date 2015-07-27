@@ -95,11 +95,11 @@ public class Server {
         server.createContext("/moves/rollNumber", rollNumberHandler);//worked on
         server.createContext("/moves/robPlayer", robPlayerHandler);//worked on
         server.createContext("/moves/finishTurn", finishTurnHandler);//worked on
-        server.createContext("/moves/buyDevCard", buyDevCardHandler);
+        server.createContext("/moves/buyDevCard", buyDevCardHandler);//worked on
         server.createContext("/moves/Year_Of_Plenty", year_of_plentyHandler);
         server.createContext("/moves/Road_Building", road_buildingHandler);
         server.createContext("/moves/Soldier", soldierHandler);//worked on
-        server.createContext("/moves/Monument", monumentHandler);
+        server.createContext("/moves/Monument", monumentHandler);//worked on
         server.createContext("/moves/offerTrade", offerTradeHandler);
         server.createContext("/moves/acceptTrade", acceptTradeHandler);
         server.createContext("/moves/buildSettlement", buildSettlementHandler);//worked on
