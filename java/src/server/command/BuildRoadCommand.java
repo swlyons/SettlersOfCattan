@@ -33,6 +33,7 @@ public class BuildRoadCommand implements Command {
             EdgeLocation edgeLocation = new EdgeLocation(hexSpot, edgeDirection);
             if (AllOfOurInformation.getSingleton().getGames().get(buildRoad.getGameId()).buildRoad(edgeLocation)) {
                 AllOfOurInformation.getSingleton().getGames().get(buildRoad.getGameId()).getGame().setVersion(AllOfOurInformation.getSingleton().getGames().get(buildRoad.getGameId()).getGame().getVersion() + 1);
+                AllOfOurInformation.getSingleton().getGames().get(buildRoad.getGameId()).getGame().setVersion(AllOfOurInformation.getSingleton().getGames().get(buildRoad.getGameId()).getGame().getVersion()+1);
                 return true;
             } else {
                 return false;

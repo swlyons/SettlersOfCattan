@@ -33,6 +33,7 @@ public class RobPlayerCommand implements Command {
             if (robPlayer.getVictimIndex() != -1) {
                 AllOfOurInformation.getSingleton().getGames().get(robPlayer.getGameId()).getResourceManager().transferResourceCard(robPlayer.getVictimIndex(), robPlayer.getPlayerIndex(), AllOfOurInformation.getSingleton().getGames().get(robPlayer.getGameId()).getGame().getPlayers().get(robPlayer.getVictimIndex()).getResources().getRandomResourceAvailable());
             }
+            AllOfOurInformation.getSingleton().getGames().get(robPlayer.getGameId()).getGame().setVersion(AllOfOurInformation.getSingleton().getGames().get(robPlayer.getGameId()).getGame().getVersion()+1);
             return true;
         } catch (Exception e) {
             return false;
