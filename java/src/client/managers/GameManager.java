@@ -242,9 +242,9 @@ public class GameManager {
         Hex robberHex = new Hex(new HexLocation(0, -2), 0, null);
         robberHex.setHasRobber(true);
 
-        hexes.add(new Hex(new HexLocation(2, 0), 11, ResourceType.wood));
-        hexes.add(new Hex(new HexLocation(2, 1), 12, ResourceType.sheep));
-        hexes.add(new Hex(new HexLocation(2, 2), 9, ResourceType.wheat));
+        hexes.add(new Hex(new HexLocation(2, -2), 11, ResourceType.wood));
+        hexes.add(new Hex(new HexLocation(2, -1), 12, ResourceType.sheep));
+        hexes.add(new Hex(new HexLocation(2, 0), 9, ResourceType.wheat));
 
         hexes.add(new Hex(new HexLocation(1, -2), 4, ResourceType.brick));
         hexes.add(new Hex(new HexLocation(1, -1), 6, ResourceType.ore));
@@ -262,9 +262,9 @@ public class GameManager {
         hexes.add(new Hex(new HexLocation(-1, 1), 9, ResourceType.sheep));
         hexes.add(new Hex(new HexLocation(-1, 2), 3, ResourceType.ore));
 
-        hexes.add(new Hex(new HexLocation(-2, -2), 5, ResourceType.ore));
-        hexes.add(new Hex(new HexLocation(-2, -1), 2, ResourceType.wheat));
-        hexes.add(new Hex(new HexLocation(-2, 0), 6, ResourceType.wood));
+        hexes.add(new Hex(new HexLocation(-2, 0), 5, ResourceType.ore));
+        hexes.add(new Hex(new HexLocation(-2, 1), 2, ResourceType.wheat));
+        hexes.add(new Hex(new HexLocation(-2, 2), 6, ResourceType.wood));
 
         List<Port> ports = new ArrayList<Port>();
 
