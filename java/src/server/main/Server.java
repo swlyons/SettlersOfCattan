@@ -25,6 +25,7 @@ import server.receiver.*;
 import server.receiver.AllOfOurInformation;
 import shared.data.*;
 import shared.model.*;
+import shared.locations.*;
 import client.communication.CookieModel;
 import client.managers.GameManager;
 import java.io.BufferedReader;
@@ -162,7 +163,7 @@ public class Server {
                 Reader reader = new InputStreamReader(exchange.getRequestBody(), "UTF-8");
                 User user = model.fromJson(reader, User.class);
 
-                if(user.getUsername()==null||user.getPassword()==null){
+                if (user.getUsername() == null || user.getPassword() == null) {
                     String error = "Username and password can't be null";
                     exchange.getResponseHeaders().set("Content-Type", "text/html");
                     exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, error.length());
@@ -223,7 +224,7 @@ public class Server {
             Reader reader = new InputStreamReader(exchange.getRequestBody(), "UTF-8");
             User user = model.fromJson(reader, User.class);
 
-            if(user.getUsername()==null||user.getPassword()==null){
+            if (user.getUsername() == null || user.getPassword() == null) {
                 String error = "Username and password can't be null";
                 exchange.getResponseHeaders().set("Content-Type", "text/html");
                 exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, error.length());
@@ -231,7 +232,7 @@ public class Server {
                 exchange.getResponseBody().close();
                 return;
             }
-            
+
             //call the appropriate fascade (real or mock)
             boolean result = false;
             try {
@@ -318,7 +319,7 @@ public class Server {
                 Reader reader = new InputStreamReader(exchange.getRequestBody(), "UTF-8");
                 String messageBody = "";
 
-            //check that the booleans are actually booleans for the swagger
+                //check that the booleans are actually booleans for the swagger
                 //<editor-fold desc="Check Booleans">
                 BufferedReader br = new BufferedReader(reader);
                 Scanner sc = new Scanner(br);
@@ -338,8 +339,8 @@ public class Server {
                 GameInfo gameInfo = null;
                 if (validRandomValues) {
                     CreateGameRequest createGame = model.fromJson(messageBody, CreateGameRequest.class);
-                    
-                    if(createGame.isRandomNumbers()==null||createGame.isRandomPorts()==null||createGame.isRandomTiles()==null){
+
+                    if (createGame.isRandomNumbers() == null || createGame.isRandomPorts() == null || createGame.isRandomTiles() == null) {
                         String error = "Create game booleans can't be null";
                         exchange.getResponseHeaders().set("Content-Type", "text/html");
                         exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, error.length());
@@ -347,8 +348,8 @@ public class Server {
                         exchange.getResponseBody().close();
                         return;
                     }
-                    
-                    if(createGame.getName()==null){
+
+                    if (createGame.getName() == null) {
                         String error = "Name can't be null";
                         exchange.getResponseHeaders().set("Content-Type", "text/html");
                         exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, error.length());
@@ -356,7 +357,7 @@ public class Server {
                         exchange.getResponseBody().close();
                         return;
                     }
-                    
+
                     try {
                         gameInfo = ServerFascade.getSingleton().createGame(createGame);
                     } catch (Exception e) {
@@ -367,10 +368,9 @@ public class Server {
                         exchange.getResponseBody().close();
                         return;
                     }
-                    
-                    
+
                 }
-                
+
                 if (gameInfo != null && validRandomValues) {
                     exchange.getResponseHeaders().set("Content-Type", "application/json");
                     String message = "{";
@@ -424,7 +424,7 @@ public class Server {
                     return;
                 }
 
-                if (joinGameRequest.getId()==null) {
+                if (joinGameRequest.getId() == null) {
                     String message = "Need a Game Id.";
                     exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
                     exchange.getResponseBody().write(message.getBytes());
@@ -637,9 +637,8 @@ public class Server {
                 } catch (com.google.gson.JsonSyntaxException jse) {
                     invalidIndex = true;
                 }
-                
-                if(sendChatRequest.getPlayerIndex()==null){
-                    exchange.getResponseHeaders().set("Content-Type", "text/html");
+
+                if (sendChatRequest.getPlayerIndex() == null) {
                     String message = "playerIndex can't be null.";
                     exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
                     exchange.getResponseBody().write(message.getBytes());
@@ -689,7 +688,6 @@ public class Server {
                 }
             } catch (Exception e) {
                 String error = "ERROR in sending chat";
-                exchange.getResponseHeaders().set("Content-Type", "text/html");
                 exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, error.length());
                 exchange.getResponseBody().write(error.getBytes());
                 exchange.getResponseBody().close();
@@ -725,8 +723,8 @@ public class Server {
                     exchange.getResponseBody().close();
                     return;
                 }
-                
-                if(rollNumber.getPlayerIndex()==null){
+
+                if (rollNumber.getPlayerIndex() == null) {
                     exchange.getResponseHeaders().set("Content-Type", "text/html");
                     String message = "playerIndex can't be null.";
                     exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
@@ -734,7 +732,6 @@ public class Server {
                     exchange.getResponseBody().close();
                     return;
                 }
-
 
                 if (rollNumber.getPlayerIndex() != gameAndPlayer.getPlayerIndex()) {
                     exchange.getResponseHeaders().set("Content-Type", "text/html");
@@ -744,8 +741,8 @@ public class Server {
                     exchange.getResponseBody().close();
                     return;
                 }
-                
-                if(rollNumber.getNumber()==null){
+
+                if (rollNumber.getNumber() == null) {
                     exchange.getResponseHeaders().set("Content-Type", "text/html");
                     String message = "Need a number.";
                     exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
@@ -838,135 +835,134 @@ public class Server {
 
         @Override
         public void handle(HttpExchange exchange) throws IOException {
-            try{
-            GameIdPlayerIdAndPlayerIndex gameAndPlayer = verifyPlayer(exchange);
+            try {
+                GameIdPlayerIdAndPlayerIndex gameAndPlayer = verifyPlayer(exchange);
 
-            if (gameAndPlayer == null) {
-                exchange.getResponseHeaders().set("Content-Type", "text/html");
-                String message = "Need to login and join a valid game.";
-                exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
-                exchange.getResponseBody().write(message.getBytes());
-                exchange.getResponseBody().close();
-                return;
-            }
-            Reader reader = new InputStreamReader(exchange.getRequestBody(), "UTF-8");
-            FinishMove finishMove = model.fromJson(reader, FinishMove.class);
+                if (gameAndPlayer == null) {
+                    exchange.getResponseHeaders().set("Content-Type", "text/html");
+                    String message = "Need to login and join a valid game.";
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                    exchange.getResponseBody().write(message.getBytes());
+                    exchange.getResponseBody().close();
+                    return;
+                }
+                Reader reader = new InputStreamReader(exchange.getRequestBody(), "UTF-8");
+                FinishMove finishMove = model.fromJson(reader, FinishMove.class);
 
-            if (!finishMove.getType().equals("finishTurn")) {
-                exchange.getResponseHeaders().set("Content-Type", "text/html");
-                String message = "Incorrect type.";
-                exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
-                exchange.getResponseBody().write(message.getBytes());
-                exchange.getResponseBody().close();
-                return;
-            }
+                if (!finishMove.getType().equals("finishTurn")) {
+                    exchange.getResponseHeaders().set("Content-Type", "text/html");
+                    String message = "Incorrect type.";
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                    exchange.getResponseBody().write(message.getBytes());
+                    exchange.getResponseBody().close();
+                    return;
+                }
 
-            if(finishMove.getPlayerIndex()==null){
+                if (finishMove.getPlayerIndex() == null) {
                     exchange.getResponseHeaders().set("Content-Type", "text/html");
                     String message = "playerIndex can't be null.";
                     exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
                     exchange.getResponseBody().write(message.getBytes());
                     exchange.getResponseBody().close();
                     return;
-            }
+                }
 
-            if (gameAndPlayer.getPlayerIndex() != finishMove.getPlayerIndex()) {
-                exchange.getResponseHeaders().set("Content-Type", "text/html");
-                String message = "Incorrect playerIndex.";
-                exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
-                exchange.getResponseBody().write(message.getBytes());
-                exchange.getResponseBody().close();
-                return;
-            }
-
-            GameInfo gi = AllOfOurInformation.getSingleton().getGames().get(gameAndPlayer.getGameId()).getGame();
-            if (gameAndPlayer.getPlayerIndex() != gi.getTurnTracker().getCurrentTurn()) {
-                exchange.getResponseHeaders().set("Content-Type", "text/html");
-                String message = "Not your turn.";
-                exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
-                exchange.getResponseBody().write(message.getBytes());
-                exchange.getResponseBody().close();
-                return;
-            }
-
-            String status = gi.getTurnTracker().getStatus();
-            if (status.equals("Rolling")) {
-                exchange.getResponseHeaders().set("Content-Type", "text/html");
-                String message = "Must Roll first.";
-                exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
-                exchange.getResponseBody().write(message.getBytes());
-                exchange.getResponseBody().close();
-                return;
-            }
-            if (status.equals("Robbing")) {
-                exchange.getResponseHeaders().set("Content-Type", "text/html");
-                String message = "Must rob first.";
-                exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
-                exchange.getResponseBody().write(message.getBytes());
-                exchange.getResponseBody().close();
-                return;
-            }
-            if (status.equals("Discarding")) {
-                exchange.getResponseHeaders().set("Content-Type", "text/html");
-                String message = "Must discard first.";
-                exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
-                exchange.getResponseBody().write(message.getBytes());
-                exchange.getResponseBody().close();
-                return;
-            }
-
-            PlayerInfo currentPlayer = gi.getPlayers().get(gameAndPlayer.getPlayerIndex());
-            if (status.equals("FirstRound")) {
-                if (currentPlayer.getSettlements() != 4 || currentPlayer.getRoads() != 14) {
+                if (gameAndPlayer.getPlayerIndex() != finishMove.getPlayerIndex()) {
                     exchange.getResponseHeaders().set("Content-Type", "text/html");
-                    String message = "Must play only 1 road and 1 settlement in first round.";
+                    String message = "Incorrect playerIndex.";
                     exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
                     exchange.getResponseBody().write(message.getBytes());
                     exchange.getResponseBody().close();
                     return;
                 }
-            }
 
-            if (status.equals("SecondRound")) {
-                if (currentPlayer.getSettlements() != 3 || currentPlayer.getRoads() != 13) {
+                GameInfo gi = AllOfOurInformation.getSingleton().getGames().get(gameAndPlayer.getGameId()).getGame();
+                if (gameAndPlayer.getPlayerIndex() != gi.getTurnTracker().getCurrentTurn()) {
                     exchange.getResponseHeaders().set("Content-Type", "text/html");
-                    String message = "Must play only 1 road and 1 settlement in second round.";
+                    String message = "Not your turn.";
                     exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
                     exchange.getResponseBody().write(message.getBytes());
                     exchange.getResponseBody().close();
                     return;
                 }
-            }
 
-            finishMove.setGameId(gameAndPlayer.getGameId());
-            GameInfo game;
-            try {
-                game = ServerFascade.getSingleton().finishMove(finishMove);
+                String status = gi.getTurnTracker().getStatus();
+                if (status.equals("Rolling")) {
+                    exchange.getResponseHeaders().set("Content-Type", "text/html");
+                    String message = "Must Roll first.";
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                    exchange.getResponseBody().write(message.getBytes());
+                    exchange.getResponseBody().close();
+                    return;
+                }
+                if (status.equals("Robbing")) {
+                    exchange.getResponseHeaders().set("Content-Type", "text/html");
+                    String message = "Must rob first.";
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                    exchange.getResponseBody().write(message.getBytes());
+                    exchange.getResponseBody().close();
+                    return;
+                }
+                if (status.equals("Discarding")) {
+                    exchange.getResponseHeaders().set("Content-Type", "text/html");
+                    String message = "Must discard first.";
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                    exchange.getResponseBody().write(message.getBytes());
+                    exchange.getResponseBody().close();
+                    return;
+                }
+
+                PlayerInfo currentPlayer = gi.getPlayers().get(gameAndPlayer.getPlayerIndex());
+                if (status.equals("FirstRound")) {
+                    if (currentPlayer.getSettlements() != 4 || currentPlayer.getRoads() != 14) {
+                        exchange.getResponseHeaders().set("Content-Type", "text/html");
+                        String message = "Must play only 1 road and 1 settlement in first round.";
+                        exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                        exchange.getResponseBody().write(message.getBytes());
+                        exchange.getResponseBody().close();
+                        return;
+                    }
+                }
+
+                if (status.equals("SecondRound")) {
+                    if (currentPlayer.getSettlements() != 3 || currentPlayer.getRoads() != 13) {
+                        exchange.getResponseHeaders().set("Content-Type", "text/html");
+                        String message = "Must play only 1 road and 1 settlement in second round.";
+                        exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                        exchange.getResponseBody().write(message.getBytes());
+                        exchange.getResponseBody().close();
+                        return;
+                    }
+                }
+
+                finishMove.setGameId(gameAndPlayer.getGameId());
+                GameInfo game;
+                try {
+                    game = ServerFascade.getSingleton().finishMove(finishMove);
+                } catch (Exception e) {
+                    game = null;
+                }
+                String result;
+                if (game != null) {
+                    result = game.toString();
+                    exchange.getResponseHeaders().set("Content-Type", "application/json");
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, result.length());
+                    exchange.getResponseBody().write(result.getBytes());
+                    exchange.getResponseBody().close();
+                } else {
+                    result = "Couldn't grab game in finish turn";
+                    exchange.getResponseHeaders().set("Content-Type", "text/html");
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, result.length());
+                    exchange.getResponseBody().write(result.getBytes());
+                    exchange.getResponseBody().close();
+                }
+
             } catch (Exception e) {
-                game = null;
-            }
-            String result;
-            if (game != null) {
-                result = game.toString();
-                exchange.getResponseHeaders().set("Content-Type", "application/json");
-                exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, result.length());
-                exchange.getResponseBody().write(result.getBytes());
-                exchange.getResponseBody().close();
-            } else {
-                result = "Couldn't grab game in finish turn";
-                exchange.getResponseHeaders().set("Content-Type", "text/html");
-                exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, result.length());
-                exchange.getResponseBody().write(result.getBytes());
-                exchange.getResponseBody().close();
-            }
-        
-            }catch (Exception e){
                 String error = "ERROR in finishing turn";
                 exchange.getResponseHeaders().set("Content-Type", "text/html");
                 exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, error.length());
                 exchange.getResponseBody().write(error.getBytes());
                 exchange.getResponseBody().close();
-
             }
         }
     };
@@ -1112,102 +1108,152 @@ public class Server {
 
         @Override
         public void handle(HttpExchange exchange) throws IOException {
-            GameIdPlayerIdAndPlayerIndex gameAndPlayer = verifyPlayer(exchange);
+            try {
 
-            if (gameAndPlayer == null) {
-                exchange.getResponseHeaders().set("Content-Type", "text/html");
-                String message = "Need to login and join a valid game.";
-                exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
-                exchange.getResponseBody().write(message.getBytes());
-                exchange.getResponseBody().close();
-                return;
-            }
+                GameIdPlayerIdAndPlayerIndex gameAndPlayer = verifyPlayer(exchange);
 
-            Reader reader = new InputStreamReader(exchange.getRequestBody(), "UTF-8");
-            BuildRoad buildRoad = model.fromJson(reader, BuildRoad.class);
-
-            if (!buildRoad.getType().equals("buildRoad")) {
-                exchange.getResponseHeaders().set("Content-Type", "text/html");
-                String message = "Incorrect type.";
-                exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
-                exchange.getResponseBody().write(message.getBytes());
-                exchange.getResponseBody().close();
-                return;
-            }
-            
-            if(buildRoad.getPlayerIndex()==null){
-                exchange.getResponseHeaders().set("Content-Type", "text/html");
-                String message = "playerIndex can't be null.";
-                exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
-                exchange.getResponseBody().write(message.getBytes());
-                exchange.getResponseBody().close();
-                return;
-            }
-
-
-            if (gameAndPlayer.getPlayerIndex() != buildRoad.getPlayerIndex()) {
-                exchange.getResponseHeaders().set("Content-Type", "text/html");
-                String message = "Incorrect playerIndex.";
-                exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
-                exchange.getResponseBody().write(message.getBytes());
-                exchange.getResponseBody().close();
-                return;
-            }
-            
-            if (buildRoad.isFree()==null) {
-                exchange.getResponseHeaders().set("Content-Type", "text/html");
-                String message = "Need free boolean.";
-                exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
-                exchange.getResponseBody().write(message.getBytes());
-                exchange.getResponseBody().close();
-                return;
-            }
-            
-            if(buildRoad.getRoadLocation()==null||buildRoad.getRoadLocation().getX()==null||buildRoad.getRoadLocation().getY()==null||buildRoad.getRoadLocation().getDirection()==null){
-                exchange.getResponseHeaders().set("Content-Type", "text/html");
-                String message = "Need a proper roadLocation.";
-                exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
-                exchange.getResponseBody().write(message.getBytes());
-                exchange.getResponseBody().close();
-                return;
-            }
-            
-
-            GameManager gm = AllOfOurInformation.getSingleton().getGames().get(gameAndPlayer.getGameId());
-            if (gameAndPlayer.getPlayerIndex() != gm.getGame().getTurnTracker().getCurrentTurn()) {
-                exchange.getResponseHeaders().set("Content-Type", "text/html");
-                String message = "Not your turn.";
-                exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
-                exchange.getResponseBody().write(message.getBytes());
-                exchange.getResponseBody().close();
-                return;
-            }
-
-            String status = gm.getGame().getTurnTracker().getStatus();
-            
-            if(status.equals("FirstRound")||status.equals("SecondRound")){
-                if(!buildRoad.isFree()){
+                if (gameAndPlayer == null) {
                     exchange.getResponseHeaders().set("Content-Type", "text/html");
-                    String message = "Building a road must be free in the first two rounds.";
+                    String message = "Need to login and join a valid game.";
                     exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
                     exchange.getResponseBody().write(message.getBytes());
                     exchange.getResponseBody().close();
                     return;
                 }
-            }
-            
-            if(!buildRoad.isFree()){
-                if(gm.canBuildRoad()){
-                
-                }
-            }
-            
-            exchange.getResponseHeaders().set("Content-Type", "application/json");
-            //TODO: build a road
 
-            exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, 0);
-            exchange.getResponseBody().write("Success".getBytes());
-            exchange.getResponseBody().close();
+                Reader reader = new InputStreamReader(exchange.getRequestBody(), "UTF-8");
+                BuildRoad buildRoad = model.fromJson(reader, BuildRoad.class);
+
+                if (!buildRoad.getType().equals("buildRoad")) {
+                    exchange.getResponseHeaders().set("Content-Type", "text/html");
+                    String message = "Incorrect type.";
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                    exchange.getResponseBody().write(message.getBytes());
+                    exchange.getResponseBody().close();
+                    return;
+                }
+
+                if (buildRoad.getPlayerIndex() == null) {
+                    exchange.getResponseHeaders().set("Content-Type", "text/html");
+                    String message = "playerIndex can't be null.";
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                    exchange.getResponseBody().write(message.getBytes());
+                    exchange.getResponseBody().close();
+                    return;
+                }
+
+                if (gameAndPlayer.getPlayerIndex() != buildRoad.getPlayerIndex()) {
+                    exchange.getResponseHeaders().set("Content-Type", "text/html");
+                    String message = "Incorrect playerIndex.";
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                    exchange.getResponseBody().write(message.getBytes());
+                    exchange.getResponseBody().close();
+                    return;
+                }
+
+                if (buildRoad.isFree() == null) {
+                    exchange.getResponseHeaders().set("Content-Type", "text/html");
+                    String message = "Need free boolean.";
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                    exchange.getResponseBody().write(message.getBytes());
+                    exchange.getResponseBody().close();
+                    return;
+                }
+
+                if (buildRoad.getRoadLocation() == null || buildRoad.getRoadLocation().getX() == null || buildRoad.getRoadLocation().getY() == null || buildRoad.getRoadLocation().getDirection() == null) {
+                    exchange.getResponseHeaders().set("Content-Type", "text/html");
+                    String message = "Need a proper roadLocation.";
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                    exchange.getResponseBody().write(message.getBytes());
+                    exchange.getResponseBody().close();
+                    return;
+                }
+
+                GameManager gm = AllOfOurInformation.getSingleton().getGames().get(gameAndPlayer.getGameId());
+                if (gameAndPlayer.getPlayerIndex() != gm.getGame().getTurnTracker().getCurrentTurn()) {
+                    exchange.getResponseHeaders().set("Content-Type", "text/html");
+                    String message = "Not your turn.";
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                    exchange.getResponseBody().write(message.getBytes());
+                    exchange.getResponseBody().close();
+                    return;
+                }
+
+                String status = gm.getGame().getTurnTracker().getStatus();
+
+                if (!(status.equals("Playing") || status.equals("FirstRound") || status.equals("SecondRound"))) {
+                    exchange.getResponseHeaders().set("Content-Type", "text/html");
+                    String message = "Cannot place road in this turn tracker status.";
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                    exchange.getResponseBody().write(message.getBytes());
+                    exchange.getResponseBody().close();
+                    return;
+                }
+
+                if (status.equals("FirstRound") || status.equals("SecondRound")) {
+                    if (!buildRoad.isFree()) {
+                        exchange.getResponseHeaders().set("Content-Type", "text/html");
+                        String message = "Building a road must be free in the first two rounds.";
+                        exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                        exchange.getResponseBody().write(message.getBytes());
+                        exchange.getResponseBody().close();
+                        return;
+                    }
+                }
+
+                if (!buildRoad.isFree()) {
+                    if (gm.canBuildRoad()) {
+                        exchange.getResponseHeaders().set("Content-Type", "text/html");
+                        String message = "Not enough resouces.";
+                        exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                        exchange.getResponseBody().write(message.getBytes());
+                        exchange.getResponseBody().close();
+                        return;
+                    }
+                }
+
+                HexLocation hexSpot = new HexLocation(buildRoad.getRoadLocation().getX(), buildRoad.getRoadLocation().getY());
+                EdgeDirection edgeDirection = buildRoad.getRoadLocation().getDirection();
+                EdgeLocation edgeLocation = new EdgeLocation(hexSpot, edgeDirection);
+
+                if (!gm.canPlaceRoad(edgeLocation)) {
+                    exchange.getResponseHeaders().set("Content-Type", "text/html");
+                    String message = "Cannot place road there.";
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                    exchange.getResponseBody().write(message.getBytes());
+                    exchange.getResponseBody().close();
+                    return;
+                }
+
+                buildRoad.setGameId(gameAndPlayer.getGameId());
+
+                GameInfo game;
+                try {
+                    game = ServerFascade.getSingleton().buildRoad(buildRoad);
+                } catch (Exception e) {
+                    game = null;
+                }
+                String result;
+                if (game != null) {
+                    result = game.toString();
+                    exchange.getResponseHeaders().set("Content-Type", "application/json");
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, result.length());
+                    exchange.getResponseBody().write(result.getBytes());
+                    exchange.getResponseBody().close();
+                } else {
+                    result = "Couldn't grab game in build road";
+                    exchange.getResponseHeaders().set("Content-Type", "text/html");
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, result.length());
+                    exchange.getResponseBody().write(result.getBytes());
+                    exchange.getResponseBody().close();
+                }
+            }catch(Exception e){
+                String error = "ERROR in build road";
+                exchange.getResponseHeaders().set("Content-Type", "text/html");
+                exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, error.length());
+                exchange.getResponseBody().write(error.getBytes());
+                exchange.getResponseBody().close();            
+            }
         }
     };
     /**

@@ -13,6 +13,7 @@ public class BuildRoad extends Command {
 
     private XYEdgeLocation roadLocation;
     private Boolean free;
+    private Integer gameId;
 
     public XYEdgeLocation getRoadLocation() {
         return roadLocation;
@@ -28,5 +29,13 @@ public class BuildRoad extends Command {
 
     public void setFree(Boolean free) {
         this.free = free;
+    }
+    
+    public Integer getGameId(){
+        return gameId;
+    }
+    
+    public void setGameId(Integer gameId){
+        this.gameId=gameId;
     }
 }
