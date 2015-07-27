@@ -245,7 +245,13 @@ public class ServerFascade implements Fascade {
 
     @Override
     public GameInfo discardCards(DiscardCards discardCards) throws ServerException {
-        return new GameInfo("Default Game");
+        DiscardCardsCommand discardCardsCommand = new DiscardCardsCommand(discardCards);
+        GameInfo gi = null;
+        if(agent.sendCommand(discardCardsCommand)){
+            gi = AllOfOurInformation.getSingleton().getGames().get(discardCards.getGameId()).getGame();
+        }
+        return gi;
+
     }
 
 }
