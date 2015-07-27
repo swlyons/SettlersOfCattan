@@ -93,7 +93,7 @@ public class Server {
         // Moves contexts
         server.createContext("/moves/sendChat", sendChatHandler);//worked on
         server.createContext("/moves/rollNumber", rollNumberHandler);//worked on
-        server.createContext("/moves/robPlayer", robPlayerHandler);
+        server.createContext("/moves/robPlayer", robPlayerHandler);//worked on
         server.createContext("/moves/finishTurn", finishTurnHandler);// worked on
         server.createContext("/moves/buyDevCard", buyDevCardHandler);
         server.createContext("/moves/Year_Of_Plenty", year_of_plentyHandler);
@@ -106,7 +106,7 @@ public class Server {
         server.createContext("/moves/buildCity", buildCityHandler);//worked on
         server.createContext("/moves/buildRoad", buildRoadHandler);// worked on
         server.createContext("/moves/maritimeTrade", maritimeTradeHandler);
-        server.createContext("/moves/discardCards", discardCardsHandler);
+        server.createContext("/moves/discardCards", discardCardsHandler);//worked on
 
         //swagger
         server.createContext("/docs/api/data", new Handlers.JSONAppender(""));
@@ -1725,171 +1725,178 @@ public class Server {
 
         @Override
         public void handle(HttpExchange exchange) throws IOException {
-            GameIdPlayerIdAndPlayerIndex gameAndPlayer = verifyPlayer(exchange);
-
-            if (gameAndPlayer == null) {
-                exchange.getResponseHeaders().set("Content-Type", "text/html");
-                String message = "Need to login and join a valid game.";
-                exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
-                exchange.getResponseBody().write(message.getBytes());
-                exchange.getResponseBody().close();
-                return;
-            }
-
-            Reader reader = new InputStreamReader(exchange.getRequestBody(), "UTF-8");
-            DiscardCards discardCards = model.fromJson(reader, DiscardCards.class);
-
-            if (discardCards.getType() == null || !discardCards.getType().equals("discardCards")) {
-                exchange.getResponseHeaders().set("Content-Type", "text/html");
-                String message = "Incorrect type.";
-                exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
-                exchange.getResponseBody().write(message.getBytes());
-                exchange.getResponseBody().close();
-                return;
-            }
-
-            if (discardCards.getPlayerIndex() == null) {
-                exchange.getResponseHeaders().set("Content-Type", "text/html");
-                String message = "playerIndex can't be null.";
-                exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
-                exchange.getResponseBody().write(message.getBytes());
-                exchange.getResponseBody().close();
-                return;
-            }
-
-            if (gameAndPlayer.getPlayerIndex() != discardCards.getPlayerIndex()) {
-                exchange.getResponseHeaders().set("Content-Type", "text/html");
-                String message = "Incorrect playerIndex.";
-                exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
-                exchange.getResponseBody().write(message.getBytes());
-                exchange.getResponseBody().close();
-                return;
-            }
-
-            if (discardCards.getDiscardedCards() == null) {
-                exchange.getResponseHeaders().set("Content-Type", "text/html");
-                String message = "Discarded cards can't be null.";
-                exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
-                exchange.getResponseBody().write(message.getBytes());
-                exchange.getResponseBody().close();
-                return;
-            }
-
-            ResourceList resourcesToDiscard = discardCards.getDiscardedCards();
-
-            if (resourcesToDiscard.getBrick() == null || resourcesToDiscard.getOre() == null || resourcesToDiscard.getSheep() == null || resourcesToDiscard.getWheat() == null || resourcesToDiscard.getWood() == null) {
-                exchange.getResponseHeaders().set("Content-Type", "text/html");
-                String message = "All Resources need to not be null.";
-                exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
-                exchange.getResponseBody().write(message.getBytes());
-                exchange.getResponseBody().close();
-                return;
-            }
-
-            GameManager gm = AllOfOurInformation.getSingleton().getGames().get(gameAndPlayer.getGameId());
-
-            if (gm.getGame().getPlayers().get(discardCards.getPlayerIndex()).isDiscarded()) {
-                exchange.getResponseHeaders().set("Content-Type", "text/html");
-                String message = "Player already discarded.";
-                exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
-                exchange.getResponseBody().write(message.getBytes());
-                exchange.getResponseBody().close();
-                return;
-            }
-
-            if (gm.getGame().getPlayers().get(discardCards.getPlayerIndex()).getResources().getTotalResources() < 7) {
-                exchange.getResponseHeaders().set("Content-Type", "text/html");
-                String message = "Player doesn't need to discard.";
-                exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
-                exchange.getResponseBody().write(message.getBytes());
-                exchange.getResponseBody().close();
-                return;
-            }
-
-            boolean negativeResource = false;
-            if (resourcesToDiscard.getBrick() < 0) {
-                negativeResource = true;
-            }
-            if (resourcesToDiscard.getOre() < 0) {
-                negativeResource = true;
-            }
-            if (resourcesToDiscard.getSheep() < 0) {
-                negativeResource = true;
-            }
-            if (resourcesToDiscard.getWheat() < 0) {
-                negativeResource = true;
-            }
-            if (resourcesToDiscard.getWood() < 0) {
-                negativeResource = true;
-            }
-
-            if (negativeResource) {
-                exchange.getResponseHeaders().set("Content-Type", "text/html");
-                String message = "Can't discard a negative number of a resource.";
-                exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
-                exchange.getResponseBody().write(message.getBytes());
-                exchange.getResponseBody().close();
-                return;
-            }
-
-            boolean playerHasEnough = true;
-            if (gm.getResourceManager().getGameBanks().get(gameAndPlayer.getPlayerIndex()).getResourcesCards().getBrick() < resourcesToDiscard.getBrick()) {
-                playerHasEnough = false;
-            }
-            if (gm.getResourceManager().getGameBanks().get(gameAndPlayer.getPlayerIndex()).getResourcesCards().getOre() < resourcesToDiscard.getOre()) {
-                playerHasEnough = false;
-            }
-            if (gm.getResourceManager().getGameBanks().get(gameAndPlayer.getPlayerIndex()).getResourcesCards().getSheep() < resourcesToDiscard.getSheep()) {
-                playerHasEnough = false;
-            }
-            if (gm.getResourceManager().getGameBanks().get(gameAndPlayer.getPlayerIndex()).getResourcesCards().getWheat() < resourcesToDiscard.getWheat()) {
-                playerHasEnough = false;
-            }
-            if (gm.getResourceManager().getGameBanks().get(gameAndPlayer.getPlayerIndex()).getResourcesCards().getWood() < resourcesToDiscard.getWood()) {
-                playerHasEnough = false;
-            }
-
-            if (!playerHasEnough) {
-                exchange.getResponseHeaders().set("Content-Type", "text/html");
-                String message = "Player doesn't have enough of those resources.";
-                exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
-                exchange.getResponseBody().write(message.getBytes());
-                exchange.getResponseBody().close();
-                return;
-            }
-
-            if (gm.getResourceManager().getGameBanks().get(gameAndPlayer.getPlayerIndex()).getResourcesCards().getTotalResources() / 2 != resourcesToDiscard.getTotalResources()) {
-                exchange.getResponseHeaders().set("Content-Type", "text/html");
-                String message = "Incorrect number of resources to discard.";
-                exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
-                exchange.getResponseBody().write(message.getBytes());
-                exchange.getResponseBody().close();
-                return;
-            }
-
-            discardCards.setGameId(gameAndPlayer.getGameId());
-
-            GameInfo game;
             try {
-                game = ServerFascade.getSingleton().discardCards(discardCards);
-            } catch (Exception e) {
-                game = null;
-            }
-            String result;
-            if (game != null) {
-                result = game.toString();
-                exchange.getResponseHeaders().set("Content-Type", "application/json");
-                exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, result.length());
-                exchange.getResponseBody().write(result.getBytes());
-                exchange.getResponseBody().close();
-            } else {
-                result = "Couldn't grab game in discardCards";
-                exchange.getResponseHeaders().set("Content-Type", "text/html");
-                exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, result.length());
-                exchange.getResponseBody().write(result.getBytes());
-                exchange.getResponseBody().close();
-            }
+                GameIdPlayerIdAndPlayerIndex gameAndPlayer = verifyPlayer(exchange);
 
+                if (gameAndPlayer == null) {
+                    exchange.getResponseHeaders().set("Content-Type", "text/html");
+                    String message = "Need to login and join a valid game.";
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                    exchange.getResponseBody().write(message.getBytes());
+                    exchange.getResponseBody().close();
+                    return;
+                }
+
+                Reader reader = new InputStreamReader(exchange.getRequestBody(), "UTF-8");
+                DiscardCards discardCards = model.fromJson(reader, DiscardCards.class);
+
+                if (discardCards.getType() == null || !discardCards.getType().equals("discardCards")) {
+                    exchange.getResponseHeaders().set("Content-Type", "text/html");
+                    String message = "Incorrect type.";
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                    exchange.getResponseBody().write(message.getBytes());
+                    exchange.getResponseBody().close();
+                    return;
+                }
+
+                if (discardCards.getPlayerIndex() == null) {
+                    exchange.getResponseHeaders().set("Content-Type", "text/html");
+                    String message = "playerIndex can't be null.";
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                    exchange.getResponseBody().write(message.getBytes());
+                    exchange.getResponseBody().close();
+                    return;
+                }
+
+                if (gameAndPlayer.getPlayerIndex() != discardCards.getPlayerIndex()) {
+                    exchange.getResponseHeaders().set("Content-Type", "text/html");
+                    String message = "Incorrect playerIndex.";
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                    exchange.getResponseBody().write(message.getBytes());
+                    exchange.getResponseBody().close();
+                    return;
+                }
+
+                if (discardCards.getDiscardedCards() == null) {
+                    exchange.getResponseHeaders().set("Content-Type", "text/html");
+                    String message = "Discarded cards can't be null.";
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                    exchange.getResponseBody().write(message.getBytes());
+                    exchange.getResponseBody().close();
+                    return;
+                }
+
+                ResourceList resourcesToDiscard = discardCards.getDiscardedCards();
+
+                if (resourcesToDiscard.getBrick() == null || resourcesToDiscard.getOre() == null || resourcesToDiscard.getSheep() == null || resourcesToDiscard.getWheat() == null || resourcesToDiscard.getWood() == null) {
+                    exchange.getResponseHeaders().set("Content-Type", "text/html");
+                    String message = "All Resources need to not be null.";
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                    exchange.getResponseBody().write(message.getBytes());
+                    exchange.getResponseBody().close();
+                    return;
+                }
+
+                GameManager gm = AllOfOurInformation.getSingleton().getGames().get(gameAndPlayer.getGameId());
+
+                if (gm.getGame().getPlayers().get(discardCards.getPlayerIndex()).isDiscarded()) {
+                    exchange.getResponseHeaders().set("Content-Type", "text/html");
+                    String message = "Player already discarded.";
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                    exchange.getResponseBody().write(message.getBytes());
+                    exchange.getResponseBody().close();
+                    return;
+                }
+
+                if (gm.getGame().getPlayers().get(discardCards.getPlayerIndex()).getResources().getTotalResources() < 7) {
+                    exchange.getResponseHeaders().set("Content-Type", "text/html");
+                    String message = "Player doesn't need to discard.";
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                    exchange.getResponseBody().write(message.getBytes());
+                    exchange.getResponseBody().close();
+                    return;
+                }
+
+                boolean negativeResource = false;
+                if (resourcesToDiscard.getBrick() < 0) {
+                    negativeResource = true;
+                }
+                if (resourcesToDiscard.getOre() < 0) {
+                    negativeResource = true;
+                }
+                if (resourcesToDiscard.getSheep() < 0) {
+                    negativeResource = true;
+                }
+                if (resourcesToDiscard.getWheat() < 0) {
+                    negativeResource = true;
+                }
+                if (resourcesToDiscard.getWood() < 0) {
+                    negativeResource = true;
+                }
+
+                if (negativeResource) {
+                    exchange.getResponseHeaders().set("Content-Type", "text/html");
+                    String message = "Can't discard a negative number of a resource.";
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                    exchange.getResponseBody().write(message.getBytes());
+                    exchange.getResponseBody().close();
+                    return;
+                }
+
+                boolean playerHasEnough = true;
+                if (gm.getResourceManager().getGameBanks().get(gameAndPlayer.getPlayerIndex()).getResourcesCards().getBrick() < resourcesToDiscard.getBrick()) {
+                    playerHasEnough = false;
+                }
+                if (gm.getResourceManager().getGameBanks().get(gameAndPlayer.getPlayerIndex()).getResourcesCards().getOre() < resourcesToDiscard.getOre()) {
+                    playerHasEnough = false;
+                }
+                if (gm.getResourceManager().getGameBanks().get(gameAndPlayer.getPlayerIndex()).getResourcesCards().getSheep() < resourcesToDiscard.getSheep()) {
+                    playerHasEnough = false;
+                }
+                if (gm.getResourceManager().getGameBanks().get(gameAndPlayer.getPlayerIndex()).getResourcesCards().getWheat() < resourcesToDiscard.getWheat()) {
+                    playerHasEnough = false;
+                }
+                if (gm.getResourceManager().getGameBanks().get(gameAndPlayer.getPlayerIndex()).getResourcesCards().getWood() < resourcesToDiscard.getWood()) {
+                    playerHasEnough = false;
+                }
+
+                if (!playerHasEnough) {
+                    exchange.getResponseHeaders().set("Content-Type", "text/html");
+                    String message = "Player doesn't have enough of those resources.";
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                    exchange.getResponseBody().write(message.getBytes());
+                    exchange.getResponseBody().close();
+                    return;
+                }
+
+                if (gm.getResourceManager().getGameBanks().get(gameAndPlayer.getPlayerIndex()).getResourcesCards().getTotalResources() / 2 != resourcesToDiscard.getTotalResources()) {
+                    exchange.getResponseHeaders().set("Content-Type", "text/html");
+                    String message = "Incorrect number of resources to discard.";
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                    exchange.getResponseBody().write(message.getBytes());
+                    exchange.getResponseBody().close();
+                    return;
+                }
+
+                discardCards.setGameId(gameAndPlayer.getGameId());
+
+                GameInfo game;
+                try {
+                    game = ServerFascade.getSingleton().discardCards(discardCards);
+                } catch (Exception e) {
+                    game = null;
+                }
+                String result;
+                if (game != null) {
+                    result = game.toString();
+                    exchange.getResponseHeaders().set("Content-Type", "application/json");
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, result.length());
+                    exchange.getResponseBody().write(result.getBytes());
+                    exchange.getResponseBody().close();
+                } else {
+                    result = "Couldn't grab game in discardCards";
+                    exchange.getResponseHeaders().set("Content-Type", "text/html");
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, result.length());
+                    exchange.getResponseBody().write(result.getBytes());
+                    exchange.getResponseBody().close();
+                }
+            } catch (Exception e) {
+                String error = "ERROR in discard cards";
+                exchange.getResponseHeaders().set("Content-Type", "text/html");
+                exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, error.length());
+                exchange.getResponseBody().write(error.getBytes());
+                exchange.getResponseBody().close();
+            }
         }
     };
 
