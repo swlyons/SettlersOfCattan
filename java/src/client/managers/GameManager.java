@@ -857,7 +857,6 @@ public class GameManager {
 
     public void useMonopoly(ResourceType r) {
         int currentPlayer = game.getTurnTracker().getCurrentTurn();
-        // TODO: use GUI to prompt user for Resource Type
         for (int i = 0; i < 4; i++) {
             if (i != currentPlayer) {
                 ResourceList playerResources = resourceManager.getGameBanks().get(i).getResourcesCards();
@@ -885,6 +884,7 @@ public class GameManager {
             }
         }
         resourceManager.monopolyUsed(currentPlayer);
+        resourceManager.getGameBanks().get(currentPlayer).makeCardsUnusable();
         saveResourcesIntoGame();
     }
 
@@ -898,6 +898,7 @@ public class GameManager {
         PlayerInfo p = game.getPlayers().get(currentPlayer);
         p.setVictoryPoints(p.getVictoryPoints() + 1);
         resourceManager.monumentUsed(currentPlayer);
+        saveResourcesIntoGame();
     }
 
     public boolean canUseRoadBuilding() {
@@ -917,6 +918,8 @@ public class GameManager {
         }
 
         resourceManager.roadBuildingUsed(currentPlayer);
+        resourceManager.getGameBanks().get(currentPlayer).makeCardsUnusable();
+        saveResourcesIntoGame();
     }
 
     public boolean canUseYearOfPlenty() {
@@ -933,6 +936,7 @@ public class GameManager {
         if (mainBankResources.hasCardsAvailable(r)) {
             resourceManager.transferResourceCard(mainBankIndex, currentPlayer, r);
             resourceManager.yearOfPlentyUsed(currentPlayer);
+            resourceManager.getGameBanks().get(currentPlayer).makeCardsUnusable();
             saveResourcesIntoGame();
             return true;
         } else {
@@ -948,6 +952,9 @@ public class GameManager {
     public void useSoldier() {
         int currentPlayer = game.getTurnTracker().getCurrentTurn();
         resourceManager.soldierUsed(currentPlayer);
+        
+        resourceManager.getGameBanks().get(currentPlayer).makeCardsUnusable();
+        saveResourcesIntoGame();
         
         if(game.getTurnTracker().getLargestArmy()==-1){
             if(3<=resourceManager.getGameBanks().get(currentPlayer).getSoldiers()){
@@ -978,6 +985,7 @@ public class GameManager {
                 l.setWhoCanBuild(new HashSet<Integer>());
             }
         }
+        saveResourcesIntoGame();
     }
 
     public GameInfo getGame() {
