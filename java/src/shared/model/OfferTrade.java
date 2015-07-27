@@ -12,7 +12,16 @@ public class OfferTrade extends Command {
 
     private ResourceList offer;
     private Integer receiver;
-
+    private Integer gameId;
+        
+    public Integer getGameId(){
+        return gameId;
+    }
+    
+    public void setGameId(Integer gameId){
+        this.gameId = gameId;
+    }
+    
     public ResourceList getOffer() {
         return offer;
     }
