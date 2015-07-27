@@ -480,6 +480,7 @@ public class Server {
                     exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
                     exchange.getResponseBody().write(message.getBytes());
                     exchange.getResponseBody().close();
+                    System.out.println(message);
                     return;
                 }
 
@@ -491,6 +492,7 @@ public class Server {
                     exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
                     exchange.getResponseBody().write(message.getBytes());
                     exchange.getResponseBody().close();
+                     System.out.println(message);
                     return;
                 }
 
@@ -502,6 +504,7 @@ public class Server {
                     exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
                     exchange.getResponseBody().write(message.getBytes());
                     exchange.getResponseBody().close();
+                     System.out.println(message);
                     return;
                 }
 
@@ -524,6 +527,7 @@ public class Server {
                 String message = "Unable to grab model.";
                 exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
                 exchange.getResponseBody().write(message.getBytes());
+                System.out.println(message);
                 exchange.getResponseBody().close();
             }
         }
@@ -744,8 +748,8 @@ public class Server {
                     exchange.getResponseBody().close();
                     return;
                 }
-
-                if(finishMove.getPlayerIndex()!=finishMove.getPlayerIndex()){
+                /* TODO: Check logic... I think this will alway be false */
+                if(finishMove.getPlayerIndex()!= finishMove.getPlayerIndex()){
                     exchange.getResponseHeaders().set("Content-Type", "text/html");
                     String message = "Incorrect playerIndex.";
                     exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
@@ -1034,6 +1038,7 @@ public class Server {
 
             for (GameManager gm : AllOfOurInformation.getSingleton().getGames()) {
                 if (gm.getGame().getId() == gameId) {
+                    System.out.println("Players: " + gm.getGame().getPlayers());
                     for (int i = 0; i < gm.getGame().getPlayers().size(); i++) {
                         if (gm.getGame().getPlayers().get(i).getId() == playerIdThisOne) {
                             found = true;
