@@ -12,11 +12,21 @@ public class Road_Building extends Command {
 
     private EdgeLocation spot1;
     private EdgeLocation spot2;
-
+    private Integer gameId;
+    
     public Road_Building(int playerIndex) {
         super("Road_Building", playerIndex);
     }
+        
+    public Integer getGameId(){
+        return gameId;
+    }
+    
+    public void setGameId(Integer gameId){
+        this.gameId = gameId;
+    }
 
+    
     public EdgeLocation getSpot1() {
         return spot1;
     }

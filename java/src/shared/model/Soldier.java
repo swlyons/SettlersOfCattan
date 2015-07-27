@@ -12,11 +12,20 @@ public class Soldier extends Command {
 
     private Integer victimIndex;
     private HexLocation location;
-
+    private Integer gameId;
+    
     public Soldier(int playerIndex) {
         super("Soldier", playerIndex);
     }
 
+    public Integer getGameId(){
+        return gameId;
+    }
+    
+    public void setGameId(Integer gameId){
+        this.gameId = gameId;
+    }
+    
     public Integer getVicitmIndex() {
         return victimIndex;
     }
