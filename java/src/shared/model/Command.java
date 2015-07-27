@@ -9,7 +9,7 @@ public class Command {
 
     }
 
-    public Command(String type, int playerIndex) {
+    public Command(String type, Integer playerIndex) {
         this.type = type;
         this.playerIndex = playerIndex;
     }

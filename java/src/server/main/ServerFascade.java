@@ -205,7 +205,12 @@ public class ServerFascade implements Fascade {
 
     @Override
     public GameInfo buildSettlement(BuildSettlement buildSettlement) throws ServerException {
-        return new GameInfo("Default Game");
+        BuildSettlementCommand buildSettlementCommand = new BuildSettlementCommand(buildSettlement);
+        GameInfo gi = null;
+        if(agent.sendCommand(buildSettlementCommand)){
+            gi = AllOfOurInformation.getSingleton().getGames().get(buildSettlement.getGameId()).getGame();
+        }
+        return gi;
     }
 
     @Override

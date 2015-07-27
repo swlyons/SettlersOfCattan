@@ -4,6 +4,7 @@
  * and open the template in the editor.
  */
 package server.command;
+
 import server.command.Command;
 import server.receiver.AllOfOurInformation;
 import shared.model.BuildRoad;
@@ -16,26 +17,30 @@ import shared.locations.HexLocation;
  *
  * @author Samuel
  */
-public class BuildRoadCommand implements Command{
-    
+public class BuildRoadCommand implements Command {
+
     private BuildRoad buildRoad;
-    
-    public BuildRoadCommand(BuildRoad buildRoad){
-        this.buildRoad=buildRoad;
+
+    public BuildRoadCommand(BuildRoad buildRoad) {
+        this.buildRoad = buildRoad;
     }
-    
+
     @Override
-    public boolean execute(){
-        try{
+    public boolean execute() {
+        try {
             GameManager gm = AllOfOurInformation.getSingleton().getGames().get(buildRoad.getGameId());
             HexLocation hexSpot = new HexLocation(buildRoad.getRoadLocation().getX(), buildRoad.getRoadLocation().getY());
             EdgeDirection edgeDirection = buildRoad.getRoadLocation().getDirection();
-            EdgeLocation edgeLocation = new EdgeLocation(hexSpot,edgeDirection);
-            gm.buildRoad(edgeLocation);
-            return true;
-        }catch(Exception e){
+            EdgeLocation edgeLocation = new EdgeLocation(hexSpot, edgeDirection);
+            if (gm.buildRoad(edgeLocation)) {
+                AllOfOurInformation.getSingleton().getGames().get(buildRoad.getGameId()).getGame().setVersion(AllOfOurInformation.getSingleton().getGames().get(buildRoad.getGameId()).getGame().getVersion() + 1);
+                return true;
+            } else {
+                return false;
+            }
+        } catch (Exception e) {
             return false;
         }
     }
-    
+
 }
