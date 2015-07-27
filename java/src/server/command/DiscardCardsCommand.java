@@ -24,8 +24,9 @@ public class DiscardCardsCommand implements Command {
     @Override
     public boolean execute() {
         try {
-//            AllOfOurInformation.getSingleton().getGames().getGame(discardCards.getGameId()).getResourceManager().transferResourceCard(discardCards.getPlayerIndex(), 4, discardCards.getDiscardedCards());
-//            AllOfOurInformation.getSingleton().getGames().getGame(discardCards.getGameId()).saveResourcesIntoGame();
+            AllOfOurInformation.getSingleton().getGames().get(discardCards.getGameId()).getResourceManager().transferResourceCard(discardCards.getPlayerIndex(), 4, discardCards.getDiscardedCards());
+            AllOfOurInformation.getSingleton().getGames().get(discardCards.getGameId()).saveResourcesIntoGame();
+            AllOfOurInformation.getSingleton().getGames().get(discardCards.getGameId()).getGame().setVersion(AllOfOurInformation.getSingleton().getGames().get(discardCards.getGameId()).getGame().getVersion()+1);
             return true;
         } catch (Exception e) {
             return false;
