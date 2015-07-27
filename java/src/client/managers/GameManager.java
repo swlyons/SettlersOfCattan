@@ -416,6 +416,11 @@ public class GameManager {
 
         if (dieRoll == 7) {
             game.getTurnTracker().setStatus("Robbing");
+            for (int i = 0; i < 4; i++) {
+                if (7 <= resourceManager.getGameBanks().get(i).getResourcesCards().getTotalResources()) {
+                    game.getTurnTracker().setStatus("Discarding");
+                }
+            }
             return;
         }
         // int dieRoll = randomness.nextInt(6) + randomness.nextInt(6) + 2;
@@ -474,19 +479,6 @@ public class GameManager {
         }
         saveResourcesIntoGame();
 
-    }
-
-    public void diceIsSevenMoveRobber(HexLocation newLocationForRobber) {
-        // "playerDiscardsHalfCards()"
-        if (mapManager.moveRobber(newLocationForRobber)) {
-            for (int i = 0; i < 4; i++) {
-                int numberOfResourceCards = resourceManager.getGameBanks().get(i).getResourcesCards()
-                        .getTotalResources();
-                if (numberOfResourceCards >= 7) {
-//					resourceManager.playerDiscardsHalfCards(i, discardResources);
-                }
-            }
-        }
     }
 
     public boolean placeFreeRoad(EdgeLocation edge) {
@@ -649,19 +641,19 @@ public class GameManager {
 
                 EdgeValue edgeValue = new EdgeValue();
                 edgeValue.setOwner(currentPlayer);
-                
+
                 XYEdgeLocation xy = new XYEdgeLocation();
-                
+
                 xy.setX(edge.getHexLoc().getX());
                 xy.setY(edge.getHexLoc().getY());
                 xy.setDirection(edge.getDir());
 
                 edgeValue.setLocation(xy);
                 edgeValue.setLocation2(edge);
-                
+
                 game.getMap().getRoads().add(edgeValue);
                 saveResourcesIntoGame();
-                
+
             }
             return builtRoad;
         } else {
@@ -720,7 +712,7 @@ public class GameManager {
                     resourceManager.transferResourceCard(currentPlayer, mainBankIndex, cost);
                     resourceManager.placedSettlement(currentPlayer);
                     boolean builtSettlement = locationManager.settleLocation(v, currentPlayer, false);
-                    if(builtSettlement){
+                    if (builtSettlement) {
                         VertexObject vertexObject = new VertexObject(currentPlayer, v);
                         SettlementLocation settlementLocation = new SettlementLocation();
                         settlementLocation.setDirection(v.getDir());
@@ -739,7 +731,7 @@ public class GameManager {
                     resourceManager.transferResourceCard(currentPlayer, mainBankIndex, cost);
                     resourceManager.placedCity(currentPlayer);
                     boolean builtCity = locationManager.upgradeToCity(v);
-                    if(builtCity){
+                    if (builtCity) {
                         VertexObject vertexObject = new VertexObject(currentPlayer, v);
                         SettlementLocation settlementLocation = new SettlementLocation();
                         settlementLocation.setDirection(v.getDir());
@@ -758,15 +750,32 @@ public class GameManager {
     }
 
     public boolean canPlaceRobber(HexLocation hexLoc) {
-        boolean canPlaceRobber = false;
         for (Hex hex : mapManager.getHexList()) {
             if (hex.getLocation().equals(hexLoc)) {
                 if (!hex.getHasRobber()) {
-                    canPlaceRobber = true;
+                    return true;
                 }
             }
         }
-        return canPlaceRobber;
+        return false;
+    }
+
+    public boolean canRobPlayer(HexLocation hexLoc, int playerId) {
+        for (Location location : locationManager.getSettledLocations()) {
+            if (location.getOwnerID() == playerId) {
+                List<HexLocation> hexes = locationManager.getHexLocationsAroundVertexLocation(location.getNormalizedLocation());
+                for (HexLocation hex : hexes) {
+                    if (hexLoc.equals(hex)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    public void placeRobber(HexLocation hexLocation) {
+        game.getMap().setRobber(hexLocation);
     }
 
     public boolean canBuyCard() {

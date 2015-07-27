@@ -426,8 +426,6 @@ public class MapController extends Controller implements IMapController {
     }
 
     public void robPlayer(RobPlayerInfo victim) {
-		// Some communication may need to happen to transfer resources between
-
         // the two players.
         // The RobPlayer class doesn't request a resource, so the resource
         // deciding must happen server side, or on the next poll request
@@ -449,6 +447,10 @@ public class MapController extends Controller implements IMapController {
             }
         }
 
+        if(playerIndex==victimIndex){
+            victimIndex=-1;
+        }
+        
         try {
             if (playedSoldier) {
                 gm.useSoldier();
