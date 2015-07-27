@@ -413,6 +413,10 @@ public class GameManager {
      */
     public void rollDice(int dieRoll) {
 
+        if(dieRoll==7){
+            game.getTurnTracker().setStatus("Robbing");
+            return;
+        }        
         // int dieRoll = randomness.nextInt(6) + randomness.nextInt(6) + 2;
         List<Hex> hexesProducingResources = mapManager.getTerrainResourceHexes(dieRoll);
         ResourceList gameBank = resourceManager.getGameBanks().get(mainBankIndex).getResourcesCards();
