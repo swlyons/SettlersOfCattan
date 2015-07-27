@@ -872,7 +872,16 @@ public class Server {
                     return;
                 }
                 
-//                Not done yet
+                if(!gi.getTurnTracker().getStatus().equals("Robbing")){
+                    exchange.getResponseHeaders().set("Content-Type", "text/html");
+                    String message = "Turn tracker status must be robbing.";
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                    exchange.getResponseBody().write(message.getBytes());
+                    exchange.getResponseBody().close();
+                    return;
+                }
+                
+                
                 
             }catch(Exception e){
                 String error = "ERROR in rob player";
