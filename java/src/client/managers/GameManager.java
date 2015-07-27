@@ -779,6 +779,9 @@ public class GameManager {
 
     public boolean canBuyCard() {
         ResourceList resList = resourceManager.getGameBanks().get(currentPlayer()).getResourcesCards();
+        if(game.getDeck().totalCardsRemaining()<=0){
+            return false;
+        }
         return resList.getOre() > 0 && resList.getSheep() > 0 && resList.getWheat() > 0;
     }
 
@@ -975,7 +978,6 @@ public class GameManager {
                 l.setWhoCanBuild(new HashSet<Integer>());
             }
         }
-        // TODO: interact with GUI to disable for non-current player
     }
 
     public GameInfo getGame() {

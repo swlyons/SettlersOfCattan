@@ -16,11 +16,11 @@ import shared.definitions.DevCardType;
  */
 public class DevCardList {
 
-    private int monopoly;
-    private int monument;
-    private int roadBuilding;
-    private int soldier;
-    private int yearOfPlenty;
+    private Integer monopoly;
+    private Integer monument;
+    private Integer roadBuilding;
+    private Integer soldier;
+    private Integer yearOfPlenty;
 
     public DevCardList() {
         this.monopoly = 0;
@@ -65,7 +65,7 @@ public class DevCardList {
         }
     }
 
-    public DevCardList(int monopoly, int monument, int roadBuilding, int soldier, int yearOfPlenty) {
+    public DevCardList(Integer monopoly, Integer monument, Integer roadBuilding, Integer soldier, Integer yearOfPlenty) {
         this.monopoly = monopoly;
         this.monument = monument;
         this.roadBuilding = roadBuilding;
@@ -73,11 +73,11 @@ public class DevCardList {
         this.yearOfPlenty = yearOfPlenty;
     }
 
-    public int getMonopoly() {
+    public Integer getMonopoly() {
         return monopoly;
     }
 
-    public void setMonopoly(int monopoly) {
+    public void setMonopoly(Integer monopoly) {
         this.monopoly = monopoly;
     }
 
@@ -89,11 +89,11 @@ public class DevCardList {
         this.monopoly--;
     }
 
-    public int getMonument() {
+    public Integer getMonument() {
         return monument;
     }
 
-    public void setMonument(int monument) {
+    public void setMonument(Integer monument) {
         this.monument = monument;
     }
 
@@ -105,11 +105,11 @@ public class DevCardList {
         this.monument--;
     }
 
-    public int getRoadBuilding() {
+    public Integer getRoadBuilding() {
         return roadBuilding;
     }
 
-    public void setRoadBuilding(int roadBuilding) {
+    public void setRoadBuilding(Integer roadBuilding) {
         this.roadBuilding = roadBuilding;
     }
 
@@ -121,11 +121,11 @@ public class DevCardList {
         this.roadBuilding--;
     }
 
-    public int getSoldier() {
+    public Integer getSoldier() {
         return soldier;
     }
 
-    public void setSoldier(int soldier) {
+    public void setSoldier(Integer soldier) {
         this.soldier = soldier;
     }
 
@@ -137,11 +137,11 @@ public class DevCardList {
         this.soldier--;
     }
 
-    public int getYearOfPlenty() {
+    public Integer getYearOfPlenty() {
         return yearOfPlenty;
     }
 
-    public void setYearOfPlenty(int yearOfPlenty) {
+    public void setYearOfPlenty(Integer yearOfPlenty) {
         this.yearOfPlenty = yearOfPlenty;
     }
 
@@ -155,7 +155,7 @@ public class DevCardList {
 
     public DevCardType selectRandomDevCard() {
         Random r = new Random();
-        int cardType = r.nextInt(totalCardsRemaining()) + 1;
+        Integer cardType = r.nextInt(totalCardsRemaining()) + 1;
 
         if (cardType <= this.monopoly) {
             return DevCardType.MONOPOLY;
@@ -170,7 +170,7 @@ public class DevCardList {
         }
     }
 
-    public int totalCardsRemaining() {
+    public Integer totalCardsRemaining() {
         return this.monopoly + this.monument + this.roadBuilding + this.yearOfPlenty + this.soldier;
     }
 
