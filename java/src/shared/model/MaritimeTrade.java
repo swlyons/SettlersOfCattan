@@ -10,7 +10,7 @@ import shared.definitions.ResourceType;
  */
 public class MaritimeTrade extends Command {
 
-    private int ratio;
+    private Integer ratio;
     private ResourceType inputResource;
     private ResourceType outputResource;
 
@@ -30,11 +30,11 @@ public class MaritimeTrade extends Command {
         this.outputResource = outputResource;
     }
 
-    public int getRatio() {
+    public Integer getRatio() {
         return ratio;
     }
 
-    public void setRatio(int ratio) {
+    public void setRatio(Integer ratio) {
         this.ratio = ratio;
     }
 }

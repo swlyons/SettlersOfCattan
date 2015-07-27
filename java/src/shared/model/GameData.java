@@ -20,11 +20,11 @@ public class GameData {
         this.gameTitle = gameTitle;
     }
 
-    public int getGameId() {
+    public Integer getGameId() {
         return gameId;
     }
 
-    public void setGameId(int gameId) {
+    public void setGameId(Integer gameId) {
         this.gameId = gameId;
     }
 
@@ -36,6 +36,6 @@ public class GameData {
         this.players = players;
     }
     private String gameTitle;
-    private int gameId;
+    private Integer gameId;
     private List<PlayerInfo> players;
 }

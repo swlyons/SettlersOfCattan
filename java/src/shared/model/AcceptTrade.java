@@ -8,13 +8,13 @@ package shared.model;
  */
 public class AcceptTrade extends Command {
 
-    private boolean willAccept;
+    private Boolean willAccept;
 
-    public boolean isWillAccept() {
+    public Boolean isWillAccept() {
         return willAccept;
     }
 
-    public void setWillAccept(boolean willAccept) {
+    public void setWillAccept(Boolean willAccept) {
         this.willAccept = willAccept;
     }
 }

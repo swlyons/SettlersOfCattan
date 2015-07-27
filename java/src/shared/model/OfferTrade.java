@@ -11,7 +11,7 @@ import shared.data.ResourceList;
 public class OfferTrade extends Command {
 
     private ResourceList offer;
-    private int receiver;
+    private Integer receiver;
 
     public ResourceList getOffer() {
         return offer;
@@ -21,11 +21,11 @@ public class OfferTrade extends Command {
         this.offer = offer;
     }
 
-    public int getReceiver() {
+    public Integer getReceiver() {
         return receiver;
     }
 
-    public void setReceiver(int receiver) {
+    public void setReceiver(Integer receiver) {
         this.receiver = receiver;
     }
 }

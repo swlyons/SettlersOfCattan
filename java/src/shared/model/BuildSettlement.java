@@ -11,7 +11,7 @@ import shared.data.SettlementLocation;
 public class BuildSettlement extends Command {
 
     private SettlementLocation vertexLocation;
-    private boolean free;
+    private Boolean free;
 
     public SettlementLocation getVertexLocation() {
         return vertexLocation;
@@ -21,11 +21,11 @@ public class BuildSettlement extends Command {
         this.vertexLocation = vertexLocation;
     }
 
-    public boolean isFree() {
+    public Boolean isFree() {
         return free;
     }
 
-    public void setFree(boolean free) {
+    public void setFree(Boolean free) {
         this.free = free;
     }
 }
