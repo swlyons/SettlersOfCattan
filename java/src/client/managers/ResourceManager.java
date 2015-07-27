@@ -194,6 +194,7 @@ public class ResourceManager {
             destination.addMonopoly();
         } else if (requestType == DevCardType.MONUMENT) {
             start.removeMonument();
+            destination = gameBanks.get(destinationIndex).getDevelopmentCards();
             destination.addMonument();
         } else if (requestType == DevCardType.ROAD_BUILD) {
             start.removeRoadBuilding();
