@@ -12,7 +12,7 @@ import shared.data.XYEdgeLocation;
 public class BuildRoad extends Command {
 
     private XYEdgeLocation roadLocation;
-    private boolean free;
+    private Boolean free;
 
     public XYEdgeLocation getRoadLocation() {
         return roadLocation;
@@ -22,11 +22,11 @@ public class BuildRoad extends Command {
         this.roadLocation = roadLocation;
     }
 
-    public boolean isFree() {
+    public Boolean isFree() {
         return free;
     }
 
-    public void setFree(boolean free) {
+    public void setFree(Boolean free) {
         this.free = free;
     }
 }

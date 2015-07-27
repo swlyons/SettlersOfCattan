@@ -11,7 +11,7 @@ package shared.model;
  */
 public class JoinGameRequest {
 
-    private int id;
+    private Integer id;
     private String color;
 
     public JoinGameRequest(int id, String color) {
@@ -19,11 +19,11 @@ public class JoinGameRequest {
         this.color = color;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
