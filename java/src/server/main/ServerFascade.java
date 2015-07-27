@@ -206,7 +206,12 @@ public class ServerFascade implements Fascade {
 
     @Override
     public GameInfo monument(Monument monument) throws ServerException {
-        return new GameInfo("Default Game");
+        MonumentCommand monumentCommand = new MonumentCommand(monument);
+        GameInfo gi = null;
+        if(agent.sendCommand(monumentCommand)){
+            gi = AllOfOurInformation.getSingleton().getGames().get(monument.getGameId()).getGame();
+        }
+        return gi;
     }
 
     @Override
