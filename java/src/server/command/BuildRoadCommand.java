@@ -28,16 +28,18 @@ public class BuildRoadCommand implements Command {
     @Override
     public boolean execute() {
         try {
-            HexLocation hexSpot = new HexLocation(buildRoad.getRoadLocation().getX(), buildRoad.getRoadLocation().getY());
+            /* TODO: RETHINK LOGIC HERE
+            /*HexLocation hexSpot = new HexLocation(buildRoad.getRoadLocation().getX(), buildRoad.getRoadLocation().getY());
             EdgeDirection edgeDirection = buildRoad.getRoadLocation().getDirection();
             EdgeLocation edgeLocation = new EdgeLocation(hexSpot, edgeDirection);
-            if (AllOfOurInformation.getSingleton().getGames().get(buildRoad.getGameId()).buildRoad(edgeLocation)) {
+            if (AllOfOurInformation.getSingleton().getGames().get(buildRoad.getGameId()).buildRoad(edgeLocation)) {*/
                 AllOfOurInformation.getSingleton().getGames().get(buildRoad.getGameId()).getGame().setVersion(AllOfOurInformation.getSingleton().getGames().get(buildRoad.getGameId()).getGame().getVersion() + 1);
-                AllOfOurInformation.getSingleton().getGames().get(buildRoad.getGameId()).getGame().setVersion(AllOfOurInformation.getSingleton().getGames().get(buildRoad.getGameId()).getGame().getVersion()+1);
                 return true;
+                /*AllOfOurInformation.getSingleton().getGames().get(buildRoad.getGameId()).getGame().setVersion(AllOfOurInformation.getSingleton().getGames().get(buildRoad.getGameId()).getGame().getVersion()+1);
+                
             } else {
                 return false;
-            }
+            }*/
         } catch (Exception e) {
             return false;
         }

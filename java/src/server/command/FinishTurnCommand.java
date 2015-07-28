@@ -5,10 +5,8 @@
  */
 package server.command;
 
-import server.command.Command;
 import shared.model.FinishMove;
 import server.receiver.AllOfOurInformation;
-import shared.data.TurnTracker;
 import shared.locations.EdgeLocation;
 import shared.locations.HexLocation;
 import shared.locations.EdgeDirection;
@@ -59,8 +57,8 @@ public class FinishTurnCommand implements Command {
 
             AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).endTurn();
 
-            while (AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).getGame().getPlayers().get(currentTurn).getId() < -1) {
-                if(!(status.equals("SecondRound")||status.equals("FirstRound"))){
+            while (AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).getGame().getPlayers().get((currentTurn - 1)).getId() < -1) {
+                if(!(status.equals("SecondRound")|| status.equals("FirstRound"))){
                     currentTurn++;
                     if(currentTurn == 4){
                         currentTurn = 0;
@@ -246,11 +244,11 @@ public class FinishTurnCommand implements Command {
 
                 }
             }
-
             AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).getGame().getTurnTracker().setCurrentTurn(currentTurn);
             AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).getGame().setVersion(AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).getGame().getVersion() + 1);
             return true;
         } catch (Exception e) {
+            e.printStackTrace();
             return false;
         }
     }

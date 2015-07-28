@@ -47,9 +47,7 @@ public class GameHistoryController extends Controller implements IGameHistoryCon
             }
         
         //}
-        System.out.println("Old Size: " + getView().getEntries().size() + " New Entries: " + game.getLog().getLines().size());
-        
-        getView().setEntries(getView().getEntries());
+         getView().setEntries(getView().getEntries());
         }
     }
 
