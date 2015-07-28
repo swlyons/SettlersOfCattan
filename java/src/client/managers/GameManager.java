@@ -411,7 +411,7 @@ public class GameManager {
         if (dieRoll == 7) {
             game.getTurnTracker().setStatus("Robbing");
             for (int i = 0; i < 4; i++) {
-                if (7 <= resourceManager.getGameBanks().get(i).getResourcesCards().getTotalResources()) {
+                if (7 <= resourceManager.getGameBanks().get(i).getResourcesCards().getTotalResources() && game.getPlayers().get(i).getId()>=0) {
                     game.getTurnTracker().setStatus("Discarding");
                 }
             }
