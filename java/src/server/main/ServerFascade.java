@@ -170,7 +170,12 @@ public class ServerFascade implements Fascade {
 
     @Override
     public GameInfo buyDevCard(BuyDevCard buyDevCard) throws ServerException {
-        return new GameInfo("Default Game");
+        BuyDevCardCommand buyDevCardCommand = new BuyDevCardCommand(buyDevCard);
+        GameInfo gi = null;
+        if(agent.sendCommand(buyDevCardCommand)){
+            gi = AllOfOurInformation.getSingleton().getGames().get(buyDevCard.getGameId()).getGame();
+        }
+        return gi;
     }
 
     @Override
@@ -185,7 +190,13 @@ public class ServerFascade implements Fascade {
 
     @Override
     public GameInfo soldier(Soldier soldier) throws ServerException {
-        return new GameInfo("Default Game");
+        SoldierCommand soldierCommand = new SoldierCommand(soldier);
+        GameInfo gi = null;
+        if(agent.sendCommand(soldierCommand)){
+            gi = AllOfOurInformation.getSingleton().getGames().get(soldier.getGameId()).getGame();
+        }
+        return gi;
+
     }
 
     @Override
@@ -195,7 +206,12 @@ public class ServerFascade implements Fascade {
 
     @Override
     public GameInfo monument(Monument monument) throws ServerException {
-        return new GameInfo("Default Game");
+        MonumentCommand monumentCommand = new MonumentCommand(monument);
+        GameInfo gi = null;
+        if(agent.sendCommand(monumentCommand)){
+            gi = AllOfOurInformation.getSingleton().getGames().get(monument.getGameId()).getGame();
+        }
+        return gi;
     }
 
     @Override

@@ -456,7 +456,7 @@ public class MapController extends Controller implements IMapController {
                 gm.useSoldier();
                 Soldier s = new Soldier(playerIndex);
                 s.setType("Soldier");
-                s.setVicitmIndex(victimIndex);
+                s.setVictimIndex(victimIndex);
                 s.setLocation(newRobberLocation);
                 ClientFascade.getSingleton().soldier(s);
             } else {

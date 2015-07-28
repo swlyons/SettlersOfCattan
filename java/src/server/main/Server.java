@@ -90,24 +90,25 @@ public class Server {
         // Game contexts
         server.createContext("/game/model", modelHandler);//worked on
         server.createContext("/game/listAI", listAIHandler);//worked on
+        server.createContext("/game/addAI", addAIHandler);//worked on
 
         // Moves contexts
         server.createContext("/moves/sendChat", sendChatHandler);//worked on
         server.createContext("/moves/rollNumber", rollNumberHandler);//worked on
-        server.createContext("/moves/robPlayer", robPlayerHandler);
-        server.createContext("/moves/finishTurn", finishTurnHandler);// worked on
-        server.createContext("/moves/buyDevCard", buyDevCardHandler);
+        server.createContext("/moves/robPlayer", robPlayerHandler);//worked on
+        server.createContext("/moves/finishTurn", finishTurnHandler);//worked on
+        server.createContext("/moves/buyDevCard", buyDevCardHandler);//worked on
         server.createContext("/moves/Year_Of_Plenty", year_of_plentyHandler);
         server.createContext("/moves/Road_Building", road_buildingHandler);
-        server.createContext("/moves/Soldier", soldierHandler);
-        server.createContext("/moves/Monument", monumentHandler);
+        server.createContext("/moves/Soldier", soldierHandler);//worked on
+        server.createContext("/moves/Monument", monumentHandler);//worked on
         server.createContext("/moves/offerTrade", offerTradeHandler);
         server.createContext("/moves/acceptTrade", acceptTradeHandler);
         server.createContext("/moves/buildSettlement", buildSettlementHandler);//worked on
         server.createContext("/moves/buildCity", buildCityHandler);//worked on
         server.createContext("/moves/buildRoad", buildRoadHandler);// worked on
         server.createContext("/moves/maritimeTrade", maritimeTradeHandler);
-        server.createContext("/moves/discardCards", discardCardsHandler);
+        server.createContext("/moves/discardCards", discardCardsHandler);//worked on
 
         //swagger
         server.createContext("/docs/api/data", new Handlers.JSONAppender(""));
@@ -626,6 +627,64 @@ public class Server {
         }
     };
 
+    private HttpHandler addAIHandler = new HttpHandler() {
+
+        @Override
+        public void handle(HttpExchange exchange) throws IOException {
+            try {
+
+                GameIdPlayerIdAndPlayerIndex gameAndPlayer = verifyPlayer(exchange);
+
+                if (gameAndPlayer == null) {
+                    exchange.getResponseHeaders().set("Content-Type", "text/html");
+                    String message = "Need to login and join a valid game.";
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                    exchange.getResponseBody().write(message.getBytes());
+                    exchange.getResponseBody().close();
+                    return;
+                }
+                
+                
+                for(int i=0;i<AllOfOurInformation.getSingleton().getGames().get(gameAndPlayer.getGameId()).getGame().getPlayers().size();i++){
+                    if(AllOfOurInformation.getSingleton().getGames().get(gameAndPlayer.getGameId()).getGame().getPlayers().get(i)==null){
+                        PlayerInfo aiPlayer = new PlayerInfo();
+                        
+                        aiPlayer.setId(-1-i);
+                        aiPlayer.setPlayerID(-1-i);
+                        aiPlayer.setName("AI "+i);
+                        if(i==1){
+                            aiPlayer.setColor("red");
+                        }
+                        if(i==2){
+                            aiPlayer.setColor("blue");
+                        }
+                        if(i==3){
+                            aiPlayer.setColor("yellow");
+                        }
+                        AllOfOurInformation.getSingleton().getGames().get(gameAndPlayer.getGameId()).getGame().getPlayers().set(i, aiPlayer);
+                        break;
+                    }
+                }
+                
+                    String message = "Success";
+                    exchange.getResponseHeaders().set("Content-Type", "text/html");
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, message.length());
+                    exchange.getResponseBody().write(message.getBytes());
+                    exchange.getResponseBody().close();
+                
+            } catch (Exception e) {
+                exchange.getResponseHeaders().set("Content-Type", "text/html");
+                String message = "ERROR in adding AI.";
+                exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                exchange.getResponseBody().write(message.getBytes());
+                exchange.getResponseBody().close();
+            }
+
+        }
+    };
+
+    
+    
     /**
      * Handler to send a chat message
      */
@@ -1094,12 +1153,106 @@ public class Server {
 
         @Override
         public void handle(HttpExchange exchange) throws IOException {
-            exchange.getResponseHeaders().set("Content-Type", "application/json");
-            //TODO: buy a development card
+            try {
+                GameIdPlayerIdAndPlayerIndex gameAndPlayer = verifyPlayer(exchange);
 
-            exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, 0);
-            exchange.getResponseBody().write("Success".getBytes());
-            exchange.getResponseBody().close();
+                if (gameAndPlayer == null) {
+                    exchange.getResponseHeaders().set("Content-Type", "text/html");
+                    String message = "Need to login and join a valid game.";
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                    exchange.getResponseBody().write(message.getBytes());
+                    exchange.getResponseBody().close();
+                    return;
+                }
+                Reader reader = new InputStreamReader(exchange.getRequestBody(), "UTF-8");
+                BuyDevCard buyDevCard = model.fromJson(reader, BuyDevCard.class);
+
+                if (buyDevCard.getType() == null || !buyDevCard.getType().equals("buyDevCard")) {
+                    exchange.getResponseHeaders().set("Content-Type", "text/html");
+                    String message = "Incorrect type.";
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                    exchange.getResponseBody().write(message.getBytes());
+                    exchange.getResponseBody().close();
+                    return;
+                }
+
+                if (buyDevCard.getPlayerIndex() == null) {
+                    exchange.getResponseHeaders().set("Content-Type", "text/html");
+                    String message = "playerIndex can't be null.";
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                    exchange.getResponseBody().write(message.getBytes());
+                    exchange.getResponseBody().close();
+                    return;
+                }
+
+                if (gameAndPlayer.getPlayerIndex() != buyDevCard.getPlayerIndex()) {
+                    exchange.getResponseHeaders().set("Content-Type", "text/html");
+                    String message = "Incorrect playerIndex.";
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                    exchange.getResponseBody().write(message.getBytes());
+                    exchange.getResponseBody().close();
+                    return;
+                }
+
+                GameManager gm = AllOfOurInformation.getSingleton().getGames().get(gameAndPlayer.getGameId());
+                if (gameAndPlayer.getPlayerIndex() != gm.getGame().getTurnTracker().getCurrentTurn()) {
+                    exchange.getResponseHeaders().set("Content-Type", "text/html");
+                    String message = "Not your turn.";
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                    exchange.getResponseBody().write(message.getBytes());
+                    exchange.getResponseBody().close();
+                    return;
+                }
+
+                String status = gm.getGame().getTurnTracker().getStatus();
+
+                if (!status.equals("Playing")) {
+                    exchange.getResponseHeaders().set("Content-Type", "text/html");
+                    String message = "Turn tracker status must be in \"Playing\".";
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                    exchange.getResponseBody().write(message.getBytes());
+                    exchange.getResponseBody().close();
+                    return;
+                }
+
+                if (!gm.canBuyCard()) {
+                    exchange.getResponseHeaders().set("Content-Type", "text/html");
+                    String message = "Not enough resources.";
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                    exchange.getResponseBody().write(message.getBytes());
+                    exchange.getResponseBody().close();
+                    return;
+                }
+
+                buyDevCard.setGameId(gameAndPlayer.getGameId());
+                GameInfo game;
+                try {
+                    game = ServerFascade.getSingleton().buyDevCard(buyDevCard);
+                } catch (Exception e) {
+                    game = null;
+                }
+                String result;
+                if (game != null) {
+                    result = game.toString();
+                    exchange.getResponseHeaders().set("Content-Type", "application/json");
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, result.length());
+                    exchange.getResponseBody().write(result.getBytes());
+                    exchange.getResponseBody().close();
+                } else {
+                    result = "Couldn't grab game in buy dev card";
+                    exchange.getResponseHeaders().set("Content-Type", "text/html");
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, result.length());
+                    exchange.getResponseBody().write(result.getBytes());
+                    exchange.getResponseBody().close();
+                }
+
+            } catch (Exception e) {
+                String error = "ERROR in buy dev card";
+                exchange.getResponseHeaders().set("Content-Type", "text/html");
+                exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, error.length());
+                exchange.getResponseBody().write(error.getBytes());
+                exchange.getResponseBody().close();
+            }
         }
     };
     /**
@@ -1139,12 +1292,133 @@ public class Server {
 
         @Override
         public void handle(HttpExchange exchange) throws IOException {
-            exchange.getResponseHeaders().set("Content-Type", "application/json");
-            //TODO: use the soldier card
+            try {
+                GameIdPlayerIdAndPlayerIndex gameAndPlayer = verifyPlayer(exchange);
 
-            exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, 0);
-            exchange.getResponseBody().write("Success".getBytes());
-            exchange.getResponseBody().close();
+                if (gameAndPlayer == null) {
+                    exchange.getResponseHeaders().set("Content-Type", "text/html");
+                    String message = "Need to login and join a valid game.";
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                    exchange.getResponseBody().write(message.getBytes());
+                    exchange.getResponseBody().close();
+                    return;
+                }
+
+                Reader reader = new InputStreamReader(exchange.getRequestBody(), "UTF-8");
+                Soldier soldier = model.fromJson(reader, Soldier.class);
+
+                if (soldier.getType() == null || !soldier.getType().equals("Soldier")) {
+                    exchange.getResponseHeaders().set("Content-Type", "text/html");
+                    String message = "Incorrect type.";
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                    exchange.getResponseBody().write(message.getBytes());
+                    exchange.getResponseBody().close();
+                    return;
+                }
+
+                if (soldier.getPlayerIndex() == null) {
+                    exchange.getResponseHeaders().set("Content-Type", "text/html");
+                    String message = "playerIndex can't be null.";
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                    exchange.getResponseBody().write(message.getBytes());
+                    exchange.getResponseBody().close();
+                    return;
+                }
+
+                if (soldier.getPlayerIndex() != soldier.getPlayerIndex()) {
+                    exchange.getResponseHeaders().set("Content-Type", "text/html");
+                    String message = "Incorrect playerIndex.";
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                    exchange.getResponseBody().write(message.getBytes());
+                    exchange.getResponseBody().close();
+                    return;
+                }
+
+                if (soldier.getVictimIndex() == null || soldier.getVictimIndex() < -1 || 3 < soldier.getVictimIndex() || soldier.getVictimIndex() == soldier.getPlayerIndex()) {
+                    exchange.getResponseHeaders().set("Content-Type", "text/html");
+                    String message = "Victim index isn't valid.";
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                    exchange.getResponseBody().write(message.getBytes());
+                    exchange.getResponseBody().close();
+                    return;
+                }
+
+                GameManager gm = AllOfOurInformation.getSingleton().getGames().get(gameAndPlayer.getGameId());
+                if (gameAndPlayer.getPlayerIndex() != gm.getGame().getTurnTracker().getCurrentTurn()) {
+                    exchange.getResponseHeaders().set("Content-Type", "text/html");
+                    String message = "Not your turn.";
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                    exchange.getResponseBody().write(message.getBytes());
+                    exchange.getResponseBody().close();
+                    return;
+                }
+
+                if (!gm.getGame().getTurnTracker().getStatus().equals("Playing")) {
+                    exchange.getResponseHeaders().set("Content-Type", "text/html");
+                    String message = "Turn tracker status must be \"Playing\".";
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                    exchange.getResponseBody().write(message.getBytes());
+                    exchange.getResponseBody().close();
+                    return;
+                }
+
+                if (!gm.canUseSoldier()) {
+                    exchange.getResponseHeaders().set("Content-Type", "text/html");
+                    String message = "Cannot play soldier card";
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                    exchange.getResponseBody().write(message.getBytes());
+                    exchange.getResponseBody().close();
+                    return;
+                }
+
+                if (!gm.canPlaceRobber(soldier.getLocation())) {
+                    exchange.getResponseHeaders().set("Content-Type", "text/html");
+                    String message = "Cannot place robber there";
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                    exchange.getResponseBody().write(message.getBytes());
+                    exchange.getResponseBody().close();
+                    return;
+                }
+
+                if (!gm.canRobPlayer(soldier.getLocation(), soldier.getVictimIndex())) {
+                    exchange.getResponseHeaders().set("Content-Type", "text/html");
+                    String message = "Cannot rob that player";
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                    exchange.getResponseBody().write(message.getBytes());
+                    exchange.getResponseBody().close();
+                    return;
+                }
+
+                soldier.setGameId(gameAndPlayer.getGameId());
+
+                GameInfo game;
+                try {
+                    game = ServerFascade.getSingleton().soldier(soldier);
+                } catch (Exception e) {
+                    game = null;
+                }
+                String result;
+                if (game != null) {
+                    result = game.toString();
+                    exchange.getResponseHeaders().set("Content-Type", "application/json");
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, result.length());
+                    exchange.getResponseBody().write(result.getBytes());
+                    exchange.getResponseBody().close();
+                } else {
+                    result = "Couldn't grab game in soldier";
+                    exchange.getResponseHeaders().set("Content-Type", "text/html");
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, result.length());
+                    exchange.getResponseBody().write(result.getBytes());
+                    exchange.getResponseBody().close();
+                }
+
+            } catch (Exception e) {
+                String error = "ERROR in soldier";
+                exchange.getResponseHeaders().set("Content-Type", "text/html");
+                exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, error.length());
+                exchange.getResponseBody().write(error.getBytes());
+                exchange.getResponseBody().close();
+            }
         }
     };
     /**
@@ -1154,12 +1428,97 @@ public class Server {
 
         @Override
         public void handle(HttpExchange exchange) throws IOException {
-            exchange.getResponseHeaders().set("Content-Type", "application/json");
-            //TODO: use monument card
+            try {
+                GameIdPlayerIdAndPlayerIndex gameAndPlayer = verifyPlayer(exchange);
 
-            exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, 0);
-            exchange.getResponseBody().write("Success".getBytes());
-            exchange.getResponseBody().close();
+                if (gameAndPlayer == null) {
+                    exchange.getResponseHeaders().set("Content-Type", "text/html");
+                    String message = "Need to login and join a valid game.";
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                    exchange.getResponseBody().write(message.getBytes());
+                    exchange.getResponseBody().close();
+                    return;
+                }
+
+                Reader reader = new InputStreamReader(exchange.getRequestBody(), "UTF-8");
+                Monument monument = model.fromJson(reader, Monument.class);
+
+                if (monument.getType() == null || !monument.getType().equals("Monument")) {
+                    exchange.getResponseHeaders().set("Content-Type", "text/html");
+                    String message = "Incorrect type.";
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                    exchange.getResponseBody().write(message.getBytes());
+                    exchange.getResponseBody().close();
+                    return;
+                }
+
+                if (monument.getPlayerIndex() == null) {
+                    exchange.getResponseHeaders().set("Content-Type", "text/html");
+                    String message = "playerIndex can't be null.";
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                    exchange.getResponseBody().write(message.getBytes());
+                    exchange.getResponseBody().close();
+                    return;
+                }
+
+                if (monument.getPlayerIndex() != monument.getPlayerIndex()) {
+                    exchange.getResponseHeaders().set("Content-Type", "text/html");
+                    String message = "Incorrect playerIndex.";
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                    exchange.getResponseBody().write(message.getBytes());
+                    exchange.getResponseBody().close();
+                    return;
+                }
+
+                GameManager gm = AllOfOurInformation.getSingleton().getGames().get(gameAndPlayer.getGameId());
+                if (gameAndPlayer.getPlayerIndex() != gm.getGame().getTurnTracker().getCurrentTurn()) {
+                    exchange.getResponseHeaders().set("Content-Type", "text/html");
+                    String message = "Not your turn.";
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                    exchange.getResponseBody().write(message.getBytes());
+                    exchange.getResponseBody().close();
+                    return;
+                }
+
+                if (!gm.canUseMonument()) {
+                    exchange.getResponseHeaders().set("Content-Type", "text/html");
+                    String message = "You do not have a monument.";
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                    exchange.getResponseBody().write(message.getBytes());
+                    exchange.getResponseBody().close();
+                    return;
+                }
+
+                monument.setGameId(gameAndPlayer.getGameId());
+
+                GameInfo game;
+                try {
+                    game = ServerFascade.getSingleton().monument(monument);
+                } catch (Exception e) {
+                    game = null;
+                }
+                String result;
+                if (game != null) {
+                    result = game.toString();
+                    exchange.getResponseHeaders().set("Content-Type", "application/json");
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, result.length());
+                    exchange.getResponseBody().write(result.getBytes());
+                    exchange.getResponseBody().close();
+                } else {
+                    result = "Couldn't grab game in monument";
+                    exchange.getResponseHeaders().set("Content-Type", "text/html");
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, result.length());
+                    exchange.getResponseBody().write(result.getBytes());
+                    exchange.getResponseBody().close();
+                }
+
+            } catch (Exception e) {
+                String error = "ERROR in soldier";
+                exchange.getResponseHeaders().set("Content-Type", "text/html");
+                exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, error.length());
+                exchange.getResponseBody().write(error.getBytes());
+                exchange.getResponseBody().close();
+            }
         }
     };
     /**
@@ -1734,171 +2093,178 @@ public class Server {
 
         @Override
         public void handle(HttpExchange exchange) throws IOException {
-            GameIdPlayerIdAndPlayerIndex gameAndPlayer = verifyPlayer(exchange);
-
-            if (gameAndPlayer == null) {
-                exchange.getResponseHeaders().set("Content-Type", "text/html");
-                String message = "Need to login and join a valid game.";
-                exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
-                exchange.getResponseBody().write(message.getBytes());
-                exchange.getResponseBody().close();
-                return;
-            }
-
-            Reader reader = new InputStreamReader(exchange.getRequestBody(), "UTF-8");
-            DiscardCards discardCards = model.fromJson(reader, DiscardCards.class);
-
-            if (discardCards.getType() == null || !discardCards.getType().equals("discardCards")) {
-                exchange.getResponseHeaders().set("Content-Type", "text/html");
-                String message = "Incorrect type.";
-                exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
-                exchange.getResponseBody().write(message.getBytes());
-                exchange.getResponseBody().close();
-                return;
-            }
-
-            if (discardCards.getPlayerIndex() == null) {
-                exchange.getResponseHeaders().set("Content-Type", "text/html");
-                String message = "playerIndex can't be null.";
-                exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
-                exchange.getResponseBody().write(message.getBytes());
-                exchange.getResponseBody().close();
-                return;
-            }
-
-            if (gameAndPlayer.getPlayerIndex() != discardCards.getPlayerIndex()) {
-                exchange.getResponseHeaders().set("Content-Type", "text/html");
-                String message = "Incorrect playerIndex.";
-                exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
-                exchange.getResponseBody().write(message.getBytes());
-                exchange.getResponseBody().close();
-                return;
-            }
-
-            if (discardCards.getDiscardedCards() == null) {
-                exchange.getResponseHeaders().set("Content-Type", "text/html");
-                String message = "Discarded cards can't be null.";
-                exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
-                exchange.getResponseBody().write(message.getBytes());
-                exchange.getResponseBody().close();
-                return;
-            }
-
-            ResourceList resourcesToDiscard = discardCards.getDiscardedCards();
-
-            if (resourcesToDiscard.getBrick() == null || resourcesToDiscard.getOre() == null || resourcesToDiscard.getSheep() == null || resourcesToDiscard.getWheat() == null || resourcesToDiscard.getWood() == null) {
-                exchange.getResponseHeaders().set("Content-Type", "text/html");
-                String message = "All Resources need to not be null.";
-                exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
-                exchange.getResponseBody().write(message.getBytes());
-                exchange.getResponseBody().close();
-                return;
-            }
-
-            GameManager gm = AllOfOurInformation.getSingleton().getGames().get(gameAndPlayer.getGameId());
-
-            if (gm.getGame().getPlayers().get(discardCards.getPlayerIndex()).isDiscarded()) {
-                exchange.getResponseHeaders().set("Content-Type", "text/html");
-                String message = "Player already discarded.";
-                exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
-                exchange.getResponseBody().write(message.getBytes());
-                exchange.getResponseBody().close();
-                return;
-            }
-
-            if (gm.getGame().getPlayers().get(discardCards.getPlayerIndex()).getResources().getTotalResources() < 7) {
-                exchange.getResponseHeaders().set("Content-Type", "text/html");
-                String message = "Player doesn't need to discard.";
-                exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
-                exchange.getResponseBody().write(message.getBytes());
-                exchange.getResponseBody().close();
-                return;
-            }
-
-            boolean negativeResource = false;
-            if (resourcesToDiscard.getBrick() < 0) {
-                negativeResource = true;
-            }
-            if (resourcesToDiscard.getOre() < 0) {
-                negativeResource = true;
-            }
-            if (resourcesToDiscard.getSheep() < 0) {
-                negativeResource = true;
-            }
-            if (resourcesToDiscard.getWheat() < 0) {
-                negativeResource = true;
-            }
-            if (resourcesToDiscard.getWood() < 0) {
-                negativeResource = true;
-            }
-
-            if (negativeResource) {
-                exchange.getResponseHeaders().set("Content-Type", "text/html");
-                String message = "Can't discard a negative number of a resource.";
-                exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
-                exchange.getResponseBody().write(message.getBytes());
-                exchange.getResponseBody().close();
-                return;
-            }
-
-            boolean playerHasEnough = true;
-            if (gm.getResourceManager().getGameBanks().get(gameAndPlayer.getPlayerIndex()).getResourcesCards().getBrick() < resourcesToDiscard.getBrick()) {
-                playerHasEnough = false;
-            }
-            if (gm.getResourceManager().getGameBanks().get(gameAndPlayer.getPlayerIndex()).getResourcesCards().getOre() < resourcesToDiscard.getOre()) {
-                playerHasEnough = false;
-            }
-            if (gm.getResourceManager().getGameBanks().get(gameAndPlayer.getPlayerIndex()).getResourcesCards().getSheep() < resourcesToDiscard.getSheep()) {
-                playerHasEnough = false;
-            }
-            if (gm.getResourceManager().getGameBanks().get(gameAndPlayer.getPlayerIndex()).getResourcesCards().getWheat() < resourcesToDiscard.getWheat()) {
-                playerHasEnough = false;
-            }
-            if (gm.getResourceManager().getGameBanks().get(gameAndPlayer.getPlayerIndex()).getResourcesCards().getWood() < resourcesToDiscard.getWood()) {
-                playerHasEnough = false;
-            }
-
-            if (!playerHasEnough) {
-                exchange.getResponseHeaders().set("Content-Type", "text/html");
-                String message = "Player doesn't have enough of those resources.";
-                exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
-                exchange.getResponseBody().write(message.getBytes());
-                exchange.getResponseBody().close();
-                return;
-            }
-
-            if (gm.getResourceManager().getGameBanks().get(gameAndPlayer.getPlayerIndex()).getResourcesCards().getTotalResources() / 2 != resourcesToDiscard.getTotalResources()) {
-                exchange.getResponseHeaders().set("Content-Type", "text/html");
-                String message = "Incorrect number of resources to discard.";
-                exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
-                exchange.getResponseBody().write(message.getBytes());
-                exchange.getResponseBody().close();
-                return;
-            }
-
-            discardCards.setGameId(gameAndPlayer.getGameId());
-
-            GameInfo game;
             try {
-                game = ServerFascade.getSingleton().discardCards(discardCards);
-            } catch (Exception e) {
-                game = null;
-            }
-            String result;
-            if (game != null) {
-                result = game.toString();
-                exchange.getResponseHeaders().set("Content-Type", "application/json");
-                exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, result.length());
-                exchange.getResponseBody().write(result.getBytes());
-                exchange.getResponseBody().close();
-            } else {
-                result = "Couldn't grab game in discardCards";
-                exchange.getResponseHeaders().set("Content-Type", "text/html");
-                exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, result.length());
-                exchange.getResponseBody().write(result.getBytes());
-                exchange.getResponseBody().close();
-            }
+                GameIdPlayerIdAndPlayerIndex gameAndPlayer = verifyPlayer(exchange);
 
+                if (gameAndPlayer == null) {
+                    exchange.getResponseHeaders().set("Content-Type", "text/html");
+                    String message = "Need to login and join a valid game.";
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                    exchange.getResponseBody().write(message.getBytes());
+                    exchange.getResponseBody().close();
+                    return;
+                }
+
+                Reader reader = new InputStreamReader(exchange.getRequestBody(), "UTF-8");
+                DiscardCards discardCards = model.fromJson(reader, DiscardCards.class);
+
+                if (discardCards.getType() == null || !discardCards.getType().equals("discardCards")) {
+                    exchange.getResponseHeaders().set("Content-Type", "text/html");
+                    String message = "Incorrect type.";
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                    exchange.getResponseBody().write(message.getBytes());
+                    exchange.getResponseBody().close();
+                    return;
+                }
+
+                if (discardCards.getPlayerIndex() == null) {
+                    exchange.getResponseHeaders().set("Content-Type", "text/html");
+                    String message = "playerIndex can't be null.";
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                    exchange.getResponseBody().write(message.getBytes());
+                    exchange.getResponseBody().close();
+                    return;
+                }
+
+                if (gameAndPlayer.getPlayerIndex() != discardCards.getPlayerIndex()) {
+                    exchange.getResponseHeaders().set("Content-Type", "text/html");
+                    String message = "Incorrect playerIndex.";
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                    exchange.getResponseBody().write(message.getBytes());
+                    exchange.getResponseBody().close();
+                    return;
+                }
+
+                if (discardCards.getDiscardedCards() == null) {
+                    exchange.getResponseHeaders().set("Content-Type", "text/html");
+                    String message = "Discarded cards can't be null.";
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                    exchange.getResponseBody().write(message.getBytes());
+                    exchange.getResponseBody().close();
+                    return;
+                }
+
+                ResourceList resourcesToDiscard = discardCards.getDiscardedCards();
+
+                if (resourcesToDiscard.getBrick() == null || resourcesToDiscard.getOre() == null || resourcesToDiscard.getSheep() == null || resourcesToDiscard.getWheat() == null || resourcesToDiscard.getWood() == null) {
+                    exchange.getResponseHeaders().set("Content-Type", "text/html");
+                    String message = "All Resources need to not be null.";
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                    exchange.getResponseBody().write(message.getBytes());
+                    exchange.getResponseBody().close();
+                    return;
+                }
+
+                GameManager gm = AllOfOurInformation.getSingleton().getGames().get(gameAndPlayer.getGameId());
+
+                if (gm.getGame().getPlayers().get(discardCards.getPlayerIndex()).isDiscarded()) {
+                    exchange.getResponseHeaders().set("Content-Type", "text/html");
+                    String message = "Player already discarded.";
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                    exchange.getResponseBody().write(message.getBytes());
+                    exchange.getResponseBody().close();
+                    return;
+                }
+
+                if (gm.getGame().getPlayers().get(discardCards.getPlayerIndex()).getResources().getTotalResources() < 7) {
+                    exchange.getResponseHeaders().set("Content-Type", "text/html");
+                    String message = "Player doesn't need to discard.";
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                    exchange.getResponseBody().write(message.getBytes());
+                    exchange.getResponseBody().close();
+                    return;
+                }
+
+                boolean negativeResource = false;
+                if (resourcesToDiscard.getBrick() < 0) {
+                    negativeResource = true;
+                }
+                if (resourcesToDiscard.getOre() < 0) {
+                    negativeResource = true;
+                }
+                if (resourcesToDiscard.getSheep() < 0) {
+                    negativeResource = true;
+                }
+                if (resourcesToDiscard.getWheat() < 0) {
+                    negativeResource = true;
+                }
+                if (resourcesToDiscard.getWood() < 0) {
+                    negativeResource = true;
+                }
+
+                if (negativeResource) {
+                    exchange.getResponseHeaders().set("Content-Type", "text/html");
+                    String message = "Can't discard a negative number of a resource.";
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                    exchange.getResponseBody().write(message.getBytes());
+                    exchange.getResponseBody().close();
+                    return;
+                }
+
+                boolean playerHasEnough = true;
+                if (gm.getResourceManager().getGameBanks().get(gameAndPlayer.getPlayerIndex()).getResourcesCards().getBrick() < resourcesToDiscard.getBrick()) {
+                    playerHasEnough = false;
+                }
+                if (gm.getResourceManager().getGameBanks().get(gameAndPlayer.getPlayerIndex()).getResourcesCards().getOre() < resourcesToDiscard.getOre()) {
+                    playerHasEnough = false;
+                }
+                if (gm.getResourceManager().getGameBanks().get(gameAndPlayer.getPlayerIndex()).getResourcesCards().getSheep() < resourcesToDiscard.getSheep()) {
+                    playerHasEnough = false;
+                }
+                if (gm.getResourceManager().getGameBanks().get(gameAndPlayer.getPlayerIndex()).getResourcesCards().getWheat() < resourcesToDiscard.getWheat()) {
+                    playerHasEnough = false;
+                }
+                if (gm.getResourceManager().getGameBanks().get(gameAndPlayer.getPlayerIndex()).getResourcesCards().getWood() < resourcesToDiscard.getWood()) {
+                    playerHasEnough = false;
+                }
+
+                if (!playerHasEnough) {
+                    exchange.getResponseHeaders().set("Content-Type", "text/html");
+                    String message = "Player doesn't have enough of those resources.";
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                    exchange.getResponseBody().write(message.getBytes());
+                    exchange.getResponseBody().close();
+                    return;
+                }
+
+                if (gm.getResourceManager().getGameBanks().get(gameAndPlayer.getPlayerIndex()).getResourcesCards().getTotalResources() / 2 != resourcesToDiscard.getTotalResources()) {
+                    exchange.getResponseHeaders().set("Content-Type", "text/html");
+                    String message = "Incorrect number of resources to discard.";
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                    exchange.getResponseBody().write(message.getBytes());
+                    exchange.getResponseBody().close();
+                    return;
+                }
+
+                discardCards.setGameId(gameAndPlayer.getGameId());
+
+                GameInfo game;
+                try {
+                    game = ServerFascade.getSingleton().discardCards(discardCards);
+                } catch (Exception e) {
+                    game = null;
+                }
+                String result;
+                if (game != null) {
+                    result = game.toString();
+                    exchange.getResponseHeaders().set("Content-Type", "application/json");
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, result.length());
+                    exchange.getResponseBody().write(result.getBytes());
+                    exchange.getResponseBody().close();
+                } else {
+                    result = "Couldn't grab game in discardCards";
+                    exchange.getResponseHeaders().set("Content-Type", "text/html");
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, result.length());
+                    exchange.getResponseBody().write(result.getBytes());
+                    exchange.getResponseBody().close();
+                }
+            } catch (Exception e) {
+                String error = "ERROR in discard cards";
+                exchange.getResponseHeaders().set("Content-Type", "text/html");
+                exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, error.length());
+                exchange.getResponseBody().write(error.getBytes());
+                exchange.getResponseBody().close();
+            }
         }
     };
 

@@ -26,11 +26,11 @@ public class Soldier extends Command {
         this.gameId = gameId;
     }
     
-    public Integer getVicitmIndex() {
+    public Integer getVictimIndex() {
         return victimIndex;
     }
 
-    public void setVicitmIndex(Integer victimIndex) {
+    public void setVictimIndex(Integer victimIndex) {
         this.victimIndex = victimIndex;
     }
 

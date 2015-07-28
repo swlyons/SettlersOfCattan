@@ -193,11 +193,6 @@ public class Bank {
     }
 
     public void makeCardsUsable() {
-        int monuments = unusableDevCards.getMonument();
-        for (int i = 0; i < monuments; i++) {
-            this.unusableDevCards.removeMonument();
-            this.developmentCards.addMonument();
-        }
         int monopolies = unusableDevCards.getMonopoly();
         for (int i = 0; i < monopolies; i++) {
             this.unusableDevCards.removeMonopoly();
@@ -217,6 +212,29 @@ public class Bank {
         for (int i = 0; i < soldiers; i++) {
             this.unusableDevCards.removeSoldier();
             this.developmentCards.addSoldier();
+        }
+    }
+
+    public void makeCardsUnusable() {
+        int monopolies = unusableDevCards.getMonopoly();
+        for (int i = 0; i < monopolies; i++) {
+            this.developmentCards.removeMonopoly();
+            this.unusableDevCards.addMonopoly();
+        }
+        int yearsOfPlenty = unusableDevCards.getYearOfPlenty();
+        for (int i = 0; i < yearsOfPlenty; i++) {
+            this.developmentCards.removeYearOfPlenty();
+            this.unusableDevCards.addYearOfPlenty();
+        }
+        int roadBuildings = unusableDevCards.getRoadBuilding();
+        for (int i = 0; i < roadBuildings; i++) {
+            this.developmentCards.removeRoadBuilding();
+            this.unusableDevCards.addRoadBuilding();
+        }
+        int soldiers = unusableDevCards.getSoldier();
+        for (int i = 0; i < soldiers; i++) {
+            this.developmentCards.removeSoldier();
+            this.unusableDevCards.addSoldier();
         }
     }
 
