@@ -28,7 +28,6 @@ public class FinishTurnCommand implements Command {
     @Override
     public boolean execute() {
         try {
-            System.out.println("A1");
             int currentTurn = AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).getGame().getTurnTracker().getCurrentTurn();
             String status = AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).getGame().getTurnTracker().getStatus();
             currentTurn++;
@@ -39,7 +38,6 @@ public class FinishTurnCommand implements Command {
                 AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).getGame().getTurnTracker().setStatus("Rolling");
             } else {
                 if (status.equals("FirstRound")) {
-            System.out.println("A8");
                     if (4 <= currentTurn) {
                         currentTurn = 3;
                         AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).getGame().getTurnTracker().setStatus("SecondRound");
@@ -57,7 +55,6 @@ public class FinishTurnCommand implements Command {
                     }
                 }
             }
-            System.out.println("A15");
 
             AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).endTurn();
 
