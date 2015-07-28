@@ -5,10 +5,8 @@
  */
 package server.command;
 
-import server.command.Command;
 import server.receiver.AllOfOurInformation;
 import shared.model.BuildSettlement;
-import client.managers.GameManager;
 import shared.definitions.PieceType;
 import shared.locations.HexLocation;
 import shared.locations.VertexDirection;
@@ -29,16 +27,18 @@ public class BuildSettlementCommand implements Command {
     @Override
     public boolean execute() {
         try {
-            HexLocation hexSpot = new HexLocation(buildSettlement.getVertexLocation().getX(), buildSettlement.getVertexLocation().getY());
+            /* TODO RETHINK LOGIC HERE */
+            /*HexLocation hexSpot = new HexLocation(buildSettlement.getVertexLocation().getX(), buildSettlement.getVertexLocation().getY());
             VertexDirection vertexDirection = buildSettlement.getVertexLocation().getDirection();
             VertexLocation vertexLocation = new VertexLocation(hexSpot, vertexDirection);
-            if (AllOfOurInformation.getSingleton().getGames().get(buildSettlement.getGameId()).buildStructure(PieceType.SETTLEMENT, vertexLocation)) {
+            System.out.println("Build Settlement Command Game: " + AllOfOurInformation.getSingleton().getGames().get(buildSettlement.getGameId()).getGame());
+            if (AllOfOurInformation.getSingleton().getGames().get(buildSettlement.getGameId()).buildStructure(PieceType.SETTLEMENT, vertexLocation)) {*/
                 AllOfOurInformation.getSingleton().getGames().get(buildSettlement.getGameId()).getGame().setVersion(AllOfOurInformation.getSingleton().getGames().get(buildSettlement.getGameId()).getGame().getVersion() + 1);
-                AllOfOurInformation.getSingleton().getGames().get(buildSettlement.getGameId()).getGame().setVersion(AllOfOurInformation.getSingleton().getGames().get(buildSettlement.getGameId()).getGame().getVersion()+1);
+                //AllOfOurInformation.getSingleton().getGames().get(buildSettlement.getGameId()).getGame().setVersion(AllOfOurInformation.getSingleton().getGames().get(buildSettlement.getGameId()).getGame().getVersion() + 1);
                 return true;
-            } else {
+            /*} else {
                 return false;
-            }
+            }*/
         } catch (Exception e) {
             return false;
         }

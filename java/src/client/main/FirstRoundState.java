@@ -39,22 +39,22 @@ public class FirstRoundState extends State {
             GameManager gameManager = ClientCommunicator.getSingleton().getGameManager();
             try {
                 GameInfo gameInformation = ClientFascade.getSingleton()
-                        .getGameModel("?version=" + - 1);
+                        .getGameModel("?version=" + -1);
+                
                 status = gameInformation.getTurnTracker().getStatus();
-
                 gameManager.initializeGame(gameInformation);
                 version = gameInformation.getVersion();
 
                 Integer playerId = ClientCommunicator.getSingleton().getPlayerId();
                 int size = gameManager.getGame().getPlayers().size();
-
+                
                 for (int i = 0; i < size; i++) {
                     if (gameManager.getGame().getPlayers().get(i).getPlayerID() == playerId) {
                         playerIndex = gameManager.getGame().getPlayers().get(i).getPlayerIndex();
                         break;
                     }
                 }
-
+                
                 if (playerIndex == gameInformation.getTurnTracker().getCurrentTurn()) {
                     if (status.equals("FirstRound")) {
                         boolean builtSettlement = false;

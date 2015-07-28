@@ -140,7 +140,6 @@ public class GameInfo {
                 ", \"log\" : " + log.toString()+
                 ", \"turnTracker\" : " + turnTracker.toString() + 
                 ", \"version\" : " + version + ", \"winner\" : " + winner + "}";
-        System.out.println("Game Info : " + output);
         return output;
 //        return "{" + "\"title\" : \"" + title + "\" , \"id\" : " + id + ", \"bank\" : " + bank + ", \"chat\" : " + chat + ", \"log\" : " + log + ", \"map\" : " + map + ", \"players\" : " + players + ", \"tradeOffer\" : " + tradeOffer + ", \"turnTracker\" : " + turnTracker + ", \"version\" : " + version + ", \"winner\" : " + winner + "}";
     }

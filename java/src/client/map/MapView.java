@@ -249,9 +249,7 @@ public class MapView extends PanelView implements IMapView {
             this.add(map, BorderLayout.CENTER);
 
             if (isCancelAllowed) {
-            	System.out.println("here");
-
-                cancelButton = new JButton("Cancel");
+            	cancelButton = new JButton("Cancel");
                 Font buttonFont = cancelButton.getFont();
                 buttonFont = buttonFont.deriveFont(buttonFont.getStyle(),
                         BUTTON_TEXT_SIZE);

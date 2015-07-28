@@ -498,12 +498,14 @@ public class Server {
                         player.setPlayerID(playerIdThisOne);
                         player.setName(name);
                         player.setColor(joinGameRequest.getColor());
-
+                             
                         for (int i = 0; i < 4; i++) {
                             if (AllOfOurInformation.getSingleton().getGames().get(joinGameRequest.getId()).getGame().getPlayers().get(i) == null) {
+                                player.setPlayerIndex(i);
                                 AllOfOurInformation.getSingleton().getGames().get(joinGameRequest.getId()).getGame().getPlayers().set(i, player);
                                 break;
                             }
+
                         }
 
                         int spot = AllOfOurInformation.getSingleton().getGames().get(joinGameRequest.getId()).getGame().getPlayers().indexOf(player);
@@ -546,9 +548,8 @@ public class Server {
         @Override
         public void handle(HttpExchange exchange) throws IOException {
             try {
-                
+
                 GameIdPlayerIdAndPlayerIndex gameAndPlayer = verifyPlayer(exchange);
-                
 
                 if (gameAndPlayer == null) {
                     exchange.getResponseHeaders().set("Content-Type", "text/html");
@@ -568,11 +569,10 @@ public class Server {
                     exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
                     exchange.getResponseBody().write(message.getBytes());
                     exchange.getResponseBody().close();
-                     System.out.println(message);
+                    System.out.println(message);
                     return;
                 }
-                
-                System.out.println(exchange.getRequestURI().toString());
+
                 try {
                     version = Integer.parseInt(exchange.getRequestURI().toString().substring(version + 8));
                 } catch (Exception e) {
@@ -581,7 +581,7 @@ public class Server {
                     exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
                     exchange.getResponseBody().write(message.getBytes());
                     exchange.getResponseBody().close();
-                     System.out.println(message);
+                    System.out.println(message);
                     return;
                 }
 
@@ -590,7 +590,6 @@ public class Server {
                 if (version < AllOfOurInformation.getSingleton().getGames().get(gameAndPlayer.getGameId()).getGame().getVersion()) {
                     result = AllOfOurInformation.getSingleton().getGames().get(gameAndPlayer.getGameId()).getGame().toString();
                 } else {
-                    System.out.println("Version True");
                     result = "\"true\"";
                 }
 
@@ -598,7 +597,6 @@ public class Server {
                 exchange.getResponseHeaders().set("Content-Type", "application/json");
                 exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, result.length());
                 exchange.getResponseBody().write(result.getBytes());
-                System.out.println(result);
                 exchange.getResponseBody().close();
             } catch (Exception e) {
                 String error = "ERROR in grabbing model";
@@ -643,35 +641,35 @@ public class Server {
                     exchange.getResponseBody().close();
                     return;
                 }
-                
-                
-                for(int i=0;i<AllOfOurInformation.getSingleton().getGames().get(gameAndPlayer.getGameId()).getGame().getPlayers().size();i++){
-                    if(AllOfOurInformation.getSingleton().getGames().get(gameAndPlayer.getGameId()).getGame().getPlayers().get(i)==null){
+
+                for (int i = 0; i < AllOfOurInformation.getSingleton().getGames().get(gameAndPlayer.getGameId()).getGame().getPlayers().size(); i++) {
+                    if (AllOfOurInformation.getSingleton().getGames().get(gameAndPlayer.getGameId()).getGame().getPlayers().get(i) == null) {
                         PlayerInfo aiPlayer = new PlayerInfo();
-                        
-                        aiPlayer.setId(-1-i);
-                        aiPlayer.setPlayerID(-1-i);
-                        aiPlayer.setName("AI "+i);
-                        if(i==1){
+
+                        aiPlayer.setId(-1 - i);
+                        aiPlayer.setPlayerID(-1 - i);
+                        aiPlayer.setName("AI " + i);
+                        if (i == 1) {
                             aiPlayer.setColor("red");
                         }
-                        if(i==2){
+                        if (i == 2) {
                             aiPlayer.setColor("blue");
                         }
-                        if(i==3){
+                        if (i == 3) {
                             aiPlayer.setColor("yellow");
                         }
                         AllOfOurInformation.getSingleton().getGames().get(gameAndPlayer.getGameId()).getGame().getPlayers().set(i, aiPlayer);
+                        aiPlayer.setPlayerIndex(i);
                         break;
                     }
                 }
-                
-                    String message = "Success";
-                    exchange.getResponseHeaders().set("Content-Type", "text/html");
-                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, message.length());
-                    exchange.getResponseBody().write(message.getBytes());
-                    exchange.getResponseBody().close();
-                
+
+                String message = "Success";
+                exchange.getResponseHeaders().set("Content-Type", "text/html");
+                exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, message.length());
+                exchange.getResponseBody().write(message.getBytes());
+                exchange.getResponseBody().close();
+
             } catch (Exception e) {
                 exchange.getResponseHeaders().set("Content-Type", "text/html");
                 String message = "ERROR in adding AI.";
@@ -683,8 +681,6 @@ public class Server {
         }
     };
 
-    
-    
     /**
      * Handler to send a chat message
      */
@@ -911,7 +907,7 @@ public class Server {
                     exchange.getResponseBody().close();
                     return;
                 }
-                
+
                 if (robPlayer.getPlayerIndex() == null) {
                     exchange.getResponseHeaders().set("Content-Type", "text/html");
                     String message = "playerIndex can't be null.";
@@ -920,7 +916,7 @@ public class Server {
                     exchange.getResponseBody().close();
                     return;
                 }
-
+                /* TODO: Check logic this may be always false */
                 if (robPlayer.getPlayerIndex() != robPlayer.getPlayerIndex()) {
                     exchange.getResponseHeaders().set("Content-Type", "text/html");
                     String message = "Incorrect playerIndex.";
@@ -1024,6 +1020,7 @@ public class Server {
                     exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
                     exchange.getResponseBody().write(message.getBytes());
                     exchange.getResponseBody().close();
+                    System.out.println(message);
                     return;
                 }
                 Reader reader = new InputStreamReader(exchange.getRequestBody(), "UTF-8");
@@ -1035,6 +1032,7 @@ public class Server {
                     exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
                     exchange.getResponseBody().write(message.getBytes());
                     exchange.getResponseBody().close();
+                    System.out.println(message);
                     return;
                 }
 
@@ -1044,6 +1042,7 @@ public class Server {
                     exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
                     exchange.getResponseBody().write(message.getBytes());
                     exchange.getResponseBody().close();
+                    System.out.println(message);
                     return;
                 }
 
@@ -1053,6 +1052,7 @@ public class Server {
                     exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
                     exchange.getResponseBody().write(message.getBytes());
                     exchange.getResponseBody().close();
+                    System.out.println(message);
                     return;
                 }
 
@@ -1063,6 +1063,7 @@ public class Server {
                     exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
                     exchange.getResponseBody().write(message.getBytes());
                     exchange.getResponseBody().close();
+                    System.out.println(message);
                     return;
                 }
 
@@ -1073,6 +1074,7 @@ public class Server {
                     exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
                     exchange.getResponseBody().write(message.getBytes());
                     exchange.getResponseBody().close();
+                    System.out.println(message);
                     return;
                 }
                 if (status.equals("Robbing")) {
@@ -1081,6 +1083,7 @@ public class Server {
                     exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
                     exchange.getResponseBody().write(message.getBytes());
                     exchange.getResponseBody().close();
+                    System.out.println(message);
                     return;
                 }
                 if (status.equals("Discarding")) {
@@ -1089,6 +1092,7 @@ public class Server {
                     exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
                     exchange.getResponseBody().write(message.getBytes());
                     exchange.getResponseBody().close();
+                    System.out.println(message);
                     return;
                 }
 
@@ -1100,6 +1104,7 @@ public class Server {
                         exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
                         exchange.getResponseBody().write(message.getBytes());
                         exchange.getResponseBody().close();
+                        System.out.println(message);
                         return;
                     }
                 }
@@ -1111,6 +1116,7 @@ public class Server {
                         exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
                         exchange.getResponseBody().write(message.getBytes());
                         exchange.getResponseBody().close();
+                        System.out.println(message);
                         return;
                     }
                 }
@@ -1134,6 +1140,7 @@ public class Server {
                     exchange.getResponseHeaders().set("Content-Type", "text/html");
                     exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, result.length());
                     exchange.getResponseBody().write(result.getBytes());
+                    System.out.println(result);
                     exchange.getResponseBody().close();
                 }
 
@@ -1143,6 +1150,7 @@ public class Server {
                 exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, error.length());
                 exchange.getResponseBody().write(error.getBytes());
                 exchange.getResponseBody().close();
+                System.out.println(error);
             }
         }
     };
@@ -1670,20 +1678,12 @@ public class Server {
                     exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
                     exchange.getResponseBody().write(message.getBytes());
                     exchange.getResponseBody().close();
+                    System.out.println(message);
                     return;
                 }
 
                 Reader reader = new InputStreamReader(exchange.getRequestBody(), "UTF-8");
                 BuildSettlement buildSettlement = model.fromJson(reader, BuildSettlement.class);
-
-                if (buildSettlement.getType() == null || !buildSettlement.getType().equals("buildSettlement")) {
-                    exchange.getResponseHeaders().set("Content-Type", "text/html");
-                    String message = "Incorrect type.";
-                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
-                    exchange.getResponseBody().write(message.getBytes());
-                    exchange.getResponseBody().close();
-                    return;
-                }
 
                 if (buildSettlement.getPlayerIndex() == null) {
                     exchange.getResponseHeaders().set("Content-Type", "text/html");
@@ -1691,6 +1691,7 @@ public class Server {
                     exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
                     exchange.getResponseBody().write(message.getBytes());
                     exchange.getResponseBody().close();
+                    System.out.println(message);
                     return;
                 }
 
@@ -1700,6 +1701,7 @@ public class Server {
                     exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
                     exchange.getResponseBody().write(message.getBytes());
                     exchange.getResponseBody().close();
+                    System.out.println(message);
                     return;
                 }
 
@@ -1709,6 +1711,7 @@ public class Server {
                     exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
                     exchange.getResponseBody().write(message.getBytes());
                     exchange.getResponseBody().close();
+                    System.out.println(message);
                     return;
                 }
 
@@ -1718,6 +1721,7 @@ public class Server {
                     exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
                     exchange.getResponseBody().write(message.getBytes());
                     exchange.getResponseBody().close();
+                    System.out.println(message);
                     return;
                 }
 
@@ -1728,19 +1732,11 @@ public class Server {
                     exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
                     exchange.getResponseBody().write(message.getBytes());
                     exchange.getResponseBody().close();
+                    System.out.println(message);
                     return;
                 }
 
                 String status = gm.getGame().getTurnTracker().getStatus();
-
-                if (!(status.equals("Playing") || status.equals("FirstRound") || status.equals("SecondRound"))) {
-                    exchange.getResponseHeaders().set("Content-Type", "text/html");
-                    String message = "Cannot place settlement in this turn tracker status.";
-                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
-                    exchange.getResponseBody().write(message.getBytes());
-                    exchange.getResponseBody().close();
-                    return;
-                }
 
                 if (status.equals("FirstRound") || status.equals("SecondRound")) {
 
@@ -1750,6 +1746,7 @@ public class Server {
                         exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
                         exchange.getResponseBody().write(message.getBytes());
                         exchange.getResponseBody().close();
+                        System.out.println(message);
                         return;
                     }
 
@@ -1761,6 +1758,7 @@ public class Server {
                                 exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
                                 exchange.getResponseBody().write(message.getBytes());
                                 exchange.getResponseBody().close();
+                                System.out.println(message);
                                 return;
                             }
                         }
@@ -1771,6 +1769,7 @@ public class Server {
                             exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
                             exchange.getResponseBody().write(message.getBytes());
                             exchange.getResponseBody().close();
+                            System.out.println(message);
                             return;
                         }
 
@@ -1783,11 +1782,22 @@ public class Server {
                             exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
                             exchange.getResponseBody().write(message.getBytes());
                             exchange.getResponseBody().close();
+                            System.out.println(message);
                             return;
                         }
 
                     }
 
+                }
+
+                if (!(status.equals("Playing") || status.equals("FirstRound") || status.equals("SecondRound"))) {
+                    exchange.getResponseHeaders().set("Content-Type", "text/html");
+                    String message = "Cannot place settlement in this turn tracker status.";
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                    exchange.getResponseBody().write(message.getBytes());
+                    exchange.getResponseBody().close();
+                    System.out.println(message);
+                    return;
                 }
 
                 if (!buildSettlement.isFree()) {
@@ -1797,6 +1807,7 @@ public class Server {
                         exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
                         exchange.getResponseBody().write(message.getBytes());
                         exchange.getResponseBody().close();
+                        System.out.println(message);
                         return;
                     }
                 }
@@ -1805,17 +1816,19 @@ public class Server {
                 VertexDirection vertexDirection = buildSettlement.getVertexLocation().getDirection();
                 VertexLocation vertexLocation = new VertexLocation(hexSpot, vertexDirection);
 
-                if (!gm.canPlaceSettlement(vertexLocation)) {
-                    exchange.getResponseHeaders().set("Content-Type", "text/html");
-                    String message = "Cannot place settlement there.";
-                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
-                    exchange.getResponseBody().write(message.getBytes());
-                    exchange.getResponseBody().close();
-                    return;
-                }
-
+                /* TODO: logic not working cause  the list of settled locations is empty */
+                
+                 /*if (!(gm.canPlaceSettlement(vertexLocation))) {    
+                 exchange.getResponseHeaders().set("Content-Type", "text/html");
+                 String message = "Cannot place settlement there.";
+                 exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                 exchange.getResponseBody().write(message.getBytes());
+                 exchange.getResponseBody().close();
+                 System.out.println(message);
+                 return;
+                 }*/
                 buildSettlement.setGameId(gameAndPlayer.getGameId());
-
+                buildSettlement.setPlayerIndex(gameAndPlayer.getPlayerIndex());
                 GameInfo game;
                 try {
                     game = ServerFascade.getSingleton().buildSettlement(buildSettlement);
@@ -1835,6 +1848,7 @@ public class Server {
                     exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, result.length());
                     exchange.getResponseBody().write(result.getBytes());
                     exchange.getResponseBody().close();
+                    System.out.println(result);
                 }
 
             } catch (Exception e) {
@@ -1843,6 +1857,7 @@ public class Server {
                 exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, error.length());
                 exchange.getResponseBody().write(error.getBytes());
                 exchange.getResponseBody().close();
+                System.out.println(error);
             }
         }
     };
@@ -1995,6 +2010,7 @@ public class Server {
                     exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
                     exchange.getResponseBody().write(message.getBytes());
                     exchange.getResponseBody().close();
+                    System.out.println(message);
                     return;
                 }
 
@@ -2007,6 +2023,7 @@ public class Server {
                     exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
                     exchange.getResponseBody().write(message.getBytes());
                     exchange.getResponseBody().close();
+                    System.out.println(message);
                     return;
                 }
 
@@ -2016,6 +2033,7 @@ public class Server {
                     exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
                     exchange.getResponseBody().write(message.getBytes());
                     exchange.getResponseBody().close();
+                    System.out.println(message);
                     return;
                 }
 
@@ -2025,6 +2043,7 @@ public class Server {
                     exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
                     exchange.getResponseBody().write(message.getBytes());
                     exchange.getResponseBody().close();
+                    System.out.println(message);
                     return;
                 }
 
@@ -2034,6 +2053,7 @@ public class Server {
                     exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
                     exchange.getResponseBody().write(message.getBytes());
                     exchange.getResponseBody().close();
+                    System.out.println(message);
                     return;
                 }
 
@@ -2043,6 +2063,7 @@ public class Server {
                     exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
                     exchange.getResponseBody().write(message.getBytes());
                     exchange.getResponseBody().close();
+                    System.out.println(message);
                     return;
                 }
 
@@ -2053,6 +2074,7 @@ public class Server {
                     exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
                     exchange.getResponseBody().write(message.getBytes());
                     exchange.getResponseBody().close();
+                    System.out.println(message);
                     return;
                 }
 
@@ -2064,6 +2086,7 @@ public class Server {
                     exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
                     exchange.getResponseBody().write(message.getBytes());
                     exchange.getResponseBody().close();
+                    System.out.println(message);
                     return;
                 }
 
@@ -2074,16 +2097,19 @@ public class Server {
                         exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
                         exchange.getResponseBody().write(message.getBytes());
                         exchange.getResponseBody().close();
+                        System.out.println(message);
                         return;
                     }
 
                     if (status.equals("FirstRound")) {
                         if (gm.getGame().getPlayers().get(gameAndPlayer.getPlayerIndex()).getSettlements() != 4) {
                             exchange.getResponseHeaders().set("Content-Type", "text/html");
-                            String message = "Place exactly 1 settlement first.";
+                            
+                            String message = "Place exactly 1 settlement first. You placed : " + (5 - gm.getGame().getPlayers().get(gameAndPlayer.getPlayerIndex()).getSettlements());
                             exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
                             exchange.getResponseBody().write(message.getBytes());
                             exchange.getResponseBody().close();
+                            System.out.println(message);
                             return;
                         }
 
@@ -2093,6 +2119,7 @@ public class Server {
                             exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
                             exchange.getResponseBody().write(message.getBytes());
                             exchange.getResponseBody().close();
+                            System.out.println(message);
                             return;
                         }
 
@@ -2105,6 +2132,7 @@ public class Server {
                             exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
                             exchange.getResponseBody().write(message.getBytes());
                             exchange.getResponseBody().close();
+                            System.out.println(message);
                             return;
                         }
 
@@ -2114,6 +2142,7 @@ public class Server {
                             exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
                             exchange.getResponseBody().write(message.getBytes());
                             exchange.getResponseBody().close();
+                            System.out.println(message);
                             return;
                         }
                     }
@@ -2126,11 +2155,12 @@ public class Server {
                         exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
                         exchange.getResponseBody().write(message.getBytes());
                         exchange.getResponseBody().close();
+                        System.out.println(message);
                         return;
                     }
                 }
-
-                HexLocation hexSpot = new HexLocation(buildRoad.getRoadLocation().getX(), buildRoad.getRoadLocation().getY());
+                /* TODO: logic not working cause  the list of settled locations is empty */
+                /*HexLocation hexSpot = new HexLocation(buildRoad.getRoadLocation().getX(), buildRoad.getRoadLocation().getY());
                 EdgeDirection edgeDirection = buildRoad.getRoadLocation().getDirection();
                 EdgeLocation edgeLocation = new EdgeLocation(hexSpot, edgeDirection);
 
@@ -2140,8 +2170,9 @@ public class Server {
                     exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
                     exchange.getResponseBody().write(message.getBytes());
                     exchange.getResponseBody().close();
+                    System.out.println(message);
                     return;
-                }
+                }*/
 
                 buildRoad.setGameId(gameAndPlayer.getGameId());
 
@@ -2164,6 +2195,7 @@ public class Server {
                     exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, result.length());
                     exchange.getResponseBody().write(result.getBytes());
                     exchange.getResponseBody().close();
+                    System.out.println(result);
                 }
             } catch (Exception e) {
                 String error = "ERROR in build road";
@@ -2171,6 +2203,7 @@ public class Server {
                 exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, error.length());
                 exchange.getResponseBody().write(error.getBytes());
                 exchange.getResponseBody().close();
+                System.out.println(error);
             }
         }
     };
@@ -2378,17 +2411,15 @@ public class Server {
             if (userCookie == null || userCookie.equals("")) {
                 return gameAndPlayer;
             }
-            
-            
+
             String decodedCookie = URLDecoder.decode(userCookie.split(";")[0].split("=")[1], "UTF-8");
             Integer playerIdThisOne = model.fromJson(decodedCookie, CookieModel.class).getPlayerID();
-            System.out.println(" Server User Cookie Splitted: " + userCookie.split(";")[1]);
             Integer gameId = Integer.parseInt(URLDecoder.decode(userCookie.split(";")[1].split("catan.game=")[1], "UTF-8"));
             int playerIndex = -1;
             boolean found = false;
             for (GameManager gm : AllOfOurInformation.getSingleton().getGames()) {
                 if (gm.getGame().getId() == gameId) {
-                    
+
                     for (int i = 0; i < gm.getGame().getPlayers().size(); i++) {
                         if (gm.getGame().getPlayers().get(i).getId() == playerIdThisOne) {
                             found = true;
