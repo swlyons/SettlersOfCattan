@@ -48,6 +48,7 @@ public class FinishTurnCommand implements Command {
                     if (status.equals("SecondRound")) {
                         currentTurn -= 2;
                         if (currentTurn < 0) {
+                            currentTurn++;
                             AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).getGame().getTurnTracker().setStatus("Rolling");
                             status = "Rolling";
                         }
