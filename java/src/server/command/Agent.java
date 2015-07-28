@@ -22,7 +22,6 @@ public class Agent {
 
     public boolean sendCommand(Command command) {
         commandQueue.add(command);
-        System.out.println(commandQueue.size());
         return(command.execute());
     }
 
