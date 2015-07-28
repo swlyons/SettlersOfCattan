@@ -28,6 +28,7 @@ public class FinishTurnCommand implements Command {
     @Override
     public boolean execute() {
         try {
+            System.out.println("A1");
             int currentTurn = AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).getGame().getTurnTracker().getCurrentTurn();
             String status = AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).getGame().getTurnTracker().getStatus();
             currentTurn++;
@@ -38,6 +39,7 @@ public class FinishTurnCommand implements Command {
                 AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).getGame().getTurnTracker().setStatus("Rolling");
             } else {
                 if (status.equals("FirstRound")) {
+            System.out.println("A8");
                     if (4 <= currentTurn) {
                         currentTurn = 3;
                         AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).getGame().getTurnTracker().setStatus("SecondRound");
@@ -47,25 +49,27 @@ public class FinishTurnCommand implements Command {
                         currentTurn -= 2;
                         if (currentTurn < 0) {
                             AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).getGame().getTurnTracker().setStatus("Rolling");
-                            status="Rolling";
+                            status = "Rolling";
                         }
                     } else {
                         return false;
                     }
                 }
             }
+            System.out.println("A15");
 
             AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).endTurn();
 
-            while (AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).getGame().getPlayers().get((currentTurn - 1)).getId() < -1) {
-                if(!(status.equals("SecondRound")|| status.equals("FirstRound"))){
+            while (AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).getGame().getPlayers().get((currentTurn)).getId() < -1) {
+            AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).getGame().getTurnTracker().setCurrentTurn(currentTurn);
+                if (!(status.equals("SecondRound") || status.equals("FirstRound"))) {
                     currentTurn++;
-                    if(currentTurn == 4){
+                    if (currentTurn == 4) {
                         currentTurn = 0;
                     }
                     continue;
                 }
-                
+
                 if (status.equals("SecondRound") && currentTurn == 0) {
                     System.out.println("Errors with AI");
                     break;
@@ -81,6 +85,7 @@ public class FinishTurnCommand implements Command {
                             if (AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).canPlaceSettlement(vl)) {
                                 AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).placeFirstSettlement(vl);
                                 builtSettlement = true;
+                                AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).getGame().setVersion(AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).getGame().getVersion() + 1);
                                 break;
                             }
                         }
@@ -96,6 +101,7 @@ public class FinishTurnCommand implements Command {
                                 if (AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).canPlaceSettlement(vl)) {
                                     AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).placeFirstSettlement(vl);
                                     builtSettlement = true;
+                                    AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).getGame().setVersion(AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).getGame().getVersion() + 1);
                                     break;
                                 }
                             }
@@ -113,6 +119,7 @@ public class FinishTurnCommand implements Command {
                             if (AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).canPlaceRoad(el)) {
                                 AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).placeFreeRoad(el);
                                 builtRoad = true;
+                                AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).getGame().setVersion(AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).getGame().getVersion() + 1);
                                 break;
                             }
                         }
@@ -128,6 +135,7 @@ public class FinishTurnCommand implements Command {
                                 if (AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).canPlaceRoad(el)) {
                                     AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).placeFreeRoad(el);
                                     builtRoad = true;
+                                    AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).getGame().setVersion(AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).getGame().getVersion() + 1);
                                     break;
                                 }
                             }
@@ -145,6 +153,7 @@ public class FinishTurnCommand implements Command {
                                 if (AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).canPlaceRoad(el)) {
                                     AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).placeFreeRoad(el);
                                     builtRoad = true;
+                                    AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).getGame().setVersion(AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).getGame().getVersion() + 1);
                                     break;
                                 }
                             }
@@ -155,9 +164,9 @@ public class FinishTurnCommand implements Command {
                     }
 
                     currentTurn++;
-                    if(currentTurn==4){
+                    if (currentTurn == 4) {
                         currentTurn--;
-                        status="SecondRound";
+                        status = "SecondRound";
                         AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).getGame().getTurnTracker().setStatus("SecondRound");
                     }
                 } else {
@@ -171,6 +180,7 @@ public class FinishTurnCommand implements Command {
                                 if (AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).canPlaceSettlement(vl)) {
                                     AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).placeSecondSettlement(vl);
                                     builtSettlement = true;
+                                    AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).getGame().setVersion(AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).getGame().getVersion() + 1);
                                     break;
                                 }
                             }
@@ -186,6 +196,7 @@ public class FinishTurnCommand implements Command {
                                     if (AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).canPlaceSettlement(vl)) {
                                         AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).placeSecondSettlement(vl);
                                         builtSettlement = true;
+                                        AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).getGame().setVersion(AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).getGame().getVersion() + 1);
                                         break;
                                     }
                                 }
@@ -202,6 +213,7 @@ public class FinishTurnCommand implements Command {
 
                                 if (AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).canPlaceRoad(el)) {
                                     AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).placeFreeRoad(el);
+                                    AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).getGame().setVersion(AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).getGame().getVersion() + 1);
                                     builtRoad = true;
                                     break;
                                 }
@@ -217,6 +229,7 @@ public class FinishTurnCommand implements Command {
                                     EdgeLocation el = new EdgeLocation(new HexLocation(i, j), EdgeDirection.NE);
                                     if (AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).canPlaceRoad(el)) {
                                         AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).placeFreeRoad(el);
+                                        AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).getGame().setVersion(AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).getGame().getVersion() + 1);
                                         builtRoad = true;
                                         break;
                                     }
@@ -234,6 +247,7 @@ public class FinishTurnCommand implements Command {
                                     EdgeLocation el = new EdgeLocation(new HexLocation(i, j), EdgeDirection.NW);
                                     if (AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).canPlaceRoad(el)) {
                                         AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).placeFreeRoad(el);
+                                        AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).getGame().setVersion(AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).getGame().getVersion() + 1);
                                         builtRoad = true;
                                         break;
                                     }
