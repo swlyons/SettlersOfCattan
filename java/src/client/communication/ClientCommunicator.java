@@ -239,7 +239,7 @@ public class ClientCommunicator {
                             playerIdThisOne = model.fromJson(decodedCookie, CookieModel.class).getPlayerID();
                             name = model.fromJson(decodedCookie, CookieModel.class).getName();
                             if((cookies.get(playerIdThisOne) == null)){
-                                 cookies.put(playerIdThisOne, userCookie + "; ");
+                                 cookies.put(playerIdThisOne, userCookie + "");
                             }
                         }
                     } else if (commandName.equals("games/join")) {
