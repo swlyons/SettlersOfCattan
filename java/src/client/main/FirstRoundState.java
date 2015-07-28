@@ -39,7 +39,7 @@ public class FirstRoundState extends State {
             GameManager gameManager = ClientCommunicator.getSingleton().getGameManager();
             try {
                 GameInfo gameInformation = ClientFascade.getSingleton()
-                        .getGameModel("?version=" + - 1);
+                        .getGameModel("?version=" + -1);
                 status = gameInformation.getTurnTracker().getStatus();
 
                 gameManager.initializeGame(gameInformation);
