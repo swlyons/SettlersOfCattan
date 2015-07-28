@@ -916,8 +916,8 @@ public class Server {
                     exchange.getResponseBody().close();
                     return;
                 }
-                /* TODO: Check logic this may be always false */
-                if (robPlayer.getPlayerIndex() != robPlayer.getPlayerIndex()) {
+                
+                if (gameAndPlayer.getPlayerIndex() != robPlayer.getPlayerIndex()) {
                     exchange.getResponseHeaders().set("Content-Type", "text/html");
                     String message = "Incorrect playerIndex.";
                     exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
@@ -1815,20 +1815,19 @@ public class Server {
                 HexLocation hexSpot = new HexLocation(buildSettlement.getVertexLocation().getX(), buildSettlement.getVertexLocation().getY());
                 VertexDirection vertexDirection = buildSettlement.getVertexLocation().getDirection();
                 VertexLocation vertexLocation = new VertexLocation(hexSpot, vertexDirection);
-
-                /* TODO: logic not working cause  the list of settled locations is empty */
                 
-                 /*if (!(gm.canPlaceSettlement(vertexLocation))) {    
-                 exchange.getResponseHeaders().set("Content-Type", "text/html");
-                 String message = "Cannot place settlement there.";
-                 exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
-                 exchange.getResponseBody().write(message.getBytes());
-                 exchange.getResponseBody().close();
-                 System.out.println(message);
-                 return;
-                 }*/
+                 if (!(gm.canPlaceSettlement(vertexLocation))) {    
+                    exchange.getResponseHeaders().set("Content-Type", "text/html");
+                    String message = "Cannot place settlement there.";
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                    exchange.getResponseBody().write(message.getBytes());
+                    exchange.getResponseBody().close();
+                    System.out.println(message);
+                    return;
+                 }
+                
                 buildSettlement.setGameId(gameAndPlayer.getGameId());
-                buildSettlement.setPlayerIndex(gameAndPlayer.getPlayerIndex());
+
                 GameInfo game;
                 try {
                     game = ServerFascade.getSingleton().buildSettlement(buildSettlement);
@@ -2159,8 +2158,7 @@ public class Server {
                         return;
                     }
                 }
-                /* TODO: logic not working cause  the list of settled locations is empty */
-                /*HexLocation hexSpot = new HexLocation(buildRoad.getRoadLocation().getX(), buildRoad.getRoadLocation().getY());
+                HexLocation hexSpot = new HexLocation(buildRoad.getRoadLocation().getX(), buildRoad.getRoadLocation().getY());
                 EdgeDirection edgeDirection = buildRoad.getRoadLocation().getDirection();
                 EdgeLocation edgeLocation = new EdgeLocation(hexSpot, edgeDirection);
 
@@ -2172,7 +2170,7 @@ public class Server {
                     exchange.getResponseBody().close();
                     System.out.println(message);
                     return;
-                }*/
+                }
 
                 buildRoad.setGameId(gameAndPlayer.getGameId());
 

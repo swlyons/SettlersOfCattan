@@ -27,18 +27,26 @@ public class BuildSettlementCommand implements Command {
     @Override
     public boolean execute() {
         try {
-            /* TODO RETHINK LOGIC HERE */
-            /*HexLocation hexSpot = new HexLocation(buildSettlement.getVertexLocation().getX(), buildSettlement.getVertexLocation().getY());
+            HexLocation hexSpot = new HexLocation(buildSettlement.getVertexLocation().getX(), buildSettlement.getVertexLocation().getY());
             VertexDirection vertexDirection = buildSettlement.getVertexLocation().getDirection();
             VertexLocation vertexLocation = new VertexLocation(hexSpot, vertexDirection);
-            System.out.println("Build Settlement Command Game: " + AllOfOurInformation.getSingleton().getGames().get(buildSettlement.getGameId()).getGame());
-            if (AllOfOurInformation.getSingleton().getGames().get(buildSettlement.getGameId()).buildStructure(PieceType.SETTLEMENT, vertexLocation)) {*/
-                AllOfOurInformation.getSingleton().getGames().get(buildSettlement.getGameId()).getGame().setVersion(AllOfOurInformation.getSingleton().getGames().get(buildSettlement.getGameId()).getGame().getVersion() + 1);
-                //AllOfOurInformation.getSingleton().getGames().get(buildSettlement.getGameId()).getGame().setVersion(AllOfOurInformation.getSingleton().getGames().get(buildSettlement.getGameId()).getGame().getVersion() + 1);
+            if (AllOfOurInformation.getSingleton().getGames().get(buildSettlement.getGameId()).getGame().getTurnTracker().getStatus().equals("FirstRound")) {
+                AllOfOurInformation.getSingleton().getGames().get(buildSettlement.getGameId()).placeFirstSettlement(vertexLocation);
+                
                 return true;
-            /*} else {
-                return false;
-            }*/
+            } else {
+                if (AllOfOurInformation.getSingleton().getGames().get(buildSettlement.getGameId()).getGame().getTurnTracker().getStatus().equals("SecondRound")) {
+                    AllOfOurInformation.getSingleton().getGames().get(buildSettlement.getGameId()).placeSecondSettlement(vertexLocation);
+                    return true;
+                } else {
+                    if (AllOfOurInformation.getSingleton().getGames().get(buildSettlement.getGameId()).buildStructure(PieceType.SETTLEMENT, vertexLocation)) {
+                        AllOfOurInformation.getSingleton().getGames().get(buildSettlement.getGameId()).getGame().setVersion(AllOfOurInformation.getSingleton().getGames().get(buildSettlement.getGameId()).getGame().getVersion() + 1);
+                        return true;
+                    } else {
+                        return false;
+                    }
+                }
+            }
         } catch (Exception e) {
             return false;
         }

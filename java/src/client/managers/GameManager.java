@@ -312,9 +312,10 @@ public class GameManager {
             }
         }
 
+        mapManager.setHexList(hexes);
+        
         createUnsettledAreas(hexes);
 
-        mapManager.setHexList(hexes);
         locationManager.setPorts(ports);
 
         Map map = new Map();
@@ -482,6 +483,8 @@ public class GameManager {
         if (playerBank.getRoads() > 0) {
             playerBank.removeRoad();
             locationManager.settleEdge(edge, currentPlayer);
+            resourceManager.placedRoad(currentPlayer);
+            saveResourcesIntoGame();
             return true;
         } else {
             return false;
@@ -502,12 +505,14 @@ public class GameManager {
         int currentPlayer = game.getTurnTracker().getCurrentTurn();
         Bank playerBank = resourceManager.getGameBanks().get(currentPlayer);
         locationManager.settleLocation(v, currentPlayer, true);
-        playerBank.removeSettlement();
+        resourceManager.placedSettlement(currentPlayer);
+        saveResourcesIntoGame();
     }
 
     public void placeSecondSettlement(VertexLocation v) {
         int currentPlayer = game.getTurnTracker().getCurrentTurn();
         locationManager.settleLocation(v, currentPlayer, true);
+        resourceManager.placedSettlement(currentPlayer);
         List<HexLocation> neighbors = locationManager.getHexLocationsAroundVertexLocation(v);
         ResourceList resourceList = new ResourceList(0, 0, 0, 0, 0);
         for (Hex hex : mapManager.getHexList()) {
@@ -597,6 +602,7 @@ public class GameManager {
                 if (edge.getEdgeLocation().equals(edgeLoc)) {
                     if (edge.getWhoCanBuild().contains(currentPlayer())) {
                         canPlaceRoad = true;
+                        break;
                     }
                 }
             }
@@ -614,7 +620,7 @@ public class GameManager {
      */
     public boolean buildRoad(EdgeLocation edge) {
         int currentPlayer = game.getTurnTracker().getCurrentTurn();
-        Bank playerBank = resourceManager.getGameBanks().get(currentPlayer);
+        Bank playerBank = resourceManager.getGameBanks().get(currentPlayer);        
         ResourceList cost = new ResourceList(1, 0, 0, 0, 1);
         if (playerBank.getRoads() > 0 && playerBank.getResourcesCards().hasCardsAvailable(cost)) {
             resourceManager.transferResourceCard(currentPlayer, mainBankIndex, cost);
@@ -669,9 +675,8 @@ public class GameManager {
     public boolean canPlaceSettlement(VertexLocation vertLoc) {
 
         boolean canPlaceSettlement = false;
-        int i = 0;
+        int i = 0;        
         for (Location lc : locationManager.getUnsettledLocations()) {
-
             if (lc.getNormalizedLocation().equals(vertLoc)) {
 
                 if (lc.getWhoCanBuild().contains(currentPlayer()) && lc.getCanBeSettled()) {
