@@ -210,6 +210,7 @@ public class GameManager {
         bank.setSheep(19);
         bank.setWheat(19);
         bank.setWood(19);
+        game.setBank(bank);
         DevCardList deck = new DevCardList();
         deck.setMonopoly(2);
         deck.setMonument(5);
