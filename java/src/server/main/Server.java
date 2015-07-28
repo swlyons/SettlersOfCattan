@@ -1277,12 +1277,115 @@ public class Server {
 
         @Override
         public void handle(HttpExchange exchange) throws IOException {
-            exchange.getResponseHeaders().set("Content-Type", "application/json");
-            //TODO: use the road building card
+            try {
+                GameIdPlayerIdAndPlayerIndex gameAndPlayer = verifyPlayer(exchange);
 
-            exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, 0);
-            exchange.getResponseBody().write("Success".getBytes());
-            exchange.getResponseBody().close();
+                if (gameAndPlayer == null) {
+                    exchange.getResponseHeaders().set("Content-Type", "text/html");
+                    String message = "Need to login and join a valid game.";
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                    exchange.getResponseBody().write(message.getBytes());
+                    exchange.getResponseBody().close();
+                    return;
+                }
+
+                Reader reader = new InputStreamReader(exchange.getRequestBody(), "UTF-8");
+                Road_Building roadBuilding = model.fromJson(reader, Road_Building.class);
+
+                if (roadBuilding.getType() == null || !roadBuilding.getType().equals("Road_Building")) {
+                    exchange.getResponseHeaders().set("Content-Type", "text/html");
+                    String message = "Incorrect type.";
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                    exchange.getResponseBody().write(message.getBytes());
+                    exchange.getResponseBody().close();
+                    return;
+                }
+
+                if (roadBuilding.getPlayerIndex() == null) {
+                    exchange.getResponseHeaders().set("Content-Type", "text/html");
+                    String message = "playerIndex can't be null.";
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                    exchange.getResponseBody().write(message.getBytes());
+                    exchange.getResponseBody().close();
+                    return;
+                }
+
+                if (gameAndPlayer.getPlayerIndex() != roadBuilding.getPlayerIndex()) {
+                    exchange.getResponseHeaders().set("Content-Type", "text/html");
+                    String message = "Incorrect playerIndex.";
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                    exchange.getResponseBody().write(message.getBytes());
+                    exchange.getResponseBody().close();
+                    return;
+                }
+                
+                GameManager gm = AllOfOurInformation.getSingleton().getGames().get(gameAndPlayer.getGameId());
+                if (gameAndPlayer.getPlayerIndex() != gm.getGame().getTurnTracker().getCurrentTurn()) {
+                    exchange.getResponseHeaders().set("Content-Type", "text/html");
+                    String message = "Not your turn.";
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                    exchange.getResponseBody().write(message.getBytes());
+                    exchange.getResponseBody().close();
+                    return;
+                }
+
+                if (!gm.getGame().getTurnTracker().getStatus().equals("Playing")) {
+                    exchange.getResponseHeaders().set("Content-Type", "text/html");
+                    String message = "Turn tracker status must be \"Playing\".";
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                    exchange.getResponseBody().write(message.getBytes());
+                    exchange.getResponseBody().close();
+                    return;
+                }
+
+                if (!gm.canUseRoadBuilding()) {
+                    exchange.getResponseHeaders().set("Content-Type", "text/html");
+                    String message = "Cannot play road building card";
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                    exchange.getResponseBody().write(message.getBytes());
+                    exchange.getResponseBody().close();
+                    return;
+                }
+                
+                if(roadBuilding.getSpot1()==null||roadBuilding.getSpot2()==null){
+                    exchange.getResponseHeaders().set("Content-Type", "text/html");
+                    String message = "The two road building locations can't be null";
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+                    exchange.getResponseBody().write(message.getBytes());
+                    exchange.getResponseBody().close();
+                    return;
+                }
+                
+                roadBuilding.setGameId(gameAndPlayer.getGameId());
+
+                GameInfo game;
+                try {
+                    game = ServerFascade.getSingleton().roadBuilding(roadBuilding);
+                } catch (Exception e) {
+                    game = null;
+                }
+                String result;
+                if (game != null) {
+                    result = game.toString();
+                    exchange.getResponseHeaders().set("Content-Type", "application/json");
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, result.length());
+                    exchange.getResponseBody().write(result.getBytes());
+                    exchange.getResponseBody().close();
+                } else {
+                    result = "Couldn't grab game in road building";
+                    exchange.getResponseHeaders().set("Content-Type", "text/html");
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, result.length());
+                    exchange.getResponseBody().write(result.getBytes());
+                    exchange.getResponseBody().close();
+                }
+
+            } catch (Exception e) {
+                String error = "ERROR in roadBuilding";
+                exchange.getResponseHeaders().set("Content-Type", "text/html");
+                exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, error.length());
+                exchange.getResponseBody().write(error.getBytes());
+                exchange.getResponseBody().close();
+            }
         }
     };
     /**
@@ -1325,7 +1428,7 @@ public class Server {
                     return;
                 }
 
-                if (soldier.getPlayerIndex() != soldier.getPlayerIndex()) {
+                if (gameAndPlayer.getPlayerIndex() != soldier.getPlayerIndex()) {
                     exchange.getResponseHeaders().set("Content-Type", "text/html");
                     String message = "Incorrect playerIndex.";
                     exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
@@ -1461,7 +1564,7 @@ public class Server {
                     return;
                 }
 
-                if (monument.getPlayerIndex() != monument.getPlayerIndex()) {
+                if (gameAndPlayer.getPlayerIndex() != monument.getPlayerIndex()) {
                     exchange.getResponseHeaders().set("Content-Type", "text/html");
                     String message = "Incorrect playerIndex.";
                     exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
