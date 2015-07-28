@@ -188,6 +188,9 @@ public class DevCardController extends Controller implements IDevCardController 
         GameManager gm = ClientCommunicator.getSingleton().getGameManager();
         boolean playedDevCard = ClientCommunicator.getSingleton().getGameManager().getGame().getPlayers().get(playerIndex).isPlayedDevCard();
         boolean canBuild = gm.canUseRoadBuilding() && gm.getGame().getTurnTracker().getCurrentTurn() == gm.getPlayerIndex(playerId) && !playedDevCard;
+        if(gm.getGame().getPlayers().get(playerIndex).getRoads()<2){
+            canBuild = false;
+        }
         int cardsInHand = gm.getGame().getPlayers().get(playerIndex).getNewDevCards().getRoadBuilding()
                 + gm.getGame().getPlayers().get(playerIndex).getOldDevCards().getRoadBuilding();
         getPlayCardView().setCardAmount(DevCardType.ROAD_BUILD, cardsInHand);
