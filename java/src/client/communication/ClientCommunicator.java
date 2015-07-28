@@ -247,7 +247,7 @@ public class ClientCommunicator {
                         if (content.equals("Success")) {
                             String gameCookie = connection.getHeaderField("Set-Cookie").split(";")[0];
                             if(!cookies.get(playerID).contains("catan.game=")){
-                                cookies.put(playerID, cookies.get(playerID) + gameCookie);
+                                cookies.put(playerID, cookies.get(playerID) +"; "+ gameCookie);
                             }
                         }
                     } else if (commandName.equals("games/create")) {
