@@ -483,6 +483,15 @@ public class GameManager {
         if (playerBank.getRoads() > 0) {
             locationManager.settleEdge(edge, currentPlayer);
             resourceManager.placedRoad(currentPlayer);
+            EdgeValue edgeValue = new EdgeValue();
+            edgeValue.setOwner(currentPlayer);
+            XYEdgeLocation xy = new XYEdgeLocation();
+            xy.setX(edge.getHexLoc().getX());
+            xy.setY(edge.getHexLoc().getY());
+            xy.setDirection(edge.getDir());
+            edgeValue.setLocation(xy);
+            edgeValue.setLocation2(edge);
+            game.getMap().getRoads().add(edgeValue);
             saveResourcesIntoGame();
             return true;
         } else {
@@ -505,6 +514,13 @@ public class GameManager {
         Bank playerBank = resourceManager.getGameBanks().get(currentPlayer);
         locationManager.settleLocation(v, currentPlayer, true);
         resourceManager.placedSettlement(currentPlayer);
+        VertexObject vertexObject = new VertexObject(currentPlayer, v);
+        SettlementLocation settlementLocation = new SettlementLocation();
+        settlementLocation.setDirection(v.getDir());
+        settlementLocation.setX(v.getHexLoc().getX());
+        settlementLocation.setY(v.getHexLoc().getY());
+        vertexObject.setLocation(settlementLocation);
+        game.getMap().getSettlements().add(vertexObject);
         saveResourcesIntoGame();
     }
 
@@ -512,6 +528,13 @@ public class GameManager {
         int currentPlayer = game.getTurnTracker().getCurrentTurn();
         locationManager.settleLocation(v, currentPlayer, true);
         resourceManager.placedSettlement(currentPlayer);
+        VertexObject vertexObject = new VertexObject(currentPlayer, v);
+        SettlementLocation settlementLocation = new SettlementLocation();
+        settlementLocation.setDirection(v.getDir());
+        settlementLocation.setX(v.getHexLoc().getX());
+        settlementLocation.setY(v.getHexLoc().getY());
+        vertexObject.setLocation(settlementLocation);
+        game.getMap().getSettlements().add(vertexObject);
         List<HexLocation> neighbors = locationManager.getHexLocationsAroundVertexLocation(v);
         ResourceList resourceList = new ResourceList(0, 0, 0, 0, 0);
         for (Hex hex : mapManager.getHexList()) {
@@ -725,6 +748,7 @@ public class GameManager {
                         settlementLocation.setDirection(v.getDir());
                         settlementLocation.setX(v.getHexLoc().getX());
                         settlementLocation.setY(v.getHexLoc().getY());
+                        vertexObject.setLocation(settlementLocation);
                         game.getMap().getSettlements().add(vertexObject);
                         game.getPlayers().get(currentPlayer).setVictoryPoints(game.getPlayers().get(currentPlayer).getVictoryPoints() + 1);
                         saveResourcesIntoGame();
@@ -745,6 +769,7 @@ public class GameManager {
                         settlementLocation.setDirection(v.getDir());
                         settlementLocation.setX(v.getHexLoc().getX());
                         settlementLocation.setY(v.getHexLoc().getY());
+                        vertexObject.setLocation(settlementLocation);
                         game.getMap().getSettlements().add(vertexObject);
                         game.getPlayers().get(currentPlayer).setVictoryPoints(game.getPlayers().get(currentPlayer).getVictoryPoints() + 1);
                         saveResourcesIntoGame();
