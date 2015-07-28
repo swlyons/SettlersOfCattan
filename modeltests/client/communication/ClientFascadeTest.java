@@ -253,8 +253,8 @@ public class ClientFascadeTest {
         instance.login(new User("Sam", "sam"));
         instance.joinGame(new JoinGameRequest(0, "red"));
         GameInfo result = instance.resetGame();
-
-        assertEquals(expResult,result.getBank().getTotalResources());
+        int actualResult = result.getBank().getTotalResources();
+        assertEquals(expResult,actualResult);
       
         
         System.out.print("...PASSED");
@@ -415,7 +415,8 @@ public class ClientFascadeTest {
         GameInfo result = instance.buyDevCard(new BuyDevCard(0));
         
         //should have decrease by one
-        assertEquals(expResult, result.getBank().getTotalResources());
+        int actualResult = result.getBank().getTotalResources();
+        assertEquals(expResult, actualResult);
         
         System.out.print("...PASSED");
         System.out.println();

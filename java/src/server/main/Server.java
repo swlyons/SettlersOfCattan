@@ -29,6 +29,7 @@ import shared.locations.*;
 import client.communication.CookieModel;
 import client.managers.GameManager;
 import java.io.BufferedReader;
+import java.net.URLEncoder;
 import java.util.Scanner;
 
 public class Server {
@@ -183,11 +184,11 @@ public class Server {
 //                cookie+="{\"name\":\""+AllOfOurInformation.getSingleton().getUsers().get(id).getUsername()+"\",";
 //                cookie+="\"password\":\""+AllOfOurInformation.getSingleton().getUsers().get(id).getPassword()+"\",";
 //                cookie+="\"playerID\":" +id+"}";
-                    cookie += "{name:" + AllOfOurInformation.getSingleton().getUsers().get(id).getUsername() + ",";
-                    cookie += "password:" + AllOfOurInformation.getSingleton().getUsers().get(id).getPassword() + ",";
-                    cookie += "playerID:" + id + "}";
+                    String cookieModel = "{name:" + AllOfOurInformation.getSingleton().getUsers().get(id).getUsername() + ",";
+                    cookieModel += "password:" + AllOfOurInformation.getSingleton().getUsers().get(id).getPassword() + ",";
+                    cookieModel += "playerID:" + id + "}";
 
-                    cookie += ";Path=/;";
+                    cookie += URLEncoder.encode(cookieModel, "UTF-8") + ";Path=/;";
 //                String message = model.toJson("Success", String.class);
                     String message = "Success";
                     exchange.getResponseHeaders().set("Content-Type", "text/html");
@@ -545,8 +546,9 @@ public class Server {
         @Override
         public void handle(HttpExchange exchange) throws IOException {
             try {
-
+                
                 GameIdPlayerIdAndPlayerIndex gameAndPlayer = verifyPlayer(exchange);
+                
 
                 if (gameAndPlayer == null) {
                     exchange.getResponseHeaders().set("Content-Type", "text/html");
@@ -554,6 +556,7 @@ public class Server {
                     exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
                     exchange.getResponseBody().write(message.getBytes());
                     exchange.getResponseBody().close();
+                    System.out.println(message);
                     return;
                 }
 
@@ -565,9 +568,11 @@ public class Server {
                     exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
                     exchange.getResponseBody().write(message.getBytes());
                     exchange.getResponseBody().close();
+                     System.out.println(message);
                     return;
                 }
-
+                
+                System.out.println(exchange.getRequestURI().toString());
                 try {
                     version = Integer.parseInt(exchange.getRequestURI().toString().substring(version + 8));
                 } catch (Exception e) {
@@ -576,15 +581,16 @@ public class Server {
                     exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
                     exchange.getResponseBody().write(message.getBytes());
                     exchange.getResponseBody().close();
+                     System.out.println(message);
                     return;
                 }
 
                 //call the appropriate fascade (real or mock)
                 String result;
-
                 if (version < AllOfOurInformation.getSingleton().getGames().get(gameAndPlayer.getGameId()).getGame().getVersion()) {
                     result = AllOfOurInformation.getSingleton().getGames().get(gameAndPlayer.getGameId()).getGame().toString();
                 } else {
+                    System.out.println("Version True");
                     result = "\"true\"";
                 }
 
@@ -592,10 +598,13 @@ public class Server {
                 exchange.getResponseHeaders().set("Content-Type", "application/json");
                 exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, result.length());
                 exchange.getResponseBody().write(result.getBytes());
+                System.out.println(result);
                 exchange.getResponseBody().close();
             } catch (Exception e) {
                 String error = "ERROR in grabbing model";
                 exchange.getResponseHeaders().set("Content-Type", "text/html");
+                e.printStackTrace();
+                System.out.println(error);
                 exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, error.length());
                 exchange.getResponseBody().write(error.getBytes());
                 exchange.getResponseBody().close();
@@ -902,7 +911,7 @@ public class Server {
                     exchange.getResponseBody().close();
                     return;
                 }
-
+                
                 if (robPlayer.getPlayerIndex() == null) {
                     exchange.getResponseHeaders().set("Content-Type", "text/html");
                     String message = "playerIndex can't be null.";
@@ -2266,15 +2275,17 @@ public class Server {
             if (userCookie == null || userCookie.equals("")) {
                 return gameAndPlayer;
             }
-
-            String decodedCookie = URLDecoder.decode(userCookie.split("=")[1], "UTF-8");
-            Integer playerIdThisOne = model.fromJson(decodedCookie.split(";")[0], CookieModel.class).getPlayerID();
-            Integer gameId = Integer.parseInt(URLDecoder.decode(userCookie.split("=")[2], "UTF-8"));
+            
+            
+            String decodedCookie = URLDecoder.decode(userCookie.split(";")[0].split("=")[1], "UTF-8");
+            Integer playerIdThisOne = model.fromJson(decodedCookie, CookieModel.class).getPlayerID();
+            System.out.println(" Server User Cookie Splitted: " + userCookie.split(";")[1]);
+            Integer gameId = Integer.parseInt(URLDecoder.decode(userCookie.split(";")[1].split("catan.game=")[1], "UTF-8"));
             int playerIndex = -1;
             boolean found = false;
-
             for (GameManager gm : AllOfOurInformation.getSingleton().getGames()) {
                 if (gm.getGame().getId() == gameId) {
+                    
                     for (int i = 0; i < gm.getGame().getPlayers().size(); i++) {
                         if (gm.getGame().getPlayers().get(i).getId() == playerIdThisOne) {
                             found = true;
@@ -2287,7 +2298,7 @@ public class Server {
             }
 
             if (found) {
-                gameAndPlayer = new GameIdPlayerIdAndPlayerIndex(playerIdThisOne, gameId, playerIndex);
+                gameAndPlayer = new GameIdPlayerIdAndPlayerIndex(gameId, playerIdThisOne, playerIndex);
             }
             return gameAndPlayer;
         } catch (Exception e) {

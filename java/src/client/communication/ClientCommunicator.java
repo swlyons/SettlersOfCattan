@@ -136,7 +136,7 @@ public class ClientCommunicator {
             URL url = new URL(URL_PREFIX + "/" + commandName + params);
 
             if (commandName.contains("model")) {
-                System.out.println(url);
+                //System.out.println(url);
             }
             HttpURLConnection connection = (HttpURLConnection) url
                     .openConnection();
@@ -238,14 +238,17 @@ public class ClientCommunicator {
                             String decodedCookie = URLDecoder.decode(userCookie.split("=")[1], "UTF-8");
                             playerIdThisOne = model.fromJson(decodedCookie, CookieModel.class).getPlayerID();
                             name = model.fromJson(decodedCookie, CookieModel.class).getName();
-                            cookies.put(playerIdThisOne, userCookie + ((cookies.get(playerIdThisOne) != null) ? "; " + cookies.get(playerIdThisOne) : ""));
+                            if((cookies.get(playerIdThisOne) == null)){
+                                 cookies.put(playerIdThisOne, userCookie + "; ");
+                            }
                         }
                     } else if (commandName.equals("games/join")) {
                         result.setResponseBody(content);
                         if (content.equals("Success")) {
                             String gameCookie = connection.getHeaderField("Set-Cookie").split(";")[0];
-                            //cookies.put(playerID, "");
-                            cookies.put(playerID, ((cookies.get(playerID) != null) ? cookies.get(playerID) + "; " : "") + gameCookie);
+                            if(!cookies.get(playerID).contains("catan.game=")){
+                                cookies.put(playerID, cookies.get(playerID) + gameCookie);
+                            }
                         }
                     } else if (commandName.equals("games/create")) {
                         result.setResponseBody(model.fromJson(content, GameInfo.class));

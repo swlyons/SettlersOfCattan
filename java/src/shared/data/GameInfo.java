@@ -132,7 +132,7 @@ public class GameInfo {
 
     @Override
     public String toString() {
-        return "{\"deck\":"+deck.toString()+
+        String output = "{\"deck\":"+deck.toString()+
                 ",\"map\":"+map.toString()+
                 ",\"players\":"+players.toString()+ 
                 ", \"bank\" : " + bank.toString() + 
@@ -140,6 +140,8 @@ public class GameInfo {
                 ", \"log\" : " + log.toString()+
                 ", \"turnTracker\" : " + turnTracker.toString() + 
                 ", \"version\" : " + version + ", \"winner\" : " + winner + "}";
+        System.out.println("Game Info : " + output);
+        return output;
 //        return "{" + "\"title\" : \"" + title + "\" , \"id\" : " + id + ", \"bank\" : " + bank + ", \"chat\" : " + chat + ", \"log\" : " + log + ", \"map\" : " + map + ", \"players\" : " + players + ", \"tradeOffer\" : " + tradeOffer + ", \"turnTracker\" : " + turnTracker + ", \"version\" : " + version + ", \"winner\" : " + winner + "}";
     }
 
