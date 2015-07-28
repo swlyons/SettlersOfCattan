@@ -185,7 +185,12 @@ public class ServerFascade implements Fascade {
 
     @Override
     public GameInfo roadBuilding(Road_Building roadBuilding) throws ServerException {
-        return new GameInfo("Default Game");
+        RoadBuildingCommand roadBuildingCommand = new RoadBuildingCommand(roadBuilding);
+        GameInfo gi = null;
+        if(agent.sendCommand(roadBuildingCommand)){
+            gi = AllOfOurInformation.getSingleton().getGames().get(roadBuilding.getGameId()).getGame();
+        }
+        return gi;
     }
 
     @Override

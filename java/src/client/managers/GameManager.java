@@ -669,11 +669,11 @@ public class GameManager {
     public boolean canPlaceSettlement(VertexLocation vertLoc) {
 
         boolean canPlaceSettlement = false;
-        int i =0;
+        int i = 0;
         for (Location lc : locationManager.getUnsettledLocations()) {
-            
+
             if (lc.getNormalizedLocation().equals(vertLoc)) {
-                
+
                 if (lc.getWhoCanBuild().contains(currentPlayer()) && lc.getCanBeSettled()) {
                     canPlaceSettlement = true;
                     i++;
@@ -890,7 +890,7 @@ public class GameManager {
             }
         }
         resourceManager.monopolyUsed(currentPlayer);
-        resourceManager.getGameBanks().get(currentPlayer).makeCardsUnusable();
+        getGame().getPlayers().get(currentPlayer).setPlayedDevCard(true);
         saveResourcesIntoGame();
     }
 
@@ -924,7 +924,7 @@ public class GameManager {
         }
 
         resourceManager.roadBuildingUsed(currentPlayer);
-        resourceManager.getGameBanks().get(currentPlayer).makeCardsUnusable();
+        getGame().getPlayers().get(currentPlayer).setPlayedDevCard(true);
         saveResourcesIntoGame();
     }
 
@@ -942,7 +942,7 @@ public class GameManager {
         if (mainBankResources.hasCardsAvailable(r)) {
             resourceManager.transferResourceCard(mainBankIndex, currentPlayer, r);
             resourceManager.yearOfPlentyUsed(currentPlayer);
-            resourceManager.getGameBanks().get(currentPlayer).makeCardsUnusable();
+            getGame().getPlayers().get(currentPlayer).setPlayedDevCard(true);
             saveResourcesIntoGame();
             return true;
         } else {
@@ -959,7 +959,8 @@ public class GameManager {
         int currentPlayer = game.getTurnTracker().getCurrentTurn();
         resourceManager.soldierUsed(currentPlayer);
 
-        resourceManager.getGameBanks().get(currentPlayer).makeCardsUnusable();
+        getGame().getPlayers().get(currentPlayer).setPlayedDevCard(true);
+
         saveResourcesIntoGame();
 
         if (game.getTurnTracker().getLargestArmy() == -1) {
@@ -991,6 +992,7 @@ public class GameManager {
                 l.setWhoCanBuild(new HashSet<Integer>());
             }
         }
+        getGame().getPlayers().get(currentPlayer()).setPlayedDevCard(true);
         saveResourcesIntoGame();
     }
 
