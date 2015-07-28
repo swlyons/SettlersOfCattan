@@ -255,7 +255,6 @@ public class ServerFascade implements Fascade {
         GameInfo gi = null;
         if(agent.sendCommand(buildRoadCommand)){
             gi = AllOfOurInformation.getSingleton().getGames().get(buildRoad.getGameId()).getGame();
-            gi.getPlayers().get(buildRoad.getPlayerIndex()).setRoads(gi.getPlayers().get(buildRoad.getPlayerIndex()).getRoads() - 1);
         }
         return gi;
     }
