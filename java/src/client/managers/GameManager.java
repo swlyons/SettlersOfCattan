@@ -481,7 +481,6 @@ public class GameManager {
         int currentPlayer = game.getTurnTracker().getCurrentTurn();
         Bank playerBank = resourceManager.getGameBanks().get(currentPlayer);
         if (playerBank.getRoads() > 0) {
-            playerBank.removeRoad();
             locationManager.settleEdge(edge, currentPlayer);
             resourceManager.placedRoad(currentPlayer);
             saveResourcesIntoGame();
