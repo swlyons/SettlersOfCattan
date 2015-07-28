@@ -9,6 +9,11 @@ import server.command.Command;
 import shared.model.FinishMove;
 import server.receiver.AllOfOurInformation;
 import shared.data.TurnTracker;
+import shared.locations.EdgeLocation;
+import shared.locations.HexLocation;
+import shared.locations.EdgeDirection;
+import shared.locations.VertexDirection;
+import shared.locations.VertexLocation;
 
 /**
  *
@@ -44,6 +49,7 @@ public class FinishTurnCommand implements Command {
                         currentTurn -= 2;
                         if (currentTurn < 0) {
                             AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).getGame().getTurnTracker().setStatus("Rolling");
+                            status="Rolling";
                         }
                     } else {
                         return false;
@@ -52,16 +58,195 @@ public class FinishTurnCommand implements Command {
             }
 
             AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).endTurn();
-            while (AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).getGame().getPlayers().get(1).getId() < -1) {
-                if (status.equals("SecondRound")) {
-                    currentTurn--;
-                } else {
+
+            while (AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).getGame().getPlayers().get(currentTurn).getId() < -1) {
+                if(!(status.equals("SecondRound")||status.equals("FirstRound"))){
                     currentTurn++;
-                    if (currentTurn == 4) {
+                    if(currentTurn == 4){
                         currentTurn = 0;
                     }
+                    continue;
+                }
+                
+                if (status.equals("SecondRound") && currentTurn == 0) {
+                    System.out.println("Errors with AI");
+                    break;
+                }
+
+                if (status.equals("FirstRound")) {
+
+                    boolean builtSettlement = false;
+                    boolean builtRoad = false;
+                    for (int i = -3; i < 4; i++) {
+                        for (int j = -3; j < 4; j++) {
+                            VertexLocation vl = new VertexLocation(new HexLocation(i, j), VertexDirection.NE);
+                            if (AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).canPlaceSettlement(vl)) {
+                                AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).placeFirstSettlement(vl);
+                                builtSettlement = true;
+                                break;
+                            }
+                        }
+                        if (builtSettlement) {
+                            break;
+                        }
+                    }
+
+                    if (!builtSettlement) {
+                        for (int i = -3; i < 4; i++) {
+                            for (int j = -3; j < 4; j++) {
+                                VertexLocation vl = new VertexLocation(new HexLocation(i, j), VertexDirection.NW);
+                                if (AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).canPlaceSettlement(vl)) {
+                                    AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).placeFirstSettlement(vl);
+                                    builtSettlement = true;
+                                    break;
+                                }
+                            }
+                            if (builtSettlement) {
+                                break;
+                            }
+                        }
+
+                    }
+
+                    for (int i = -3; i < 4; i++) {
+                        for (int j = -3; j < 4; j++) {
+                            EdgeLocation el = new EdgeLocation(new HexLocation(i, j), EdgeDirection.N);
+
+                            if (AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).canPlaceRoad(el)) {
+                                AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).buildRoad(el);
+                                builtRoad = true;
+                                break;
+                            }
+                        }
+                        if (builtRoad) {
+                            break;
+                        }
+                    }
+
+                    if (!builtRoad) {
+                        for (int i = -3; i < 4; i++) {
+                            for (int j = -3; j < 4; j++) {
+                                EdgeLocation el = new EdgeLocation(new HexLocation(i, j), EdgeDirection.NE);
+                                if (AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).canPlaceRoad(el)) {
+                                    AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).buildRoad(el);
+                                    builtRoad = true;
+                                    break;
+                                }
+                            }
+                            if (builtRoad) {
+                                break;
+                            }
+                        }
+                    }
+
+                    if (!builtRoad) {
+
+                        for (int i = -3; i < 4; i++) {
+                            for (int j = -3; j < 4; j++) {
+                                EdgeLocation el = new EdgeLocation(new HexLocation(i, j), EdgeDirection.NW);
+                                if (AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).canPlaceRoad(el)) {
+                                    AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).buildRoad(el);
+                                    builtRoad = true;
+                                    break;
+                                }
+                            }
+                            if (builtRoad) {
+                                break;
+                            }
+                        }
+                    }
+
+                    currentTurn++;
+                } else {
+
+                    if (status.equals("SecondRound")) {
+                        boolean builtSettlement = false;
+                        boolean builtRoad = false;
+                        for (int i = -3; i < 4; i++) {
+                            for (int j = -3; j < 4; j++) {
+                                VertexLocation vl = new VertexLocation(new HexLocation(i, j), VertexDirection.NE);
+                                if (AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).canPlaceSettlement(vl)) {
+                                    AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).placeSecondSettlement(vl);
+                                    builtSettlement = true;
+                                    break;
+                                }
+                            }
+                            if (builtSettlement) {
+                                break;
+                            }
+                        }
+
+                        if (!builtSettlement) {
+                            for (int i = -3; i < 4; i++) {
+                                for (int j = -3; j < 4; j++) {
+                                    VertexLocation vl = new VertexLocation(new HexLocation(i, j), VertexDirection.NW);
+                                    if (AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).canPlaceSettlement(vl)) {
+                                        AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).placeSecondSettlement(vl);
+                                        builtSettlement = true;
+                                        break;
+                                    }
+                                }
+                                if (builtSettlement) {
+                                    break;
+                                }
+                            }
+
+                        }
+
+                        for (int i = -3; i < 4; i++) {
+                            for (int j = -3; j < 4; j++) {
+                                EdgeLocation el = new EdgeLocation(new HexLocation(i, j), EdgeDirection.N);
+
+                                if (AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).canPlaceRoad(el)) {
+                                    AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).buildRoad(el);
+                                    builtRoad = true;
+                                    break;
+                                }
+                            }
+                            if (builtRoad) {
+                                break;
+                            }
+                        }
+
+                        if (!builtRoad) {
+                            for (int i = -3; i < 4; i++) {
+                                for (int j = -3; j < 4; j++) {
+                                    EdgeLocation el = new EdgeLocation(new HexLocation(i, j), EdgeDirection.NE);
+                                    if (AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).canPlaceRoad(el)) {
+                                        AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).buildRoad(el);
+                                        builtRoad = true;
+                                        break;
+                                    }
+                                }
+                                if (builtRoad) {
+                                    break;
+                                }
+                            }
+                        }
+
+                        if (!builtRoad) {
+
+                            for (int i = -3; i < 4; i++) {
+                                for (int j = -3; j < 4; j++) {
+                                    EdgeLocation el = new EdgeLocation(new HexLocation(i, j), EdgeDirection.NW);
+                                    if (AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).canPlaceRoad(el)) {
+                                        AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).buildRoad(el);
+                                        builtRoad = true;
+                                        break;
+                                    }
+                                }
+                                if (builtRoad) {
+                                    break;
+                                }
+                            }
+                        }
+
+                        currentTurn--;
+                    }
+
                 }
             }
+
             AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).getGame().getTurnTracker().setCurrentTurn(currentTurn);
             AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).getGame().setVersion(AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).getGame().getVersion() + 1);
             return true;
