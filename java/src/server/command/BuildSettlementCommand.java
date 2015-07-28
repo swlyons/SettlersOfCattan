@@ -32,10 +32,12 @@ public class BuildSettlementCommand implements Command {
             VertexLocation vertexLocation = new VertexLocation(hexSpot, vertexDirection);
             if (AllOfOurInformation.getSingleton().getGames().get(buildSettlement.getGameId()).getGame().getTurnTracker().getStatus().equals("FirstRound")) {
                 AllOfOurInformation.getSingleton().getGames().get(buildSettlement.getGameId()).placeFirstSettlement(vertexLocation);
+                AllOfOurInformation.getSingleton().getGames().get(buildSettlement.getGameId()).getGame().setVersion(AllOfOurInformation.getSingleton().getGames().get(buildSettlement.getGameId()).getGame().getVersion() + 1);
                 return true;
             } else {
                 if (AllOfOurInformation.getSingleton().getGames().get(buildSettlement.getGameId()).getGame().getTurnTracker().getStatus().equals("SecondRound")) {
                     AllOfOurInformation.getSingleton().getGames().get(buildSettlement.getGameId()).placeSecondSettlement(vertexLocation);
+                    AllOfOurInformation.getSingleton().getGames().get(buildSettlement.getGameId()).getGame().setVersion(AllOfOurInformation.getSingleton().getGames().get(buildSettlement.getGameId()).getGame().getVersion() + 1);
                     return true;
                 } else {
                     if (AllOfOurInformation.getSingleton().getGames().get(buildSettlement.getGameId()).buildStructure(PieceType.SETTLEMENT, vertexLocation)) {

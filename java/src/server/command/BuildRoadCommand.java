@@ -34,6 +34,7 @@ public class BuildRoadCommand implements Command {
             if (AllOfOurInformation.getSingleton().getGames().get(buildRoad.getGameId()).getGame().getTurnTracker().getStatus().equals("FirstRound")
                     || AllOfOurInformation.getSingleton().getGames().get(buildRoad.getGameId()).getGame().getTurnTracker().getStatus().equals("SecondRound")) {
                 AllOfOurInformation.getSingleton().getGames().get(buildRoad.getGameId()).placeFreeRoad(edgeLocation);
+                AllOfOurInformation.getSingleton().getGames().get(buildRoad.getGameId()).getGame().setVersion(AllOfOurInformation.getSingleton().getGames().get(buildRoad.getGameId()).getGame().getVersion() + 1);
 
                 return true;
             } else {
