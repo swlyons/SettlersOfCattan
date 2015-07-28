@@ -235,7 +235,6 @@ public class ServerFascade implements Fascade {
         GameInfo gi = null;
         if(agent.sendCommand(buildSettlementCommand)){
             gi = AllOfOurInformation.getSingleton().getGames().get(buildSettlement.getGameId()).getGame();
-            gi.getPlayers().get(buildSettlement.getPlayerIndex()).setSettlements(gi.getPlayers().get(buildSettlement.getPlayerIndex()).getSettlements() - 1);
         }
         return gi;
     }

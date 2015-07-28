@@ -74,7 +74,7 @@ public class LocationManager {
                                 locationUnavailable.setCanBeSettled(false);
                             }
                         }
-
+                        
                         EdgeLocation usableEdge1 = new EdgeLocation(location.getNormalizedLocation().getHexLoc(),
                                 EdgeDirection.N);
                         EdgeLocation usableEdge2 = new EdgeLocation(location.getNormalizedLocation().getHexLoc(),
@@ -128,11 +128,10 @@ public class LocationManager {
                         }
                     }
 
-                    break;
-
                 } else {
                     return false;
                 }
+                break;
             }
         }
 

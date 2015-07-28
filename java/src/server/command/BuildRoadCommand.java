@@ -28,18 +28,24 @@ public class BuildRoadCommand implements Command {
     @Override
     public boolean execute() {
         try {
-            /* TODO: RETHINK LOGIC HERE
-            /*HexLocation hexSpot = new HexLocation(buildRoad.getRoadLocation().getX(), buildRoad.getRoadLocation().getY());
+            HexLocation hexSpot = new HexLocation(buildRoad.getRoadLocation().getX(), buildRoad.getRoadLocation().getY());
             EdgeDirection edgeDirection = buildRoad.getRoadLocation().getDirection();
             EdgeLocation edgeLocation = new EdgeLocation(hexSpot, edgeDirection);
-            if (AllOfOurInformation.getSingleton().getGames().get(buildRoad.getGameId()).buildRoad(edgeLocation)) {*/
-                AllOfOurInformation.getSingleton().getGames().get(buildRoad.getGameId()).getGame().setVersion(AllOfOurInformation.getSingleton().getGames().get(buildRoad.getGameId()).getGame().getVersion() + 1);
+            if (AllOfOurInformation.getSingleton().getGames().get(buildRoad.getGameId()).getGame().getTurnTracker().getStatus().equals("FirstRound")
+                    || AllOfOurInformation.getSingleton().getGames().get(buildRoad.getGameId()).getGame().getTurnTracker().getStatus().equals("SecondRound")) {
+                AllOfOurInformation.getSingleton().getGames().get(buildRoad.getGameId()).placeFreeRoad(edgeLocation);
+
                 return true;
-                /*AllOfOurInformation.getSingleton().getGames().get(buildRoad.getGameId()).getGame().setVersion(AllOfOurInformation.getSingleton().getGames().get(buildRoad.getGameId()).getGame().getVersion()+1);
-                
             } else {
-                return false;
-            }*/
+
+                if (AllOfOurInformation.getSingleton().getGames().get(buildRoad.getGameId()).buildRoad(edgeLocation)) {
+                    AllOfOurInformation.getSingleton().getGames().get(buildRoad.getGameId()).getGame().setVersion(AllOfOurInformation.getSingleton().getGames().get(buildRoad.getGameId()).getGame().getVersion() + 1);
+                    return true;
+                } else {
+                    return false;
+                }
+
+            }
         } catch (Exception e) {
             return false;
         }

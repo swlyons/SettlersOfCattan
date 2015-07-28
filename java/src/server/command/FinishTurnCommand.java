@@ -111,7 +111,7 @@ public class FinishTurnCommand implements Command {
                             EdgeLocation el = new EdgeLocation(new HexLocation(i, j), EdgeDirection.N);
 
                             if (AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).canPlaceRoad(el)) {
-                                AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).buildRoad(el);
+                                AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).placeFreeRoad(el);
                                 builtRoad = true;
                                 break;
                             }
@@ -126,7 +126,7 @@ public class FinishTurnCommand implements Command {
                             for (int j = -3; j < 4; j++) {
                                 EdgeLocation el = new EdgeLocation(new HexLocation(i, j), EdgeDirection.NE);
                                 if (AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).canPlaceRoad(el)) {
-                                    AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).buildRoad(el);
+                                    AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).placeFreeRoad(el);
                                     builtRoad = true;
                                     break;
                                 }
@@ -143,7 +143,7 @@ public class FinishTurnCommand implements Command {
                             for (int j = -3; j < 4; j++) {
                                 EdgeLocation el = new EdgeLocation(new HexLocation(i, j), EdgeDirection.NW);
                                 if (AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).canPlaceRoad(el)) {
-                                    AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).buildRoad(el);
+                                    AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).placeFreeRoad(el);
                                     builtRoad = true;
                                     break;
                                 }
@@ -155,6 +155,11 @@ public class FinishTurnCommand implements Command {
                     }
 
                     currentTurn++;
+                    if(currentTurn==4){
+                        currentTurn--;
+                        status="SecondRound";
+                        AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).getGame().getTurnTracker().setStatus("SecondRound");
+                    }
                 } else {
 
                     if (status.equals("SecondRound")) {
@@ -196,7 +201,7 @@ public class FinishTurnCommand implements Command {
                                 EdgeLocation el = new EdgeLocation(new HexLocation(i, j), EdgeDirection.N);
 
                                 if (AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).canPlaceRoad(el)) {
-                                    AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).buildRoad(el);
+                                    AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).placeFreeRoad(el);
                                     builtRoad = true;
                                     break;
                                 }
@@ -211,7 +216,7 @@ public class FinishTurnCommand implements Command {
                                 for (int j = -3; j < 4; j++) {
                                     EdgeLocation el = new EdgeLocation(new HexLocation(i, j), EdgeDirection.NE);
                                     if (AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).canPlaceRoad(el)) {
-                                        AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).buildRoad(el);
+                                        AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).placeFreeRoad(el);
                                         builtRoad = true;
                                         break;
                                     }
@@ -228,7 +233,7 @@ public class FinishTurnCommand implements Command {
                                 for (int j = -3; j < 4; j++) {
                                     EdgeLocation el = new EdgeLocation(new HexLocation(i, j), EdgeDirection.NW);
                                     if (AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).canPlaceRoad(el)) {
-                                        AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).buildRoad(el);
+                                        AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).placeFreeRoad(el);
                                         builtRoad = true;
                                         break;
                                     }
