@@ -414,7 +414,7 @@ public class GameManager {
 		if (dieRoll == 7) {
 			game.getTurnTracker().setStatus("Robbing");
 			for (int i = 0; i < 4; i++) {
-				if (7 <= resourceManager.getGameBanks().get(i).getResourcesCards().getTotalResources()
+				if (7 < resourceManager.getGameBanks().get(i).getResourcesCards().getTotalResources()
 						&& game.getPlayers().get(i).getId() >= 0) {
 					game.getTurnTracker().setStatus("Discarding");
 				}
@@ -446,28 +446,31 @@ public class GameManager {
 				for (Location settled : locationManager.getSettledLocations()) {
 					if (loc.getNormalizedLocation().equals(settled.getNormalizedLocation())) {
 						int ownerId = settled.getOwnerID();
-						boolean isCity = false;
-						for(VertexObject city : game.getMap().getCities()){
-							if(city.getLocation().getX() == settled.getNormalizedLocation().getHexLoc().getX() 
-									&& city.getLocation().getY() == settled.getNormalizedLocation().getHexLoc().getY()){
-								isCity = true;
+						if (!(game.getPlayers().get(ownerId).getId() <= -1)) {
+							boolean isCity = false;
+							for (VertexObject city : game.getMap().getCities()) {
+								if (city.getLocation().getX() == settled.getNormalizedLocation().getHexLoc().getX()
+										&& city.getLocation().getY() == settled.getNormalizedLocation().getHexLoc()
+												.getY()) {
+									isCity = true;
+								}
 							}
-						}
-						switch (ownerId) {
-						case 0:
-							player1Resources.add(type, isCity ? 2 : 1);
-							break;
-						case 1:
-							player2Resources.add(type, isCity ? 2 : 1);
-							break;
-						case 2:
-							player3Resources.add(type, isCity ? 2 : 1);
-							break;
-						case 3:
-							player4Resources.add(type, isCity ? 2 : 1);
-							break;
-						default:
-							// do nothing
+							switch (ownerId) {
+							case 0:
+								player1Resources.add(type, isCity ? 2 : 1);
+								break;
+							case 1:
+								player2Resources.add(type, isCity ? 2 : 1);
+								break;
+							case 2:
+								player3Resources.add(type, isCity ? 2 : 1);
+								break;
+							case 3:
+								player4Resources.add(type, isCity ? 2 : 1);
+								break;
+							default:
+								// do nothing
+							}
 						}
 					}
 				}
@@ -615,7 +618,8 @@ public class GameManager {
 		settlementLocation.setY(v.getHexLoc().getY());
 		vertexObject.setLocation(settlementLocation);
 		game.getMap().getSettlements().add(vertexObject);
-		game.getPlayers().get(currentPlayer).setVictoryPoints(game.getPlayers().get(currentPlayer).getVictoryPoints() + 1);
+		game.getPlayers().get(currentPlayer)
+				.setVictoryPoints(game.getPlayers().get(currentPlayer).getVictoryPoints() + 1);
 		saveResourcesIntoGame();
 	}
 
@@ -630,11 +634,13 @@ public class GameManager {
 		settlementLocation.setY(v.getHexLoc().getY());
 		vertexObject.setLocation(settlementLocation);
 		game.getMap().getSettlements().add(vertexObject);
-		game.getPlayers().get(currentPlayer).setVictoryPoints(game.getPlayers().get(currentPlayer).getVictoryPoints() + 1);
+		game.getPlayers().get(currentPlayer)
+				.setVictoryPoints(game.getPlayers().get(currentPlayer).getVictoryPoints() + 1);
 		List<HexLocation> neighbors = locationManager.getHexLocationsAroundVertexLocation(v);
 		ResourceList resourceList = new ResourceList(0, 0, 0, 0, 0);
 		for (Hex hex : mapManager.getHexList()) {
-			if (hex.getLocation().equals(neighbors.get(0)) || hex.getLocation().equals(neighbors.get(1)) || hex.getLocation().equals(neighbors.get(2))) {
+			if (hex.getLocation().equals(neighbors.get(0)) || hex.getLocation().equals(neighbors.get(1))
+					|| hex.getLocation().equals(neighbors.get(2))) {
 				if (hex.getResource() != null) {
 					switch (hex.getResource()) {
 					case ore:
