@@ -446,7 +446,13 @@ public class GameManager {
 				for (Location settled : locationManager.getSettledLocations()) {
 					if (loc.getNormalizedLocation().equals(settled.getNormalizedLocation())) {
 						int ownerId = settled.getOwnerID();
-						boolean isCity = loc.getIsCity();
+						boolean isCity = false;
+						for(VertexObject city : game.getMap().getCities()){
+							if(city.getLocation().getX() == settled.getNormalizedLocation().getHexLoc().getX() 
+									&& city.getLocation().getY() == settled.getNormalizedLocation().getHexLoc().getY()){
+								isCity = true;
+							}
+						}
 						switch (ownerId) {
 						case 0:
 							player1Resources.add(type, isCity ? 2 : 1);
@@ -627,45 +633,28 @@ public class GameManager {
 		game.getPlayers().get(currentPlayer).setVictoryPoints(game.getPlayers().get(currentPlayer).getVictoryPoints() + 1);
 		List<HexLocation> neighbors = locationManager.getHexLocationsAroundVertexLocation(v);
 		ResourceList resourceList = new ResourceList(0, 0, 0, 0, 0);
-		System.out.println("Neighbors size: " + neighbors.size());
-		System.out.println("HexList size: " + mapManager.getHexList().size());
-		
 		for (Hex hex : mapManager.getHexList()) {
 			if (hex.getLocation().equals(neighbors.get(0)) || hex.getLocation().equals(neighbors.get(1)) || hex.getLocation().equals(neighbors.get(2))) {
-				System.out.println("Found a neighbor hex");
 				if (hex.getResource() != null) {
 					switch (hex.getResource()) {
 					case ore:
-						System.out.println("ResourceType = Ore");
 						resourceList.setOre(resourceList.getOre() + 1);
-						System.out.println("Amt = " + resourceList.getOre());
 						break;
 					case wood:
-						System.out.println("ResourceType = Wood");
 						resourceList.setWood(resourceList.getWood() + 1);
-						System.out.println("Amt = " + resourceList.getWood());
 						break;
 					case brick:
-						System.out.println("ResourceType = Brick");
 						resourceList.setBrick(resourceList.getBrick() + 1);
-						System.out.println("Amt = " + resourceList.getBrick());
 						break;
 					case sheep:
-						System.out.println("ResourceType = Sheep");
 						resourceList.setSheep(resourceList.getSheep() + 1);
-						System.out.println("Amt = " + resourceList.getSheep());
 						break;
 					case wheat:
-						System.out.println("ResourceType = Wheat");
 						resourceList.setWheat(resourceList.getWheat() + 1);
-						System.out.println("Amt = " + resourceList.getWheat());
 						break;
 					default:
 						break;
 					}
-				}
-				else {
-					System.out.println("Null!");
 				}
 			}
 		}
