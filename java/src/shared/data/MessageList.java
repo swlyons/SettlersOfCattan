@@ -21,12 +21,18 @@ public class MessageList {
     @Override
     public String toString() {
 
+        boolean hasOne = false;
         String messageLines = "{\"lines\" : [";
 
         for (MessageLine line : lines) {
             messageLines += line.toString() + ",";
+            hasOne = true;
         }
 
+        if (hasOne) {
+            messageLines = messageLines.substring(0, messageLines.length() - 1);
+        }
+        
         messageLines += "]}";
 
         return messageLines;
