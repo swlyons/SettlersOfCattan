@@ -434,13 +434,7 @@ public class MapController extends Controller implements IMapController {
         // deciding must happen server side, or on the next poll request
         GameManager gm = ClientCommunicator.getSingleton().getGameManager();
         Integer playerId = ClientCommunicator.getSingleton().getPlayerId();
-        Integer playerIndex = 4;
-        for (int i = 0; i < gm.getGame().getPlayers().size(); i++) {
-            if (gm.getGame().getPlayers().get(i).getPlayerID() == playerId) {
-                playerIndex = i;
-                break;
-            }
-        }
+        Integer playerIndex = gm.getPlayerIndex(playerId);
 
         Integer victimIndex = 4;
         for (int i = 0; i < gm.getGame().getPlayers().size(); i++) {
@@ -450,7 +444,7 @@ public class MapController extends Controller implements IMapController {
             }
         }
 
-        if(playerIndex==victimIndex){
+        if(playerIndex == victimIndex){
             victimIndex=-1;
         }
         

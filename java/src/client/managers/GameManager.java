@@ -914,6 +914,8 @@ public class GameManager {
 	}
 
 	public boolean canRobPlayer(HexLocation hexLoc, int playerId) {
+		if(playerId == -1)
+			return true;
 		for (Location location : locationManager.getSettledLocations()) {
 			if (location.getOwnerID() == playerId) {
 				List<HexLocation> hexes = locationManager

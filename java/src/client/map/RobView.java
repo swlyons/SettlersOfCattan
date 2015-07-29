@@ -68,12 +68,13 @@ public class RobView extends OverlayView implements IRobView {
         public void actionPerformed(ActionEvent e) {
             GameManager gm = ClientCommunicator.getSingleton().getGameManager();
             Integer playerId = ClientCommunicator.getSingleton().getPlayerId();
+            Integer playerIndex = gm.getPlayerIndex(playerId);
 
             if (e.getSource() == defaultButton) {
                 closeModal();
-                getController().robPlayer(victims[gm.getPlayerIndex(playerId)]);
+                RobPlayerInfo self = new RobPlayerInfo(gm.getGame().getPlayers().get(playerIndex), 1);
+                getController().robPlayer(self);
             } else {
-
                 for (int i = 0; i < victimButtons.size(); i++) {
                     if (e.getSource() == victimButtons.get(i)) {
                         closeModal();
@@ -125,6 +126,13 @@ public class RobView extends OverlayView implements IRobView {
                 this.add(buttonPanel, BorderLayout.CENTER);
                 revalidate();
             }
+        } else {
+            this.remove(buttonPanel);
+            buttonPanel = new JPanel();
+            buttonPanel.setBorder(BorderFactory.createEmptyBorder(25, 0, 25, 0));
+            buttonPanel.add(defaultButton);
+            this.add(buttonPanel, BorderLayout.CENTER);
+            revalidate();
         }
     }
 
