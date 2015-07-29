@@ -1,6 +1,7 @@
 package client.map;
 
 import shared.data.Edge;
+import shared.data.GameInfo;
 import shared.data.SettlementLocation;
 import shared.data.Hex;
 import shared.data.RobPlayerInfo;
@@ -308,6 +309,7 @@ public class MapController extends Controller implements IMapController {
                 CatanColor color = CatanColor
                         .valueOf(gm.getGame().getPlayers().get(currentPlayer).getColor().toUpperCase());
                 build.setType("buildSettlement");
+                build.setFree(false);
                 build.setPlayerIndex(currentPlayer);
                 build.setVertexLocation(settle);
                 try {
@@ -338,7 +340,8 @@ public class MapController extends Controller implements IMapController {
             build.setPlayerIndex(currentPlayer);
             build.setVertexLocation(settle);
             try {
-                ClientFascade.getSingleton().buildCity(build);
+                GameInfo updatedModel = ClientFascade.getSingleton().buildCity(build);
+                gm.initializeGame(updatedModel);
                 getView().placeCity(vertLoc, color);
             } catch (Exception e) {
                 e.printStackTrace();

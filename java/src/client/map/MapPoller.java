@@ -290,9 +290,9 @@ public class MapPoller extends TimerTask {
                         resourceBarController.canBuyCard();
                         resourceBarController.canBuildSettlement();
                         resourceBarController.canBuildRoad();
-                        resourceBarController.canPlayCard();
-                    }
+                        resourceBarController.canPlayCard();                    }
                 }
+
                 /* End Resource Bar Update */
                 // </editor-fold>
 
@@ -300,7 +300,7 @@ public class MapPoller extends TimerTask {
                 /* Begin Discard Controller */
                 if (doneOnce && gameInformation.getTurnTracker().getCurrentTurn() == playerIndex && rollController.getClickedOk()) {
                     if (status.equals("Discarding") && !gameInformation.getPlayers().get(playerIndex).isDiscarded() && gameManager.getResourceManager()
-                            .getGameBanks().get(playerIndex).getResourcesCards().getTotalResources() > 7 && !discardedOnce) {
+                            .getGameBanks().get(playerIndex).getResourcesCards().getTotalResources() >= 7 && !discardedOnce) {
                         if (!dis.getDiscardView().isModalShowing()) {
                             dis.initFromModel();
                             dis.getDiscardView().showModal();

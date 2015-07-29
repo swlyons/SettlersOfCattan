@@ -20,6 +20,31 @@ public class Hex {
         location = hexStart;
         number = rollValueStart;
         resource = resourceTypeStart;
+//		switch (resourceTypeStart) {
+//		case brick:
+//			System.out.println("Made a Brick");
+//			type = HexType.brick;
+//			break;
+//		case ore:
+//			System.out.println("Made a Ore");
+//			type = HexType.ore;
+//			break;
+//		case sheep:
+//			System.out.println("Made a Sheep");
+//			type = HexType.sheep;
+//			break;
+//		case wheat:
+//			System.out.println("Made a Wheat");
+//			type = HexType.wheat;
+//			break;
+//		case wood:
+//			System.out.println("Made a Wood");
+//			type = HexType.wood;
+//			break;
+//		default:
+//			// do nothing
+//		}
+
         hasRobber = false;
     }
 
@@ -82,4 +107,31 @@ public class Hex {
         }
     }
 
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((edgeLocations == null) ? 0 : edgeLocations.hashCode());
+		result = prime * result + (hasRobber ? 1231 : 1237);
+		result = prime * result + ((location == null) ? 0 : location.hashCode());
+		result = prime * result + number;
+		result = prime * result + ((resource == null) ? 0 : resource.hashCode());
+		result = prime * result + ((type == null) ? 0 : type.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Hex other = (Hex) obj;
+
+		if (!location.equals(other.location))
+			return false;
+		return true;
+	}
 }

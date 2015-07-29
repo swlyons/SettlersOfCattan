@@ -81,8 +81,7 @@ public class ServerFascade implements Fascade {
     public boolean joinGame(JoinGameRequest joinGameRequest) throws ServerException {
         return false;
     }
-    
-    
+
 
     @Override
     public boolean saveGame(SaveGameRequest saveGameRequest) throws ServerException {
@@ -180,7 +179,12 @@ public class ServerFascade implements Fascade {
 
     @Override
     public GameInfo year_Of_Plenty(Year_Of_Plenty year_of_plenty) throws ServerException {
-        return new GameInfo("Default Game");
+        YearOfPlentyCommand yearOfPlentyCommand = new YearOfPlentyCommand(year_of_plenty);
+        GameInfo gi = null;
+        if(agent.sendCommand(yearOfPlentyCommand)){
+            gi = AllOfOurInformation.getSingleton().getGames().get(year_of_plenty.getGameId()).getGame();
+        }
+        return gi;
     }
 
     @Override
@@ -221,12 +225,22 @@ public class ServerFascade implements Fascade {
 
     @Override
     public GameInfo offerTrade(OfferTrade offerTrade) throws ServerException {
-        return new GameInfo("Default Game");
+        OfferTradeCommand offerTradeCommand = new OfferTradeCommand(offerTrade);
+        GameInfo gi = null;
+        if(agent.sendCommand(offerTradeCommand)){
+            gi = AllOfOurInformation.getSingleton().getGames().get(offerTrade.getGameId()).getGame();
+        }
+        return gi;    
     }
 
     @Override
     public GameInfo acceptTrade(AcceptTrade acceptTrade) throws ServerException {
-        return new GameInfo("Default Game");
+        AcceptTradeCommand acceptTradeCommand = new AcceptTradeCommand(acceptTrade);
+        GameInfo gi = null;
+        if(agent.sendCommand(acceptTradeCommand)){
+            gi = AllOfOurInformation.getSingleton().getGames().get(acceptTrade.getGameId()).getGame();
+        }
+        return gi;   
     }
 
     @Override
@@ -261,7 +275,13 @@ public class ServerFascade implements Fascade {
 
     @Override
     public GameInfo maritimeTrade(MaritimeTrade maritimeTrade) throws ServerException {
-        return new GameInfo("Default Game");
+        MaritimeTradeCommand maritimeTradeCommand = new MaritimeTradeCommand(maritimeTrade);
+        GameInfo gi = null;
+        if(agent.sendCommand(maritimeTradeCommand)) {
+        	gi = AllOfOurInformation.getSingleton().getGames().get(maritimeTrade.getGameId()).getGame();
+        }
+    	return gi;
+        
     }
 
     @Override

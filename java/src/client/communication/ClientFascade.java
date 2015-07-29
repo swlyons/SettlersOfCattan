@@ -116,6 +116,8 @@ public class ClientFascade implements Fascade{
 
     @Override
     public GameInfo robPlayer(RobPlayer robPlayer) throws ClientException {
+//    	System.out.println(ClientCommunicator.getSingleton().doPost(ROB_PLAYER_MOVES, robPlayer, 0).getResponseBody());
+//    	return new GameInfo("Default");
         return (GameInfo) ClientCommunicator.getSingleton().doPost(ROB_PLAYER_MOVES, robPlayer, 0).getResponseBody();
     }
 

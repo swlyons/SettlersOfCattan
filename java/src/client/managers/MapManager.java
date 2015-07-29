@@ -24,7 +24,7 @@ public class MapManager {
         List<Hex> hexesProducingResources = new ArrayList<>();
 
         for (int i = 0; i < hexList.size(); i++) {
-            if (hexList.get(i).getNumber()== i && !hexList.get(i).getHasRobber()) {
+            if (hexList.get(i).getNumber() == rollValue && !hexList.get(i).getHasRobber()) {
                 hexesProducingResources.add(hexList.get(i));
             }
         }

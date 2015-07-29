@@ -9,6 +9,7 @@ import server.command.Command;
 import server.receiver.AllOfOurInformation;
 import shared.model.RobPlayer;
 import client.managers.GameManager;
+import shared.data.Bank;
 import shared.definitions.PieceType;
 import shared.locations.HexLocation;
 import shared.locations.VertexDirection;
@@ -31,8 +32,14 @@ public class RobPlayerCommand implements Command {
         try {
             AllOfOurInformation.getSingleton().getGames().get(robPlayer.getGameId()).placeRobber(robPlayer.getLocation());
             if (robPlayer.getVictimIndex() != -1) {
-                AllOfOurInformation.getSingleton().getGames().get(robPlayer.getGameId()).getResourceManager().transferResourceCard(robPlayer.getVictimIndex(), robPlayer.getPlayerIndex(), AllOfOurInformation.getSingleton().getGames().get(robPlayer.getGameId()).getGame().getPlayers().get(robPlayer.getVictimIndex()).getResources().getRandomResourceAvailable());
+            	GameManager gm = AllOfOurInformation.getSingleton().getGames().get(robPlayer.getGameId());
+            	Bank victimBank = gm.getResourceManager().getGameBanks().get(robPlayer.getVictimIndex());
+            	if(victimBank.getResourcesCards().getTotalResources() > 0) {
+            		gm.getResourceManager().transferResourceCard(robPlayer.getVictimIndex(), robPlayer.getPlayerIndex(), 
+            				 AllOfOurInformation.getSingleton().getGames().get(robPlayer.getGameId()).getGame().getPlayers().get(robPlayer.getVictimIndex()).getResources().getRandomResourceAvailable());
+            	}
             }
+            AllOfOurInformation.getSingleton().getGames().get(robPlayer.getGameId()).getGame().getTurnTracker().setStatus("Playing");
             AllOfOurInformation.getSingleton().getGames().get(robPlayer.getGameId()).getGame().setVersion(AllOfOurInformation.getSingleton().getGames().get(robPlayer.getGameId()).getGame().getVersion()+1);
             return true;
         } catch (Exception e) {
