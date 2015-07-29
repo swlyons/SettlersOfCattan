@@ -6,6 +6,7 @@ import client.base.*;
 import client.communication.ClientCommunicator;
 import client.communication.ClientFascade;
 import client.managers.GameManager;
+import java.util.Date;
 import shared.model.RollNumber;
 
 /**
@@ -48,6 +49,7 @@ public class RollController extends Controller implements IRollController {
 	public void rollDice() {
 		GameManager gm = ClientCommunicator.getSingleton().getGameManager();
 		Random r = new Random();
+                r.setSeed((new Date()).getTime());
 		int twoD6 = r.nextInt(6) + r.nextInt(6) + 2;
 		Integer playerId = ClientCommunicator.getSingleton().getPlayerId();
 		Integer playerIndex = 4;
