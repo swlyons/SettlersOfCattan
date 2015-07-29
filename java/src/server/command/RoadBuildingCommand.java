@@ -25,6 +25,7 @@ public class RoadBuildingCommand implements Command {
     public boolean execute() {
         try {
             AllOfOurInformation.getSingleton().getGames().get(roadBuilding.getGameId()).useRoadBuilding(roadBuilding.getSpot1(),roadBuilding.getSpot2());
+            AllOfOurInformation.getSingleton().getGames().get(roadBuilding.getGameId()).getGame().getPlayers().get(roadBuilding.getPlayerIndex()).setPlayedDevCard(true);
             AllOfOurInformation.getSingleton().getGames().get(roadBuilding.getGameId()).getGame().setVersion(AllOfOurInformation.getSingleton().getGames().get(roadBuilding.getGameId()).getGame().getVersion()+1);
             return true;
         } catch (Exception e) {

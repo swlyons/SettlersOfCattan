@@ -25,6 +25,7 @@ public class MonumentCommand implements Command {
     public boolean execute() {
         try {
             AllOfOurInformation.getSingleton().getGames().get(monument.getGameId()).useMonument();
+            AllOfOurInformation.getSingleton().getGames().get(monument.getGameId()).getGame().getPlayers().get(monument.getPlayerIndex()).setPlayedDevCard(true);
             AllOfOurInformation.getSingleton().getGames().get(monument.getGameId()).getGame().setVersion(AllOfOurInformation.getSingleton().getGames().get(monument.getGameId()).getGame().getVersion()+1);
             return true;
         } catch (Exception e) {

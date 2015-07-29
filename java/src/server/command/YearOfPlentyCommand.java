@@ -15,6 +15,7 @@ public class YearOfPlentyCommand implements Command {
     public boolean execute() {
         try {
             AllOfOurInformation.getSingleton().getGames().get(yearOfPlenty.getGameId()).useYearOfPlenty(yearOfPlenty.getResource1(),yearOfPlenty.getResource2());
+            AllOfOurInformation.getSingleton().getGames().get(yearOfPlenty.getGameId()).getGame().getPlayers().get(yearOfPlenty.getPlayerIndex()).setPlayedDevCard(true);
             AllOfOurInformation.getSingleton().getGames().get(yearOfPlenty.getGameId()).getGame().setVersion(AllOfOurInformation.getSingleton().getGames().get(yearOfPlenty.getGameId()).getGame().getVersion()+1);
             return true;
         } catch (Exception e) {
