@@ -35,6 +35,7 @@ public class FinishTurnCommand implements Command {
                 if (4 <= currentTurn) {
                     currentTurn = 0;
                 }
+                AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).endTurn();
                 AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).getGame().getTurnTracker().setStatus("Rolling");
             } else {
                 if (status.equals("FirstRound")) {
