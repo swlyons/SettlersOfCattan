@@ -211,7 +211,12 @@ public class ServerFascade implements Fascade {
 
     @Override
     public GameInfo monopoly(Monopoly monopoly) throws ServerException {
-        return new GameInfo("Default Game");
+    	MonopolyCommand monopolyCommand = new MonopolyCommand(monopoly);
+        GameInfo gi = null;
+        if(agent.sendCommand(monopolyCommand)){
+            gi = AllOfOurInformation.getSingleton().getGames().get(monopoly.getGameId()).getGame();
+        }
+        return gi;
     }
 
     @Override
