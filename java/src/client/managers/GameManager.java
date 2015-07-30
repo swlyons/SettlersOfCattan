@@ -517,58 +517,6 @@ public class GameManager {
 			}
 		}
 		saveResourcesIntoGame();
-
-		// for (ResourceType resourceType : ResourceType.values()) {
-		// List<Hex> hexesProducingAParticularResource = new ArrayList<>();
-		//
-		// for (Hex particularHex : hexesProducingResources) {
-		// if (resourceType == particularHex.getResource()) {
-		// hexesProducingAParticularResource.add(particularHex);
-		// }
-		// }
-		//
-		// if (hexesProducingAParticularResource.isEmpty()) {
-		// continue;
-		// }
-		//
-		// // If a player shows up, add one resource to them
-		// List<Integer> playersEarningResources = new ArrayList<>();
-		//
-		// for (Hex hexProducingResources : hexesProducingAParticularResource) {
-		// playersEarningResources
-		// .addAll(locationManager.awardTerrainResource(hexProducingResources.getLocation()));
-		// }
-		//
-		// int amountAvailable = 0;
-		// switch (resourceType) {
-		// case ore:
-		// amountAvailable = gameBank.getOre();
-		// break;
-		// case wood:
-		// amountAvailable = gameBank.getWood();
-		// break;
-		// case brick:
-		// amountAvailable = gameBank.getBrick();
-		// break;
-		// case sheep:
-		// amountAvailable = gameBank.getSheep();
-		// break;
-		// case wheat:
-		// amountAvailable = gameBank.getWheat();
-		// break;
-		// default:
-		// break;
-		// }
-		//
-		// if (amountAvailable >= playersEarningResources.size()) {
-		// ResourceList resource = new ResourceList(resourceType);
-		// for (Integer earningPlayer : playersEarningResources) {
-		// resourceManager.transferResourceCard(mainBankIndex, earningPlayer,
-		// resource);
-		// }
-		// }
-		//
-		// }
 	}
 
 	public boolean placeFreeRoad(EdgeLocation edge) {
@@ -1120,7 +1068,7 @@ public class GameManager {
 
 		getGame().getPlayers().get(currentPlayer).setPlayedDevCard(true);
 
-		if (game.getTurnTracker().getLargestArmy() == -1) {
+		if (game.getTurnTracker().getLargestArmy() == 4) {
 			if (3 <= resourceManager.getGameBanks().get(currentPlayer).getSoldiers()) {
 				game.getPlayers().get(currentPlayer)
 						.setVictoryPoints(game.getPlayers().get(currentPlayer).getVictoryPoints() + 2);

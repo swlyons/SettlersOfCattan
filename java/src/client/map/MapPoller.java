@@ -308,7 +308,7 @@ public class MapPoller extends TimerTask {
                         }
                     }
                     if (status.equals("Robbing")) {
-                        mapView.getController().startMove(PieceType.ROBBER, true, true);
+                        mapView.getController().startMove(PieceType.ROBBER, true, false);
                         rollController.setClickedOk(false);
                         discardedOnce = false;
                     }
