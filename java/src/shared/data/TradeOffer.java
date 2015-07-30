@@ -24,7 +24,7 @@ public class TradeOffer {
         return receiver;
     }
 
-    public void getReceiver(int receiver) {
+    public void setReceiver(int receiver) {
         this.receiver = receiver;
     }
 
