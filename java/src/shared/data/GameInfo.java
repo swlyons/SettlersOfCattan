@@ -139,7 +139,10 @@ public class GameInfo {
                 ", \"chat\" : " + chat.toString() + 
                 ", \"log\" : " + log.toString()+
                 ", \"turnTracker\" : " + turnTracker.toString() + 
-                ", \"version\" : " + version + ", \"winner\" : " + winner + "}";
+                (tradeOffer != null ? ", \"tradeOffer\" : " + tradeOffer.toString() : "") + 
+                ", \"version\" : " + version + 
+                ", \"winner\" : " + winner + 
+                "}";
         return output;
 //        return "{" + "\"title\" : \"" + title + "\" , \"id\" : " + id + ", \"bank\" : " + bank + ", \"chat\" : " + chat + ", \"log\" : " + log + ", \"map\" : " + map + ", \"players\" : " + players + ", \"tradeOffer\" : " + tradeOffer + ", \"turnTracker\" : " + turnTracker + ", \"version\" : " + version + ", \"winner\" : " + winner + "}";
     }

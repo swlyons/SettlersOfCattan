@@ -70,7 +70,8 @@ public class ClientFascade implements Fascade{
     }
 
     public GameInfo getGameModel(String version) throws ClientException {
-        return (GameInfo) ClientCommunicator.getSingleton().doGet(MODEL_GAME, version, 0).getResponseBody();
+        GameInfo result = (GameInfo) ClientCommunicator.getSingleton().doGet(MODEL_GAME, version, 0).getResponseBody();
+    	return result;
     }
 
     public GameInfo resetGame() throws ClientException {
@@ -157,7 +158,8 @@ public class ClientFascade implements Fascade{
 
     @Override
     public GameInfo offerTrade(OfferTrade offerTrade) throws ClientException {
-        return (GameInfo) ClientCommunicator.getSingleton().doPost(OFFER_TRADE_MOVES, offerTrade, 0).getResponseBody();
+    	GameInfo result = (GameInfo) ClientCommunicator.getSingleton().doPost(OFFER_TRADE_MOVES, offerTrade, 0).getResponseBody();
+    	return result;
     }
 
     @Override

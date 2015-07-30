@@ -15,9 +15,14 @@ public class AcceptTradeCommand implements Command{
     @Override
     public boolean execute() {
         try {
-        	TradeOffer trade = AllOfOurInformation.getSingleton().getGames().get(acceptTrade.getGameId()).getGame().getTradeOffer();
-            AllOfOurInformation.getSingleton().getGames().get(acceptTrade.getGameId()).tradeAccepted(trade.getSender(), trade.getReceiver(), trade.getOffer());
-            AllOfOurInformation.getSingleton().getGames().get(acceptTrade.getGameId()).getGame().setVersion(AllOfOurInformation.getSingleton().getGames().get(acceptTrade.getGameId()).getGame().getVersion()+1);
+        	if(acceptTrade.isWillAccept()){
+        		TradeOffer trade = AllOfOurInformation.getSingleton().getGames().get(acceptTrade.getGameId()).getGame().getTradeOffer();
+            	AllOfOurInformation.getSingleton().getGames().get(acceptTrade.getGameId()).tradeAccepted(trade.getSender(), trade.getReceiver(), trade.getOffer());
+        	}
+        	else {
+        		AllOfOurInformation.getSingleton().getGames().get(acceptTrade.getGameId()).getGame().setTradeOffer(null);
+        	}
+        	AllOfOurInformation.getSingleton().getGames().get(acceptTrade.getGameId()).getGame().setVersion(AllOfOurInformation.getSingleton().getGames().get(acceptTrade.getGameId()).getGame().getVersion()+1);
             return true;
         } catch (Exception e) {
             return false;

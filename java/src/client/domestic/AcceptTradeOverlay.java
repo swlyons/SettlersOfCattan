@@ -14,8 +14,10 @@ import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
+import shared.data.TradeOffer;
 import shared.definitions.*;
 import client.base.*;
+import client.communication.ClientCommunicator;
 import client.utils.ImageUtils;
 
 /**
@@ -131,53 +133,56 @@ public class AcceptTradeOverlay extends OverlayView implements IAcceptTradeOverl
     @Override
     public void addGetResource(ResourceType resource, int amount) {
         //Instantiate component on the first addition
-        if (offering_component == null) {
-            offering_component = new JPanel();
-            offering_component.setBackground(new Color(255, 255, 255, 255));
-            offering_component.setLayout(new GridBagLayout());
-            GridBagConstraints offering_component_gbc = new GridBagConstraints();
-            offering_component_gbc.gridx = 0;
-            offering_component_gbc.gridy = 1;
-            contentPanel.add(offering_component, offering_component_gbc);
-        }
-        //The Image
-        Image i = ImageUtils.loadImage("images/resources/" + resource + ".png");
-        ImageIcon ii = new ImageIcon(i.getScaledInstance(50, 50, 0));
+//        if (offering_component == null) {
+//            offering_component = new JPanel();
+//            offering_component.setBackground(new Color(255, 255, 255, 255));
+//            offering_component.setLayout(new GridBagLayout());
+//            GridBagConstraints offering_component_gbc = new GridBagConstraints();
+//            offering_component_gbc.gridx = 0;
+//            offering_component_gbc.gridy = 1;
+//            contentPanel.add(offering_component, offering_component_gbc);
+//        }
+//        //The Image
+//        Image i = ImageUtils.loadImage("images/resources/" + resource + ".png");
+//        ImageIcon ii = new ImageIcon(i.getScaledInstance(50, 50, 0));
+//
+//        //The Number (and image)
+//        JLabel get_combo = new JLabel(Integer.toString(amount));
 
-        //The Number (and image)
-        JLabel get_combo = new JLabel(Integer.toString(amount));
-        get_combo.setFont(new Font(HEAVY_FONT, Font.PLAIN, GIVE_AND_GET_NUMERAL_TEXT_SIZE));
-        get_combo.setBorder(new EmptyBorder(10, 10, 10, 10));
-        get_combo.setIcon(ii);
+    	offerer_component.setText(offerer_component.getText() + " <" + Integer.toString(amount) + " " + resource.toString() + ">");
+//        get_combo.setFont(new Font(HEAVY_FONT, Font.PLAIN, GIVE_AND_GET_NUMERAL_TEXT_SIZE));
+//        get_combo.setBorder(new EmptyBorder(10, 10, 10, 10));
+//        get_combo.setIcon(ii);
 
         //Add it to the window
-        offering_component.add(get_combo);
+//        offerer_component.add(get_combo);
     }
 
     @Override
     public void addGiveResource(ResourceType resource, int amount) {
-        //Instantiate component on the first addition
-        if (requesting_component == null) {
-            requesting_component = new JPanel();
-            requesting_component.setBackground(new Color(255, 255, 255, 255));
-            requesting_component.setLayout(new GridBagLayout());
-            GridBagConstraints requesting_component_gbc = new GridBagConstraints();
-            requesting_component_gbc.gridx = 0;
-            requesting_component_gbc.gridy = 3;
-            contentPanel.add(requesting_component, requesting_component_gbc);
-        }
-        //The Image
-        Image i = ImageUtils.loadImage("images/resources/" + resource.toString().toLowerCase() + ".png");
-        ImageIcon ii = new ImageIcon(i.getScaledInstance(50, 50, 0));
-
-        //The Number (and image)
-        JLabel give_combo = new JLabel(Integer.toString(amount));
-        give_combo.setFont(new Font(HEAVY_FONT, Font.PLAIN, GIVE_AND_GET_NUMERAL_TEXT_SIZE));
-        give_combo.setBorder(new EmptyBorder(10, 10, 10, 10));
-        give_combo.setIcon(ii);
-
-        //Add it to the window
-        requesting_component.add(give_combo);
+    	request_component.setText(request_component.getText() + " <" + Integer.toString(amount) + " " + resource.toString() + ">");    	
+    	//Instantiate component on the first addition
+//        if (requesting_component == null) {
+//            requesting_component = new JPanel();
+//            requesting_component.setBackground(new Color(255, 255, 255, 255));
+//            requesting_component.setLayout(new GridBagLayout());
+//            GridBagConstraints requesting_component_gbc = new GridBagConstraints();
+//            requesting_component_gbc.gridx = 0;
+//            requesting_component_gbc.gridy = 3;
+//            contentPanel.add(requesting_component, requesting_component_gbc);
+//        }
+//        //The Image
+//        Image i = ImageUtils.loadImage("images/resources/" + resource.toString().toLowerCase() + ".png");
+//        ImageIcon ii = new ImageIcon(i.getScaledInstance(50, 50, 0));
+//
+//        //The Number (and image)
+//        JLabel give_combo = new JLabel(Integer.toString(amount));
+//        give_combo.setFont(new Font(HEAVY_FONT, Font.PLAIN, GIVE_AND_GET_NUMERAL_TEXT_SIZE));
+//        give_combo.setBorder(new EmptyBorder(10, 10, 10, 10));
+//        give_combo.setIcon(ii);
+//
+//        //Add it to the window
+//        request_component.add(give_combo);
     }
 
     @Override
