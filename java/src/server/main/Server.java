@@ -989,15 +989,6 @@ public class Server {
 					return;
 				}
 
-				if (!gm.canRobPlayer(robPlayer.getLocation(), robPlayer.getVictimIndex())) {
-					exchange.getResponseHeaders().set("Content-Type", "text/html");
-					String message = "Cannot rob that player";
-					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
-					exchange.getResponseBody().write(message.getBytes());
-					exchange.getResponseBody().close();
-					return;
-				}
-
 				robPlayer.setGameId(gameAndPlayer.getGameId());
 
 				GameInfo game;
@@ -2291,16 +2282,6 @@ public class Server {
 				VertexDirection vertexDirection = buildSettlement.getVertexLocation().getDirection();
 				VertexLocation vertexLocation = new VertexLocation(hexSpot, vertexDirection);
 
-				if (!(gm.canPlaceSettlement(vertexLocation))) {
-					exchange.getResponseHeaders().set("Content-Type", "text/html");
-					String message = "Cannot place settlement there.";
-					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
-					exchange.getResponseBody().write(message.getBytes());
-					exchange.getResponseBody().close();
-					System.out.println(message);
-					return;
-				}
-
 				buildSettlement.setGameId(gameAndPlayer.getGameId());
 
 				GameInfo game;
@@ -2643,16 +2624,6 @@ public class Server {
 						buildRoad.getRoadLocation().getY());
 				EdgeDirection edgeDirection = buildRoad.getRoadLocation().getDirection();
 				EdgeLocation edgeLocation = new EdgeLocation(hexSpot, edgeDirection);
-
-				if (!gm.canPlaceRoad(edgeLocation)) {
-					exchange.getResponseHeaders().set("Content-Type", "text/html");
-					String message = "Cannot place road there.";
-					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
-					exchange.getResponseBody().write(message.getBytes());
-					exchange.getResponseBody().close();
-					System.out.println(message);
-					return;
-				}
 
 				buildRoad.setGameId(gameAndPlayer.getGameId());
 
