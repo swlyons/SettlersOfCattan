@@ -29,7 +29,6 @@ public class SoldierCommand implements Command {
             if (soldier.getVictimIndex() != -1) {
                 AllOfOurInformation.getSingleton().getGames().get(soldier.getGameId()).getResourceManager().transferResourceCard(soldier.getVictimIndex(), soldier.getPlayerIndex(), AllOfOurInformation.getSingleton().getGames().get(soldier.getGameId()).getGame().getPlayers().get(soldier.getVictimIndex()).getResources().getRandomResourceAvailable());
             }
-            System.out.println("here");
             AllOfOurInformation.getSingleton().getGames().get(soldier.getGameId()).getGame().getPlayers().get(soldier.getPlayerIndex()).setPlayedDevCard(true);
             AllOfOurInformation.getSingleton().getGames().get(soldier.getGameId()).getGame().setVersion(AllOfOurInformation.getSingleton().getGames().get(soldier.getGameId()).getGame().getVersion()+1);
             return true;
