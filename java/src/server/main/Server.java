@@ -168,6 +168,7 @@ public class Server {
 
 				if (user.getUsername() == null || user.getPassword() == null) {
 					String error = "Username and password can't be null";
+					System.out.println(error);
 					exchange.getResponseHeaders().set("Content-Type", "text/html");
 					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, error.length());
 					exchange.getResponseBody().write(error.getBytes());
@@ -194,14 +195,15 @@ public class Server {
 					cookie += URLEncoder.encode(cookieModel, "UTF-8") + ";Path=/;";
 					// String message = model.toJson("Success", String.class);
 					String message = "Success";
+					System.out.println("Login successful:" + user.getUsername());
 					exchange.getResponseHeaders().set("Content-Type", "text/html");
 					exchange.getResponseHeaders().set("Set-Cookie", cookie);
 					exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, message.length());
 					exchange.getResponseBody().write(message.getBytes());
 					exchange.getResponseBody().close();
 				} else {
-
 					String message = "Failed to login - bad username or password.";
+					System.out.println(message);
 					exchange.getResponseHeaders().set("Content-Type", "text/html");
 					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
 					exchange.getResponseBody().write(message.getBytes());
@@ -209,6 +211,7 @@ public class Server {
 				}
 			} catch (Exception e) {
 				String error = "ERROR in logging in";
+				System.out.println(error);
 				exchange.getResponseHeaders().set("Content-Type", "text/html");
 				exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, error.length());
 				exchange.getResponseBody().write(error.getBytes());
@@ -231,6 +234,7 @@ public class Server {
 
 			if (user.getUsername() == null || user.getPassword() == null) {
 				String error = "Username and password can't be null";
+				System.out.println(error);
 				exchange.getResponseHeaders().set("Content-Type", "text/html");
 				exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, error.length());
 				exchange.getResponseBody().write(error.getBytes());
@@ -250,11 +254,13 @@ public class Server {
 			// re-package and return the data
 			if (result) {
 				String message = "Success";
+				System.out.println(message);
 				exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, message.length());
 				exchange.getResponseBody().write(message.getBytes());
 				exchange.getResponseBody().close();
 			} else {
 				String message = "Failed to register - bad username or password.";
+				System.out.println(message);
 				exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
 				exchange.getResponseBody().write(message.getBytes());
 				exchange.getResponseBody().close();
@@ -304,6 +310,7 @@ public class Server {
 			} catch (Exception e) {
 				e.printStackTrace();
 				String error = "ERROR in list games";
+				System.out.println(error);
 				exchange.getResponseHeaders().set("Content-Type", "text/html");
 				exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, error.length());
 				exchange.getResponseBody().write(error.getBytes());
@@ -348,6 +355,7 @@ public class Server {
 					if (createGame.isRandomNumbers() == null || createGame.isRandomPorts() == null
 							|| createGame.isRandomTiles() == null) {
 						String error = "Create game booleans can't be null";
+						System.out.println(error);
 						exchange.getResponseHeaders().set("Content-Type", "text/html");
 						exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, error.length());
 						exchange.getResponseBody().write(error.getBytes());
@@ -357,6 +365,7 @@ public class Server {
 
 					if (createGame.getName() == null) {
 						String error = "Name can't be null";
+						System.out.println(error);
 						exchange.getResponseHeaders().set("Content-Type", "text/html");
 						exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, error.length());
 						exchange.getResponseBody().write(error.getBytes());
@@ -368,6 +377,7 @@ public class Server {
 						gameInfo = ServerFascade.getSingleton().createGame(createGame);
 					} catch (Exception e) {
 						String error = "Create game error with fascade trying to create game";
+						System.out.println(error);
 						exchange.getResponseHeaders().set("Content-Type", "text/html");
 						exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, error.length());
 						exchange.getResponseBody().write(error.getBytes());
@@ -393,6 +403,7 @@ public class Server {
 
 					String message = validRandomValues ? "Failed to createGame - need a name."
 							: "Failed to create game - all random values (i.e. randomTiles) must be \"true\" or \"false\"";
+					System.out.println(message);
 					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
 					exchange.getResponseBody().write(message.getBytes());
 					exchange.getResponseBody().close();
@@ -400,6 +411,7 @@ public class Server {
 
 			} catch (Exception e) {
 				String error = "ERROR in create game";
+				System.out.println(error);
 				exchange.getResponseHeaders().set("Content-Type", "text/html");
 				exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, error.length());
 				exchange.getResponseBody().write(error.getBytes());
@@ -425,6 +437,7 @@ public class Server {
 
 				if (userCookie == null || userCookie.equals("")) {
 					String message = "Need to login first.";
+					System.out.println(message);
 					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
 					exchange.getResponseBody().write(message.getBytes());
 					exchange.getResponseBody().close();
@@ -433,6 +446,7 @@ public class Server {
 
 				if (joinGameRequest.getId() == null) {
 					String message = "Need a Game Id.";
+					System.out.println(message);
 					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
 					exchange.getResponseBody().write(message.getBytes());
 					exchange.getResponseBody().close();
@@ -442,6 +456,7 @@ public class Server {
 				if (joinGameRequest.getId() < 0
 						|| AllOfOurInformation.getSingleton().getGames().size() <= joinGameRequest.getId()) {
 					String message = "Invalid Game Id.";
+					System.out.println(message);
 					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
 					exchange.getResponseBody().write(message.getBytes());
 					exchange.getResponseBody().close();
@@ -501,6 +516,7 @@ public class Server {
 				} else {
 					if (finished || colorTaken) {
 						String message = colorTaken ? "Color already taken." : "Already full.";
+						System.out.println(message);
 						exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
 						exchange.getResponseBody().write(message.getBytes());
 						exchange.getResponseBody().close();
@@ -529,6 +545,7 @@ public class Server {
 							AllOfOurInformation.getSingleton().getGames().get(joinGameRequest.getId()).getGame()
 									.getPlayers().remove(player);
 							String message = "Already full.";
+							System.out.println(message);
 							exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
 							exchange.getResponseBody().write(message.getBytes());
 							exchange.getResponseBody().close();
@@ -549,6 +566,7 @@ public class Server {
 
 			} catch (Exception e) {
 				String error = "ERROR in join game";
+				System.out.println(error);
 				exchange.getResponseHeaders().set("Content-Type", "text/html");
 				exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, error.length());
 				exchange.getResponseBody().write(error.getBytes());
@@ -620,7 +638,6 @@ public class Server {
 			} catch (Exception e) {
 				String error = "ERROR in grabbing model";
 				exchange.getResponseHeaders().set("Content-Type", "text/html");
-				e.printStackTrace();
 				System.out.println(error);
 				exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, error.length());
 				exchange.getResponseBody().write(error.getBytes());
@@ -655,6 +672,7 @@ public class Server {
 				if (gameAndPlayer == null) {
 					exchange.getResponseHeaders().set("Content-Type", "text/html");
 					String message = "Need to login and join a valid game.";
+					System.out.println(message);
 					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
 					exchange.getResponseBody().write(message.getBytes());
 					exchange.getResponseBody().close();
@@ -695,6 +713,7 @@ public class Server {
 			} catch (Exception e) {
 				exchange.getResponseHeaders().set("Content-Type", "text/html");
 				String message = "ERROR in adding AI.";
+				System.out.println(message);
 				exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
 				exchange.getResponseBody().write(message.getBytes());
 				exchange.getResponseBody().close();
@@ -727,6 +746,7 @@ public class Server {
 
 				if (sendChatRequest.getPlayerIndex() == null) {
 					String message = "playerIndex can't be null.";
+					System.out.println(message);
 					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
 					exchange.getResponseBody().write(message.getBytes());
 					exchange.getResponseBody().close();
@@ -754,6 +774,7 @@ public class Server {
 				if (invalidIndex || notLoggedIn) {
 					String message = invalidIndex ? "Invalid command.  ['playerIndex' field has an invalid value.]"
 							: "Need to login and join a game first.";
+					System.out.println(message);
 					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
 					exchange.getResponseBody().write(message.getBytes());
 					exchange.getResponseBody().close();
@@ -765,6 +786,7 @@ public class Server {
 					} catch (NullPointerException npe) {
 						String message = "For the specified game there is no player with the index: "
 								+ sendChatRequest.getPlayerIndex();
+						System.out.println(message);
 						exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
 						exchange.getResponseBody().write(message.getBytes());
 						exchange.getResponseBody().close();
@@ -777,6 +799,7 @@ public class Server {
 				}
 			} catch (Exception e) {
 				String error = "ERROR in sending chat";
+				System.out.println(error);
 				exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, error.length());
 				exchange.getResponseBody().write(error.getBytes());
 				exchange.getResponseBody().close();
@@ -797,6 +820,7 @@ public class Server {
 				if (gameAndPlayer == null) {
 					exchange.getResponseHeaders().set("Content-Type", "text/html");
 					String message = "Need to login and join a valid game.";
+					System.out.println(message);
 					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
 					exchange.getResponseBody().write(message.getBytes());
 					exchange.getResponseBody().close();
@@ -807,6 +831,7 @@ public class Server {
 				if (rollNumber.getType() == null || !rollNumber.getType().equals("rollNumber")) {
 					exchange.getResponseHeaders().set("Content-Type", "text/html");
 					String message = "Incorrect type.";
+					System.out.println(message);
 					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
 					exchange.getResponseBody().write(message.getBytes());
 					exchange.getResponseBody().close();
@@ -816,6 +841,7 @@ public class Server {
 				if (rollNumber.getPlayerIndex() == null) {
 					exchange.getResponseHeaders().set("Content-Type", "text/html");
 					String message = "playerIndex can't be null.";
+					System.out.println(message);
 					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
 					exchange.getResponseBody().write(message.getBytes());
 					exchange.getResponseBody().close();
@@ -825,6 +851,7 @@ public class Server {
 				if (rollNumber.getPlayerIndex() != gameAndPlayer.getPlayerIndex()) {
 					exchange.getResponseHeaders().set("Content-Type", "text/html");
 					String message = "Incorrect playerIndex.";
+					System.out.println(message);
 					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
 					exchange.getResponseBody().write(message.getBytes());
 					exchange.getResponseBody().close();
@@ -834,6 +861,7 @@ public class Server {
 				if (rollNumber.getNumber() == null) {
 					exchange.getResponseHeaders().set("Content-Type", "text/html");
 					String message = "Need a number.";
+					System.out.println(message);
 					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
 					exchange.getResponseBody().write(message.getBytes());
 					exchange.getResponseBody().close();
@@ -845,6 +873,7 @@ public class Server {
 				if (gameAndPlayer.getPlayerIndex() != gi.getTurnTracker().getCurrentTurn()) {
 					exchange.getResponseHeaders().set("Content-Type", "text/html");
 					String message = "Not your turn.";
+					System.out.println(message);
 					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
 					exchange.getResponseBody().write(message.getBytes());
 					exchange.getResponseBody().close();
@@ -854,6 +883,7 @@ public class Server {
 				if (!gi.getTurnTracker().getStatus().equals("Rolling")) {
 					exchange.getResponseHeaders().set("Content-Type", "text/html");
 					String message = "Not Rolling status in turn tracker.";
+					System.out.println(message);
 					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
 					exchange.getResponseBody().write(message.getBytes());
 					exchange.getResponseBody().close();
@@ -863,6 +893,7 @@ public class Server {
 				if (rollNumber.getNumber() < 2 || 12 < rollNumber.getNumber()) {
 					exchange.getResponseHeaders().set("Content-Type", "text/html");
 					String message = "Invalid number to roll.";
+					System.out.println(message);
 					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
 					exchange.getResponseBody().write(message.getBytes());
 					exchange.getResponseBody().close();
@@ -886,6 +917,7 @@ public class Server {
 					exchange.getResponseBody().close();
 				} else {
 					result = "Couldn't grab game in rolling number";
+					System.out.println(result);
 					exchange.getResponseHeaders().set("Content-Type", "text/html");
 					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, result.length());
 					exchange.getResponseBody().write(result.getBytes());
@@ -894,6 +926,7 @@ public class Server {
 
 			} catch (Exception e) {
 				String error = "ERROR in rolling number";
+				System.out.println(error);
 				exchange.getResponseHeaders().set("Content-Type", "text/html");
 				exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, error.length());
 				exchange.getResponseBody().write(error.getBytes());
@@ -915,6 +948,7 @@ public class Server {
 				if (gameAndPlayer == null) {
 					exchange.getResponseHeaders().set("Content-Type", "text/html");
 					String message = "Need to login and join a valid game.";
+					System.out.println(message);
 					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
 					exchange.getResponseBody().write(message.getBytes());
 					exchange.getResponseBody().close();
@@ -927,6 +961,7 @@ public class Server {
 				if (robPlayer.getType() == null || !robPlayer.getType().equals("robPlayer")) {
 					exchange.getResponseHeaders().set("Content-Type", "text/html");
 					String message = "Incorrect type.";
+					System.out.println(message);
 					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
 					exchange.getResponseBody().write(message.getBytes());
 					exchange.getResponseBody().close();
@@ -936,6 +971,7 @@ public class Server {
 				if (robPlayer.getPlayerIndex() == null) {
 					exchange.getResponseHeaders().set("Content-Type", "text/html");
 					String message = "playerIndex can't be null.";
+					System.out.println(message);
 					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
 					exchange.getResponseBody().write(message.getBytes());
 					exchange.getResponseBody().close();
@@ -945,6 +981,7 @@ public class Server {
 				if (gameAndPlayer.getPlayerIndex() != robPlayer.getPlayerIndex()) {
 					exchange.getResponseHeaders().set("Content-Type", "text/html");
 					String message = "Incorrect playerIndex.";
+					System.out.println(message);
 					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
 					exchange.getResponseBody().write(message.getBytes());
 					exchange.getResponseBody().close();
@@ -955,6 +992,7 @@ public class Server {
 						|| 3 < robPlayer.getVictimIndex() || robPlayer.getVictimIndex() == robPlayer.getPlayerIndex()) {
 					exchange.getResponseHeaders().set("Content-Type", "text/html");
 					String message = "Victim index isn't valid.";
+					System.out.println(message);
 					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
 					exchange.getResponseBody().write(message.getBytes());
 					exchange.getResponseBody().close();
@@ -965,6 +1003,7 @@ public class Server {
 				if (gameAndPlayer.getPlayerIndex() != gm.getGame().getTurnTracker().getCurrentTurn()) {
 					exchange.getResponseHeaders().set("Content-Type", "text/html");
 					String message = "Not your turn.";
+					System.out.println(message);
 					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
 					exchange.getResponseBody().write(message.getBytes());
 					exchange.getResponseBody().close();
@@ -974,6 +1013,7 @@ public class Server {
 				if (!gm.getGame().getTurnTracker().getStatus().equals("Robbing")) {
 					exchange.getResponseHeaders().set("Content-Type", "text/html");
 					String message = "Turn tracker status must be \"Robbing\".";
+					System.out.println(message);
 					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
 					exchange.getResponseBody().write(message.getBytes());
 					exchange.getResponseBody().close();
@@ -983,6 +1023,7 @@ public class Server {
 				if (!gm.canPlaceRobber(robPlayer.getLocation())) {
 					exchange.getResponseHeaders().set("Content-Type", "text/html");
 					String message = "Cannot place robber there";
+					System.out.println(message);
 					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
 					exchange.getResponseBody().write(message.getBytes());
 					exchange.getResponseBody().close();
@@ -992,6 +1033,7 @@ public class Server {
 				if (!gm.canRobPlayer(robPlayer.getLocation(), robPlayer.getVictimIndex())) {
 					exchange.getResponseHeaders().set("Content-Type", "text/html");
 					String message = "Cannot rob that player";
+					System.out.println(message);
 					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
 					exchange.getResponseBody().write(message.getBytes());
 					exchange.getResponseBody().close();
@@ -1015,6 +1057,7 @@ public class Server {
 					exchange.getResponseBody().close();
 				} else {
 					result = "Couldn't grab game in rob player";
+					System.out.println(result);
 					exchange.getResponseHeaders().set("Content-Type", "text/html");
 					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, result.length());
 					exchange.getResponseBody().write(result.getBytes());
@@ -1023,6 +1066,7 @@ public class Server {
 
 			} catch (Exception e) {
 				String error = "ERROR in rob player";
+				System.out.println(error);
 				exchange.getResponseHeaders().set("Content-Type", "text/html");
 				exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, error.length());
 				exchange.getResponseBody().write(error.getBytes());
@@ -1193,6 +1237,7 @@ public class Server {
 				if (gameAndPlayer == null) {
 					exchange.getResponseHeaders().set("Content-Type", "text/html");
 					String message = "Need to login and join a valid game.";
+					System.out.println(message);
 					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
 					exchange.getResponseBody().write(message.getBytes());
 					exchange.getResponseBody().close();
@@ -1204,6 +1249,7 @@ public class Server {
 				if (buyDevCard.getType() == null || !buyDevCard.getType().equals("buyDevCard")) {
 					exchange.getResponseHeaders().set("Content-Type", "text/html");
 					String message = "Incorrect type.";
+					System.out.println(message);
 					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
 					exchange.getResponseBody().write(message.getBytes());
 					exchange.getResponseBody().close();
@@ -1213,6 +1259,7 @@ public class Server {
 				if (buyDevCard.getPlayerIndex() == null) {
 					exchange.getResponseHeaders().set("Content-Type", "text/html");
 					String message = "playerIndex can't be null.";
+					System.out.println(message);
 					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
 					exchange.getResponseBody().write(message.getBytes());
 					exchange.getResponseBody().close();
@@ -1222,6 +1269,7 @@ public class Server {
 				if (gameAndPlayer.getPlayerIndex() != buyDevCard.getPlayerIndex()) {
 					exchange.getResponseHeaders().set("Content-Type", "text/html");
 					String message = "Incorrect playerIndex.";
+					System.out.println(message);
 					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
 					exchange.getResponseBody().write(message.getBytes());
 					exchange.getResponseBody().close();
@@ -1232,6 +1280,7 @@ public class Server {
 				if (gameAndPlayer.getPlayerIndex() != gm.getGame().getTurnTracker().getCurrentTurn()) {
 					exchange.getResponseHeaders().set("Content-Type", "text/html");
 					String message = "Not your turn.";
+					System.out.println(message);
 					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
 					exchange.getResponseBody().write(message.getBytes());
 					exchange.getResponseBody().close();
@@ -1243,6 +1292,7 @@ public class Server {
 				if (!status.equals("Playing")) {
 					exchange.getResponseHeaders().set("Content-Type", "text/html");
 					String message = "Turn tracker status must be in \"Playing\".";
+					System.out.println(message);
 					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
 					exchange.getResponseBody().write(message.getBytes());
 					exchange.getResponseBody().close();
@@ -1252,6 +1302,7 @@ public class Server {
 				if (!gm.canBuyCard()) {
 					exchange.getResponseHeaders().set("Content-Type", "text/html");
 					String message = "Not enough resources.";
+					System.out.println(message);
 					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
 					exchange.getResponseBody().write(message.getBytes());
 					exchange.getResponseBody().close();
@@ -1274,6 +1325,7 @@ public class Server {
 					exchange.getResponseBody().close();
 				} else {
 					result = "Couldn't grab game in buy dev card";
+					System.out.println(result);
 					exchange.getResponseHeaders().set("Content-Type", "text/html");
 					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, result.length());
 					exchange.getResponseBody().write(result.getBytes());
@@ -1282,6 +1334,7 @@ public class Server {
 
 			} catch (Exception e) {
 				String error = "ERROR in buy dev card";
+				System.out.println(error);
 				exchange.getResponseHeaders().set("Content-Type", "text/html");
 				exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, error.length());
 				exchange.getResponseBody().write(error.getBytes());
@@ -1302,6 +1355,7 @@ public class Server {
 				if (gameAndPlayer == null) {
 					exchange.getResponseHeaders().set("Content-Type", "text/html");
 					String message = "Need to login and join a valid game.";
+					System.out.println(message);
 					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
 					exchange.getResponseBody().write(message.getBytes());
 					exchange.getResponseBody().close();
@@ -1314,6 +1368,7 @@ public class Server {
 				if (yearOfPlenty.getType() == null || !yearOfPlenty.getType().equals("Year_of_Plenty")) {
 					exchange.getResponseHeaders().set("Content-Type", "text/html");
 					String message = "Incorrect type.";
+					System.out.println(message);
 					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
 					exchange.getResponseBody().write(message.getBytes());
 					exchange.getResponseBody().close();
@@ -1323,6 +1378,7 @@ public class Server {
 				if (yearOfPlenty.getPlayerIndex() == null) {
 					exchange.getResponseHeaders().set("Content-Type", "text/html");
 					String message = "playerIndex can't be null.";
+					System.out.println(message);
 					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
 					exchange.getResponseBody().write(message.getBytes());
 					exchange.getResponseBody().close();
@@ -1332,6 +1388,7 @@ public class Server {
 				if (gameAndPlayer.getPlayerIndex() != yearOfPlenty.getPlayerIndex()) {
 					exchange.getResponseHeaders().set("Content-Type", "text/html");
 					String message = "Incorrect playerIndex.";
+					System.out.println(message);
 					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
 					exchange.getResponseBody().write(message.getBytes());
 					exchange.getResponseBody().close();
@@ -1342,6 +1399,7 @@ public class Server {
 				if (gameAndPlayer.getPlayerIndex() != gm.getGame().getTurnTracker().getCurrentTurn()) {
 					exchange.getResponseHeaders().set("Content-Type", "text/html");
 					String message = "Not your turn.";
+					System.out.println(message);
 					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
 					exchange.getResponseBody().write(message.getBytes());
 					exchange.getResponseBody().close();
@@ -1351,6 +1409,7 @@ public class Server {
 				if (!gm.getGame().getTurnTracker().getStatus().equals("Playing")) {
 					exchange.getResponseHeaders().set("Content-Type", "text/html");
 					String message = "Turn tracker status must be \"Playing\".";
+					System.out.println(message);
 					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
 					exchange.getResponseBody().write(message.getBytes());
 					exchange.getResponseBody().close();
@@ -1360,6 +1419,7 @@ public class Server {
 				if (!gm.canUseYearOfPlenty()) {
 					exchange.getResponseHeaders().set("Content-Type", "text/html");
 					String message = "Cannot play year of plenty card";
+					System.out.println(message);
 					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
 					exchange.getResponseBody().write(message.getBytes());
 					exchange.getResponseBody().close();
@@ -1369,6 +1429,7 @@ public class Server {
 				if (yearOfPlenty.getResource1() == null || yearOfPlenty.getResource2() == null) {
 					exchange.getResponseHeaders().set("Content-Type", "text/html");
 					String message = "The two requested resources cannot be null";
+					System.out.println(message);
 					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
 					exchange.getResponseBody().write(message.getBytes());
 					exchange.getResponseBody().close();
@@ -1392,6 +1453,7 @@ public class Server {
 					exchange.getResponseBody().close();
 				} else {
 					result = "Couldn't grab game in year of plenty";
+					System.out.println(result);
 					exchange.getResponseHeaders().set("Content-Type", "text/html");
 					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, result.length());
 					exchange.getResponseBody().write(result.getBytes());
@@ -1400,6 +1462,7 @@ public class Server {
 
 			} catch (Exception e) {
 				String error = "ERROR in yearOfPlenty";
+				System.out.println(error);
 				exchange.getResponseHeaders().set("Content-Type", "text/html");
 				exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, error.length());
 				exchange.getResponseBody().write(error.getBytes());
@@ -1548,6 +1611,7 @@ public class Server {
 				if (gameAndPlayer == null) {
 					exchange.getResponseHeaders().set("Content-Type", "text/html");
 					String message = "Need to login and join a valid game.";
+					System.out.println(message);
 					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
 					exchange.getResponseBody().write(message.getBytes());
 					exchange.getResponseBody().close();
@@ -1560,6 +1624,7 @@ public class Server {
 				if (roadBuilding.getType() == null || !roadBuilding.getType().equals("Road_Building")) {
 					exchange.getResponseHeaders().set("Content-Type", "text/html");
 					String message = "Incorrect type.";
+					System.out.println(message);
 					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
 					exchange.getResponseBody().write(message.getBytes());
 					exchange.getResponseBody().close();
@@ -1569,6 +1634,7 @@ public class Server {
 				if (roadBuilding.getPlayerIndex() == null) {
 					exchange.getResponseHeaders().set("Content-Type", "text/html");
 					String message = "playerIndex can't be null.";
+					System.out.println(message);
 					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
 					exchange.getResponseBody().write(message.getBytes());
 					exchange.getResponseBody().close();
@@ -1578,6 +1644,7 @@ public class Server {
 				if (gameAndPlayer.getPlayerIndex() != roadBuilding.getPlayerIndex()) {
 					exchange.getResponseHeaders().set("Content-Type", "text/html");
 					String message = "Incorrect playerIndex.";
+					System.out.println(message);
 					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
 					exchange.getResponseBody().write(message.getBytes());
 					exchange.getResponseBody().close();
@@ -1588,6 +1655,7 @@ public class Server {
 				if (gameAndPlayer.getPlayerIndex() != gm.getGame().getTurnTracker().getCurrentTurn()) {
 					exchange.getResponseHeaders().set("Content-Type", "text/html");
 					String message = "Not your turn.";
+					System.out.println(message);
 					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
 					exchange.getResponseBody().write(message.getBytes());
 					exchange.getResponseBody().close();
@@ -1597,6 +1665,7 @@ public class Server {
 				if (!gm.getGame().getTurnTracker().getStatus().equals("Playing")) {
 					exchange.getResponseHeaders().set("Content-Type", "text/html");
 					String message = "Turn tracker status must be \"Playing\".";
+					System.out.println(message);
 					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
 					exchange.getResponseBody().write(message.getBytes());
 					exchange.getResponseBody().close();
@@ -1606,6 +1675,7 @@ public class Server {
 				if (!gm.canUseRoadBuilding()) {
 					exchange.getResponseHeaders().set("Content-Type", "text/html");
 					String message = "Cannot play road building card";
+					System.out.println(message);
 					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
 					exchange.getResponseBody().write(message.getBytes());
 					exchange.getResponseBody().close();
@@ -1615,6 +1685,7 @@ public class Server {
 				if (roadBuilding.getSpot1() == null || roadBuilding.getSpot2() == null) {
 					exchange.getResponseHeaders().set("Content-Type", "text/html");
 					String message = "The two road building locations can't be null";
+					System.out.println(message);
 					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
 					exchange.getResponseBody().write(message.getBytes());
 					exchange.getResponseBody().close();
@@ -1638,6 +1709,7 @@ public class Server {
 					exchange.getResponseBody().close();
 				} else {
 					result = "Couldn't grab game in road building";
+					System.out.println(result);
 					exchange.getResponseHeaders().set("Content-Type", "text/html");
 					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, result.length());
 					exchange.getResponseBody().write(result.getBytes());
@@ -1646,6 +1718,7 @@ public class Server {
 
 			} catch (Exception e) {
 				String error = "ERROR in roadBuilding";
+				System.out.println(error);
 				exchange.getResponseHeaders().set("Content-Type", "text/html");
 				exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, error.length());
 				exchange.getResponseBody().write(error.getBytes());
@@ -1815,6 +1888,7 @@ public class Server {
 				if (gameAndPlayer == null) {
 					exchange.getResponseHeaders().set("Content-Type", "text/html");
 					String message = "Need to login and join a valid game.";
+					System.out.println(message);
 					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
 					exchange.getResponseBody().write(message.getBytes());
 					exchange.getResponseBody().close();
@@ -1827,6 +1901,7 @@ public class Server {
 				if (monument.getType() == null || !monument.getType().equals("Monument")) {
 					exchange.getResponseHeaders().set("Content-Type", "text/html");
 					String message = "Incorrect type.";
+					System.out.println(message);
 					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
 					exchange.getResponseBody().write(message.getBytes());
 					exchange.getResponseBody().close();
@@ -1836,6 +1911,7 @@ public class Server {
 				if (monument.getPlayerIndex() == null) {
 					exchange.getResponseHeaders().set("Content-Type", "text/html");
 					String message = "playerIndex can't be null.";
+					System.out.println(message);
 					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
 					exchange.getResponseBody().write(message.getBytes());
 					exchange.getResponseBody().close();
@@ -1845,6 +1921,7 @@ public class Server {
 				if (gameAndPlayer.getPlayerIndex() != monument.getPlayerIndex()) {
 					exchange.getResponseHeaders().set("Content-Type", "text/html");
 					String message = "Incorrect playerIndex.";
+					System.out.println(message);
 					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
 					exchange.getResponseBody().write(message.getBytes());
 					exchange.getResponseBody().close();
@@ -1855,6 +1932,7 @@ public class Server {
 				if (gameAndPlayer.getPlayerIndex() != gm.getGame().getTurnTracker().getCurrentTurn()) {
 					exchange.getResponseHeaders().set("Content-Type", "text/html");
 					String message = "Not your turn.";
+					System.out.println(message);
 					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
 					exchange.getResponseBody().write(message.getBytes());
 					exchange.getResponseBody().close();
@@ -1864,6 +1942,7 @@ public class Server {
 				if (!gm.canUseMonument()) {
 					exchange.getResponseHeaders().set("Content-Type", "text/html");
 					String message = "You do not have a monument.";
+					System.out.println(message);
 					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
 					exchange.getResponseBody().write(message.getBytes());
 					exchange.getResponseBody().close();
@@ -1887,6 +1966,7 @@ public class Server {
 					exchange.getResponseBody().close();
 				} else {
 					result = "Couldn't grab game in monument";
+					System.out.println(result);
 					exchange.getResponseHeaders().set("Content-Type", "text/html");
 					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, result.length());
 					exchange.getResponseBody().write(result.getBytes());
@@ -1895,6 +1975,7 @@ public class Server {
 
 			} catch (Exception e) {
 				String error = "ERROR in soldier";
+				System.out.println(error);
 				exchange.getResponseHeaders().set("Content-Type", "text/html");
 				exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, error.length());
 				exchange.getResponseBody().write(error.getBytes());
@@ -1915,6 +1996,7 @@ public class Server {
 				if (gameAndPlayer == null) {
 					exchange.getResponseHeaders().set("Content-Type", "text/html");
 					String message = "Need to login and join a valid game.";
+					System.out.println(message);
 					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
 					exchange.getResponseBody().write(message.getBytes());
 					exchange.getResponseBody().close();
@@ -1927,6 +2009,7 @@ public class Server {
 				if (offerTrade.getType() == null || !offerTrade.getType().equals("offerTrade")) {
 					exchange.getResponseHeaders().set("Content-Type", "text/html");
 					String message = "Incorrect type.";
+					System.out.println(message);
 					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
 					exchange.getResponseBody().write(message.getBytes());
 					exchange.getResponseBody().close();
@@ -1936,6 +2019,7 @@ public class Server {
 				if (offerTrade.getPlayerIndex() == null) {
 					exchange.getResponseHeaders().set("Content-Type", "text/html");
 					String message = "playerIndex can't be null.";
+					System.out.println(message);
 					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
 					exchange.getResponseBody().write(message.getBytes());
 					exchange.getResponseBody().close();
@@ -1945,6 +2029,7 @@ public class Server {
 				if (gameAndPlayer.getPlayerIndex() != offerTrade.getPlayerIndex()) {
 					exchange.getResponseHeaders().set("Content-Type", "text/html");
 					String message = "Incorrect playerIndex.";
+					System.out.println(message);
 					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
 					exchange.getResponseBody().write(message.getBytes());
 					exchange.getResponseBody().close();
@@ -1955,6 +2040,7 @@ public class Server {
 				if (gameAndPlayer.getPlayerIndex() != gm.getGame().getTurnTracker().getCurrentTurn()) {
 					exchange.getResponseHeaders().set("Content-Type", "text/html");
 					String message = "Not your turn.";
+					System.out.println(message);
 					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
 					exchange.getResponseBody().write(message.getBytes());
 					exchange.getResponseBody().close();
@@ -1964,6 +2050,7 @@ public class Server {
 				if (!gm.getGame().getTurnTracker().getStatus().equals("Playing")) {
 					exchange.getResponseHeaders().set("Content-Type", "text/html");
 					String message = "Turn tracker status must be \"Playing\".";
+					System.out.println(message);
 					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
 					exchange.getResponseBody().write(message.getBytes());
 					exchange.getResponseBody().close();
@@ -1973,6 +2060,7 @@ public class Server {
 				if (offerTrade.getOffer() == null) {
 					exchange.getResponseHeaders().set("Content-Type", "text/html");
 					String message = "Trade offer cannot be null";
+					System.out.println(message);
 					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
 					exchange.getResponseBody().write(message.getBytes());
 					exchange.getResponseBody().close();
@@ -1982,6 +2070,7 @@ public class Server {
 				if (offerTrade.getReceiver() == null) {
 					exchange.getResponseHeaders().set("Content-Type", "text/html");
 					String message = "Trade receiver cannot be null";
+					System.out.println(message);
 					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
 					exchange.getResponseBody().write(message.getBytes());
 					exchange.getResponseBody().close();
@@ -2005,6 +2094,7 @@ public class Server {
 					exchange.getResponseBody().close();
 				} else {
 					result = "Couldn't grab game in offer trade";
+					System.out.println(result);
 					exchange.getResponseHeaders().set("Content-Type", "text/html");
 					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, result.length());
 					exchange.getResponseBody().write(result.getBytes());
@@ -2013,6 +2103,7 @@ public class Server {
 
 			} catch (Exception e) {
 				String error = "ERROR in offerTrade";
+				System.out.println(error);
 				exchange.getResponseHeaders().set("Content-Type", "text/html");
 				exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, error.length());
 				exchange.getResponseBody().write(error.getBytes());
@@ -2033,6 +2124,7 @@ public class Server {
 				if (gameAndPlayer == null) {
 					exchange.getResponseHeaders().set("Content-Type", "text/html");
 					String message = "Need to login and join a valid game.";
+					System.out.println(message);
 					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
 					exchange.getResponseBody().write(message.getBytes());
 					exchange.getResponseBody().close();
@@ -2045,6 +2137,7 @@ public class Server {
 				if (acceptTrade.getType() == null || !acceptTrade.getType().equals("acceptTrade")) {
 					exchange.getResponseHeaders().set("Content-Type", "text/html");
 					String message = "Incorrect type.";
+					System.out.println(message);
 					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
 					exchange.getResponseBody().write(message.getBytes());
 					exchange.getResponseBody().close();
@@ -2054,6 +2147,7 @@ public class Server {
 				if (acceptTrade.getPlayerIndex() == null) {
 					exchange.getResponseHeaders().set("Content-Type", "text/html");
 					String message = "playerIndex can't be null.";
+					System.out.println(message);
 					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
 					exchange.getResponseBody().write(message.getBytes());
 					exchange.getResponseBody().close();
@@ -2063,6 +2157,7 @@ public class Server {
 				if (gameAndPlayer.getPlayerIndex() != acceptTrade.getPlayerIndex()) {
 					exchange.getResponseHeaders().set("Content-Type", "text/html");
 					String message = "Incorrect playerIndex.";
+					System.out.println(message);
 					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
 					exchange.getResponseBody().write(message.getBytes());
 					exchange.getResponseBody().close();
@@ -2073,6 +2168,7 @@ public class Server {
 				if (gameAndPlayer.getPlayerIndex() != gm.getGame().getTurnTracker().getCurrentTurn()) {
 					exchange.getResponseHeaders().set("Content-Type", "text/html");
 					String message = "Not your turn.";
+					System.out.println(message);
 					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
 					exchange.getResponseBody().write(message.getBytes());
 					exchange.getResponseBody().close();
@@ -2091,6 +2187,7 @@ public class Server {
 				if (acceptTrade.isWillAccept() == null) {
 					exchange.getResponseHeaders().set("Content-Type", "text/html");
 					String message = "Trade willAccept boolean cannot be null";
+					System.out.println(message);
 					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
 					exchange.getResponseBody().write(message.getBytes());
 					exchange.getResponseBody().close();
@@ -2114,6 +2211,7 @@ public class Server {
 					exchange.getResponseBody().close();
 				} else {
 					result = "Couldn't grab game in accept trade";
+					System.out.println(result);
 					exchange.getResponseHeaders().set("Content-Type", "text/html");
 					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, result.length());
 					exchange.getResponseBody().write(result.getBytes());
@@ -2122,6 +2220,7 @@ public class Server {
 
 			} catch (Exception e) {
 				String error = "ERROR in acceptTrade";
+				System.out.println(error);
 				exchange.getResponseHeaders().set("Content-Type", "text/html");
 				exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, error.length());
 				exchange.getResponseBody().write(error.getBytes());
@@ -2348,6 +2447,7 @@ public class Server {
 				if (gameAndPlayer == null) {
 					exchange.getResponseHeaders().set("Content-Type", "text/html");
 					String message = "Need to login and join a valid game.";
+					System.out.println(message);
 					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
 					exchange.getResponseBody().write(message.getBytes());
 					exchange.getResponseBody().close();
@@ -2360,6 +2460,7 @@ public class Server {
 				if (buildCity.getType() == null || !buildCity.getType().equals("buildCity")) {
 					exchange.getResponseHeaders().set("Content-Type", "text/html");
 					String message = "Incorrect type.";
+					System.out.println(message);
 					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
 					exchange.getResponseBody().write(message.getBytes());
 					exchange.getResponseBody().close();
@@ -2369,6 +2470,7 @@ public class Server {
 				if (buildCity.getPlayerIndex() == null) {
 					exchange.getResponseHeaders().set("Content-Type", "text/html");
 					String message = "playerIndex can't be null.";
+					System.out.println(message);
 					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
 					exchange.getResponseBody().write(message.getBytes());
 					exchange.getResponseBody().close();
@@ -2378,6 +2480,7 @@ public class Server {
 				if (gameAndPlayer.getPlayerIndex() != buildCity.getPlayerIndex()) {
 					exchange.getResponseHeaders().set("Content-Type", "text/html");
 					String message = "Incorrect playerIndex.";
+					System.out.println(message);
 					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
 					exchange.getResponseBody().write(message.getBytes());
 					exchange.getResponseBody().close();
@@ -2389,6 +2492,7 @@ public class Server {
 						|| buildCity.getVertexLocation().getDirection() == null) {
 					exchange.getResponseHeaders().set("Content-Type", "text/html");
 					String message = "Need a proper cityLocation.";
+					System.out.println(message);
 					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
 					exchange.getResponseBody().write(message.getBytes());
 					exchange.getResponseBody().close();
@@ -2399,6 +2503,7 @@ public class Server {
 				if (gameAndPlayer.getPlayerIndex() != gm.getGame().getTurnTracker().getCurrentTurn()) {
 					exchange.getResponseHeaders().set("Content-Type", "text/html");
 					String message = "Not your turn.";
+					System.out.println(message);
 					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
 					exchange.getResponseBody().write(message.getBytes());
 					exchange.getResponseBody().close();
@@ -2410,6 +2515,7 @@ public class Server {
 				if (!(status.equals("Playing"))) {
 					exchange.getResponseHeaders().set("Content-Type", "text/html");
 					String message = "Cannot place city in this turn tracker status.";
+					System.out.println(message);
 					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
 					exchange.getResponseBody().write(message.getBytes());
 					exchange.getResponseBody().close();
@@ -2419,6 +2525,7 @@ public class Server {
 				if (!gm.canBuildCity()) {
 					exchange.getResponseHeaders().set("Content-Type", "text/html");
 					String message = "Not enough resouces.";
+					System.out.println(message);
 					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
 					exchange.getResponseBody().write(message.getBytes());
 					exchange.getResponseBody().close();
@@ -2433,6 +2540,7 @@ public class Server {
 				if (!gm.canPlaceCity(vertexLocation)) {
 					exchange.getResponseHeaders().set("Content-Type", "text/html");
 					String message = "Cannot place city there.";
+					System.out.println(message);
 					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
 					exchange.getResponseBody().write(message.getBytes());
 					exchange.getResponseBody().close();
@@ -2456,6 +2564,7 @@ public class Server {
 					exchange.getResponseBody().close();
 				} else {
 					result = "Couldn't grab game in build city";
+					System.out.println(result);
 					exchange.getResponseHeaders().set("Content-Type", "text/html");
 					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, result.length());
 					exchange.getResponseBody().write(result.getBytes());
@@ -2464,6 +2573,7 @@ public class Server {
 
 			} catch (Exception e) {
 				String error = "ERROR in build city";
+				System.out.println(error);
 				exchange.getResponseHeaders().set("Content-Type", "text/html");
 				exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, error.length());
 				exchange.getResponseBody().write(error.getBytes());
@@ -2699,6 +2809,7 @@ public class Server {
 				if (gameAndPlayer == null) {
 					exchange.getResponseHeaders().set("Content-Type", "text/html");
 					String message = "Need to login and join a valid game.";
+					System.out.println(message);
 					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
 					exchange.getResponseBody().write(message.getBytes());
 					exchange.getResponseBody().close();
@@ -2710,6 +2821,7 @@ public class Server {
 				if (maritimeTrade.getType() == null || !maritimeTrade.getType().equals("maritimeTrade")) {
 					exchange.getResponseHeaders().set("Content-Type", "text/html");
 					String message = "Incorrect type.";
+					System.out.println(message);
 					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
 					exchange.getResponseBody().write(message.getBytes());
 					exchange.getResponseBody().close();
@@ -2719,6 +2831,7 @@ public class Server {
 				if (maritimeTrade.getPlayerIndex() == null) {
 					exchange.getResponseHeaders().set("Content-Type", "text/html");
 					String message = "playerIndex can't be null.";
+					System.out.println(message);
 					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
 					exchange.getResponseBody().write(message.getBytes());
 					exchange.getResponseBody().close();
@@ -2728,6 +2841,7 @@ public class Server {
 				if (gameAndPlayer.getPlayerIndex() != maritimeTrade.getPlayerIndex()) {
 					exchange.getResponseHeaders().set("Content-Type", "text/html");
 					String message = "Incorrect playerIndex.";
+					System.out.println(message);
 					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
 					exchange.getResponseBody().write(message.getBytes());
 					exchange.getResponseBody().close();
@@ -2738,6 +2852,7 @@ public class Server {
 				if (gameAndPlayer.getPlayerIndex() != gm.getGame().getTurnTracker().getCurrentTurn()) {
 					exchange.getResponseHeaders().set("Content-Type", "text/html");
 					String message = "Not your turn.";
+					System.out.println(message);
 					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
 					exchange.getResponseBody().write(message.getBytes());
 					exchange.getResponseBody().close();
@@ -2749,6 +2864,7 @@ public class Server {
 				if (!status.equals("Playing")) {
 					exchange.getResponseHeaders().set("Content-Type", "text/html");
 					String message = "Turn tracker status must be in \"Playing\".";
+					System.out.println(message);
 					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
 					exchange.getResponseBody().write(message.getBytes());
 					exchange.getResponseBody().close();
@@ -2771,6 +2887,7 @@ public class Server {
 					exchange.getResponseBody().close();
 				} else {
 					result = "Couldn't grab game in maritime trade";
+					System.out.println(result);
 					exchange.getResponseHeaders().set("Content-Type", "text/html");
 					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, result.length());
 					exchange.getResponseBody().write(result.getBytes());
@@ -2779,6 +2896,7 @@ public class Server {
 
 			} catch (Exception e) {
 				String error = "ERROR in maritime trade";
+				System.out.println(error);
 				exchange.getResponseHeaders().set("Content-Type", "text/html");
 				exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, error.length());
 				exchange.getResponseBody().write(error.getBytes());
@@ -2799,6 +2917,7 @@ public class Server {
 				if (gameAndPlayer == null) {
 					exchange.getResponseHeaders().set("Content-Type", "text/html");
 					String message = "Need to login and join a valid game.";
+					System.out.println(message);
 					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
 					exchange.getResponseBody().write(message.getBytes());
 					exchange.getResponseBody().close();
@@ -2811,6 +2930,7 @@ public class Server {
 				if (discardCards.getType() == null || !discardCards.getType().equals("discardCards")) {
 					exchange.getResponseHeaders().set("Content-Type", "text/html");
 					String message = "Incorrect type.";
+					System.out.println(message);
 					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
 					exchange.getResponseBody().write(message.getBytes());
 					exchange.getResponseBody().close();
@@ -2820,6 +2940,7 @@ public class Server {
 				if (discardCards.getPlayerIndex() == null) {
 					exchange.getResponseHeaders().set("Content-Type", "text/html");
 					String message = "playerIndex can't be null.";
+					System.out.println(message);
 					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
 					exchange.getResponseBody().write(message.getBytes());
 					exchange.getResponseBody().close();
@@ -2829,6 +2950,7 @@ public class Server {
 				if (gameAndPlayer.getPlayerIndex() != discardCards.getPlayerIndex()) {
 					exchange.getResponseHeaders().set("Content-Type", "text/html");
 					String message = "Incorrect playerIndex.";
+					System.out.println(message);
 					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
 					exchange.getResponseBody().write(message.getBytes());
 					exchange.getResponseBody().close();
@@ -2838,6 +2960,7 @@ public class Server {
 				if (discardCards.getDiscardedCards() == null) {
 					exchange.getResponseHeaders().set("Content-Type", "text/html");
 					String message = "Discarded cards can't be null.";
+					System.out.println(message);
 					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
 					exchange.getResponseBody().write(message.getBytes());
 					exchange.getResponseBody().close();
@@ -2851,6 +2974,7 @@ public class Server {
 						|| resourcesToDiscard.getWood() == null) {
 					exchange.getResponseHeaders().set("Content-Type", "text/html");
 					String message = "All Resources need to not be null.";
+					System.out.println(message);
 					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
 					exchange.getResponseBody().write(message.getBytes());
 					exchange.getResponseBody().close();
@@ -2862,6 +2986,7 @@ public class Server {
 				if (gm.getGame().getPlayers().get(discardCards.getPlayerIndex()).isDiscarded()) {
 					exchange.getResponseHeaders().set("Content-Type", "text/html");
 					String message = "Player already discarded.";
+					System.out.println(message);
 					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
 					exchange.getResponseBody().write(message.getBytes());
 					exchange.getResponseBody().close();
@@ -2872,6 +2997,7 @@ public class Server {
 						.getTotalResources() < 7) {
 					exchange.getResponseHeaders().set("Content-Type", "text/html");
 					String message = "Player doesn't need to discard.";
+					System.out.println(message);
 					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
 					exchange.getResponseBody().write(message.getBytes());
 					exchange.getResponseBody().close();
@@ -2898,6 +3024,7 @@ public class Server {
 				if (negativeResource) {
 					exchange.getResponseHeaders().set("Content-Type", "text/html");
 					String message = "Can't discard a negative number of a resource.";
+					System.out.println(message);
 					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
 					exchange.getResponseBody().write(message.getBytes());
 					exchange.getResponseBody().close();
@@ -2929,6 +3056,7 @@ public class Server {
 				if (!playerHasEnough) {
 					exchange.getResponseHeaders().set("Content-Type", "text/html");
 					String message = "Player doesn't have enough of those resources.";
+					System.out.println(message);
 					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
 					exchange.getResponseBody().write(message.getBytes());
 					exchange.getResponseBody().close();
@@ -2939,6 +3067,7 @@ public class Server {
 						.getTotalResources() / 2 != resourcesToDiscard.getTotalResources()) {
 					exchange.getResponseHeaders().set("Content-Type", "text/html");
 					String message = "Incorrect number of resources to discard.";
+					System.out.println(message);
 					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
 					exchange.getResponseBody().write(message.getBytes());
 					exchange.getResponseBody().close();
@@ -2962,6 +3091,7 @@ public class Server {
 					exchange.getResponseBody().close();
 				} else {
 					result = "Couldn't grab game in discardCards";
+					System.out.println(result);
 					exchange.getResponseHeaders().set("Content-Type", "text/html");
 					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, result.length());
 					exchange.getResponseBody().write(result.getBytes());
@@ -2969,6 +3099,7 @@ public class Server {
 				}
 			} catch (Exception e) {
 				String error = "ERROR in discard cards";
+				System.out.println(error);
 				exchange.getResponseHeaders().set("Content-Type", "text/html");
 				exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, error.length());
 				exchange.getResponseBody().write(error.getBytes());
