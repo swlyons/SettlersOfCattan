@@ -1481,7 +1481,7 @@ public class Server {
 					return;
 				}
 
-				if (!gm.canUseYearOfPlenty()) {
+				if (!gm.canUseMonopoly()) {
 					exchange.getResponseHeaders().set("Content-Type", "text/html");
 					String message = "Cannot play monopoly card";
 					System.out.println(message);
