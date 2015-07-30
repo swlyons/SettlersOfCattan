@@ -251,14 +251,8 @@ public class DomesticTradeController extends Controller implements IDomesticTrad
 
         GameManager gm = ClientCommunicator.getSingleton().getGameManager();
         Integer playerId = ClientCommunicator.getSingleton().getPlayerId();
-        Integer playerIndex = 4;
-        for (int i = 0; i < gm.getGame().getPlayers().size(); i++) {
-            if (gm.getGame().getPlayers().get(i).getPlayerID() == playerId) {
-                playerIndex = i;
-                break;
-            }
-        }
-
+        Integer playerIndex = gm.getPlayerIndex(playerId);
+        
         OfferTrade trade = new OfferTrade();
         trade.setPlayerIndex(playerIndex);
         trade.setType("offerTrade");
@@ -471,13 +465,7 @@ public class DomesticTradeController extends Controller implements IDomesticTrad
     public void setResourcesPlayerHas() {
         GameManager gm = ClientCommunicator.getSingleton().getGameManager();
         Integer playerId = ClientCommunicator.getSingleton().getPlayerId();
-        Integer playerIndex = 4;
-        for (int i = 0; i < gm.getGame().getPlayers().size(); i++) {
-            if (gm.getGame().getPlayers().get(i).getPlayerID() == playerId) {
-                playerIndex = i;
-                break;
-            }
-        }
+        Integer playerIndex = gm.getPlayerIndex(playerId);
         resourcesPlayerHas = gm.getResourceManager().getGameBanks().get(playerIndex).getResourcesCards();
     }
 }

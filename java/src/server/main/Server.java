@@ -625,7 +625,7 @@ public class Server {
 				if (version < AllOfOurInformation.getSingleton().getGames().get(gameAndPlayer.getGameId()).getGame()
 						.getVersion()) {
 					result = AllOfOurInformation.getSingleton().getGames().get(gameAndPlayer.getGameId()).getGame()
-							.toString();
+							.toString();						
 				} else {
 					result = "\"true\"";
 				}
@@ -636,6 +636,7 @@ public class Server {
 				exchange.getResponseBody().write(result.getBytes());
 				exchange.getResponseBody().close();
 			} catch (Exception e) {
+				e.printStackTrace();
 				String error = "ERROR in grabbing model";
 				exchange.getResponseHeaders().set("Content-Type", "text/html");
 				System.out.println(error);
@@ -1020,15 +1021,15 @@ public class Server {
 					return;
 				}
 
-				if (!gm.canPlaceRobber(robPlayer.getLocation())) {
-					exchange.getResponseHeaders().set("Content-Type", "text/html");
-					String message = "Cannot place robber there";
-					System.out.println(message);
-					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
-					exchange.getResponseBody().write(message.getBytes());
-					exchange.getResponseBody().close();
-					return;
-				}
+//				if (!gm.canPlaceRobber(robPlayer.getLocation())) {
+//					exchange.getResponseHeaders().set("Content-Type", "text/html");
+//					String message = "Cannot place robber there";
+//					System.out.println(message);
+//					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+//					exchange.getResponseBody().write(message.getBytes());
+//					exchange.getResponseBody().close();
+//					return;
+//				}
 
 				robPlayer.setGameId(gameAndPlayer.getGameId());
 
@@ -1289,15 +1290,15 @@ public class Server {
 					return;
 				}
 
-				if (!gm.canBuyCard()) {
-					exchange.getResponseHeaders().set("Content-Type", "text/html");
-					String message = "Not enough resources.";
-					System.out.println(message);
-					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
-					exchange.getResponseBody().write(message.getBytes());
-					exchange.getResponseBody().close();
-					return;
-				}
+//				if (!gm.canBuyCard()) {
+//					exchange.getResponseHeaders().set("Content-Type", "text/html");
+//					String message = "Not enough resources.";
+//					System.out.println(message);
+//					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+//					exchange.getResponseBody().write(message.getBytes());
+//					exchange.getResponseBody().close();
+//					return;
+//				}
 
 				buyDevCard.setGameId(gameAndPlayer.getGameId());
 				GameInfo game;
@@ -1406,15 +1407,15 @@ public class Server {
 					return;
 				}
 
-				if (!gm.canUseYearOfPlenty()) {
-					exchange.getResponseHeaders().set("Content-Type", "text/html");
-					String message = "Cannot play year of plenty card";
-					System.out.println(message);
-					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
-					exchange.getResponseBody().write(message.getBytes());
-					exchange.getResponseBody().close();
-					return;
-				}
+//				if (!gm.canUseYearOfPlenty()) {
+//					exchange.getResponseHeaders().set("Content-Type", "text/html");
+//					String message = "Cannot play year of plenty card";
+//					System.out.println(message);
+//					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+//					exchange.getResponseBody().write(message.getBytes());
+//					exchange.getResponseBody().close();
+//					return;
+//				}
 
 				if (yearOfPlenty.getResource1() == null || yearOfPlenty.getResource2() == null) {
 					exchange.getResponseHeaders().set("Content-Type", "text/html");
@@ -1534,15 +1535,15 @@ public class Server {
 					return;
 				}
 
-				if (!gm.canUseMonopoly()) {
-					exchange.getResponseHeaders().set("Content-Type", "text/html");
-					String message = "Cannot play monopoly card";
-					System.out.println(message);
-					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
-					exchange.getResponseBody().write(message.getBytes());
-					exchange.getResponseBody().close();
-					return;
-				}
+//				if (!gm.canUseMonopoly()) {
+//					exchange.getResponseHeaders().set("Content-Type", "text/html");
+//					String message = "Cannot play monopoly card";
+//					System.out.println(message);
+//					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+//					exchange.getResponseBody().write(message.getBytes());
+//					exchange.getResponseBody().close();
+//					return;
+//				}
 
 				if (monopoly.getResource() == null) {
 					exchange.getResponseHeaders().set("Content-Type", "text/html");
@@ -1662,15 +1663,15 @@ public class Server {
 					return;
 				}
 
-				if (!gm.canUseRoadBuilding()) {
-					exchange.getResponseHeaders().set("Content-Type", "text/html");
-					String message = "Cannot play road building card";
-					System.out.println(message);
-					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
-					exchange.getResponseBody().write(message.getBytes());
-					exchange.getResponseBody().close();
-					return;
-				}
+//				if (!gm.canUseRoadBuilding()) {
+//					exchange.getResponseHeaders().set("Content-Type", "text/html");
+//					String message = "Cannot play road building card";
+//					System.out.println(message);
+//					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+//					exchange.getResponseBody().write(message.getBytes());
+//					exchange.getResponseBody().close();
+//					return;
+//				}
 
 				if (roadBuilding.getSpot1() == null || roadBuilding.getSpot2() == null) {
 					exchange.getResponseHeaders().set("Content-Type", "text/html");
@@ -1801,35 +1802,35 @@ public class Server {
 					return;
 				}
 
-				if (!gm.canUseSoldier()) {
-					exchange.getResponseHeaders().set("Content-Type", "text/html");
-					String message = "Cannot play soldier card";
-					System.out.println(message);
-					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
-					exchange.getResponseBody().write(message.getBytes());
-					exchange.getResponseBody().close();
-					return;
-				}
+//				if (!gm.canUseSoldier()) {
+//					exchange.getResponseHeaders().set("Content-Type", "text/html");
+//					String message = "Cannot play soldier card";
+//					System.out.println(message);
+//					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+//					exchange.getResponseBody().write(message.getBytes());
+//					exchange.getResponseBody().close();
+//					return;
+//				}
 
-				if (!gm.canPlaceRobber(soldier.getLocation())) {
-					exchange.getResponseHeaders().set("Content-Type", "text/html");
-					String message = "Cannot place robber there";
-					System.out.println(message);
-					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
-					exchange.getResponseBody().write(message.getBytes());
-					exchange.getResponseBody().close();
-					return;
-				}
+//				if (!gm.canPlaceRobber(soldier.getLocation())) {
+//					exchange.getResponseHeaders().set("Content-Type", "text/html");
+//					String message = "Cannot place robber there";
+//					System.out.println(message);
+//					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+//					exchange.getResponseBody().write(message.getBytes());
+//					exchange.getResponseBody().close();
+//					return;
+//				}
 
-				if (!gm.canRobPlayer(soldier.getLocation(), soldier.getVictimIndex())) {
-					exchange.getResponseHeaders().set("Content-Type", "text/html");
-					String message = "Cannot rob that player";
-					System.out.println(message);
-					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
-					exchange.getResponseBody().write(message.getBytes());
-					exchange.getResponseBody().close();
-					return;
-				}
+//				if (!gm.canRobPlayer(soldier.getLocation(), soldier.getVictimIndex())) {
+//					exchange.getResponseHeaders().set("Content-Type", "text/html");
+//					String message = "Cannot rob that player";
+//					System.out.println(message);
+//					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+//					exchange.getResponseBody().write(message.getBytes());
+//					exchange.getResponseBody().close();
+//					return;
+//				}
 
 				soldier.setGameId(gameAndPlayer.getGameId());
 
@@ -1929,15 +1930,15 @@ public class Server {
 					return;
 				}
 
-				if (!gm.canUseMonument()) {
-					exchange.getResponseHeaders().set("Content-Type", "text/html");
-					String message = "You do not have a monument.";
-					System.out.println(message);
-					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
-					exchange.getResponseBody().write(message.getBytes());
-					exchange.getResponseBody().close();
-					return;
-				}
+//				if (!gm.canUseMonument()) {
+//					exchange.getResponseHeaders().set("Content-Type", "text/html");
+//					String message = "You do not have a monument.";
+//					System.out.println(message);
+//					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+//					exchange.getResponseBody().write(message.getBytes());
+//					exchange.getResponseBody().close();
+//					return;
+//				}
 
 				monument.setGameId(gameAndPlayer.getGameId());
 
@@ -2155,16 +2156,6 @@ public class Server {
 				}
 
 				GameManager gm = AllOfOurInformation.getSingleton().getGames().get(gameAndPlayer.getGameId());
-				if (gameAndPlayer.getPlayerIndex() != gm.getGame().getTurnTracker().getCurrentTurn()) {
-					exchange.getResponseHeaders().set("Content-Type", "text/html");
-					String message = "Not your turn.";
-					System.out.println(message);
-					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
-					exchange.getResponseBody().write(message.getBytes());
-					exchange.getResponseBody().close();
-					return;
-				}
-
 				if (!gm.getGame().getTurnTracker().getStatus().equals("Playing")) {
 					exchange.getResponseHeaders().set("Content-Type", "text/html");
 					String message = "Turn tracker status must be \"Playing\".";
@@ -2363,17 +2354,17 @@ public class Server {
 					return;
 				}
 
-				if (!buildSettlement.isFree()) {
-					if (!gm.canBuildSettlement()) {
-						exchange.getResponseHeaders().set("Content-Type", "text/html");
-						String message = "Not enough resouces.";
-						exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
-						exchange.getResponseBody().write(message.getBytes());
-						exchange.getResponseBody().close();
-						System.out.println(message);
-						return;
-					}
-				}
+//				if (!buildSettlement.isFree()) {
+//					if (!gm.canBuildSettlement()) {
+//						exchange.getResponseHeaders().set("Content-Type", "text/html");
+//						String message = "Not enough resouces.";
+//						exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+//						exchange.getResponseBody().write(message.getBytes());
+//						exchange.getResponseBody().close();
+//						System.out.println(message);
+//						return;
+//					}
+//				}
 
 				HexLocation hexSpot = new HexLocation(buildSettlement.getVertexLocation().getX(),
 						buildSettlement.getVertexLocation().getY());
@@ -2502,30 +2493,30 @@ public class Server {
 					return;
 				}
 
-				if (!gm.canBuildCity()) {
-					exchange.getResponseHeaders().set("Content-Type", "text/html");
-					String message = "Not enough resouces.";
-					System.out.println(message);
-					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
-					exchange.getResponseBody().write(message.getBytes());
-					exchange.getResponseBody().close();
-					return;
-				}
+//				if (!gm.canBuildCity()) {
+//					exchange.getResponseHeaders().set("Content-Type", "text/html");
+//					String message = "Not enough resouces.";
+//					System.out.println(message);
+//					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+//					exchange.getResponseBody().write(message.getBytes());
+//					exchange.getResponseBody().close();
+//					return;
+//				}
 
 				HexLocation hexSpot = new HexLocation(buildCity.getVertexLocation().getX(),
 						buildCity.getVertexLocation().getY());
 				VertexDirection vertexDirection = buildCity.getVertexLocation().getDirection();
 				VertexLocation vertexLocation = new VertexLocation(hexSpot, vertexDirection);
 
-				if (!gm.canPlaceCity(vertexLocation)) {
-					exchange.getResponseHeaders().set("Content-Type", "text/html");
-					String message = "Cannot place city there.";
-					System.out.println(message);
-					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
-					exchange.getResponseBody().write(message.getBytes());
-					exchange.getResponseBody().close();
-					return;
-				}
+//				if (!gm.canPlaceCity(vertexLocation)) {
+//					exchange.getResponseHeaders().set("Content-Type", "text/html");
+//					String message = "Cannot place city there.";
+//					System.out.println(message);
+//					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+//					exchange.getResponseBody().write(message.getBytes());
+//					exchange.getResponseBody().close();
+//					return;
+//				}
 
 				buildCity.setGameId(gameAndPlayer.getGameId());
 
@@ -2718,17 +2709,17 @@ public class Server {
 					}
 				}
 
-				if (!buildRoad.isFree()) {
-					if (!gm.canBuildRoad()) {
-						exchange.getResponseHeaders().set("Content-Type", "text/html");
-						String message = "Not enough resouces.";
-						exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
-						exchange.getResponseBody().write(message.getBytes());
-						exchange.getResponseBody().close();
-						System.out.println(message);
-						return;
-					}
-				}
+//				if (!buildRoad.isFree()) {
+//					if (!gm.canBuildRoad()) {
+//						exchange.getResponseHeaders().set("Content-Type", "text/html");
+//						String message = "Not enough resouces.";
+//						exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+//						exchange.getResponseBody().write(message.getBytes());
+//						exchange.getResponseBody().close();
+//						System.out.println(message);
+//						return;
+//					}
+//				}
 				HexLocation hexSpot = new HexLocation(buildRoad.getRoadLocation().getX(),
 						buildRoad.getRoadLocation().getY());
 				EdgeDirection edgeDirection = buildRoad.getRoadLocation().getDirection();

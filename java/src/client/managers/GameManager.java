@@ -80,7 +80,7 @@ public class GameManager {
 
 			// our game
 			setGame(game);
-
+				
 			Map map = game.getMap();
 
 			if (mapManager == null) {
