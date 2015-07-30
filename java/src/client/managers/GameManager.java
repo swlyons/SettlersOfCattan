@@ -742,12 +742,33 @@ public class GameManager {
 				edgeValue.setLocation2(edge);
 
 				game.getMap().getRoads().add(edgeValue);
+				
+				checkLongestRoad(currentPlayer);
 				saveResourcesIntoGame();
 
 			}
 			return builtRoad;
 		} else {
 			return false;
+		}
+	}
+	
+	public void checkLongestRoad(int currentPlayer) {
+		if (game.getTurnTracker().getLongestRoad() == 4) {
+			if (10 >= resourceManager.getGameBanks().get(currentPlayer).getRoads()) {
+				game.getPlayers().get(currentPlayer)
+						.setVictoryPoints(game.getPlayers().get(currentPlayer).getVictoryPoints() + 2);
+				game.getTurnTracker().setLongestRoad(currentPlayer);
+			}
+		} else {
+			if (resourceManager.getGameBanks().get(game.getTurnTracker().getLargestArmy())
+					.getRoads() > resourceManager.getGameBanks().get(currentPlayer).getRoads()) {
+				game.getPlayers().get(currentPlayer)
+						.setVictoryPoints(game.getPlayers().get(currentPlayer).getVictoryPoints() + 2);
+				game.getPlayers().get(game.getTurnTracker().getLargestArmy()).setVictoryPoints(
+						game.getPlayers().get(game.getTurnTracker().getLargestArmy()).getVictoryPoints() - 2);
+				game.getTurnTracker().setLongestRoad(currentPlayer);
+			}
 		}
 	}
 

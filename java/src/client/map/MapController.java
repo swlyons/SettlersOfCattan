@@ -397,7 +397,7 @@ public class MapController extends Controller implements IMapController {
      * allowDisconnected);
      */
     public void startMove(PieceType pieceType, boolean isFree, boolean allowDisconnected) {
-
+    	playedSoldier = false;
         GameManager gm = ClientCommunicator.getSingleton().getGameManager();
         this.isFree = isFree;
         Integer currentPlayer = gm.getGame().getTurnTracker().getCurrentTurn();
