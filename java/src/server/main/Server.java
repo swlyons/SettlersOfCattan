@@ -1420,6 +1420,7 @@ public class Server {
 				if (gameAndPlayer == null) {
 					exchange.getResponseHeaders().set("Content-Type", "text/html");
 					String message = "Need to login and join a valid game.";
+					System.out.println(message);
 					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
 					exchange.getResponseBody().write(message.getBytes());
 					exchange.getResponseBody().close();
@@ -1432,6 +1433,7 @@ public class Server {
 				if (monopoly.getType() == null || !monopoly.getType().equals("Monopoly")) {
 					exchange.getResponseHeaders().set("Content-Type", "text/html");
 					String message = "Incorrect type.";
+					System.out.println(message);
 					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
 					exchange.getResponseBody().write(message.getBytes());
 					exchange.getResponseBody().close();
@@ -1441,6 +1443,7 @@ public class Server {
 				if (monopoly.getPlayerIndex() == null) {
 					exchange.getResponseHeaders().set("Content-Type", "text/html");
 					String message = "playerIndex can't be null.";
+					System.out.println(message);
 					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
 					exchange.getResponseBody().write(message.getBytes());
 					exchange.getResponseBody().close();
@@ -1450,6 +1453,7 @@ public class Server {
 				if (gameAndPlayer.getPlayerIndex() != monopoly.getPlayerIndex()) {
 					exchange.getResponseHeaders().set("Content-Type", "text/html");
 					String message = "Incorrect playerIndex.";
+					System.out.println(message);
 					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
 					exchange.getResponseBody().write(message.getBytes());
 					exchange.getResponseBody().close();
@@ -1460,6 +1464,7 @@ public class Server {
 				if (gameAndPlayer.getPlayerIndex() != gm.getGame().getTurnTracker().getCurrentTurn()) {
 					exchange.getResponseHeaders().set("Content-Type", "text/html");
 					String message = "Not your turn.";
+					System.out.println(message);
 					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
 					exchange.getResponseBody().write(message.getBytes());
 					exchange.getResponseBody().close();
@@ -1469,6 +1474,7 @@ public class Server {
 				if (!gm.getGame().getTurnTracker().getStatus().equals("Playing")) {
 					exchange.getResponseHeaders().set("Content-Type", "text/html");
 					String message = "Turn tracker status must be \"Playing\".";
+					System.out.println(message);
 					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
 					exchange.getResponseBody().write(message.getBytes());
 					exchange.getResponseBody().close();
@@ -1478,6 +1484,7 @@ public class Server {
 				if (!gm.canUseYearOfPlenty()) {
 					exchange.getResponseHeaders().set("Content-Type", "text/html");
 					String message = "Cannot play monopoly card";
+					System.out.println(message);
 					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
 					exchange.getResponseBody().write(message.getBytes());
 					exchange.getResponseBody().close();
@@ -1487,6 +1494,7 @@ public class Server {
 				if (monopoly.getResource() == null) {
 					exchange.getResponseHeaders().set("Content-Type", "text/html");
 					String message = "The requested resource cannot be null";
+					System.out.println(message);
 					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
 					exchange.getResponseBody().write(message.getBytes());
 					exchange.getResponseBody().close();
@@ -1510,6 +1518,7 @@ public class Server {
 					exchange.getResponseBody().close();
 				} else {
 					result = "Couldn't grab game in monopoly";
+					System.out.println(result);
 					exchange.getResponseHeaders().set("Content-Type", "text/html");
 					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, result.length());
 					exchange.getResponseBody().write(result.getBytes());
@@ -1518,6 +1527,7 @@ public class Server {
 
 			} catch (Exception e) {
 				String error = "ERROR in monopoly";
+				System.out.println(error);
 				exchange.getResponseHeaders().set("Content-Type", "text/html");
 				exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, error.length());
 				exchange.getResponseBody().write(error.getBytes());
