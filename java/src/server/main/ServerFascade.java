@@ -202,7 +202,6 @@ public class ServerFascade implements Fascade {
         SoldierCommand soldierCommand = new SoldierCommand(soldier);
         GameInfo gi = null;
         if(agent.sendCommand(soldierCommand)){
-        	System.out.println(soldier.getGameId());
             gi = AllOfOurInformation.getSingleton().getGames().get(soldier.getGameId()).getGame();
         }
         return gi;
