@@ -156,7 +156,6 @@ public class DevCardList {
     public DevCardType selectRandomDevCard() {
         Random r = new Random();
         Integer cardType = r.nextInt(totalCardsRemaining()) + 1;
-
         if (cardType <= this.monopoly) {
             return DevCardType.MONOPOLY;
         } else if (cardType <= this.monopoly + this.monument) {
