@@ -19,7 +19,7 @@ public class MaritimeTradeCommand implements Command {
         	ResourceList output = new ResourceList();
        		input.add(maritimeTrade.getInputResource(), maritimeTrade.getRatio());
        		output.add(maritimeTrade.getOutputResource(), 1);
-            AllOfOurInformation.getSingleton().getGames().get(maritimeTrade.getGameId()).tradeAccepted(maritimeTrade.getPlayerIndex(), 4, input, output);
+            AllOfOurInformation.getSingleton().getGames().get(maritimeTrade.getGameId()).maritimeTrade(maritimeTrade.getPlayerIndex(), 4, input, output);
             AllOfOurInformation.getSingleton().getGames().get(maritimeTrade.getGameId()).getGame().setVersion(AllOfOurInformation.getSingleton().getGames().get(maritimeTrade.getGameId()).getGame().getVersion()+1);
             return true;
         } catch (Exception e) {
