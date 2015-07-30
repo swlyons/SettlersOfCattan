@@ -97,7 +97,7 @@ public class Server {
 																		// on
 		server.createContext("/moves/buyDevCard", buyDevCardHandler);// worked
 																		// on
-		server.createContext("/moves/Year_Of_Plenty", year_of_plentyHandler);
+		server.createContext("/moves/Year_of_Plenty", year_of_plentyHandler);
 		server.createContext("/moves/Road_Building", road_buildingHandler);
 		server.createContext("/moves/Soldier", soldierHandler);// worked on
 		server.createContext("/moves/Monument", monumentHandler);// worked on
