@@ -101,6 +101,7 @@ public class Server {
 		server.createContext("/moves/Road_Building", road_buildingHandler);
 		server.createContext("/moves/Soldier", soldierHandler);// worked on
 		server.createContext("/moves/Monument", monumentHandler);// worked on
+		server.createContext("/moves/Monopoly", monopolyHandler);
 		server.createContext("/moves/offerTrade", offerTradeHandler);
 		server.createContext("/moves/acceptTrade", acceptTradeHandler);
 		server.createContext("/moves/buildSettlement", buildSettlementHandler);// worked
@@ -1399,6 +1400,124 @@ public class Server {
 
 			} catch (Exception e) {
 				String error = "ERROR in yearOfPlenty";
+				exchange.getResponseHeaders().set("Content-Type", "text/html");
+				exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, error.length());
+				exchange.getResponseBody().write(error.getBytes());
+				exchange.getResponseBody().close();
+			}
+		}
+	};
+	/**
+	 * Handler to use amonopoly card
+	 */
+	private HttpHandler monopolyHandler = new HttpHandler() {
+
+		@Override
+		public void handle(HttpExchange exchange) throws IOException {
+			try {
+				GameIdPlayerIdAndPlayerIndex gameAndPlayer = verifyPlayer(exchange);
+
+				if (gameAndPlayer == null) {
+					exchange.getResponseHeaders().set("Content-Type", "text/html");
+					String message = "Need to login and join a valid game.";
+					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+					exchange.getResponseBody().write(message.getBytes());
+					exchange.getResponseBody().close();
+					return;
+				}
+
+				Reader reader = new InputStreamReader(exchange.getRequestBody(), "UTF-8");
+				Monopoly monopoly = model.fromJson(reader, Monopoly.class);
+
+				if (monopoly.getType() == null || !monopoly.getType().equals("Monopoly")) {
+					exchange.getResponseHeaders().set("Content-Type", "text/html");
+					String message = "Incorrect type.";
+					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+					exchange.getResponseBody().write(message.getBytes());
+					exchange.getResponseBody().close();
+					return;
+				}
+
+				if (monopoly.getPlayerIndex() == null) {
+					exchange.getResponseHeaders().set("Content-Type", "text/html");
+					String message = "playerIndex can't be null.";
+					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+					exchange.getResponseBody().write(message.getBytes());
+					exchange.getResponseBody().close();
+					return;
+				}
+
+				if (gameAndPlayer.getPlayerIndex() != monopoly.getPlayerIndex()) {
+					exchange.getResponseHeaders().set("Content-Type", "text/html");
+					String message = "Incorrect playerIndex.";
+					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+					exchange.getResponseBody().write(message.getBytes());
+					exchange.getResponseBody().close();
+					return;
+				}
+
+				GameManager gm = AllOfOurInformation.getSingleton().getGames().get(gameAndPlayer.getGameId());
+				if (gameAndPlayer.getPlayerIndex() != gm.getGame().getTurnTracker().getCurrentTurn()) {
+					exchange.getResponseHeaders().set("Content-Type", "text/html");
+					String message = "Not your turn.";
+					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+					exchange.getResponseBody().write(message.getBytes());
+					exchange.getResponseBody().close();
+					return;
+				}
+
+				if (!gm.getGame().getTurnTracker().getStatus().equals("Playing")) {
+					exchange.getResponseHeaders().set("Content-Type", "text/html");
+					String message = "Turn tracker status must be \"Playing\".";
+					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+					exchange.getResponseBody().write(message.getBytes());
+					exchange.getResponseBody().close();
+					return;
+				}
+
+				if (!gm.canUseYearOfPlenty()) {
+					exchange.getResponseHeaders().set("Content-Type", "text/html");
+					String message = "Cannot play monopoly card";
+					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+					exchange.getResponseBody().write(message.getBytes());
+					exchange.getResponseBody().close();
+					return;
+				}
+
+				if (monopoly.getResource() == null) {
+					exchange.getResponseHeaders().set("Content-Type", "text/html");
+					String message = "The requested resource cannot be null";
+					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
+					exchange.getResponseBody().write(message.getBytes());
+					exchange.getResponseBody().close();
+					return;
+				}
+
+				monopoly.setGameId(gameAndPlayer.getGameId());
+
+				GameInfo game;
+				try {
+					game = ServerFascade.getSingleton().monopoly(monopoly);
+				} catch (Exception e) {
+					game = null;
+				}
+				String result;
+				if (game != null) {
+					result = game.toString();
+					exchange.getResponseHeaders().set("Content-Type", "application/json");
+					exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, result.length());
+					exchange.getResponseBody().write(result.getBytes());
+					exchange.getResponseBody().close();
+				} else {
+					result = "Couldn't grab game in monopoly";
+					exchange.getResponseHeaders().set("Content-Type", "text/html");
+					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, result.length());
+					exchange.getResponseBody().write(result.getBytes());
+					exchange.getResponseBody().close();
+				}
+
+			} catch (Exception e) {
+				String error = "ERROR in monopoly";
 				exchange.getResponseHeaders().set("Content-Type", "text/html");
 				exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, error.length());
 				exchange.getResponseBody().write(error.getBytes());
