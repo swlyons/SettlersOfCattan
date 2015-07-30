@@ -17,6 +17,7 @@ import shared.data.MessageList;
 import shared.data.TurnTracker;
 import shared.data.XYEdgeLocation;
 import shared.data.SettlementLocation;
+import shared.data.TradeOffer;
 
 import java.util.List;
 import java.util.ArrayList;
@@ -28,6 +29,7 @@ import shared.definitions.DevCardType;
 import shared.definitions.PieceType;
 import shared.definitions.ResourceType;
 import shared.locations.VertexLocation;
+import shared.model.OfferTrade;
 import shared.locations.EdgeLocation;
 import shared.locations.HexLocation;
 
@@ -742,7 +744,7 @@ public class GameManager {
 				edgeValue.setLocation2(edge);
 
 				game.getMap().getRoads().add(edgeValue);
-				
+
 				checkLongestRoad(currentPlayer);
 				saveResourcesIntoGame();
 
@@ -752,7 +754,7 @@ public class GameManager {
 			return false;
 		}
 	}
-	
+
 	public void checkLongestRoad(int currentPlayer) {
 		if (game.getTurnTracker().getLongestRoad() == 4) {
 			if (10 >= resourceManager.getGameBanks().get(currentPlayer).getRoads()) {
@@ -761,8 +763,8 @@ public class GameManager {
 				game.getTurnTracker().setLongestRoad(currentPlayer);
 			}
 		} else {
-			if (resourceManager.getGameBanks().get(game.getTurnTracker().getLargestArmy())
-					.getRoads() > resourceManager.getGameBanks().get(currentPlayer).getRoads()) {
+			if (resourceManager.getGameBanks().get(game.getTurnTracker().getLargestArmy()).getRoads() > resourceManager
+					.getGameBanks().get(currentPlayer).getRoads()) {
 				game.getPlayers().get(currentPlayer)
 						.setVictoryPoints(game.getPlayers().get(currentPlayer).getVictoryPoints() + 2);
 				game.getPlayers().get(game.getTurnTracker().getLargestArmy()).setVictoryPoints(
@@ -883,7 +885,7 @@ public class GameManager {
 	}
 
 	public boolean canRobPlayer(HexLocation hexLoc, int playerId) {
-		if(playerId == -1)
+		if (playerId == -1)
 			return true;
 		for (Location location : locationManager.getSettledLocations()) {
 			if (location.getOwnerID() == playerId) {
@@ -932,41 +934,59 @@ public class GameManager {
 		return dev;
 	}
 
-	public boolean tradeOffer(int senderID, int receiverID, ResourceList offer, ResourceList request) {
+	public boolean tradeOffer(int senderID, int receiverID, OfferTrade offer) {
+		TradeOffer trade = new TradeOffer(offer.getPlayerIndex(), offer.getReceiver(), offer.getOffer());
+		game.setTradeOffer(trade);
+		return true;
+	}
+	
+	public boolean tradeAccepted(int senderID, int receiverID, ResourceList offer) {
+		TradeOffer gameTrade = game.getTradeOffer();
+		ResourceList tradeOffer = new ResourceList();
+		ResourceList tradeRequest = new ResourceList();
+		if(offer.getBrick() >= 0) {
+			tradeOffer.setBrick(offer.getBrick());
+		}
+		else {
+			tradeRequest.setBrick(0 - offer.getBrick());
+		}
+		if(offer.getOre() >= 0) {
+			tradeOffer.setOre(offer.getOre());
+		}
+		else {
+			tradeRequest.setOre(0 - offer.getOre());
+		}
+		if(offer.getSheep() >= 0) {
+			tradeOffer.setSheep(offer.getSheep());
+		}
+		else {
+			tradeRequest.setSheep(0 - offer.getSheep());
+		}
+		if(offer.getWheat() >= 0) {
+			tradeOffer.setWheat(offer.getWheat());
+		}
+		else {
+			tradeRequest.setWheat(0 - offer.getWheat());
+		}
+		if(offer.getWood() >= 0) {
+			tradeOffer.setWood(offer.getWood());
+		}
+		else {
+			tradeRequest.setWood(0 - offer.getWood());
+		}
 		ResourceList senderResources = resourceManager.getGameBanks().get(senderID).getResourcesCards();
 		ResourceList receiverResources = resourceManager.getGameBanks().get(receiverID).getResourcesCards();
-		if (senderResources.hasCardsAvailable(offer) && receiverResources.hasCardsAvailable(request)) {
-			if (receiverID == mainBankIndex) {
-				tradeAccepted(senderID, receiverID, offer, request);
-				saveResourcesIntoGame();
-				return true;
-			} else {
-				return true;
-			}
+		if (senderResources.hasCardsAvailable(tradeOffer) && receiverResources.hasCardsAvailable(tradeRequest)) {
+			resourceManager.transferResourceCard(gameTrade.getSender(), gameTrade.getReceiver(), tradeOffer);
+			resourceManager.transferResourceCard(gameTrade.getReceiver(), gameTrade.getSender(), tradeRequest);
+			game.setTradeOffer(null);
+			return true;
 		} else {
 			return false;
 		}
 	}
 
-	/**
-	 * @author Curt
-	 * @param gameID
-	 *            = unique ID of a game in the server's games list
-	 * @param senderID
-	 *            = unique ID of the current player
-	 * @param receiverID
-	 *            = unique ID of the trade recipient (game's bankID if maritime
-	 *            trade)
-	 * @param offer
-	 *            = List of cards being offered by current player
-	 * @param request
-	 *            = List of cards requested from the trade recipient
-	 * @pre gameID is valid. Sender and receiver are valid. Sender has all cards
-	 *      in the offer available
-	 * @post Failure = Receiver doesn't have the requested cards; Success =
-	 *       cards are transferred between the two player's banks.
-	 */
-	public boolean tradeAccepted(int senderID, int receiverID, ResourceList offer, ResourceList request) {
+	public boolean maritimeTrade(int senderID, int receiverID, ResourceList offer, ResourceList request) {
 		ResourceList senderResources = resourceManager.getGameBanks().get(senderID).getResourcesCards();
 		ResourceList receiverResources = resourceManager.getGameBanks().get(receiverID).getResourcesCards();
 		if (senderResources.hasCardsAvailable(offer) && receiverResources.hasCardsAvailable(request)) {
@@ -978,7 +998,7 @@ public class GameManager {
 			return false;
 		}
 	}
-
+	
 	public boolean canPlayCard() {
 		DevCardList devList = resourceManager.getGameBanks().get(currentPlayer()).getDevelopmentCards();
 		return devList.totalCardsRemaining() > 0;
