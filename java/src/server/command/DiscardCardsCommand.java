@@ -30,7 +30,7 @@ public class DiscardCardsCommand implements Command {
             boolean everyoneDiscarded = true;
             for (int i = 0; i < 4; i++) {
                 if (!(AllOfOurInformation.getSingleton().getGames().get(discardCards.getGameId()).getGame().getPlayers().get(i).isDiscarded() ||
-                        AllOfOurInformation.getSingleton().getGames().get(discardCards.getGameId()).getGame().getPlayers().get(i).getResources().getTotalResources() < 7)) {
+                        AllOfOurInformation.getSingleton().getGames().get(discardCards.getGameId()).getGame().getPlayers().get(i).getResources().getTotalResources() < 8)) {
                     if(AllOfOurInformation.getSingleton().getGames().get(discardCards.getGameId()).getGame().getPlayers().get(i).getId()<-1){
                         continue;
                     }
