@@ -29,15 +29,19 @@ public class SoldierCommand implements Command {
             AllOfOurInformation.getSingleton().getGames().get(soldier.getGameId()).placeRobber(soldier.getLocation());
             AllOfOurInformation.getSingleton().getGames().get(soldier.getGameId()).useSoldier();
             if (soldier.getVictimIndex() != -1) {
-            	GameManager gm = AllOfOurInformation.getSingleton().getGames().get(soldier.getGameId());
-            	Bank victimBank = gm.getResourceManager().getGameBanks().get(soldier.getVictimIndex());
-            	if(victimBank.getResourcesCards().getTotalResources() > 0) {
-            		gm.getResourceManager().transferResourceCard(soldier.getVictimIndex(), soldier.getPlayerIndex(), 
-            				 AllOfOurInformation.getSingleton().getGames().get(soldier.getGameId()).getGame().getPlayers().get(soldier.getVictimIndex()).getResources().getRandomResourceAvailable());
-            	}
+                GameManager gm = AllOfOurInformation.getSingleton().getGames().get(soldier.getGameId());
+                Bank victimBank = gm.getResourceManager().getGameBanks().get(soldier.getVictimIndex());
+                if (victimBank.getResourcesCards().getTotalResources() > 0) {
+                    gm.getResourceManager().transferResourceCard(soldier.getVictimIndex(), soldier.getPlayerIndex(),
+                            AllOfOurInformation.getSingleton().getGames().get(soldier.getGameId()).getGame().getPlayers().get(soldier.getVictimIndex()).getResources().getRandomResourceAvailable());
+                    AllOfOurInformation.getSingleton().getGames().get(soldier.getGameId()).logWithPlayerId("I was attacked!", soldier.getVictimIndex());
+                } else {
+                    AllOfOurInformation.getSingleton().getGames().get(soldier.getGameId()).logWithPlayerId("Player hid among is nothingness.", soldier.getVictimIndex());
+                }
             }
             AllOfOurInformation.getSingleton().getGames().get(soldier.getGameId()).getGame().getPlayers().get(soldier.getPlayerIndex()).setPlayedDevCard(true);
-            AllOfOurInformation.getSingleton().getGames().get(soldier.getGameId()).getGame().setVersion(AllOfOurInformation.getSingleton().getGames().get(soldier.getGameId()).getGame().getVersion()+1);
+            AllOfOurInformation.getSingleton().getGames().get(soldier.getGameId()).getGame().setVersion(AllOfOurInformation.getSingleton().getGames().get(soldier.getGameId()).getGame().getVersion() + 1);
+            AllOfOurInformation.getSingleton().getGames().get(soldier.getGameId()).log("Player moved the theif.");
             return true;
         } catch (Exception e) {
             return false;

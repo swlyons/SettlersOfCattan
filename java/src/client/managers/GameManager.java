@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Random;
 import java.util.Date;
 import java.util.HashSet;
+import shared.data.MessageLine;
 
 import shared.definitions.DevCardType;
 import shared.definitions.PieceType;
@@ -1182,4 +1183,58 @@ public class GameManager {
 		}
 		return playerIndex;
 	}
+        
+        public boolean log(String content){
+            try {
+                String playerName = game.getPlayers().get(currentPlayer()).getName();
+
+                if(content.contains("Player")){
+                    content=content.replaceAll("Player", playerName);
+                }
+                
+                //create the message line for the chat
+                MessageLine messageLine = new MessageLine();
+                messageLine.setSource(playerName);
+                messageLine.setMessage(content);
+
+                game.getLog().getLines().add(messageLine);
+
+                //update the game version
+                int oldVersion = game.getVersion();
+                game.setVersion(oldVersion + 1);
+
+                //return success if we made it this far
+                return true;
+            } catch (ArrayIndexOutOfBoundsException aio) {
+                aio.printStackTrace();
+                return false;
+            }
+        }
+        
+        public boolean logWithPlayerId(String content, Integer playerId){
+            try {
+                String playerName = game.getPlayers().get(playerId).getName();
+
+                if(content.contains("Player")){
+                    content=content.replaceAll("Player", playerName);
+                }
+                
+                //create the message line for the chat
+                MessageLine messageLine = new MessageLine();
+                messageLine.setSource(playerName);
+                messageLine.setMessage(content);
+
+                game.getLog().getLines().add(messageLine);
+
+                //update the game version
+                int oldVersion = game.getVersion();
+                game.setVersion(oldVersion + 1);
+
+                //return success if we made it this far
+                return true;
+            } catch (ArrayIndexOutOfBoundsException aio) {
+                aio.printStackTrace();
+                return false;
+            }
+        }
 }

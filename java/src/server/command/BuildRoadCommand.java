@@ -35,12 +35,14 @@ public class BuildRoadCommand implements Command {
                     || AllOfOurInformation.getSingleton().getGames().get(buildRoad.getGameId()).getGame().getTurnTracker().getStatus().equals("SecondRound")) {
                 AllOfOurInformation.getSingleton().getGames().get(buildRoad.getGameId()).placeFreeRoad(edgeLocation);
                 AllOfOurInformation.getSingleton().getGames().get(buildRoad.getGameId()).getGame().setVersion(AllOfOurInformation.getSingleton().getGames().get(buildRoad.getGameId()).getGame().getVersion() + 1);
+                AllOfOurInformation.getSingleton().getGames().get(buildRoad.getGameId()).log("Player mows his lawn.");
 
                 return true;
             } else {
 
                 if (AllOfOurInformation.getSingleton().getGames().get(buildRoad.getGameId()).buildRoad(edgeLocation)) {
                     AllOfOurInformation.getSingleton().getGames().get(buildRoad.getGameId()).getGame().setVersion(AllOfOurInformation.getSingleton().getGames().get(buildRoad.getGameId()).getGame().getVersion() + 1);
+                    AllOfOurInformation.getSingleton().getGames().get(buildRoad.getGameId()).log("Player paved the way to other lands.");
                     return true;
                 } else {
                     return false;

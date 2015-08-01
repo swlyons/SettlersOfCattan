@@ -23,6 +23,7 @@ public class RollNumberCommand implements Command{
         try{
             AllOfOurInformation.getSingleton().getGames().get(rollNumber.getGameId()).rollDice(rollNumber.getNumber());
             AllOfOurInformation.getSingleton().getGames().get(rollNumber.getGameId()).getGame().setVersion(AllOfOurInformation.getSingleton().getGames().get(rollNumber.getGameId()).getGame().getVersion()+1);
+            AllOfOurInformation.getSingleton().getGames().get(rollNumber.getGameId()).log("Player rolled a "+rollNumber.getNumber()+".");
             return true;
         }catch(Exception e){
             return false;

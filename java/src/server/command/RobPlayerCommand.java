@@ -35,12 +35,16 @@ public class RobPlayerCommand implements Command {
             	GameManager gm = AllOfOurInformation.getSingleton().getGames().get(robPlayer.getGameId());
             	Bank victimBank = gm.getResourceManager().getGameBanks().get(robPlayer.getVictimIndex());
             	if(victimBank.getResourcesCards().getTotalResources() > 0) {
-            		gm.getResourceManager().transferResourceCard(robPlayer.getVictimIndex(), robPlayer.getPlayerIndex(), 
-            				 AllOfOurInformation.getSingleton().getGames().get(robPlayer.getGameId()).getGame().getPlayers().get(robPlayer.getVictimIndex()).getResources().getRandomResourceAvailable());
-            	}
+                    gm.getResourceManager().transferResourceCard(robPlayer.getVictimIndex(), robPlayer.getPlayerIndex(), 
+                    AllOfOurInformation.getSingleton().getGames().get(robPlayer.getGameId()).getGame().getPlayers().get(robPlayer.getVictimIndex()).getResources().getRandomResourceAvailable());
+                    AllOfOurInformation.getSingleton().getGames().get(robPlayer.getGameId()).logWithPlayerId("I was robbed!", robPlayer.getVictimIndex());
+            	}else{
+                    AllOfOurInformation.getSingleton().getGames().get(robPlayer.getGameId()).logWithPlayerId("Player was spared.", robPlayer.getVictimIndex());
+                }
             }
             AllOfOurInformation.getSingleton().getGames().get(robPlayer.getGameId()).getGame().getTurnTracker().setStatus("Playing");
             AllOfOurInformation.getSingleton().getGames().get(robPlayer.getGameId()).getGame().setVersion(AllOfOurInformation.getSingleton().getGames().get(robPlayer.getGameId()).getGame().getVersion()+1);
+            AllOfOurInformation.getSingleton().getGames().get(robPlayer.getGameId()).log("Player moved the theif.");
             return true;
         } catch (Exception e) {
             return false;

@@ -26,6 +26,7 @@ public class BuyDevCardCommand implements Command {
         try {
             AllOfOurInformation.getSingleton().getGames().get(buyDevCard.getGameId()).buyDevCard();
             AllOfOurInformation.getSingleton().getGames().get(buyDevCard.getGameId()).getGame().setVersion(AllOfOurInformation.getSingleton().getGames().get(buyDevCard.getGameId()).getGame().getVersion()+1);
+            AllOfOurInformation.getSingleton().getGames().get(buyDevCard.getGameId()).log("Player bought something from some merchants.");
             return true;
         } catch (Exception e) {
             return false;
