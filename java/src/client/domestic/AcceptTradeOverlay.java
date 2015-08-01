@@ -48,7 +48,7 @@ public class AcceptTradeOverlay extends OverlayView implements IAcceptTradeOverl
     private JPanel offerPanel = new JPanel();
 
     public AcceptTradeOverlay() {
-        contentPanel = new JPanel();
+
         this.initialize();
     }
 
@@ -61,6 +61,7 @@ public class AcceptTradeOverlay extends OverlayView implements IAcceptTradeOverl
         label = new JLabel("Accept Trade Offer?");
         Font labelFont = new Font(HEAVY_FONT, Font.PLAIN, LABEL_TEXT_SIZE);
         label.setFont(labelFont);
+        contentPanel = new JPanel();
         content_panel_gbc = new GridBagConstraints();
         content_panel_gbc.gridx = 0;
         content_panel_gbc.gridy = 0;
@@ -217,8 +218,10 @@ public class AcceptTradeOverlay extends OverlayView implements IAcceptTradeOverl
 
             if (e.getSource() == acceptButton) {
                 getController().acceptTrade(true);
+                reset();
             } else if (e.getSource() == rejectButton) {
                 getController().acceptTrade(false);
+                reset();
             }
         }
     };

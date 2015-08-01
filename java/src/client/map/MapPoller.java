@@ -80,7 +80,6 @@ public class MapPoller extends TimerTask {
                 PointsController pointsController = catanPanel.getRightPanel().getPointsController();
                 ResourceBarController resourceBarController = catanPanel.getRightPanel().getResourceController();
                 MapView mapView = (MapView) catanPanel.getMidPanel().getMapController().getView();
-                WaitView mapWaitView = ((WaitView) ((MapController) mapView.getController()).getWaitView());
 
                 GameManager gameManager = ClientCommunicator.getSingleton().getGameManager();
                 String status = "";
@@ -121,27 +120,19 @@ public class MapPoller extends TimerTask {
                     //enable the domestic trade button when it's your turn
                     catanPanel.getMidPanel().getTradePanel()
                             .getDomesticController().getTradeView().enableDomesticTrade(true);
-                    
+
                     status = "Finish Turn";
                 } else if (status.equals("Rolling") && playerIndex != gameInformation.getTurnTracker().getCurrentTurn()) {
                     //disable the domestic trade button when it's your turn
                     catanPanel.getMidPanel().getTradePanel()
                             .getDomesticController().getTradeView().enableDomesticTrade(false);
-                    //put up hour glass
-                    if (!mapWaitView.isModalShowing()) {
-                        mapWaitView.setMessage("Waiting For Other Players");
-                        mapWaitView.showModal();
-                    }
-                    
+
                 }
-                
+
                 // <editor-fold desc="Roll Update">
                 /* Begin Roll Update */
                 if (status.equals("Rolling") && playerIndex == gameInformation.getTurnTracker().getCurrentTurn()) {
-                    //if waiting view there take it down
-                    if (mapWaitView.isModalShowing()) {
-                        mapWaitView.closeModal();
-                    }
+
                     if (!rollController.getRollView().isModalShowing()) {
                         rollController.getRollView().showModal();
                         rollController.getRollView().getRollTimer().start();
@@ -210,6 +201,7 @@ public class MapPoller extends TimerTask {
                  */
                 // </editor-fold>
 
+               
                 //updates the game state panel with the new status
                 turnTrackerView.updateGameState(status, status.equalsIgnoreCase("Finish Turn"));
 
@@ -324,7 +316,7 @@ public class MapPoller extends TimerTask {
                     if (status.equals("Robbing")) {
                         mapView.getController().startMove(PieceType.ROBBER, true, false);
                         rollController.setClickedOk(false);
-                        
+
                         discardedOnce = false;
                     }
                 }
@@ -440,6 +432,7 @@ public class MapPoller extends TimerTask {
                                                     .getWaitOverlay().showModal();
                                             catanPanel.getMidPanel().getTradePanel().getDomesticController()
                                                     .getWaitOverlay().setMessage("Waiting for Trade to Go Through");
+
                                         }
                                     }
                                 }
