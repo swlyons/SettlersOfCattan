@@ -53,6 +53,8 @@ public class DomesticTradeController extends Controller implements IDomesticTrad
         setTradeOverlay(tradeOverlay);
         setWaitOverlay(waitOverlay);
         setAcceptOverlay(acceptOverlay);
+        //disable domestic trade button by default
+        tradeView.enableDomesticTrade(false);
     }
 
     public IDomesticTradeView getTradeView() {
