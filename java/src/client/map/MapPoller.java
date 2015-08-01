@@ -121,10 +121,7 @@ public class MapPoller extends TimerTask {
                     //enable the domestic trade button when it's your turn
                     catanPanel.getMidPanel().getTradePanel()
                             .getDomesticController().getTradeView().enableDomesticTrade(true);
-                    //if waiting view there take it down
-                    if (mapWaitView.isModalShowing()) {
-                        mapWaitView.closeModal();
-                    }
+                    
                     status = "Finish Turn";
                 } else if (status.equals("Rolling") && playerIndex != gameInformation.getTurnTracker().getCurrentTurn()) {
                     //disable the domestic trade button when it's your turn
@@ -140,7 +137,10 @@ public class MapPoller extends TimerTask {
                 // <editor-fold desc="Roll Update">
                 /* Begin Roll Update */
                 if (status.equals("Rolling") && playerIndex == gameInformation.getTurnTracker().getCurrentTurn()) {
-                    
+                    //if waiting view there take it down
+                    if (mapWaitView.isModalShowing()) {
+                        mapWaitView.closeModal();
+                    }
                     if (!rollController.getRollView().isModalShowing()) {
                         rollController.getRollView().showModal();
                         rollController.getRollView().getRollTimer().start();
@@ -323,6 +323,7 @@ public class MapPoller extends TimerTask {
                     if (status.equals("Robbing")) {
                         mapView.getController().startMove(PieceType.ROBBER, true, true);
                         rollController.setClickedOk(false);
+                        
                         discardedOnce = false;
                     }
                 }
