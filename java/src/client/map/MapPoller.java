@@ -128,12 +128,13 @@ public class MapPoller extends TimerTask {
                     catanPanel.getMidPanel().getTradePanel()
                             .getDomesticController().getTradeView().enableDomesticTrade(false);
                     //put up hour glass
-                    mapWaitView.setMessage("Waiting For Other Players");
                     if (!mapWaitView.isModalShowing()) {
+                        mapWaitView.setMessage("Waiting For Other Players");
                         mapWaitView.showModal();
                     }
                     
                 }
+                
                 // <editor-fold desc="Roll Update">
                 /* Begin Roll Update */
                 if (status.equals("Rolling") && playerIndex == gameInformation.getTurnTracker().getCurrentTurn()) {
@@ -321,7 +322,7 @@ public class MapPoller extends TimerTask {
                         }
                     }
                     if (status.equals("Robbing")) {
-                        mapView.getController().startMove(PieceType.ROBBER, true, true);
+                        mapView.getController().startMove(PieceType.ROBBER, true, false);
                         rollController.setClickedOk(false);
                         
                         discardedOnce = false;

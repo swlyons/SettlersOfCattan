@@ -66,7 +66,7 @@ public class FirstRoundState extends State {
                         if (((MapView) mapController.getView()).getOverlay() == null) {
                             mapController.initFromModel();
                             if (!builtSettlement) {
-                                mapController.startMove(PieceType.SETTLEMENT, true, true);
+                                mapController.startMove(PieceType.SETTLEMENT, true, false);
                             } else {
                                 mapController.startMove(PieceType.ROAD, true, false);
                             }

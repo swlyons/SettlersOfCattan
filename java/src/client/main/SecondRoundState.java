@@ -77,7 +77,7 @@ public class SecondRoundState extends State {
                                 }
                             }
                             if (settlements == 1) {
-                                mapController.startMove(PieceType.SETTLEMENT, true, true);
+                                mapController.startMove(PieceType.SETTLEMENT, true, false);
                             } else {
                                 mapController.startMove(PieceType.ROAD, true, true);
                             }
