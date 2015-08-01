@@ -8,6 +8,7 @@ package client.join;
 import client.main.ClientException;
 import client.communication.ClientCommunicator;
 import client.communication.ClientFascade;
+import java.awt.Dimension;
 import shared.data.GameInfo;
 import shared.data.PlayerInfo;
 import java.util.ArrayList;
@@ -45,8 +46,6 @@ public class JoinGameViewPoller extends TimerTask {
 
         try {
             activeGames = ClientFascade.getSingleton().listGames();
-
-            //
         } catch (ClientException ex) {
             ex.printStackTrace();
             Logger.getLogger(JoinGameViewPoller.class.getName()).log(Level.SEVERE, null, ex);
@@ -92,12 +91,15 @@ public class JoinGameViewPoller extends TimerTask {
             
         }
         if (getJoinGameController().getJoinGameView().isModalShowing()) {
+            
             //only update when necessary
+            
             if (update) {
-                getJoinGameController().getJoinGameView().closeModal();
                 getJoinGameController().getJoinGameView().setGames(games, playerInfo);
+                getJoinGameController().getJoinGameView().closeModal();
                 getJoinGameController().getJoinGameView().showModal();
             }
+            
         }
 
     }

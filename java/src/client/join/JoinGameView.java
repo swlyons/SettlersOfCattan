@@ -70,10 +70,10 @@ public class JoinGameView extends OverlayView implements IJoinGameView {
         labelPanel.add(label);
         labelPanel.add(subLabel);
         this.add(labelPanel, BorderLayout.NORTH);
-
-        // This is the header layout
+        
         gamePanel = new JPanel();
-        gamePanel.setLayout(new GridLayout(0, 4));
+        gamePanel.setBorder(BorderFactory.createLineBorder(Color.white, BORDER_WIDTH));
+        gamePanel.setLayout(new BoxLayout(gamePanel, BoxLayout.Y_AXIS));
         hash = new JLabel("#");
         labelFont = new Font(labelFont.getFontName(), Font.BOLD, PANEL_TEXT_SIZE);
         hash.setFont(labelFont);
@@ -84,21 +84,38 @@ public class JoinGameView extends OverlayView implements IJoinGameView {
         join = new JLabel("Join");
         join.setFont(labelFont);
 
-        gamePanel.add(hash);
-        gamePanel.add(name);
-        gamePanel.add(currentPlayer);
-        gamePanel.add(join);
-
+        // add the header information
+        JPanel gameInfo = new JPanel(new GridLayout(games == null ? 4 : (games.length + 1),4));
+        JPanel hashPanel = new JPanel();
+        hashPanel.add(hash);
+        gameInfo.add(hashPanel);
+        JPanel namePanel = new JPanel();
+        namePanel.setLayout(new FlowLayout(FlowLayout.LEFT));
+        namePanel.add(name);
+        gameInfo.add(namePanel);
+        JPanel currentPlayerPanel = new JPanel();
+        currentPlayerPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
+        currentPlayerPanel.add(currentPlayer);
+        gameInfo.add(currentPlayerPanel);
+        JPanel joinLabelPanel = new JPanel();
+        joinLabelPanel.add(join);
+        gameInfo.add(joinLabelPanel);
+        
         // This is the looped layout
         if (games != null && games.length > 0) {
             labelFont = labelFont.deriveFont(labelFont.getStyle(), PANEL_TEXT_SIZE);
             for (GameInfo game : games) {
                 JLabel tmp1 = new JLabel(String.valueOf(game.getId()));
                 tmp1.setFont(labelFont);
-                gamePanel.add(tmp1);
+                JPanel gameIdPanel = new JPanel();
+                gameIdPanel.add(tmp1);
+                gameInfo.add(gameIdPanel);
                 JLabel tmp2 = new JLabel(game.getTitle());
                 tmp2.setFont(labelFont);
-                gamePanel.add(tmp2);
+                JPanel gameTitlePanel = new JPanel();
+                gameTitlePanel.setLayout(new FlowLayout(FlowLayout.LEFT));
+                gameTitlePanel.add(tmp2);
+                gameInfo.add(gameTitlePanel);
                 String players = String.valueOf(game.getPlayers().size()) + "/4 : ";
                 for (int j = 0; j < game.getPlayers().size(); j++) {
                     if (j < game.getPlayers().size() - 1) {
@@ -109,44 +126,53 @@ public class JoinGameView extends OverlayView implements IJoinGameView {
                 }
                 playerNames = new JLabel(players);
                 playerNames.setFont(labelFont);
-                gamePanel.add(playerNames);
+                playerNames.setLayout(new GridLayout());
+                JPanel playerPanel = new JPanel();
+                playerPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
+                playerPanel.add(playerNames);
+                gameInfo.add(playerPanel);
                 JButton joinButton;
+                JPanel joinPanel = new JPanel();
                 if (game.getPlayers().contains(localPlayer)) {
                     joinButton = new JButton("Re-Join");
                 } else if (game.getPlayers().size() >= 4) {
-//                    if(game.getPlayers().get(3).getId()==-1){
-//                        joinButton = new JButton("Join");
-//                    }else{
                     joinButton = new JButton("Full");
                     joinButton.setEnabled(false);
-//                    }
                 } else {
                     joinButton = new JButton("Join");
                 }
                 joinButton.setActionCommand("" + game.getId());
                 joinButton.addActionListener(actionListener);
-                gamePanel.add(joinButton);
+                joinPanel.add(joinButton);
+                gameInfo.add(joinPanel);
+                gamePanel.add(gameInfo);
             }
+
         }
 
-        //Add all the above
-        this.add(gamePanel, BorderLayout.CENTER);
+        //add the gamePanel to a scroll pane and then that pane to the center
+        JScrollPane pane = new JScrollPane(gamePanel);
+        if (getParent() != null) {
+            if (games != null) {
+                pane.setPreferredSize(new Dimension (getParent().getSize().width/5,getParent().getSize().height /5));
+            }
 
-        tempJoinButton = new JButton("Temporary Join Button");
-        tempJoinButton.addActionListener(actionListener);
-        Font buttonFont = tempJoinButton.getFont();
-        buttonFont = buttonFont.deriveFont(buttonFont.getStyle(), BUTTON_TEXT_SIZE);
-        tempJoinButton.setFont(buttonFont);
+        }
+        //Add all the above
+        pane.getVerticalScrollBar().setUnitIncrement(16);
+        this.add(pane, BorderLayout.CENTER);
 
         createButton = new JButton("Create Game");
         createButton.addActionListener(actionListener);
-        createButton.setFont(buttonFont);
+        createButton.setPreferredSize(new Dimension(250, 30));
+        createButton.setFont(labelFont);
 
         buttonPanel = new JPanel();
-        buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.X_AXIS));
+        buttonPanel.add(new JLabel("Number of Games: " + (games == null ? 0 : games.length)));
         buttonPanel.add(createButton);
-        //buttonPanel.add(tempJoinButton);
+
         this.add(buttonPanel, BorderLayout.SOUTH);
+
     }
 
     @Override
@@ -159,7 +185,7 @@ public class JoinGameView extends OverlayView implements IJoinGameView {
         this.games = games;
         this.localPlayer = localPlayer;
         this.removeAll();
-        this.initialize();
+        this.initializeView();
     }
 
     public GameInfo[] getGames() {

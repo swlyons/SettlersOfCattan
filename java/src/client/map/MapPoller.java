@@ -20,22 +20,14 @@ import shared.data.PlayerInfo;
 import shared.data.ResourceList;
 import client.discard.DiscardController;
 import client.domestic.DomesticTradeController;
-import client.main.ClientException;
-import client.main.FirstRoundState;
 import client.points.PointsController;
 import client.resources.ResourceBarController;
 import client.resources.ResourceBarElement;
 import client.roll.RollController;
 import client.turntracker.TurnTrackerView;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.Icon;
 import shared.definitions.CatanColor;
 import shared.definitions.PieceType;
-import shared.definitions.ResourceType;
-import shared.model.FinishMove;
 
 /**
  *
@@ -43,443 +35,371 @@ import shared.model.FinishMove;
  */
 public class MapPoller extends TimerTask {
 
-	private CatanPanel catanPanel;
-	private int version;
-	private boolean doneOnce;
-	private boolean seenTrade;
-	private int playerIndex;
-	private String playerColor;
-	private final int MAX_POINTS = 10;
-	private boolean initializedPlayers;
-	private boolean discardedOnce;
+    private CatanPanel catanPanel;
+    private int version;
+    private boolean doneOnce;
+    private boolean seenTrade;
+    private int playerIndex;
+    private String playerColor;
+    private final int MAX_POINTS = 10;
+    private boolean initializedPlayers;
+    private boolean discardedOnce;
 
-	public MapPoller() {
-		super();
-		discardedOnce = false;
-		this.initializedPlayers = false;
-		this.doneOnce = false;
-		this.seenTrade = false;
-		playerIndex = -1;
-		playerColor = "";
-		version = -1;
-	}
+    public MapPoller() {
+        super();
+        discardedOnce = false;
+        this.initializedPlayers = false;
+        this.doneOnce = false;
+        this.seenTrade = false;
+        playerIndex = -1;
+        playerColor = "";
+        version = -1;
+    }
 
-	public CatanPanel getCatanPanel() {
-		return catanPanel;
-	}
+    public CatanPanel getCatanPanel() {
+        return catanPanel;
+    }
 
-	public void setCatanPanel(CatanPanel catanPanel) {
-		this.catanPanel = catanPanel;
-	}
+    public void setCatanPanel(CatanPanel catanPanel) {
+        this.catanPanel = catanPanel;
+    }
 
-	public void run() {
-		if (ClientCommunicator.getSingleton().getJoinedGame()) {
+    public void run() {
+        if (ClientCommunicator.getSingleton().getJoinedGame()) {
 
-			try {
-				ChatView chatView = catanPanel.getLeftPanel().getChatView();
-				GameHistoryView historyView = catanPanel.getLeftPanel().getHistoryView();
-				TurnTrackerView turnTrackerView = catanPanel.getLeftPanel().getTurnView();
-				RollController rollController = catanPanel.getRollController();
-				DiscardController dis = catanPanel.getDiscardController();
-				GameStatePanel gameStatePanel = catanPanel.getMidPanel().getGameStatePanel();
+            try {
+                ChatView chatView = catanPanel.getLeftPanel().getChatView();
+                GameHistoryView historyView = catanPanel.getLeftPanel().getHistoryView();
+                TurnTrackerView turnTrackerView = catanPanel.getLeftPanel().getTurnView();
+                RollController rollController = catanPanel.getRollController();
+                DiscardController dis = catanPanel.getDiscardController();
+                GameStatePanel gameStatePanel = catanPanel.getMidPanel().getGameStatePanel();
 
-				PointsController pointsController = catanPanel.getRightPanel().getPointsController();
-				ResourceBarController resourceBarController = catanPanel.getRightPanel().getResourceController();
-				MapView mapView = (MapView) catanPanel.getMidPanel().getMapController().getView();
+                PointsController pointsController = catanPanel.getRightPanel().getPointsController();
+                ResourceBarController resourceBarController = catanPanel.getRightPanel().getResourceController();
+                MapView mapView = (MapView) catanPanel.getMidPanel().getMapController().getView();
 
-				GameManager gameManager = ClientCommunicator.getSingleton().getGameManager();
-				String status = "";
-				GameInfo gameInformation = ClientFascade.getSingleton()
-						.getGameModel("?version=" + (gameManager.getGame().getVersion() - 1));
+                GameManager gameManager = ClientCommunicator.getSingleton().getGameManager();
+                String status = "";
+                GameInfo gameInformation = ClientFascade.getSingleton()
+                        .getGameModel("?version=" + (gameManager.getGame().getVersion() - 1));
+                status = gameInformation.getTurnTracker().getStatus();
 
-				status = gameInformation.getTurnTracker().getStatus();
+                //only do these updates when the version changes
+                //<editor-fold desc="Version Dependent">
+//                if (version != gameManager.getGame().getVersion()) {
+                    gameManager.initializeGame(gameInformation);
+                    version = gameInformation.getVersion();
+                    mapView.getController().initFromModel();
+//                }
+                //</editor-fold>
 
-				// only do these updates when the version changes
-				// <editor-fold desc="Version Dependent">
-				// if (version != gameManager.getGame().getVersion()) {
-				gameManager.initializeGame(gameInformation);
-				version = gameInformation.getVersion();
-				mapView.getController().initFromModel();
-				// }
-				// </editor-fold>
+                //these must be done whether the version changes or not
+                // <editor-fold desc="Version Independent">
+                /*  ---------- BEGIN ----------THESE UPDATES WILL BE DONE WHETHER THE VERSION CHANGES OR NOT */
+                if (playerIndex == -1) {
+                    Integer playerId = ClientCommunicator.getSingleton().getPlayerId();
+                    for (int i = 0; i < gameManager.getGame().getPlayers().size(); i++) {
+                        if (gameManager.getGame().getPlayers().get(i).getPlayerID() == playerId) {
+                            playerIndex = gameManager.getGame().getPlayers().get(i).getPlayerIndex();
+                            playerColor = gameManager.getGame().getPlayers().get(i).getColor().toUpperCase();
+                            break;
+                        }
+                    }
+                }
+                //update the button color to match whomever the current player is
+                if (gameStatePanel.getBackground() != CatanColor.valueOf(gameInformation.getPlayers().get(gameInformation.getTurnTracker().getCurrentTurn()).getColor().toUpperCase()).getJavaColor()) {
 
-				// these must be done whether the version changes or not
-				// <editor-fold desc="Version Independent">
-				/*
-				 * ---------- BEGIN ----------THESE UPDATES WILL BE DONE WHETHER
-				 * THE VERSION CHANGES OR NOT
-				 */
-				if (playerIndex == -1) {
-					Integer playerId = ClientCommunicator.getSingleton().getPlayerId();
-					for (int i = 0; i < gameManager.getGame().getPlayers().size(); i++) {
-						if (gameManager.getGame().getPlayers().get(i).getPlayerID() == playerId) {
-							playerIndex = gameManager.getGame().getPlayers().get(i).getPlayerIndex();
-							playerColor = gameManager.getGame().getPlayers().get(i).getColor().toUpperCase();
-							break;
-						}
-					}
-				}
-				// update the button color to match whomever the current player
-				// is
-				if (gameStatePanel.getBackground() != CatanColor.valueOf(gameInformation.getPlayers()
-						.get(gameInformation.getTurnTracker().getCurrentTurn()).getColor().toUpperCase())
-						.getJavaColor()) {
+                    gameStatePanel.getCentered().setBackground(CatanColor.valueOf(gameInformation.getPlayers().get(gameInformation.getTurnTracker().getCurrentTurn()).getColor().toUpperCase()).getJavaColor());
+                }
 
-					gameStatePanel.getCentered()
-							.setBackground(CatanColor.valueOf(gameInformation.getPlayers()
-									.get(gameInformation.getTurnTracker().getCurrentTurn()).getColor().toUpperCase())
-							.getJavaColor());
-				}
+                // Toggle the button to Finish Turn (this ultimately controls whether the button is enable or not)
+                if (status.equals("Playing") && playerIndex == gameInformation.getTurnTracker().getCurrentTurn()) {
+                    status = "Finish Turn";
+                }
+                // <editor-fold desc="Roll Update">
+                /* Begin Roll Update */
+                if (status.equals("Rolling") && playerIndex == gameInformation.getTurnTracker().getCurrentTurn()) {
 
-				// Toggle the button to Finish Turn (this ultimately controls
-				// whether the button is enable or not)
-				if (status.equals("Playing") && playerIndex == gameInformation.getTurnTracker().getCurrentTurn()) {
-					status = "Finish Turn";
-				}
-				// <editor-fold desc="Roll Update">
-				/* Begin Roll Update */
-				if (status.equals("Rolling") && playerIndex == gameInformation.getTurnTracker().getCurrentTurn()) {
+                    if (!rollController.getRollView().isModalShowing()) {
+                        rollController.getRollView().showModal();
+                        rollController.getRollView().getRollTimer().start();
+                        rollController.setClickedOk(false);
+                    }
+                    //enable = true;
+                }
+                /* End Roll Update */
+                // </editor-fold>
 
-					if (!rollController.getRollView().isModalShowing()) {
-						rollController.getRollView().showModal();
-						rollController.getRollView().getRollTimer().start();
-						rollController.setClickedOk(false);
-					}
-					// enable = true;
-				}
-				/* End Roll Update */
-				// </editor-fold>
+                // <editor-fold desc="Turn Tracker Update">
+                /**
+                 * ******* Begin Turn Tracker Update ********
+                 */
+                /* Begin Turn Tracker Initialization */
+                for (PlayerInfo player : gameInformation.getPlayers()) {
+                    if (!initializedPlayers) {
+                        turnTrackerView.initializePlayer(player.getPlayerIndex(), player.getName(),
+                                CatanColor.valueOf(player.getColor().toUpperCase()));
 
-				// <editor-fold desc="Turn Tracker Update">
-				/**
-				 * ******* Begin Turn Tracker Update ********
-				 */
-				/* Begin Turn Tracker Initialization */
-				for (PlayerInfo player : gameInformation.getPlayers()) {
-					if (!initializedPlayers) {
-						turnTrackerView.initializePlayer(player.getPlayerIndex(), player.getName(),
-								CatanColor.valueOf(player.getColor().toUpperCase()));
-					}
-				}
-				// only initialize the players once (multiple times creates
-				// garbled data)
-				initializedPlayers = true;
-				/* End Turn Tracker Initialization */
-				for (PlayerInfo player : gameInformation.getPlayers()) {
-					if (initializedPlayers) {
-						boolean longestRoad = false;
-						boolean largestArmy = false;
-						boolean highlight = false;
-						int index = player.getPlayerIndex();
-						// only update local player color for local player
-						if (player.getPlayerID() == ClientCommunicator.getSingleton().getPlayerId()) {
-							turnTrackerView.setLocalPlayerColor(CatanColor.valueOf(player.getColor().toUpperCase()));
-							pointsController.getPointsView().setPoints(player.getVictoryPoints());
-						}
-						// decide the awards
-						if (gameInformation.getTurnTracker().getLargestArmy() == index) {
-							largestArmy = true;
-						}
-						if (gameInformation.getTurnTracker().getLongestRoad() == index) {
-							longestRoad = true;
-						}
-						// decide who is current player
-						if (gameInformation.getTurnTracker().getCurrentTurn() == index) {
-							highlight = true;
-						}
+                    }
+                }
+                //only initialize the players once (multiple times creates garbled data)
+                initializedPlayers = true;
+                /* End Turn Tracker Initialization */
+                for (PlayerInfo player : gameInformation.getPlayers()) {
+                    if (initializedPlayers) {
+                        boolean longestRoad = false;
+                        boolean largestArmy = false;
+                        boolean highlight = false;
+                        int index = player.getPlayerIndex();
+                        // only update local player color for local player
+                        if (player.getPlayerID() == ClientCommunicator.getSingleton().getPlayerId()) {
+                            turnTrackerView.setLocalPlayerColor(CatanColor.valueOf(player.getColor().toUpperCase()));
+                            pointsController.getPointsView().setPoints(player.getVictoryPoints());
+                        }
+                        // decide the awards
+                        if (gameInformation.getTurnTracker().getLargestArmy() == index) {
+                            largestArmy = true;
+                        }
+                        if (gameInformation.getTurnTracker().getLongestRoad() == index) {
+                            longestRoad = true;
+                        }
+                        // decide who is current player
+                        if (gameInformation.getTurnTracker().getCurrentTurn() == index) {
+                            highlight = true;
+                        }
 
-						turnTrackerView.updatePlayer(index, player.getVictoryPoints(), highlight, largestArmy,
-								longestRoad);
+                        turnTrackerView.updatePlayer(index, player.getVictoryPoints(), highlight, largestArmy,
+                                longestRoad);
 
-						/* Begin Points Controller Update */
-						if (player.getVictoryPoints() == MAX_POINTS) {
-							pointsController.getFinishedView().setWinner(player.getName(),
-									(player.getPlayerIndex() == index));
-							if (!pointsController.getFinishedView().isModalShowing()) {
-								pointsController.getFinishedView().showModal();
-							}
-						}
-						/* End Points Controller Update */
-					}
+                        /* Begin Points Controller Update */
+                        if (player.getVictoryPoints() == MAX_POINTS) {
+                            pointsController.getFinishedView().setWinner(player.getName(),
+                                    (player.getPlayerIndex() == index));
+                            if (!pointsController.getFinishedView().isModalShowing()) {
+                                pointsController.getFinishedView().showModal();
+                            }
+                        }
+                        /* End Points Controller Update */
+                    }
 
-				}
-				/**
-				 * ******* End Turn Track Update ********
-				 */
-				// </editor-fold>
+                }
+                /**
+                 * ******* End Turn Track Update ********
+                 */
+                // </editor-fold>
 
-				// updates the game state panel with the new status
-				turnTrackerView.updateGameState(status, status.equalsIgnoreCase("Finish Turn"));
+                //updates the game state panel with the new status
+                turnTrackerView.updateGameState(status, status.equalsIgnoreCase("Finish Turn"));
 
-				// <editor-fold desc="Chat View Update">
-				/* Begin Chat View Update */
-				int oldChatSize = chatView.getEntries().size();
-				int newChatSize = gameInformation.getChat().getLines().size();
-				CatanColor color = CatanColor.WHITE;
+                //<editor-fold desc="Chat View Update">
+                /* Begin Chat View Update */
+                int oldChatSize = chatView.getEntries().size();
+                int newChatSize = gameInformation.getChat().getLines().size();
+                CatanColor color = CatanColor.WHITE;
 
-				if (oldChatSize != newChatSize || (newChatSize == 0)) {
-					ArrayList<LogEntry> newChatEntries = new ArrayList<>();
-					for (MessageLine messageLine : gameInformation.getChat().getLines()) {
-						// get the color
-						for (PlayerInfo player : gameInformation.getPlayers()) {
-							if (player.getName().equals(messageLine.getSource())) {
-								color = CatanColor.valueOf(player.getColor().toUpperCase());
-								break;
-							}
-						}
-						LogEntry logEntry = new LogEntry(color, messageLine.getMessage());
-						newChatEntries.add(logEntry);
-					}
-					chatView.setEntries(newChatEntries);
-				}
-				/* End Chat View Update */
-				// </editor-fold>
+                if (oldChatSize != newChatSize || (newChatSize == 0)) {
+                    ArrayList<LogEntry> newChatEntries = new ArrayList<>();
+                    for (MessageLine messageLine : gameInformation.getChat().getLines()) {
+                        // get the color
+                        for (PlayerInfo player : gameInformation.getPlayers()) {
+                            if (player.getName().equals(messageLine.getSource())) {
+                                color = CatanColor.valueOf(player.getColor().toUpperCase());
+                                break;
+                            }
+                        }
+                        LogEntry logEntry = new LogEntry(color, messageLine.getMessage());
+                        newChatEntries.add(logEntry);
+                    }
+                    chatView.setEntries(newChatEntries);
+                }
+                /* End Chat View Update */
+                //</editor-fold>
 
-				// <editor-fold desc="Game History Update">
-				/* Begin Game History View Update */
-				int oldHistorySize = historyView.getEntries().size();
-				int newHistorySize = gameInformation.getLog().getLines().size();
-				CatanColor colorHistory = CatanColor.WHITE;
+                //<editor-fold desc="Game History Update">
+                /* Begin Game History View Update */
+                int oldHistorySize = historyView.getEntries().size();
+                int newHistorySize = gameInformation.getLog().getLines().size();
+                CatanColor colorHistory = CatanColor.WHITE;
 
-				if (oldHistorySize != newHistorySize || (newHistorySize == 0)) {
-					ArrayList<LogEntry> newHistoryEntries = new ArrayList<>();
-					for (MessageLine messageLine : gameInformation.getLog().getLines()) {
-						// get the color
-						for (PlayerInfo player : gameInformation.getPlayers()) {
-							if (player.getName().equals(messageLine.getSource())) {
-								colorHistory = CatanColor.valueOf(player.getColor().toUpperCase());
-								break;
-							}
-						}
-						LogEntry logEntry = new LogEntry(colorHistory, messageLine.getMessage());
-						newHistoryEntries.add(logEntry);
-					}
-					historyView.setEntries(newHistoryEntries);
-				}
-				/* End Game History View Update */
-				// </editor-fold>
+                if (oldHistorySize != newHistorySize || (newHistorySize == 0)) {
+                    ArrayList<LogEntry> newHistoryEntries = new ArrayList<>();
+                    for (MessageLine messageLine : gameInformation.getLog().getLines()) {
+                        // get the color
+                        for (PlayerInfo player : gameInformation.getPlayers()) {
+                            if (player.getName().equals(messageLine.getSource())) {
+                                colorHistory = CatanColor.valueOf(player.getColor().toUpperCase());
+                                break;
+                            }
+                        }
+                        LogEntry logEntry = new LogEntry(colorHistory, messageLine.getMessage());
+                        newHistoryEntries.add(logEntry);
+                    }
+                    historyView.setEntries(newHistoryEntries);
+                }
+                /* End Game History View Update */
+                // </editor-fold>
 
-				// <editor-fold desc="Trade Panel Update">
-				// If they haven't initialized before or it isn't the client's
-				// turn
-				/* Begin Trade Panel Update */
-				if (gameInformation.getTradeOffer() == null) {
-					seenTrade = false;
-					if (catanPanel.getMidPanel().getTradePanel().getDomesticController().getWaitingForOffer()) {
-						catanPanel.getMidPanel().getTradePanel().getDomesticController().setWaitingForOffer(false);
-						catanPanel.getMidPanel().getTradePanel().getDomesticController().getWaitOverlay().closeModal();
-						catanPanel.getMidPanel().getTradePanel().getDomesticController().getTradeOverlay().closeModal();
-						catanPanel.getMidPanel().getTradePanel().getDomesticController().getTradeOverlay().reset();
-					}
-				}
-				/* End Domestic Trade Panel Update */
-				// </editor-fold>
+                //<editor-fold desc="Trade Panel Update">
+                // If they haven't initialized before or it isn't the client's turn
+                /* Begin Trade Panel Update */
+                if (gameManager.getGame().getTradeOffer() == null) {
+                    seenTrade = false;
+                    if (catanPanel.getMidPanel().getTradePanel().getDomesticController().getWaitingForOffer()) {
+                        catanPanel.getMidPanel().getTradePanel().getDomesticController().setWaitingForOffer(false);
+                        catanPanel.getMidPanel().getTradePanel().getDomesticController().getWaitOverlay().closeModal();
+                        catanPanel.getMidPanel().getTradePanel().getDomesticController().getTradeOverlay().closeModal();
+                        catanPanel.getMidPanel().getTradePanel().getDomesticController().getTradeOverlay().reset();
+                    }
+                }
+                /* End Domestic Trade Panel Update */
+                // </editor-fold>
 
-				// <editor-fold desc="Trade Window Update">
-				/* Begin tradeWindow Update */
-				if (gameInformation.getTradeOffer() != null
-						&& !catanPanel.getMidPanel().getTradePanel().getDomesticController().getWaitingForOffer()) {
+                //<editor-fold desc="Resource Bar Update">
+                /* Begin Resource Bar Update */
+                for (PlayerInfo player : gameInformation.getPlayers()) {
+                    if (player.getPlayerIndex() == playerIndex) {
+                        int sumCards = player.getRoads() + player.getCities() + player.getSettlements()
+                                + player.getSoldiers();
+                        // TODO: add logic to only update when they are
+                        // different
+                        resourceBarController.getView().setElementAmount(ResourceBarElement.BRICK,
+                                player.getResources().getBrick());
+                        resourceBarController.getView().setElementAmount(ResourceBarElement.ORE,
+                                player.getResources().getOre());
+                        resourceBarController.getView().setElementAmount(ResourceBarElement.SHEEP,
+                                player.getResources().getSheep());
+                        resourceBarController.getView().setElementAmount(ResourceBarElement.WHEAT,
+                                player.getResources().getWheat());
+                        resourceBarController.getView().setElementAmount(ResourceBarElement.WOOD,
+                                player.getResources().getWood());
+                        resourceBarController.getView().setElementAmount(ResourceBarElement.ROAD, player.getRoads());
+                        resourceBarController.getView().setElementAmount(ResourceBarElement.CITY, player.getCities());
+                        resourceBarController.getView().setElementAmount(ResourceBarElement.SETTLEMENT,
+                                player.getSettlements());
+                        resourceBarController.getView().setElementAmount(ResourceBarElement.SOLDIERS,
+                                player.getSoldiers());
+                        resourceBarController.canBuildCity();
+                        resourceBarController.canBuyCard();
+                        resourceBarController.canBuildSettlement();
+                        resourceBarController.canBuildRoad();
+                        resourceBarController.canPlayCard();                    }
+                }
 
-					if (!seenTrade) {
-						seenTrade = true;
-						if (gameManager.getGame().getTradeOffer().getReceiver() == playerIndex) {
-							DomesticTradeController domesticController = catanPanel.getMidPanel().getTradePanel()
-									.getDomesticController();
-							boolean canAccept = true;
+                /* End Resource Bar Update */
+                // </editor-fold>
 
-							ResourceList resourcesPlayerHas = gameManager.getResourceManager().getGameBanks()
-									.get(playerIndex).getResourcesCards();
+                //<editor-fold desc="Discard Controller">
+                /* Begin Discard Controller */
+                if (doneOnce && gameInformation.getTurnTracker().getCurrentTurn() == playerIndex && rollController.getClickedOk()) {
+                    if (status.equals("Discarding") && !gameInformation.getPlayers().get(playerIndex).isDiscarded() && gameManager.getResourceManager()
+                            .getGameBanks().get(playerIndex).getResourcesCards().getTotalResources() > 7 && !discardedOnce) {
+                        if (!dis.getDiscardView().isModalShowing()) {
+                            dis.initFromModel();
+                            dis.getDiscardView().showModal();
+                            discardedOnce = true;
+                        }
+                    }
+                    if (status.equals("Robbing")) {
+                        mapView.getController().startMove(PieceType.ROBBER, true, true);
+                        rollController.setClickedOk(false);
+                        discardedOnce = false;
+                    }
+                }
+                /* End Discard Controller */
+                //</editor-fold>
 
-							if (resourcesPlayerHas.getBrick()
-									+ gameManager.getGame().getTradeOffer().getOffer().getBrick() < 0
-									|| resourcesPlayerHas.getOre()
-											+ gameManager.getGame().getTradeOffer().getOffer().getOre() < 0
-									|| resourcesPlayerHas.getSheep()
-											+ gameManager.getGame().getTradeOffer().getOffer().getSheep() < 0
-									|| resourcesPlayerHas.getWheat()
-											+ gameManager.getGame().getTradeOffer().getOffer().getWheat() < 0
-									|| resourcesPlayerHas.getWood()
-											+ gameManager.getGame().getTradeOffer().getOffer().getWood() < 0) {
-								canAccept = false;
-							}
-							System.out.println("Checking acceptOverlay");
-							if (!domesticController.getAcceptOverlay().isModalShowing()) {
-								domesticController.getAcceptOverlay().reset();
-								domesticController.getAcceptOverlay().setPlayerName(gameManager.getGame().getPlayers().get(gameManager.getGame().getTradeOffer().getSender()).getName());								
-								domesticController.getAcceptOverlay().showModal();
-								domesticController.getAcceptOverlay().setAcceptEnabled(canAccept);
-								ResourceList trade = gameManager.getGame().getTradeOffer().getOffer();
-								System.out.println("Setting up accept overlay");
-								if (trade.getBrick() > 0) {
-									System.out.println("Get Brick");
-									domesticController.getAcceptOverlay().addGetResource(ResourceType.brick,
-											trade.getBrick());
-								} else if (trade.getBrick() < 0) {
-									System.out.println("Give Brick");
-									domesticController.getAcceptOverlay().addGiveResource(ResourceType.brick,
-											0 - trade.getBrick());
-								}
-								if (trade.getOre() > 0) {
-									System.out.println("Get Ore");
-									domesticController.getAcceptOverlay().addGetResource(ResourceType.ore,
-											trade.getOre());
-								} else if (trade.getOre() < 0) {
-									System.out.println("Give Ore");
-									domesticController.getAcceptOverlay().addGiveResource(ResourceType.ore,
-											0 - trade.getOre());
-								}
-								if (trade.getSheep() > 0) {
-									System.out.println("Get Sheep");
-									domesticController.getAcceptOverlay().addGetResource(ResourceType.sheep,
-											trade.getSheep());
-								} else if (trade.getSheep() < 0) {
-									System.out.println("Give Sheep");
-									domesticController.getAcceptOverlay().addGiveResource(ResourceType.sheep,
-											0 - trade.getSheep());
-								}
-								if (trade.getWheat() > 0) {
-									System.out.println("Get Wheat");
-									domesticController.getAcceptOverlay().addGetResource(ResourceType.wheat,
-											trade.getWheat());
-								} else if (trade.getWheat() < 0) {
-									System.out.println("Give Wheat");
-									domesticController.getAcceptOverlay().addGiveResource(ResourceType.wheat,
-											0 - trade.getWheat());
-								}
-								if (trade.getWood() > 0) {
-									System.out.println("Get Wood");
-									domesticController.getAcceptOverlay().addGetResource(ResourceType.wood,
-											trade.getWood());
-								} else if (trade.getWood() < 0) {
-									System.out.println("Give Wood");
-									domesticController.getAcceptOverlay().addGiveResource(ResourceType.wood,
-											0 - trade.getWood());
-								}
-							}
-						} else {
-							if (gameManager.getGame().getTradeOffer().getSender() == playerIndex) {
-								catanPanel.getMidPanel().getTradePanel().getDomesticController()
-										.setWaitingForOffer(true);
-								catanPanel.getMidPanel().getTradePanel().getDomesticController().startTrade();
-								if (!catanPanel.getMidPanel().getTradePanel().getDomesticController().getWaitOverlay()
-										.isModalShowing()) {
-									catanPanel.getMidPanel().getTradePanel().getDomesticController().getWaitOverlay()
-											.showModal();
-									catanPanel.getMidPanel().getTradePanel().getDomesticController().getWaitOverlay()
-											.setMessage("Waiting for Trade to Go Through");
-								}
-							}
-						}
-					}
-				}
-				/* End tradeWindow Update */
-				// </editor-fold>
+                //<editor-fold desc="Updated Not Your Turn">
+                /* Begin Updated Not Your Turn */
+                // Things need updating when it's not the current player's turn
+                if (!doneOnce || gameInformation.getTurnTracker().getCurrentTurn() != playerIndex) {
+                    doneOnce = true;
+                    if (gameInformation.getTurnTracker().getCurrentTurn() == playerIndex) {
+                        if (status.equals("Robbing")) {
+                            mapView.getController().startMove(PieceType.ROBBER, true, true);
+                        }
 
-				// <editor-fold desc="Resource Bar Update">
-				/* Begin Resource Bar Update */
-				for (PlayerInfo player : gameInformation.getPlayers()) {
-					if (player.getPlayerIndex() == playerIndex) {
-						int sumCards = player.getRoads() + player.getCities() + player.getSettlements()
-								+ player.getSoldiers();
-						// TODO: add logic to only update when they are
-						// different
-						resourceBarController.getView().setElementAmount(ResourceBarElement.BRICK,
-								player.getResources().getBrick());
-						resourceBarController.getView().setElementAmount(ResourceBarElement.ORE,
-								player.getResources().getOre());
-						resourceBarController.getView().setElementAmount(ResourceBarElement.SHEEP,
-								player.getResources().getSheep());
-						resourceBarController.getView().setElementAmount(ResourceBarElement.WHEAT,
-								player.getResources().getWheat());
-						resourceBarController.getView().setElementAmount(ResourceBarElement.WOOD,
-								player.getResources().getWood());
-						resourceBarController.getView().setElementAmount(ResourceBarElement.ROAD, player.getRoads());
-						resourceBarController.getView().setElementAmount(ResourceBarElement.CITY, player.getCities());
-						resourceBarController.getView().setElementAmount(ResourceBarElement.SETTLEMENT,
-								player.getSettlements());
-						resourceBarController.getView().setElementAmount(ResourceBarElement.SOLDIERS,
-								player.getSoldiers());
-						resourceBarController.canBuildCity();
-						resourceBarController.canBuyCard();
-						resourceBarController.canBuildSettlement();
-						resourceBarController.canBuildRoad();
-						resourceBarController.canPlayCard();
-					}
-				}
+                        if (status.equals("Discarding") && !gameInformation.getPlayers().get(playerIndex).isDiscarded() && gameManager.getResourceManager()
+                                .getGameBanks().get(playerIndex).getResourcesCards().getTotalResources() > 7) {
 
-				/* End Resource Bar Update */
-				// </editor-fold>
+                            if (!dis.getDiscardView().isModalShowing()) {
+                                dis.initFromModel();
+                                dis.getDiscardView().showModal();
+                            }
+                        }
+                    } else {
 
-				// <editor-fold desc="Discard Controller">
-				/* Begin Discard Controller */
-				if (doneOnce && gameInformation.getTurnTracker().getCurrentTurn() == playerIndex
-						&& rollController.getClickedOk()) {
-					if (status.equals("Discarding") && !gameInformation.getPlayers().get(playerIndex).isDiscarded()
-							&& gameManager.getResourceManager().getGameBanks().get(playerIndex).getResourcesCards()
-									.getTotalResources() > 7
-							&& !discardedOnce) {
-						if (!dis.getDiscardView().isModalShowing()) {
-							dis.initFromModel();
-							dis.getDiscardView().showModal();
-							discardedOnce = true;
-						}
-					}
-					if (status.equals("Robbing")) {
-						mapView.getController().startMove(PieceType.ROBBER, true, false);
-						rollController.setClickedOk(false);
-						discardedOnce = false;
-					}
-				}
-				/* End Discard Controller */
-				// </editor-fold>
+                        //<editor-fold desc="Discard Window Update">
+                        /* Begin Discard Window Update */
+                        if (status.equals("Discarding") && !gameInformation.getPlayers().get(playerIndex).isDiscarded() && gameManager.getResourceManager()
+                                .getGameBanks().get(playerIndex).getResourcesCards().getTotalResources() > 7) {
+                            if (!dis.getDiscardView().isModalShowing()) {
+                                dis.initFromModel();
+                                dis.getDiscardView().showModal();
+                            }
+                        }
+                        /* End Discard Window Update */
+                        // </editor-fold>
 
-				// <editor-fold desc="Updated Not Your Turn">
-				/* Begin Updated Not Your Turn */
-				// Things need updating when it's not the current player's turn
-				if (!doneOnce || gameInformation.getTurnTracker().getCurrentTurn() != playerIndex) {
-					doneOnce = true;
-					if (gameInformation.getTurnTracker().getCurrentTurn() == playerIndex) {
-						if (status.equals("Robbing")) {
-							mapView.getController().startMove(PieceType.ROBBER, true, true);
-						}
+                        //<editor-fold desc="Trade Window Update">
+                        /* Begin tradeWindow Update */
+                        if (gameManager.getGame().getTradeOffer() != null
+                                && !catanPanel.getMidPanel().getTradePanel().getDomesticController().getWaitingForOffer()) {
+                            if (!seenTrade) {
+                                seenTrade = true;
+                                if (gameManager.getGame().getTradeOffer().getReceiver() == playerIndex) {
+                                    DomesticTradeController domesticController = catanPanel.getMidPanel().getTradePanel()
+                                            .getDomesticController();
+                                    boolean canAccept = true;
 
-						if (status.equals("Discarding") && !gameInformation.getPlayers().get(playerIndex).isDiscarded()
-								&& gameManager.getResourceManager().getGameBanks().get(playerIndex).getResourcesCards()
-										.getTotalResources() > 7) {
+                                    ResourceList resourcesPlayerHas = gameManager.getResourceManager().getGameBanks()
+                                            .get(playerIndex).getResourcesCards();
 
-							if (!dis.getDiscardView().isModalShowing()) {
-								dis.initFromModel();
-								dis.getDiscardView().showModal();
-							}
-						}
-					} else {
+                                    if (resourcesPlayerHas.getBrick()
+                                            + gameManager.getGame().getTradeOffer().getOffer().getBrick() < 0
+                                            || resourcesPlayerHas.getOre()
+                                            + gameManager.getGame().getTradeOffer().getOffer().getOre() < 0
+                                            || resourcesPlayerHas.getSheep()
+                                            + gameManager.getGame().getTradeOffer().getOffer().getSheep() < 0
+                                            || resourcesPlayerHas.getWheat()
+                                            + gameManager.getGame().getTradeOffer().getOffer().getWheat() < 0
+                                            || resourcesPlayerHas.getWood()
+                                            + gameManager.getGame().getTradeOffer().getOffer().getWood() < 0) {
+                                        canAccept = false;
+                                    }
+                                    if (!domesticController.getAcceptOverlay().isModalShowing()) {
+                                        domesticController.getAcceptOverlay().showModal();
+                                        domesticController.getAcceptOverlay().setAcceptEnabled(canAccept);
+                                    }
+                                } else {
+                                    if (gameManager.getGame().getTradeOffer().getSender() == playerIndex) {
+                                        catanPanel.getMidPanel().getTradePanel().getDomesticController()
+                                                .setWaitingForOffer(true);
+                                        catanPanel.getMidPanel().getTradePanel().getDomesticController().startTrade();
+                                        if (!catanPanel.getMidPanel().getTradePanel().getDomesticController()
+                                                .getWaitOverlay().isModalShowing()) {
+                                            catanPanel.getMidPanel().getTradePanel().getDomesticController()
+                                                    .getWaitOverlay().showModal();
+                                            catanPanel.getMidPanel().getTradePanel().getDomesticController()
+                                                    .getWaitOverlay().setMessage("Waiting for Trade to Go Through");
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        /* End tradeWindow Update */
+                        // </editor-fold>
+                    }
+                }
+                // </editor-fold>
 
-						// <editor-fold desc="Discard Window Update">
-						/* Begin Discard Window Update */
-						if (status.equals("Discarding") && !gameInformation.getPlayers().get(playerIndex).isDiscarded()
-								&& gameManager.getResourceManager().getGameBanks().get(playerIndex).getResourcesCards()
-										.getTotalResources() > 7) {
-							if (!dis.getDiscardView().isModalShowing()) {
-								dis.initFromModel();
-								dis.getDiscardView().showModal();
-							}
-						}
-						/* End Discard Window Update */
-						// </editor-fold>
-					}
-				}
-				// </editor-fold>
+                /* ---------- END ----------THESE UPDATES WILL BE DONE WHETHER THE VERSION CHANGES OR NOT */
+                // </editor-fold>
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
 
-				/*
-				 * ---------- END ----------THESE UPDATES WILL BE DONE WHETHER
-				 * THE VERSION CHANGES OR NOT
-				 */
-				// </editor-fold>
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+        }
 
-		}
-
-	}
+    }
 }
