@@ -14,7 +14,6 @@ import client.misc.WaitView;
 import client.roll.RollController;
 import client.roll.RollResultView;
 import client.roll.RollView;
-import java.util.Timer;
 
 @SuppressWarnings("serial")
 public class CatanPanel extends JPanel {
@@ -22,7 +21,6 @@ public class CatanPanel extends JPanel {
     private TitlePanel titlePanel;
     private LeftPanel leftPanel;
     private MidPanel midPanel;
-    private Timer timer;
 
     private RightPanel rightPanel;
 

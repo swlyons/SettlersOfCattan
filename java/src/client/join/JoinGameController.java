@@ -141,7 +141,6 @@ public class JoinGameController extends Controller implements IJoinGameControlle
 
     @Override
     public void startCreateNewGame() {
-
         getNewGameView().showModal();
     }
 
@@ -177,8 +176,9 @@ public class JoinGameController extends Controller implements IJoinGameControlle
             //playerInfo.setPlayerIndex(0);
             GameInfo[] allGames = new GameInfo[gamesOnServer.size()];
             gamesOnServer.toArray(allGames);
+            
             getJoinGameView().setGames(allGames, playerInfo);
-
+            
             //if successful clear out old options
             getNewGameView().setRandomlyPlaceHexes(false);
             getNewGameView().setRandomlyPlaceNumbers(false);
