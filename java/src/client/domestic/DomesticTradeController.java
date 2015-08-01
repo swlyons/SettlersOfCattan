@@ -11,6 +11,7 @@ import shared.model.OfferTrade;
 import shared.model.AcceptTrade;
 import client.misc.*;
 import java.util.List;
+import shared.data.TradeOffer;
 
 /**
  * Domestic trade controller implementation
@@ -427,7 +428,6 @@ public class DomesticTradeController extends Controller implements IDomesticTrad
 
     @Override
     public void cancelTrade() {
-
         getTradeOverlay().closeModal();
     }
 

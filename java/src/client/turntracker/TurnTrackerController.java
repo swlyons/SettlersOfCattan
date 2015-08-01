@@ -44,6 +44,7 @@ public class TurnTrackerController extends Controller implements ITurnTrackerCon
         try {
             gm.initializeGame(ClientFascade.getSingleton().finishMove(fm));
             getView().updateGameState("Waiting for other players", false);
+
         } catch (Exception e) {
             System.out.println("Couldn't end turn");
         }
