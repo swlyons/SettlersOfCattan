@@ -58,6 +58,7 @@ public class FinishTurnCommand implements Command {
             }
 
             AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).endTurn();
+            AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).log("Player is resting now.");
 
             while (AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).getGame().getPlayers().get((currentTurn)).getId() < -1) {
             AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).getGame().getTurnTracker().setCurrentTurn(currentTurn);

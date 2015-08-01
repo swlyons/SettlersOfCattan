@@ -27,6 +27,7 @@ public class MonumentCommand implements Command {
             AllOfOurInformation.getSingleton().getGames().get(monument.getGameId()).useMonument();
             AllOfOurInformation.getSingleton().getGames().get(monument.getGameId()).getGame().getPlayers().get(monument.getPlayerIndex()).setPlayedDevCard(true);
             AllOfOurInformation.getSingleton().getGames().get(monument.getGameId()).getGame().setVersion(AllOfOurInformation.getSingleton().getGames().get(monument.getGameId()).getGame().getVersion()+1);
+            AllOfOurInformation.getSingleton().getGames().get(monument.getGameId()).log("Player can taste victory");
             return true;
         } catch (Exception e) {
             return false;

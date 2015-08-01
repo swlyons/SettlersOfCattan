@@ -27,6 +27,7 @@ public class DiscardCardsCommand implements Command {
             AllOfOurInformation.getSingleton().getGames().get(discardCards.getGameId()).getGame().getPlayers().get(discardCards.getPlayerIndex()).setDiscarded(true);
             AllOfOurInformation.getSingleton().getGames().get(discardCards.getGameId()).getResourceManager().transferResourceCard(discardCards.getPlayerIndex(), 4, discardCards.getDiscardedCards());
             AllOfOurInformation.getSingleton().getGames().get(discardCards.getGameId()).saveResourcesIntoGame();
+            AllOfOurInformation.getSingleton().getGames().get(discardCards.getGameId()).logWithPlayerId("Player has surrendered resources.", discardCards.getPlayerIndex());
             boolean everyoneDiscarded = true;
             for (int i = 0; i < 4; i++) {
                 if (!(AllOfOurInformation.getSingleton().getGames().get(discardCards.getGameId()).getGame().getPlayers().get(i).isDiscarded() ||
@@ -42,7 +43,9 @@ public class DiscardCardsCommand implements Command {
                 for (int i = 0; i < 4; i++) {
                     AllOfOurInformation.getSingleton().getGames().get(discardCards.getGameId()).getGame().getPlayers().get(i).setDiscarded(false);
                 }
+                AllOfOurInformation.getSingleton().getGames().get(discardCards.getGameId()).log("Players have finished surrendering.");
                 AllOfOurInformation.getSingleton().getGames().get(discardCards.getGameId()).getGame().getTurnTracker().setStatus("Robbing");
+
             }
 
             AllOfOurInformation.getSingleton().getGames().get(discardCards.getGameId()).getGame().setVersion(AllOfOurInformation.getSingleton().getGames().get(discardCards.getGameId()).getGame().getVersion() + 1);
