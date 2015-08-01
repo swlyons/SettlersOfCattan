@@ -3,48 +3,38 @@ package client.discard;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.Font;
-import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Image;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.awt.image.RescaleOp;
 import java.io.File;
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-
-import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
-import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
-import javax.swing.JDialog;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.border.Border;
-import javax.swing.border.LineBorder;
 
 import shared.definitions.ResourceType;
 import client.base.OverlayView;
+import client.communication.ClientCommunicator;
 import client.custom.cwt.RoundedButton;
+import client.managers.GameManager;
 import client.utils.ImageUtils;
 import client.utils.FontUtils;
+import java.awt.Component;
+import shared.data.ResourceList;
 
 /*
  * IDiscardController Overview
@@ -410,7 +400,40 @@ public class DiscardView extends OverlayView implements IDiscardView {
             _upButton.setEnabled(_canIncrease);
             _downButton.setEnabled(_canDecrease);
             _discardAmountLabel.setText("" + _discardAmount);
-            _maxAmountLabel.setText("" + _maxAmount);
+            //update the amounts for each resource
+
+            GameManager gm = ClientCommunicator.getSingleton().getGameManager();
+            Integer playerId = ClientCommunicator.getSingleton().getPlayerId();
+            Integer playerIndex = 4;
+            for (int i = 0; i < gm.getGame().getPlayers().size(); i++) {
+                if (gm.getGame().getPlayers().get(i).getPlayerID() == playerId) {
+                    playerIndex = i;
+                    break;
+                }
+            }
+            ResourceList resourcesTotal = gm.getResourceManager().getGameBanks().get(playerIndex).getResourcesCards();
+            List<JLabel> maxAmountList = new ArrayList<>();
+            for (Component discardComponent : resourcePanel.getComponents()) {
+                for (Component resourcePanelComponent : ((JPanel) discardComponent).getComponents()) {
+                    for (Component maxPanelComponent : ((JPanel) resourcePanelComponent).getComponents()) {
+                        if (maxPanelComponent instanceof JLabel) {
+                            String labelName = ((JLabel) maxPanelComponent).getName();
+                            if (labelName != null) {
+                                if (((JLabel) maxPanelComponent).getName().equals("MaxAmountLabel")) {
+                                    maxAmountList.add(((JLabel) maxPanelComponent));
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            //set each respect resource total in this view
+            maxAmountList.get(0).setText(resourcesTotal.getWood() + "");
+            maxAmountList.get(1).setText(resourcesTotal.getBrick() + "");
+            maxAmountList.get(2).setText(resourcesTotal.getSheep() + "");
+            maxAmountList.get(3).setText(resourcesTotal.getWheat() + "");
+            maxAmountList.get(4).setText(resourcesTotal.getOre() + "");
+            //_maxAmountLabel.setText("" + _maxAmount);
             _discardResourcePanel.repaint();
         }
 
@@ -482,8 +505,9 @@ public class DiscardView extends OverlayView implements IDiscardView {
 
             // Discard Amount Label Settings
             _maxAmountLabel = new JLabel("Total " + _maxAmount, JLabel.CENTER);
+            _maxAmountLabel.setName("MaxAmountLabel");
             FontUtils.setFont(_maxAmountLabel, LABEL_FONT_SIZE);
-            c.gridx = 1;
+            c.gridx = 0;
             c.gridy = 0;
             c.gridwidth = 3;
             c.gridheight = 1;
