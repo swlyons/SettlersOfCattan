@@ -20,6 +20,7 @@ import shared.data.PlayerInfo;
 import shared.data.ResourceList;
 import client.discard.DiscardController;
 import client.domestic.DomesticTradeController;
+import client.misc.WaitView;
 import client.points.PointsController;
 import client.resources.ResourceBarController;
 import client.resources.ResourceBarElement;
@@ -79,6 +80,7 @@ public class MapPoller extends TimerTask {
                 PointsController pointsController = catanPanel.getRightPanel().getPointsController();
                 ResourceBarController resourceBarController = catanPanel.getRightPanel().getResourceController();
                 MapView mapView = (MapView) catanPanel.getMidPanel().getMapController().getView();
+                WaitView mapWaitView = ((WaitView) ((MapController) mapView.getController()).getWaitView());
 
                 GameManager gameManager = ClientCommunicator.getSingleton().getGameManager();
                 String status = "";
@@ -118,18 +120,27 @@ public class MapPoller extends TimerTask {
                 if (status.equals("Playing") && playerIndex == gameInformation.getTurnTracker().getCurrentTurn()) {
                     //enable the domestic trade button when it's your turn
                     catanPanel.getMidPanel().getTradePanel()
-                                            .getDomesticController().getTradeView().enableDomesticTrade(true);
+                            .getDomesticController().getTradeView().enableDomesticTrade(true);
+                    //if waiting view there take it down
+                    if (mapWaitView.isModalShowing()) {
+                        mapWaitView.closeModal();
+                    }
                     status = "Finish Turn";
-                }
-                else if(status.equals("Rolling") && playerIndex != gameInformation.getTurnTracker().getCurrentTurn()){
+                } else if (status.equals("Rolling") && playerIndex != gameInformation.getTurnTracker().getCurrentTurn()) {
                     //disable the domestic trade button when it's your turn
                     catanPanel.getMidPanel().getTradePanel()
-                                            .getDomesticController().getTradeView().enableDomesticTrade(false);
+                            .getDomesticController().getTradeView().enableDomesticTrade(false);
+                    //put up hour glass
+                    mapWaitView.setMessage("Waiting For Other Players");
+                    if (!mapWaitView.isModalShowing()) {
+                        mapWaitView.showModal();
+                    }
+                    
                 }
                 // <editor-fold desc="Roll Update">
                 /* Begin Roll Update */
                 if (status.equals("Rolling") && playerIndex == gameInformation.getTurnTracker().getCurrentTurn()) {
-
+                    
                     if (!rollController.getRollView().isModalShowing()) {
                         rollController.getRollView().showModal();
                         rollController.getRollView().getRollTimer().start();
@@ -360,7 +371,7 @@ public class MapPoller extends TimerTask {
                                     DomesticTradeController domesticController = catanPanel.getMidPanel().getTradePanel()
                                             .getDomesticController();
                                     boolean canAccept = true;
-                                    
+
                                     ResourceList resourcesPlayerHas = gameManager.getResourceManager().getGameBanks()
                                             .get(playerIndex).getResourcesCards();
 
@@ -380,7 +391,7 @@ public class MapPoller extends TimerTask {
                                         ResourceList offer = gameManager.getGame().getTradeOffer().getOffer();
                                         String name = ClientCommunicator.getSingleton().getGameManager().getGame().getPlayers().get(playerIndex).getName();
                                         domesticController.getAcceptOverlay().setPlayerName(name);
-                                        
+
                                         if (offer.getBrick() > 0) {
                                             domesticController.getAcceptOverlay().addGetResource(ResourceType.brick, offer.getBrick());
                                         } else if (offer.getBrick() < 0) {
@@ -388,7 +399,7 @@ public class MapPoller extends TimerTask {
                                         }
                                         if (offer.getOre() > 0) {
                                             domesticController.getAcceptOverlay().addGetResource(ResourceType.ore, offer.getOre());
-                                        } else if (offer.getOre() < 0)  {
+                                        } else if (offer.getOre() < 0) {
                                             domesticController.getAcceptOverlay().addGiveResource(ResourceType.ore, Math.abs(offer.getOre()));
                                         }
 
@@ -406,7 +417,7 @@ public class MapPoller extends TimerTask {
 
                                         if (offer.getWood() > 0) {
                                             domesticController.getAcceptOverlay().addGetResource(ResourceType.wood, offer.getWood());
-                                        } else if (offer.getWood() < 0){
+                                        } else if (offer.getWood() < 0) {
                                             domesticController.getAcceptOverlay().addGiveResource(ResourceType.wood, Math.abs(offer.getWood()));
                                         }
 
