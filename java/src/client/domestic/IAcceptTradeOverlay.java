@@ -43,4 +43,9 @@ public interface IAcceptTradeOverlay extends IOverlayView {
      * Resets the overlay back to the original settings.
      */
     void reset();
+    
+    /**
+     * adds all the trade information to the overlay
+     */
+    void addTradeInformation();
 }
