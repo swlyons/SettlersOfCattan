@@ -401,7 +401,6 @@ public class DiscardView extends OverlayView implements IDiscardView {
             _downButton.setEnabled(_canDecrease);
             _discardAmountLabel.setText("" + _discardAmount);
             //update the amounts for each resource
-
             GameManager gm = ClientCommunicator.getSingleton().getGameManager();
             Integer playerId = ClientCommunicator.getSingleton().getPlayerId();
             Integer playerIndex = 4;
