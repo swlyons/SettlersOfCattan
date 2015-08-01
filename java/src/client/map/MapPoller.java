@@ -116,7 +116,15 @@ public class MapPoller extends TimerTask {
 
                 // Toggle the button to Finish Turn (this ultimately controls whether the button is enable or not)
                 if (status.equals("Playing") && playerIndex == gameInformation.getTurnTracker().getCurrentTurn()) {
+                    //enable the domestic trade button when it's your turn
+                    catanPanel.getMidPanel().getTradePanel()
+                                            .getDomesticController().getTradeView().enableDomesticTrade(true);
                     status = "Finish Turn";
+                }
+                else if(status.equals("Rolling") && playerIndex != gameInformation.getTurnTracker().getCurrentTurn()){
+                    //disable the domestic trade button when it's your turn
+                    catanPanel.getMidPanel().getTradePanel()
+                                            .getDomesticController().getTradeView().enableDomesticTrade(false);
                 }
                 // <editor-fold desc="Roll Update">
                 /* Begin Roll Update */
