@@ -143,6 +143,7 @@ public class JoinGameView extends OverlayView implements IJoinGameView {
                 }
                 joinButton.setActionCommand("" + game.getId());
                 joinButton.addActionListener(actionListener);
+                joinButton.setPreferredSize(new Dimension(150, 30));
                 joinPanel.add(joinButton);
                 gameInfo.add(joinPanel);
                 gamePanel.add(gameInfo);

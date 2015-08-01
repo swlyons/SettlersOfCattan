@@ -10,7 +10,6 @@ import shared.data.ResourceList;
 import shared.model.OfferTrade;
 import shared.model.AcceptTrade;
 import client.misc.*;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -233,8 +232,12 @@ public class DomesticTradeController extends Controller implements IDomesticTrad
 
     @Override
     public void sendTradeOffer() {
+        GameManager gm = ClientCommunicator.getSingleton().getGameManager();
+        Integer playerId = ClientCommunicator.getSingleton().getPlayerId();
+        Integer playerIndex = gm.getPlayerIndex(playerId);
+        
         if (!sendingBrick) {
-            offer.setBrick(0 - offer.getBrick());
+            offer.setBrick(0 - offer.getBrick());;
         }
         if (!sendingOre) {
             offer.setOre(0 - offer.getOre());
@@ -249,10 +252,6 @@ public class DomesticTradeController extends Controller implements IDomesticTrad
             offer.setWood(0 - offer.getWood());
         }
 
-        GameManager gm = ClientCommunicator.getSingleton().getGameManager();
-        Integer playerId = ClientCommunicator.getSingleton().getPlayerId();
-        Integer playerIndex = gm.getPlayerIndex(playerId);
-        
         OfferTrade trade = new OfferTrade();
         trade.setPlayerIndex(playerIndex);
         trade.setType("offerTrade");

@@ -28,6 +28,7 @@ import client.turntracker.TurnTrackerView;
 import java.util.ArrayList;
 import shared.definitions.CatanColor;
 import shared.definitions.PieceType;
+import shared.definitions.ResourceType;
 
 /**
  *
@@ -88,9 +89,9 @@ public class MapPoller extends TimerTask {
                 //only do these updates when the version changes
                 //<editor-fold desc="Version Dependent">
 //                if (version != gameManager.getGame().getVersion()) {
-                    gameManager.initializeGame(gameInformation);
-                    version = gameInformation.getVersion();
-                    mapView.getController().initFromModel();
+                gameManager.initializeGame(gameInformation);
+                version = gameInformation.getVersion();
+                mapView.getController().initFromModel();
 //                }
                 //</editor-fold>
 
@@ -283,12 +284,12 @@ public class MapPoller extends TimerTask {
                         resourceBarController.canBuyCard();
                         resourceBarController.canBuildSettlement();
                         resourceBarController.canBuildRoad();
-                        resourceBarController.canPlayCard();                    }
+                        resourceBarController.canPlayCard();
+                    }
                 }
 
                 /* End Resource Bar Update */
                 // </editor-fold>
-
                 //<editor-fold desc="Discard Controller">
                 /* Begin Discard Controller */
                 if (doneOnce && gameInformation.getTurnTracker().getCurrentTurn() == playerIndex && rollController.getClickedOk()) {
@@ -351,7 +352,7 @@ public class MapPoller extends TimerTask {
                                     DomesticTradeController domesticController = catanPanel.getMidPanel().getTradePanel()
                                             .getDomesticController();
                                     boolean canAccept = true;
-
+                                    
                                     ResourceList resourcesPlayerHas = gameManager.getResourceManager().getGameBanks()
                                             .get(playerIndex).getResourcesCards();
 
@@ -368,6 +369,42 @@ public class MapPoller extends TimerTask {
                                         canAccept = false;
                                     }
                                     if (!domesticController.getAcceptOverlay().isModalShowing()) {
+                                        ResourceList offer = gameManager.getGame().getTradeOffer().getOffer();
+                                        String name = ClientCommunicator.getSingleton().getGameManager().getGame().getPlayers().get(playerIndex).getName();
+                                        domesticController.getAcceptOverlay().setPlayerName(name);
+                                        
+                                        if (offer.getBrick() > 0) {
+                                            domesticController.getAcceptOverlay().addGetResource(ResourceType.brick, offer.getBrick());
+                                        } else if (offer.getBrick() < 0) {
+                                            domesticController.getAcceptOverlay().addGiveResource(ResourceType.brick, Math.abs(offer.getBrick()));
+                                        }
+                                        if (offer.getOre() > 0) {
+                                            domesticController.getAcceptOverlay().addGetResource(ResourceType.ore, offer.getOre());
+                                        } else if (offer.getOre() < 0)  {
+                                            domesticController.getAcceptOverlay().addGiveResource(ResourceType.ore, Math.abs(offer.getOre()));
+                                        }
+
+                                        if (offer.getSheep() > 0) {
+                                            domesticController.getAcceptOverlay().addGetResource(ResourceType.sheep, offer.getSheep());
+                                        } else if (offer.getSheep() < 0) {
+                                            domesticController.getAcceptOverlay().addGiveResource(ResourceType.sheep, Math.abs(offer.getSheep()));
+                                        }
+
+                                        if (offer.getWheat() > 0) {
+                                            domesticController.getAcceptOverlay().addGetResource(ResourceType.wheat, offer.getWheat());
+                                        } else if (offer.getWheat() < 0) {
+                                            domesticController.getAcceptOverlay().addGiveResource(ResourceType.wheat, Math.abs(offer.getWheat()));
+                                        }
+
+                                        if (offer.getWood() > 0) {
+                                            domesticController.getAcceptOverlay().addGetResource(ResourceType.wood, offer.getWood());
+                                        } else if (offer.getWood() < 0){
+                                            domesticController.getAcceptOverlay().addGiveResource(ResourceType.wood, Math.abs(offer.getWood()));
+                                        }
+
+                                        //set all the information for the trade overlay
+                                        domesticController.getAcceptOverlay().addTradeInformation();
+
                                         domesticController.getAcceptOverlay().showModal();
                                         domesticController.getAcceptOverlay().setAcceptEnabled(canAccept);
                                     }
