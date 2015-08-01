@@ -22,6 +22,8 @@ import shared.model.RobPlayer;
 import shared.model.Soldier;
 import client.communication.ClientCommunicator;
 import client.communication.ClientFascade;
+import client.misc.IWaitView;
+import client.misc.WaitView;
 
 /**
  * Implementation for the map controller
@@ -29,6 +31,7 @@ import client.communication.ClientFascade;
 public class MapController extends Controller implements IMapController {
 
     private IRobView robView;
+    private IWaitView waitView;
     private boolean isFree = false;
     private boolean endTurn = false;
     private boolean playedRoadBuilding = false;
@@ -48,11 +51,11 @@ public class MapController extends Controller implements IMapController {
         super(view);
 
         setRobView(robView);
-
+        
         settledCities = new ArrayList<Location>();
         settledLocations = new ArrayList<Location>();
         settledEdges = new ArrayList<Edge>();
-        // initFromModel();
+        waitView = new WaitView();
     }
 
     public IMapView getView() {
@@ -76,6 +79,14 @@ public class MapController extends Controller implements IMapController {
         this.mapPoller = mapPoller;
     }
 
+    public IWaitView getWaitView() {
+        return waitView;
+    }
+
+    public void setWaitView(IWaitView waitView) {
+        this.waitView = waitView;
+    }
+    
     @Override
     public void initFromModel() {
         GameManager gm = ClientCommunicator.getSingleton().getGameManager();
