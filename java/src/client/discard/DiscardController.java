@@ -29,7 +29,7 @@ public class DiscardController extends Controller implements IDiscardController 
         }
 
         ResourceList resources2 = gm.getResourceManager().getGameBanks().get(playerIndex).getResourcesCards();
-
+        
         boolean moreThanZero;
         for (ResourceType resource : ResourceType.values()) {
             moreThanZero = false;

@@ -44,13 +44,11 @@ public class MapPoller extends TimerTask {
     private int playerIndex;
     private String playerColor;
     private final int MAX_POINTS = 10;
-    private boolean initializedPlayers;
     private boolean discardedOnce;
 
     public MapPoller() {
         super();
         discardedOnce = false;
-        this.initializedPlayers = false;
         this.doneOnce = false;
         this.seenTrade = false;
         playerIndex = -1;
@@ -147,53 +145,41 @@ public class MapPoller extends TimerTask {
                 /**
                  * ******* Begin Turn Tracker Update ********
                  */
-                /* Begin Turn Tracker Initialization */
                 for (PlayerInfo player : gameInformation.getPlayers()) {
-                    if (!initializedPlayers) {
-                        turnTrackerView.initializePlayer(player.getPlayerIndex(), player.getName(),
-                                CatanColor.valueOf(player.getColor().toUpperCase()));
 
+                    boolean longestRoad = false;
+                    boolean largestArmy = false;
+                    boolean highlight = false;
+                    int index = player.getPlayerIndex();
+                    // only update local player color for local player
+                    if (player.getPlayerID() == ClientCommunicator.getSingleton().getPlayerId()) {
+                        turnTrackerView.setLocalPlayerColor(CatanColor.valueOf(player.getColor().toUpperCase()));
+                        pointsController.getPointsView().setPoints(player.getVictoryPoints());
                     }
-                }
-                //only initialize the players once (multiple times creates garbled data)
-                initializedPlayers = true;
-                /* End Turn Tracker Initialization */
-                for (PlayerInfo player : gameInformation.getPlayers()) {
-                    if (initializedPlayers) {
-                        boolean longestRoad = false;
-                        boolean largestArmy = false;
-                        boolean highlight = false;
-                        int index = player.getPlayerIndex();
-                        // only update local player color for local player
-                        if (player.getPlayerID() == ClientCommunicator.getSingleton().getPlayerId()) {
-                            turnTrackerView.setLocalPlayerColor(CatanColor.valueOf(player.getColor().toUpperCase()));
-                            pointsController.getPointsView().setPoints(player.getVictoryPoints());
-                        }
-                        // decide the awards
-                        if (gameInformation.getTurnTracker().getLargestArmy() == index) {
-                            largestArmy = true;
-                        }
-                        if (gameInformation.getTurnTracker().getLongestRoad() == index) {
-                            longestRoad = true;
-                        }
-                        // decide who is current player
-                        if (gameInformation.getTurnTracker().getCurrentTurn() == index) {
-                            highlight = true;
-                        }
-
-                        turnTrackerView.updatePlayer(index, player.getVictoryPoints(), highlight, largestArmy,
-                                longestRoad);
-
-                        /* Begin Points Controller Update */
-                        if (player.getVictoryPoints() == MAX_POINTS) {
-                            pointsController.getFinishedView().setWinner(player.getName(),
-                                    (player.getPlayerIndex() == index));
-                            if (!pointsController.getFinishedView().isModalShowing()) {
-                                pointsController.getFinishedView().showModal();
-                            }
-                        }
-                        /* End Points Controller Update */
+                    // decide the awards
+                    if (gameInformation.getTurnTracker().getLargestArmy() == index) {
+                        largestArmy = true;
                     }
+                    if (gameInformation.getTurnTracker().getLongestRoad() == index) {
+                        longestRoad = true;
+                    }
+                    // decide who is current player
+                    if (gameInformation.getTurnTracker().getCurrentTurn() == index) {
+                        highlight = true;
+                    }
+
+                    turnTrackerView.updatePlayer(index, player.getVictoryPoints(), highlight, largestArmy,
+                            longestRoad);
+
+                    /* Begin Points Controller Update */
+                    if (player.getVictoryPoints() == MAX_POINTS) {
+                        pointsController.getFinishedView().setWinner(player.getName(),
+                                (player.getPlayerIndex() == index));
+                        if (!pointsController.getFinishedView().isModalShowing()) {
+                            pointsController.getFinishedView().showModal();
+                        }
+                    }
+                    /* End Points Controller Update */
 
                 }
                 /**
@@ -201,7 +187,6 @@ public class MapPoller extends TimerTask {
                  */
                 // </editor-fold>
 
-               
                 //updates the game state panel with the new status
                 turnTrackerView.updateGameState(status, status.equalsIgnoreCase("Finish Turn"));
 

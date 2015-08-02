@@ -6,6 +6,7 @@
 package client.main;
 
 import client.base.Controller;
+import client.catan.CatanPanel;
 import client.communication.ClientCommunicator;
 import client.communication.ClientFascade;
 import shared.data.GameInfo;
@@ -13,9 +14,13 @@ import shared.data.Location;
 import client.managers.GameManager;
 import client.map.MapController;
 import client.map.MapView;
+import client.points.PointsController;
+import client.turntracker.TurnTrackerView;
 import shared.model.FinishMove;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import shared.data.PlayerInfo;
+import shared.definitions.CatanColor;
 import shared.definitions.PieceType;
 
 /**
@@ -25,14 +30,32 @@ import shared.definitions.PieceType;
 public class FirstRoundState extends State {
 
     final static int MAX_PLAYERS = 4;
+    final static int MAX_POINTS = 10;
     int version = -1;
     private String status = "FirstRound";
-    private int turns = 0;
+    private boolean initializedPlayers = false;
+    private TurnTrackerView turnTrackerView;
+    private PointsController pointsController;
+    private CatanPanel catanPanel;
+
+    public FirstRoundState() {
+    }
+
+    public CatanPanel getCatanPanel() {
+        return catanPanel;
+    }
+
+    public void setCatanPanel(CatanPanel catanPanel) {
+        this.catanPanel = catanPanel;
+    }
 
     @Override
     public void doAction(Controller controller) {
         MapController mapController = (MapController) controller;
         int playerIndex = -1;
+
+        turnTrackerView = catanPanel.getLeftPanel().getTurnView();
+        pointsController = catanPanel.getRightPanel().getPointsController();
 
         System.out.println(this.toString());
         while (status.equals("FirstRound")) {
@@ -40,21 +63,21 @@ public class FirstRoundState extends State {
             try {
                 GameInfo gameInformation = ClientFascade.getSingleton()
                         .getGameModel("?version=" + -1);
-                
+
                 status = gameInformation.getTurnTracker().getStatus();
                 gameManager.initializeGame(gameInformation);
                 version = gameInformation.getVersion();
 
                 Integer playerId = ClientCommunicator.getSingleton().getPlayerId();
                 int size = gameManager.getGame().getPlayers().size();
-                
+
                 for (int i = 0; i < size; i++) {
                     if (gameManager.getGame().getPlayers().get(i).getPlayerID() == playerId) {
                         playerIndex = gameManager.getGame().getPlayers().get(i).getPlayerIndex();
                         break;
                     }
                 }
-                
+
                 if (playerIndex == gameInformation.getTurnTracker().getCurrentTurn()) {
                     if (status.equals("FirstRound")) {
                         boolean builtSettlement = false;
@@ -73,7 +96,59 @@ public class FirstRoundState extends State {
                         }
                     }
                 }
+                /* ******* Begin Turn Tracker Update *********/
+                /* Begin Turn Tracker Initialization */
+                for (PlayerInfo player : gameInformation.getPlayers()) {
+                    if (!initializedPlayers) {
+                        turnTrackerView.initializePlayer(player.getPlayerIndex(), player.getName(),
+                                CatanColor.valueOf(player.getColor().toUpperCase()));
 
+                    }
+                }
+                //only initialize the players once (multiple times creates garbled data)
+                initializedPlayers = true;
+                /* End Turn Tracker Initialization */
+                for (PlayerInfo player : gameInformation.getPlayers()) {
+                    if (initializedPlayers) {
+                        boolean longestRoad = false;
+                        boolean largestArmy = false;
+                        boolean highlight = false;
+                        int index = player.getPlayerIndex();
+                        // only update local player color for local player
+                        if (player.getPlayerID() == ClientCommunicator.getSingleton().getPlayerId()) {
+                            turnTrackerView.setLocalPlayerColor(CatanColor.valueOf(player.getColor().toUpperCase()));
+                            pointsController.getPointsView().setPoints(player.getVictoryPoints());
+                        }
+                        // decide the awards
+                        if (gameInformation.getTurnTracker().getLargestArmy() == index) {
+                            largestArmy = true;
+                        }
+                        if (gameInformation.getTurnTracker().getLongestRoad() == index) {
+                            longestRoad = true;
+                        }
+                        // decide who is current player
+                        if (gameInformation.getTurnTracker().getCurrentTurn() == index) {
+                            highlight = true;
+                        }
+
+                        turnTrackerView.updatePlayer(index, player.getVictoryPoints(), highlight, largestArmy,
+                                longestRoad);
+
+                        /* Begin Points Controller Update */
+                        if (player.getVictoryPoints() == MAX_POINTS) {
+                            pointsController.getFinishedView().setWinner(player.getName(),
+                                    (player.getPlayerIndex() == index));
+                            if (!pointsController.getFinishedView().isModalShowing()) {
+                                pointsController.getFinishedView().showModal();
+                            }
+                        }
+                        /* End Points Controller Update */
+                    }
+
+                }
+                /**
+                 * ******* End Turn Track Update *******
+                 */
                 //end your turn
                 if (mapController.isEndTurn()) {
 
@@ -82,6 +157,11 @@ public class FirstRoundState extends State {
                     fm.setPlayerIndex(playerIndex);
                     try {
                         gameManager.initializeGame(ClientFascade.getSingleton().finishMove(fm));
+                        //update the highligher at the end of the turn since we are leaving this state
+                        for (PlayerInfo player : gameManager.getGame().getPlayers()) {
+                            turnTrackerView.updatePlayer(player.getPlayerIndex(), player.getVictoryPoints(), player.getPlayerIndex() == gameInformation.getTurnTracker().getCurrentTurn(), false,
+                                    false);
+                        }
                     } catch (ClientException ex) {
                         ex.printStackTrace();
                         Logger.getLogger(FirstRoundState.class.getName()).log(Level.SEVERE, null, ex);
@@ -98,6 +178,17 @@ public class FirstRoundState extends State {
                 Logger.getLogger(FirstRoundState.class.getName()).log(Level.SEVERE, null, ex);
             }
 
+        }
+        //check before leaving the state (need to update the player the just ended his turn's display)
+        GameInfo gameInformation = null;
+        try {
+            gameInformation = ClientFascade.getSingleton().getGameModel("?version=" + -1);
+        } catch (ClientException ex) {
+            Logger.getLogger(FirstRoundState.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        for (PlayerInfo player : gameInformation.getPlayers()) {
+            turnTrackerView.updatePlayer(player.getPlayerIndex(), player.getVictoryPoints(), player.getPlayerIndex() == gameInformation.getTurnTracker().getCurrentTurn(), false,
+                    false);
         }
     }
 

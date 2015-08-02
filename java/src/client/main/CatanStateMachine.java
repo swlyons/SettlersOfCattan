@@ -14,12 +14,25 @@ import client.catan.CatanPanel;
  */
 public class CatanStateMachine {
 
+    private CatanPanel catanPanel;
+    private FirstRoundState firstRoundState = new FirstRoundState();
+    private SecondRoundState secondRoundState = new SecondRoundState();
     private State[] states = {new LoginState(), new JoinGameState(), new PlayerWaitingState(),
-        new SetupState(), new FirstRoundState(), new SecondRoundState(), new GamePlayState()};
+        new SetupState(), firstRoundState, secondRoundState, new GamePlayState()};
 
     private int[][] transition = {{1, 1}, {1, 2}, {2, 3}, {3, 4}, {4, 5}, {5, 6}, {6, 6}};
     private int current = 0;
+    
+    public CatanPanel getCatanPanel() {
+        return catanPanel;
+    }
 
+    public void setCatanPanel(CatanPanel catanPanel) {
+        firstRoundState.setCatanPanel(catanPanel);
+        secondRoundState.setCatanPanel(catanPanel);
+    }
+    
+    
     private void next(int message) {
         current = transition[current][message];
     }
