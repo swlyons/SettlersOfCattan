@@ -6,6 +6,7 @@
 package client.main;
 
 import client.base.Controller;
+import client.catan.CatanPanel;
 
 /**
  *
@@ -21,4 +22,5 @@ abstract class State {
      */
     public void doAction(Controller controller) {
     }
+    
 }
