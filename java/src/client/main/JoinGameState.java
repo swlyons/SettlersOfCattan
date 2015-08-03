@@ -25,7 +25,9 @@ public class JoinGameState extends State {
 
         if (joinGameController.getJoinGameView().isModalShowing()) {
             joinGameTimer.schedule(new JoinGameViewPoller(joinGameController), 0, 1000);
+            joinGameController.setJoinGameTimer(joinGameTimer);
         }
+        
     }
 
     @Override

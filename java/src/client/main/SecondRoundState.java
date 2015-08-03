@@ -7,9 +7,9 @@ package client.main;
 
 import client.base.Controller;
 import client.catan.CatanPanel;
+import client.catan.GameStatePanel;
 import client.communication.ClientCommunicator;
 import client.communication.ClientFascade;
-import static client.main.FirstRoundState.MAX_POINTS;
 import shared.data.GameInfo;
 import shared.data.Location;
 import client.managers.GameManager;
@@ -38,9 +38,6 @@ public class SecondRoundState extends State {
     private TurnTrackerView turnTrackerView;
     private PointsController pointsController;
     private CatanPanel catanPanel;
-    
-    public SecondRoundState(){
-    }
 
     public CatanPanel getCatanPanel() {
         return catanPanel;
@@ -49,36 +46,41 @@ public class SecondRoundState extends State {
     public void setCatanPanel(CatanPanel catanPanel) {
         this.catanPanel = catanPanel;
     }
-    
-    
+
     @Override
     public void doAction(Controller controller) {
         MapController mapController = (MapController) controller;
         int playerIndex = -1;
         turnTrackerView = catanPanel.getLeftPanel().getTurnView();
         pointsController = catanPanel.getRightPanel().getPointsController();
-        
+        GameStatePanel gameStatePanel = catanPanel.getMidPanel().getGameStatePanel();
+        GameManager gameManager = null;
+
         System.out.println(this.toString());
         while (status.equals("SecondRound")) {
-            GameManager gameManager = ClientCommunicator.getSingleton().getGameManager();
+            gameManager = ClientCommunicator.getSingleton().getGameManager();
             try {
                 GameInfo gameInformation = gameInformation = ClientFascade.getSingleton()
                         .getGameModel("?version=" + -1);
                 gameManager.initializeGame(gameInformation);
                 version = gameInformation.getVersion();
+                mapController.initFromModel();
 
-                if (gameInformation.getTurnTracker().getStatus().equals("FirstRound")) {
-                    try {
-                        Thread.sleep(3000);
-                        continue;
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        continue;
+                /*if (gameInformation.getTurnTracker().getStatus().equals("FirstRound")) {
+                 try {
+                 Thread.sleep(3000);
+                 continue;
+                 } catch (Exception e) {
+                 e.printStackTrace();
+                 continue;
 
-                    }
-                }
+                 }
+                 }*/
                 status = gameInformation.getTurnTracker().getStatus();
+                if (gameStatePanel.getBackground() != CatanColor.valueOf(gameInformation.getPlayers().get(gameInformation.getTurnTracker().getCurrentTurn()).getColor().toUpperCase()).getJavaColor()) {
 
+                    gameStatePanel.getCentered().setBackground(CatanColor.valueOf(gameInformation.getPlayers().get(gameInformation.getTurnTracker().getCurrentTurn()).getColor().toUpperCase()).getJavaColor());
+                }
                 Integer playerId = ClientCommunicator.getSingleton().getPlayerId();
                 int size = gameManager.getGame().getPlayers().size();
                 for (int i = 0; i < size; i++) {
@@ -134,43 +136,48 @@ public class SecondRoundState extends State {
                     turnTrackerView.updatePlayer(index, player.getVictoryPoints(), highlight, largestArmy,
                             longestRoad);
 
-                    /* Begin Points Controller Update */
-                    if (player.getVictoryPoints() == MAX_POINTS) {
-                        pointsController.getFinishedView().setWinner(player.getName(),
-                                (player.getPlayerIndex() == index));
-                        if (!pointsController.getFinishedView().isModalShowing()) {
-                            pointsController.getFinishedView().showModal();
-                        }
-                    }
-                    /* End Points Controller Update */
-
                 }
                 /**
                  * ******* End Turn Track Update *******
                  */
+                turnTrackerView.updateGameState("FirstRound", false);
                 //end your turn
                 if (mapController.isEndTurn()) {
-
                     FinishMove fm = new FinishMove(gameManager.getGame().getTurnTracker().getCurrentTurn());
                     fm.setType("finishTurn");
                     fm.setPlayerIndex(playerIndex);
                     try {
-                        gameManager.initializeGame(ClientFascade.getSingleton().finishMove(fm));
+                        ClientFascade.getSingleton().finishMove(fm);
+                        gameInformation = ClientFascade.getSingleton()
+                                .getGameModel("?version=" + -1);
+                        gameManager.initializeGame(gameInformation);
+
                     } catch (ClientException ex) {
                         Logger.getLogger(SecondRoundState.class.getName()).log(Level.SEVERE, null, ex);
                     }
                     mapController.setEndTurn(false);
-
                     mapController.initFromModel();
-
                     //second round is over
-                    break;
+                    if (!status.equals("SecondRound")) {
+                        break;
+                    }
                 }
             } catch (ClientException ex) {
                 ex.printStackTrace();
                 Logger.getLogger(FirstRoundState.class.getName()).log(Level.SEVERE, null, ex);
             }
 
+        }
+        //check before leaving the state (need to update the player the just ended his turn's display)
+        GameInfo gameInformation = null;
+        try {
+            gameInformation = ClientFascade.getSingleton().getGameModel("?version=" + -1);
+        } catch (ClientException ex) {
+            Logger.getLogger(FirstRoundState.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        for (PlayerInfo player : gameInformation.getPlayers()) {
+            turnTrackerView.updatePlayer(player.getPlayerIndex(), player.getVictoryPoints(), player.getPlayerIndex() == gameInformation.getTurnTracker().getCurrentTurn(), false,
+                    false);
         }
     }
 

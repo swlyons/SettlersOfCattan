@@ -20,13 +20,13 @@ import shared.data.PlayerInfo;
 import shared.data.ResourceList;
 import client.discard.DiscardController;
 import client.domestic.DomesticTradeController;
-import client.misc.WaitView;
 import client.points.PointsController;
 import client.resources.ResourceBarController;
 import client.resources.ResourceBarElement;
 import client.roll.RollController;
 import client.turntracker.TurnTrackerView;
 import java.util.ArrayList;
+import java.util.Timer;
 import shared.definitions.CatanColor;
 import shared.definitions.PieceType;
 import shared.definitions.ResourceType;
@@ -45,6 +45,8 @@ public class MapPoller extends TimerTask {
     private String playerColor;
     private final int MAX_POINTS = 10;
     private boolean discardedOnce;
+    private Timer gamePlayTimer;
+    
 
     public MapPoller() {
         super();
@@ -173,10 +175,20 @@ public class MapPoller extends TimerTask {
 
                     /* Begin Points Controller Update */
                     if (player.getVictoryPoints() == MAX_POINTS) {
+                        
                         pointsController.getFinishedView().setWinner(player.getName(),
-                                (player.getPlayerIndex() == index));
+                                (playerIndex == index));
                         if (!pointsController.getFinishedView().isModalShowing()) {
+                            //Game is over (stop the timer)\
+                             //also cancel the gamePlay poller
+                            gamePlayTimer.cancel();
+                            gamePlayTimer.purge();
+                            
+                            
+                            //hide the game so no interaction   
+                            catanPanel.setVisible(false);
                             pointsController.getFinishedView().showModal();
+                            
                         }
                     }
                     /* End Points Controller Update */
@@ -438,4 +450,9 @@ public class MapPoller extends TimerTask {
         }
 
     }
+    
+    public void setGamePlayTimer(Timer gamePlayTimer) {
+        this.gamePlayTimer = gamePlayTimer;
+    }
+    
 }

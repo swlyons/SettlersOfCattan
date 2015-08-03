@@ -11,6 +11,7 @@ import client.misc.*;
 import shared.model.CreateGameRequest;
 import shared.model.JoinGameRequest;
 import java.util.ArrayList;
+import java.util.Timer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -26,6 +27,7 @@ public class JoinGameController extends Controller implements IJoinGameControlle
     private IPlayerWaitingView playerWaitingView;
     private PlayerWaitingViewPoller playerWaitingViewPoller;
     private JoinGameViewPoller joinGameViewPoller;
+    private Timer joinGameTimer;
 
     /**
      * JoinGameController constructor
@@ -52,6 +54,14 @@ public class JoinGameController extends Controller implements IJoinGameControlle
         return (IJoinGameView) super.getView();
     }
 
+    public void setJoinGameTimer(Timer joinGameTimer) {
+        this.joinGameTimer = joinGameTimer;
+    }
+
+    public Timer getJoinGameTimer() {
+        return joinGameTimer;
+    }
+    
     /**
      * Returns the action to be executed when the user joins a game
      *
