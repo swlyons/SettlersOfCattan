@@ -101,7 +101,7 @@ public class MapController extends Controller implements IMapController {
                 }
             }
         }
-
+       
         for (Edge e : gm.getLocationManager().getSettledEdges()) {
             if (!settledEdges.contains(e)) {
                 settledEdges.add(e);
@@ -109,7 +109,6 @@ public class MapController extends Controller implements IMapController {
                         CatanColor.valueOf(gm.getGame().getPlayers().get(e.getOwnerId()).getColor().toUpperCase()));
             }
         }
-
         for (Location l : gm.getLocationManager().getSettledLocations()) {
             if (l.getIsCity()) {
                 if (!settledCities.contains(l)) {
@@ -125,12 +124,14 @@ public class MapController extends Controller implements IMapController {
                 }
             }
         }
-
+        
         if ((newRobberLocation2 != null && !newRobberLocation2.equals(gm.getMapManager().getRobberLocation())) || !doneOnce) {
             getView().placeRobber(gm.getMapManager().getRobberLocation());
             newRobberLocation2 = gm.getMapManager().getRobberLocation();
         }
-
+        //update the robber location
+        gm.getGame().getMap().setRobber(newRobberLocation2);
+        
         if (!doneOnce) {
             // Water tiles are hard coded, sine they never change, ever.
             getView().addHex(new HexLocation(0, 3), HexType.water);

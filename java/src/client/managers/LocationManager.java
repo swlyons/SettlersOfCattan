@@ -139,6 +139,8 @@ public class LocationManager {
             unsettledLocations.remove(locationToMove);
             settledLocations.add(locationToMove);
             return true;
+        }else{
+            System.out.println("Location Manager: location to move null: " + locationToSettle);
         }
         return false;
     }
@@ -155,17 +157,18 @@ public class LocationManager {
     public boolean settleEdge(EdgeLocation edgeLocationToSettle, int playerId) {
         Edge edgeToMove = null;
         for (Edge edge : unsettledEdges) {
+            
             if (edgeLocationToSettle.equals(edge.getEdgeLocation())) {
                 if (edge.getWhoCanBuild().contains(playerId)) {
                     edge.setOwnerId(playerId);
                     edgeToMove = edge;
                     edge.getWhoCanBuild().clear();
-
+                    
                     if (edge.getEdgeLocation().getDir() == EdgeDirection.N) {
                         VertexLocation settleable1 = new VertexLocation(edge.getEdgeLocation().getHexLoc(),
                                 VertexDirection.NE);
                         VertexLocation settleable2 = new VertexLocation(edge.getEdgeLocation().getHexLoc(),
-                                VertexDirection.NE);
+                                VertexDirection.NW);
                         for (Location location : unsettledLocations) {
                             if (location.getNormalizedLocation().equals(settleable1)
                                     || location.getNormalizedLocation().equals(settleable2)) {
@@ -351,14 +354,15 @@ public class LocationManager {
 
         hexes.add(vertex.getHexLoc());
         hexes.add(new HexLocation(vertex.getHexLoc().getX(), vertex.getHexLoc().getY() - 1));
-
+        
+        
         if (VertexDirection.NE == vertex.getDir()) {
             hexes.add(new HexLocation(vertex.getHexLoc().getX() + 1, vertex.getHexLoc().getY() - 1));
         } else {
             // case of it's NorthWest
             hexes.add(new HexLocation(vertex.getHexLoc().getX() - 1, vertex.getHexLoc().getY()));
         }
-
+        
         return hexes;
     }
 

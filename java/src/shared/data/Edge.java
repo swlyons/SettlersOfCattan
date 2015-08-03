@@ -41,4 +41,9 @@ public class Edge {
         this.edgeLocation = edgeLocation;
     }
 
+    @Override
+    public String toString() {
+        return "Edge{" + "ownerId=" + ownerId + ", whoCanBuild=" + whoCanBuild + ", edgeLocation=" + edgeLocation + '}';
+    }
+    
 }

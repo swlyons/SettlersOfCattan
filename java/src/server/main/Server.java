@@ -883,7 +883,7 @@ public class Server {
 
 				if (!gi.getTurnTracker().getStatus().equals("Rolling")) {
 					exchange.getResponseHeaders().set("Content-Type", "text/html");
-					String message = "Not Rolling status in turn tracker.";
+					String message = "Not Rolling status in turn tracker. Status is actually: " + gi.getTurnTracker().getStatus();
 					System.out.println(message);
 					exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
 					exchange.getResponseBody().write(message.getBytes());
@@ -2524,6 +2524,7 @@ public class Server {
 				try {
 					game = ServerFascade.getSingleton().buildCity(buildCity);
 				} catch (Exception e) {
+                                        e.printStackTrace();
 					game = null;
 				}
 				String result;
@@ -2731,6 +2732,7 @@ public class Server {
 				try {
 					game = ServerFascade.getSingleton().buildRoad(buildRoad);
 				} catch (Exception e) {
+                                        e.printStackTrace();
 					game = null;
 				}
 				String result;

@@ -133,7 +133,8 @@ public class DevCardController extends Controller implements IDevCardController 
                 break;
             }
         }
-
+        System.out.println(" Dev Card Controller Player Index: " + playerIndex);
+        System.out.println("Game Player Index: " + gm.getPlayerIndex(playerId));
         Monopoly m = new Monopoly(gm.getPlayerIndex(playerId));
         m.setResource(resource);
         try {
