@@ -110,8 +110,7 @@ public class GameManager {
             for (VertexObject settlement : map.getSettlements()) {
                 Location settlementLocation = null;
                 for (Location location : locationManager.getUnsettledLocations()) {
-                    /* TODO: Check if this should be 16 ( 8 would be the end of the first round) */
-                    if (locationManager.getSettledEdges().size() == 16) {
+                    if (locationManager.getSettledEdges().size() == 8) {
                         location.setWhoCanBuild(new HashSet<Integer>());
                     }
                     if (location.getNormalizedLocation().equals(settlement.getDirection())) {
@@ -175,10 +174,6 @@ public class GameManager {
                 resourceManager = new ResourceManager();
             }
             resourceManager.setGameBanks(gameBanks);
-            
-            //update the robber location
-            map.setRobber(mapManager.getRobberLocation());
-            game.setMap(map);
 
         } catch (Exception e) {
             System.out.println(e);
