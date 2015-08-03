@@ -46,7 +46,6 @@ public class MapPoller extends TimerTask {
     private final int MAX_POINTS = 10;
     private boolean discardedOnce;
     private Timer gamePlayTimer;
-    
 
     public MapPoller() {
         super();
@@ -95,7 +94,7 @@ public class MapPoller extends TimerTask {
                 mapView.getController().initFromModel();
 //                }
                 //</editor-fold>
-
+               
                 //these must be done whether the version changes or not
                 // <editor-fold desc="Version Independent">
                 /*  ---------- BEGIN ----------THESE UPDATES WILL BE DONE WHETHER THE VERSION CHANGES OR NOT */
@@ -117,6 +116,13 @@ public class MapPoller extends TimerTask {
 
                 // Toggle the button to Finish Turn (this ultimately controls whether the button is enable or not)
                 if (status.equals("Playing") && playerIndex == gameInformation.getTurnTracker().getCurrentTurn()) {
+                    if (rollController.getRollView().isModalShowing()) {
+                        rollController.getRollView().closeModal();
+                        //may not be necessary, but just in case the timer is running
+                        if (rollController.getRollView().getRollTimer().isRunning()) {
+                            rollController.getRollView().getRollTimer().stop();
+                        }
+                    }
                     //enable the domestic trade button when it's your turn
                     catanPanel.getMidPanel().getTradePanel()
                             .getDomesticController().getTradeView().enableDomesticTrade(true);
@@ -153,8 +159,9 @@ public class MapPoller extends TimerTask {
                     boolean largestArmy = false;
                     boolean highlight = false;
                     int index = player.getPlayerIndex();
+                    
                     // only update local player color for local player
-                    if (player.getPlayerID() == ClientCommunicator.getSingleton().getPlayerId()) {
+                    if (player.getPlayerID() == ClientCommunicator.getSingleton().getPlayerId()) { 
                         turnTrackerView.setLocalPlayerColor(CatanColor.valueOf(player.getColor().toUpperCase()));
                         pointsController.getPointsView().setPoints(player.getVictoryPoints());
                     }
@@ -175,20 +182,19 @@ public class MapPoller extends TimerTask {
 
                     /* Begin Points Controller Update */
                     if (player.getVictoryPoints() == MAX_POINTS) {
-                        
+
                         pointsController.getFinishedView().setWinner(player.getName(),
                                 (playerIndex == index));
                         if (!pointsController.getFinishedView().isModalShowing()) {
                             //Game is over (stop the timer)\
-                             //also cancel the gamePlay poller
+                            //also cancel the gamePlay poller
                             gamePlayTimer.cancel();
                             gamePlayTimer.purge();
-                            
-                            
+
                             //hide the game so no interaction   
                             catanPanel.setVisible(false);
                             pointsController.getFinishedView().showModal();
-                            
+
                         }
                     }
                     /* End Points Controller Update */
@@ -450,9 +456,9 @@ public class MapPoller extends TimerTask {
         }
 
     }
-    
+
     public void setGamePlayTimer(Timer gamePlayTimer) {
         this.gamePlayTimer = gamePlayTimer;
     }
-    
+
 }
