@@ -7,7 +7,6 @@ package client.main;
 
 import client.base.Controller;
 import client.join.JoinGameController;
-import client.join.PlayerWaitingController;
 import client.join.PlayerWaitingViewPoller;
 import java.util.Timer;
 
@@ -30,7 +29,12 @@ public class PlayerWaitingState extends State {
 
             if (joinGameController.getPlayerWaitingView().isModalShowing()) {
                 playerWaitingTimer.schedule(new PlayerWaitingViewPoller(joinGameController), 0, 1000);
+                
+                //you are in the player waiting no need to poll anymore on listing games
+                joinGameController.getJoinGameTimer().cancel();
+                joinGameController.getJoinGameTimer().purge();
             }
+
         } else {
 
             // we have 4 players no need to poll anymore

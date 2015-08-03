@@ -7,6 +7,7 @@ package client.main;
 
 import client.base.Controller;
 import client.catan.CatanPanel;
+import client.catan.GameStatePanel;
 import client.communication.ClientCommunicator;
 import client.communication.ClientFascade;
 import shared.data.GameInfo;
@@ -57,9 +58,12 @@ public class FirstRoundState extends State {
         turnTrackerView = catanPanel.getLeftPanel().getTurnView();
         pointsController = catanPanel.getRightPanel().getPointsController();
 
+        GameManager gameManager = null;
+        GameStatePanel gameStatePanel = catanPanel.getMidPanel().getGameStatePanel();
+
         System.out.println(this.toString());
         while (status.equals("FirstRound")) {
-            GameManager gameManager = ClientCommunicator.getSingleton().getGameManager();
+            gameManager = ClientCommunicator.getSingleton().getGameManager();
             try {
                 GameInfo gameInformation = ClientFascade.getSingleton()
                         .getGameModel("?version=" + -1);
@@ -68,6 +72,11 @@ public class FirstRoundState extends State {
                 gameManager.initializeGame(gameInformation);
                 version = gameInformation.getVersion();
 
+                if (gameStatePanel.getBackground() != CatanColor.valueOf(gameInformation.getPlayers().get(gameInformation.getTurnTracker().getCurrentTurn()).getColor().toUpperCase()).getJavaColor()) {
+
+                    gameStatePanel.getCentered().setBackground(CatanColor.valueOf(gameInformation.getPlayers().get(gameInformation.getTurnTracker().getCurrentTurn()).getColor().toUpperCase()).getJavaColor());
+                }
+                mapController.initFromModel();
                 Integer playerId = ClientCommunicator.getSingleton().getPlayerId();
                 int size = gameManager.getGame().getPlayers().size();
 
@@ -133,30 +142,23 @@ public class FirstRoundState extends State {
 
                         turnTrackerView.updatePlayer(index, player.getVictoryPoints(), highlight, largestArmy,
                                 longestRoad);
-
-                        /* Begin Points Controller Update */
-                        if (player.getVictoryPoints() == MAX_POINTS) {
-                            pointsController.getFinishedView().setWinner(player.getName(),
-                                    (player.getPlayerIndex() == index));
-                            if (!pointsController.getFinishedView().isModalShowing()) {
-                                pointsController.getFinishedView().showModal();
-                            }
-                        }
-                        /* End Points Controller Update */
                     }
 
                 }
                 /**
                  * ******* End Turn Track Update *******
                  */
+                turnTrackerView.updateGameState("FirstRound", false);
                 //end your turn
                 if (mapController.isEndTurn()) {
-
                     FinishMove fm = new FinishMove(gameManager.getGame().getTurnTracker().getCurrentTurn());
                     fm.setType("finishTurn");
                     fm.setPlayerIndex(playerIndex);
                     try {
-                        gameManager.initializeGame(ClientFascade.getSingleton().finishMove(fm));
+                        ClientFascade.getSingleton().finishMove(fm);
+                        gameInformation = ClientFascade.getSingleton()
+                                .getGameModel("?version=" + -1);
+                        gameManager.initializeGame(gameInformation);
                         //update the highligher at the end of the turn since we are leaving this state
                         for (PlayerInfo player : gameManager.getGame().getPlayers()) {
                             turnTrackerView.updatePlayer(player.getPlayerIndex(), player.getVictoryPoints(), player.getPlayerIndex() == gameInformation.getTurnTracker().getCurrentTurn(), false,
@@ -167,11 +169,12 @@ public class FirstRoundState extends State {
                         Logger.getLogger(FirstRoundState.class.getName()).log(Level.SEVERE, null, ex);
                     }
                     mapController.setEndTurn(false);
-
                     mapController.initFromModel();
 
-                    //first round is over
-                    break;
+                    //first round is over if last player has played road and settlement
+                    if (status.equals("SecondRound")) {
+                        break;
+                    }
                 }
             } catch (ClientException ex) {
                 ex.printStackTrace();

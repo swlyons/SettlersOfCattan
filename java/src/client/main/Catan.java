@@ -83,6 +83,7 @@ public class Catan extends JFrame {
 
                         //gameplay
                         catanStateMachine.stay((MapController) catanPanel.getMidPanel().getMapController());
+                        
                     }
                 });
                 JoinGameView joinView = new JoinGameView();

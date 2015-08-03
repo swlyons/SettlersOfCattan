@@ -24,7 +24,7 @@ public class PlayerWaitingViewPoller extends TimerTask {
     private JoinGameController joinGameController;
     private boolean update = false;
     private final int MAX_PLAYERS = 4;
-
+    
     public PlayerWaitingViewPoller() {
     }
 
@@ -94,7 +94,7 @@ public class PlayerWaitingViewPoller extends TimerTask {
 
             //start the game cause we have 4 players
             ((PlayerWaitingController) getJoinGameController().getPlayerWaitingView().getController()).ready();
-
+            
         }
 
     }
