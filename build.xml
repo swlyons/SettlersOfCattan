@@ -179,7 +179,7 @@
     </target>
     <!-- EXAMPLE: ant client -->
     <target name="start-client" depends="compile" description="run client using server on specified host and port">
-        <java classname="client.Client" fork="yes">
+        <java classname="client.main.Catan" fork="yes">
             <classpath>
                 <pathelement location="${java.lib.dir}/gson-2.2.4.jar"/>
                 <pathelement location="${java.build}" />
