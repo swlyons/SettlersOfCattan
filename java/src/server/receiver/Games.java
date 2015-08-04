@@ -12,8 +12,10 @@ package server.receiver;
 public class Games {
 
     private Database db;
-
-    public Games(Database db) {
+    private String plugin;
+    
+    public Games(Database db, String plugin) {
         this.db = db;
+        this.plugin = plugin;
     }
 }

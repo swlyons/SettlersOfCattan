@@ -4,6 +4,8 @@ public class User {
 
     private String username;
     private String password;
+    private int id;
+    private int gameid;
 
     /**
      *
@@ -56,5 +58,21 @@ public class User {
             condition = true;
         }
         return condition;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int getId() {
+       return id;
+    }
+
+    public int getGameId() {
+        return gameid;
+    }
+
+    public void setGameId(int gameid) {
+        this.gameid= gameid;
     }
 }
