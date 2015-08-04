@@ -9,6 +9,7 @@
     <property name="web.arg" value="gameplay"/>
     <property name="options.arg" value="ug"/>
     <property name="host.arg" value="localhost"/>
+    <property name="mock.arg" value="false"/>
     
     <!-- Input folders -->  
     <property name="java.dir" value="java"/>
@@ -170,6 +171,7 @@
         <java jar="${java.dist}/catan-server.jar" dir="${java.dist}" fork="yes">
             <sysproperty key="com.sun.management.jmxremote" value=""/>
             <arg value="${port.arg}"/>
+            <arg value="${mock.arg}"/>
             <assertions>
                 <enable/>
             </assertions>
