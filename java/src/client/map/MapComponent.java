@@ -347,6 +347,8 @@ public class MapComponent extends JComponent {
         }
 
         settlements.put(normVertLoc, color);
+        
+        this.repaint();
     }
 
     public void placeCity(VertexLocation vertLoc, CatanColor color) {
@@ -358,6 +360,8 @@ public class MapComponent extends JComponent {
         }
 
         cities.put(normVertLoc, color);
+        
+        this.repaint();
     }
 
     public void placePort(EdgeLocation edgeLoc, PortType portType) {
@@ -367,6 +371,7 @@ public class MapComponent extends JComponent {
     public void placeRobber(HexLocation hexLoc) {
 
         robber = hexLoc;
+        this.repaint();
     }
 
     public void startDrop(PieceType pieceType, CatanColor pieceColor) {
