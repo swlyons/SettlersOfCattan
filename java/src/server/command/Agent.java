@@ -15,11 +15,20 @@ import java.util.ArrayList;
 public class Agent {
 
     private final ArrayList commandQueue;
-
+    private int deltas = 5;
+    
     public Agent() {
         commandQueue = new ArrayList();
     }
 
+    public int getDeltas() {
+        return deltas;
+    }
+
+    public void setDeltas(int deltas) {
+        this.deltas = deltas;
+    }
+    
     public boolean sendCommand(Command command) {
         commandQueue.add(command);
         return(command.execute());

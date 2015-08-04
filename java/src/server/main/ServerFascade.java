@@ -50,6 +50,10 @@ public class ServerFascade implements Fascade {
         }
         return id;
     }
+
+    public Agent getAgent() {
+        return agent;
+    }
     
     @Override
     public boolean register(User credentials) throws ServerException {
