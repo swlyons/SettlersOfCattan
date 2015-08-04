@@ -1,5 +1,9 @@
 package server.command;
 
+import shared.locations.*;
+import shared.data.*;
+import shared.model.*;
+
 import static org.junit.Assert.*;
 
 import org.junit.After;
@@ -8,9 +12,14 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import shared.data.SettlementLocation;
 import shared.data.XYEdgeLocation;
+import shared.locations.HexLocation;
+import shared.locations.VertexDirection;
 import shared.model.AcceptTrade;
 import shared.model.BuildRoad;
+import shared.model.BuildSettlement;
+import shared.model.BuyDevCard;
 
 public class CommandTest {
 
@@ -90,7 +99,7 @@ public class CommandTest {
 	}
 	
 	@Test
-	public void BuildRoadTestCommandTest() {
+	public void BuildRoadCommandTest() {
 		CreateGameCommand testGame = new CreateGameCommand(false, false, false, "test game");
 		testGame.execute();
 		
@@ -103,12 +112,60 @@ public class CommandTest {
 		buildRoad.setGameId(testGame.getGameId());
 		BuildRoadCommand command = new BuildRoadCommand(buildRoad);
 		assertTrue(command != null);
-		assertTrue(command.execute());
+		assertFalse(command.execute());
 		
 		roadLocation.setX(1);
 		buildRoad.setFree(false);
 		buildRoad.setRoadLocation(roadLocation);
 		command = new BuildRoadCommand(buildRoad);
+		assertTrue(command != null);
+		assertFalse(command.execute());
+	}
+	
+	@Test
+	public void BuildSettlementCommandTest() {
+		CreateGameCommand testGame = new CreateGameCommand(false, false, false, "test game");
+		testGame.execute();
+		
+		SettlementLocation vertexLocation = new SettlementLocation();
+		vertexLocation.setX(0);
+		vertexLocation.setY(0);
+		vertexLocation.setDirection(VertexDirection.E);
+		BuildSettlement buildSettlement = new BuildSettlement();
+		buildSettlement.setVertexLocation(vertexLocation);
+		buildSettlement.setFree(true);
+		buildSettlement.setGameId(testGame.getGameId());
+		buildSettlement.setPlayerIndex(0);
+		BuildSettlementCommand command = new BuildSettlementCommand(buildSettlement);
+		assertTrue(command != null);
+		assertFalse(command.execute());
+	}
+	
+	@Test
+	public void BuildCityCommandTest() {
+		CreateGameCommand testGame = new CreateGameCommand(false, false, false, "test game");
+		testGame.execute();
+		
+		SettlementLocation vertexLocation = new SettlementLocation();
+		vertexLocation.setX(0);
+		vertexLocation.setY(0);
+		vertexLocation.setDirection(VertexDirection.E);
+		BuildCity buildCity = new BuildCity(0);
+		buildCity.setVertexLocation(vertexLocation);
+		buildCity.setGameId(testGame.getGameId());
+		BuildCityCommand command = new BuildCityCommand(buildCity);
+		assertTrue(command != null);
+		assertFalse(command.execute());
+	}
+	
+	@Test
+	public void BuyDevCardCommandTest() {
+		CreateGameCommand testGame = new CreateGameCommand(false, false, false, "test game");
+		testGame.execute();
+		
+		BuyDevCard buyDevCard = new BuyDevCard(0);
+		buyDevCard.setGameId(testGame.getGameId());
+		BuyDevCardCommand command = new BuyDevCardCommand(buyDevCard);
 		assertTrue(command != null);
 		assertFalse(command.execute());
 	}
