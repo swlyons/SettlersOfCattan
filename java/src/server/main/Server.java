@@ -619,7 +619,7 @@ public class Server {
         public void handle(HttpExchange exchange) throws IOException {
             try {
 
-                if (!isMock) {
+                if (isMock) {
 
                     String result = MockServerFascade.getSingleton().getModel(1 + "");
                     exchange.getResponseHeaders().set("Content-Type", "application/json");
