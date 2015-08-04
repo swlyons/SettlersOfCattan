@@ -33,30 +33,32 @@ public class Users {
      * @throws server.main.ServerException
      */
     public void add(User user) throws ServerException {
-        PreparedStatement stmt = null;
-        ResultSet keyRS = null;
-        try {
-            String query = "INSERT into users (username, password, gameid)"
-                    + " values (?, ?, ?)";
-            stmt = db.getConnection().prepareStatement(query);
-            stmt.setString(1, user.getUsername().toLowerCase());
-            stmt.setString(2, user.getPassword());
-           /*TODO Add a game ID for a user */
-            stmt.setInt(3, user.getGameId());
-            if (stmt.executeUpdate() == 1) {
-                Statement keyStmt = db.getConnection().createStatement();
-                keyRS = keyStmt.executeQuery("SELECT last_INSERT_rowid()");
-                keyRS.next();
-                int id = keyRS.getInt(1);
-                user.setId(id);
-            } else {
-                throw new ServerException("Could not INSERT user");
+        if (plugin.equals("sql")) {
+            PreparedStatement stmt = null;
+            ResultSet keyRS = null;
+            try {
+                String query = "INSERT into users (username, password, gameid)"
+                        + " values (?, ?, ?)";
+                stmt = db.getConnection().prepareStatement(query);
+                stmt.setString(1, user.getUsername().toLowerCase());
+                stmt.setString(2, user.getPassword());
+                /*TODO Add a game ID for a user */
+                stmt.setInt(3, user.getGameId());
+                if (stmt.executeUpdate() == 1) {
+                    Statement keyStmt = db.getConnection().createStatement();
+                    keyRS = keyStmt.executeQuery("SELECT last_INSERT_rowid()");
+                    keyRS.next();
+                    int id = keyRS.getInt(1);
+                    user.setId(id);
+                } else {
+                    throw new ServerException("Could not INSERT user");
+                }
+            } catch (SQLException e) {
+                throw new ServerException("Could not INSERT user", e);
+            } finally {
+                Database.safeClose(stmt);
+                Database.safeClose(keyRS);
             }
-        } catch (SQLException e) {
-            throw new ServerException("Could not INSERT user", e);
-        } finally {
-            Database.safeClose(stmt);
-            Database.safeClose(keyRS);
         }
     }
 
@@ -67,51 +69,55 @@ public class Users {
      * @throws server.main.ServerException
      */
     public void update(User user) throws ServerException {
-        PreparedStatement stmt = null;
-        try {
-            String query = "UPDATE users set username = ?, password = ?, gameid = ?, "
-                    + "WHERE id = ?";
-            stmt = db.getConnection().prepareStatement(query);
-            stmt.setString(1, user.getUsername().toLowerCase());
-            stmt.setString(2, user.getPassword());
-            stmt.setInt(3, user.getGameId());
-            stmt.setInt(4, user.getId());
-            if (stmt.executeUpdate() != 1) {
-                throw new ServerException("Could not UPDATE user");
+        if (plugin.equals("sql")) {
+            PreparedStatement stmt = null;
+            try {
+                String query = "UPDATE users set username = ?, password = ?, gameid = ?, "
+                        + "WHERE id = ?";
+                stmt = db.getConnection().prepareStatement(query);
+                stmt.setString(1, user.getUsername().toLowerCase());
+                stmt.setString(2, user.getPassword());
+                stmt.setInt(3, user.getGameId());
+                stmt.setInt(4, user.getId());
+                if (stmt.executeUpdate() != 1) {
+                    throw new ServerException("Could not UPDATE user");
+                }
+            } catch (SQLException e) {
+                throw new ServerException("Could not UPDATE user", e);
+            } finally {
+                Database.safeClose(stmt);
             }
-        } catch (SQLException e) {
-            throw new ServerException("Could not UPDATE user", e);
-        } finally {
-            Database.safeClose(stmt);
         }
     }
 
     /**
-     * Clears all users FROM the Users table used by 
+     * Clears all users FROM the Users table used by
      *
      *
      * @throws ServerException
      */
     public void clear() throws ServerException {
-        PreparedStatement stmt = null;
-        try {
-            String query = "DROP TABLE IF EXISTS users";
-            stmt = db.getConnection().prepareStatement(query);
-            stmt.execute();
-        } catch (SQLException e) {
-            throw new ServerException("Could not drop users table", e);
-        } finally {
-            Database.safeClose(stmt);
-        }
-        try {
-            String query = "CREATE TABLE users(id INTEGER PRIMARY KEY, username TEXT NOT NULL, "
-                    + "password TEXT NOT NULL, gameid INTEGER NOT NULL)";
-            stmt = db.getConnection().prepareStatement(query);
-            stmt.execute();
-        } catch (SQLException e) {
-            throw new ServerException("Could not create users table", e);
-        } finally {
-            Database.safeClose(stmt);
+        if (plugin.equals("sql")) {
+            PreparedStatement stmt = null;
+            try {
+                String query = "DROP TABLE IF EXISTS users";
+                stmt = db.getConnection().prepareStatement(query);
+                stmt.execute();
+            } catch (SQLException e) {
+                throw new ServerException("Could not drop users table", e);
+            } finally {
+                Database.safeClose(stmt);
+            }
+            try {
+                String query = "CREATE TABLE users(id INTEGER PRIMARY KEY, username TEXT NOT NULL, "
+                        + "password TEXT NOT NULL, gameid INTEGER NOT NULL)";
+                stmt = db.getConnection().prepareStatement(query);
+                stmt.execute();
+            } catch (SQLException e) {
+                throw new ServerException("Could not create users table", e);
+            } finally {
+                Database.safeClose(stmt);
+            }
         }
 
     }
@@ -126,34 +132,39 @@ public class Users {
      */
     public User validateUser(String name, String pass) throws ServerException {
         User result = null;
-        PreparedStatement stmt = null;
-        ResultSet rs = null;
-        try {
-            String query = "SELECT id, username, password, gameid "
-                    + "FROM users "
-                    + "WHERE username = ? and password = ? limit 1";
-            stmt = db.getConnection().prepareStatement(query);
-            stmt.setString(1, name.toLowerCase());
-            stmt.setString(2, pass);
-            rs = stmt.executeQuery();
-            while (rs.next()) {
-                int id = rs.getInt(1);
-                String username = rs.getString(2);
-                String password = rs.getString(3);
-                int gameId = rs.getInt(4);
-                
-                result = new User(username, password);
-                result.setId(id);
-                result.setGameId(gameId);
-                
-            }
-        } catch (SQLException e) {
-            throw new ServerException(e.getMessage(), e);
-        } finally {
-            Database.safeClose(rs);
-            Database.safeClose(stmt);
-        }
+        if (plugin.equals("sql")) {
 
+            PreparedStatement stmt = null;
+            ResultSet rs = null;
+            try {
+                String query = "SELECT id, username, password, gameid "
+                        + "FROM users "
+                        + "WHERE username = ? and password = ? limit 1";
+                stmt = db.getConnection().prepareStatement(query);
+                stmt.setString(1, name.toLowerCase());
+                stmt.setString(2, pass);
+                rs = stmt.executeQuery();
+                while (rs.next()) {
+                    int id = rs.getInt(1);
+                    String username = rs.getString(2);
+                    String password = rs.getString(3);
+                    int gameId = rs.getInt(4);
+
+                    result = new User(username, password);
+                    result.setId(id);
+                    result.setGameId(gameId);
+
+                }
+            } catch (SQLException e) {
+                throw new ServerException(e.getMessage(), e);
+            } finally {
+                Database.safeClose(rs);
+                Database.safeClose(stmt);
+            }
+        } else {
+
+        }
         return result;
+
     }
 }
