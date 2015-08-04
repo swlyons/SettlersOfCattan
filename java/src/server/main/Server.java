@@ -160,12 +160,11 @@ public class Server {
         @Override
         public void handle(HttpExchange exchange) throws IOException {
             try {
-                
+
                 // un-package the data
                 Reader reader = new InputStreamReader(exchange.getRequestBody(), "UTF-8");
                 User user = model.fromJson(reader, User.class);
-                
-                
+
                 if (user.getUsername() == null || user.getPassword() == null) {
                     String error = "Username and password can't be null";
                     System.out.println(error);
@@ -175,7 +174,7 @@ public class Server {
                     exchange.getResponseBody().close();
                     return;
                 }
-                
+
                 // call the appropriate fascade (real or mock)
                 if (isMock) {
                     MockServerFascade.getSingleton().login(user);
@@ -188,15 +187,12 @@ public class Server {
                     exchange.getResponseBody().close();
                     return;
                 }
-                
+
                 int id = ServerFascade.getSingleton().getLoginId(user);
 
                 // re-package and return the data
                 if (id != -1) {
                     String cookie = "catan.user=";
-					// cookie+="{\"name\":\""+AllOfOurInformation.getSingleton().getUsers().get(id).getUsername()+"\",";
-                    // cookie+="\"password\":\""+AllOfOurInformation.getSingleton().getUsers().get(id).getPassword()+"\",";
-                    // cookie+="\"playerID\":" +id+"}";
                     String cookieModel = "{name:" + AllOfOurInformation.getSingleton().getUsers().get(id).getUsername()
                             + ",";
                     cookieModel += "password:" + AllOfOurInformation.getSingleton().getUsers().get(id).getPassword()
@@ -255,18 +251,12 @@ public class Server {
 
             // call the appropriate fascade (real or mock)
             boolean result = false;
-            if(isMock){
+            if (isMock) {
                 try {
-                    MockServerFascade.getSingleton().register(user);
+                    result = MockServerFascade.getSingleton().register(user);
                 } catch (ServerException ex) {
                     Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
                 }
-                String message = "Success";
-                System.out.println(message);
-                exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, message.length());
-                exchange.getResponseBody().write(message.getBytes());
-                exchange.getResponseBody().close();
-                return;
             }
             try {
                 result = ServerFascade.getSingleton().register(user);
@@ -301,14 +291,14 @@ public class Server {
 
             try {
                 ArrayList<GameInfo> gamesList = new ArrayList<GameInfo>();
-                if(isMock){
+                if (isMock) {
                     gamesList = MockServerFascade.getSingleton().listGames();
-                }else{
+                } else {
                     gamesList = ServerFascade.getSingleton().listGames();
                 }
-                
+
                 String response = "[";
-                
+
                 if (!gamesList.isEmpty()) {
                     for (GameInfo gameInfo : gamesList) {
                         response += "{\"title\":\"" + gameInfo.getTitle() + "\",";
@@ -360,7 +350,7 @@ public class Server {
                 Reader reader = new InputStreamReader(exchange.getRequestBody(), "UTF-8");
                 String messageBody = "";
 
-				// check that the booleans are actually booleans for the swagger
+                // check that the booleans are actually booleans for the swagger
                 // <editor-fold desc="Check Booleans">
                 BufferedReader br = new BufferedReader(reader);
                 Scanner sc = new Scanner(br);
@@ -403,7 +393,11 @@ public class Server {
                     }
 
                     try {
-                        gameInfo = ServerFascade.getSingleton().createGame(createGame);
+                        if (isMock) {
+                            gameInfo = MockServerFascade.getSingleton().createGame(createGame);
+                        } else {
+                            gameInfo = ServerFascade.getSingleton().createGame(createGame);
+                        }
                     } catch (Exception e) {
                         String error = "Create game error with fascade trying to create game";
                         System.out.println(error);
@@ -513,7 +507,7 @@ public class Server {
                     }
                     if (AllOfOurInformation.getSingleton().getGames().get(joinGameRequest.getId()).getGame()
                             .getPlayers().get(i) == null) {
-						// dont allow the player to join the game with the same
+                        // dont allow the player to join the game with the same
                         // color as another player
                         if (takenColors.contains(joinGameRequest.getColor())) {
                             colorTaken = true;
@@ -532,7 +526,9 @@ public class Server {
                         finished = true;
                     }
                 }
-
+                if (isMock) {
+                    found = MockServerFascade.getSingleton().joinGame(joinGameRequest);
+                }
                 if (found) {
                     String cookie = "catan.game=";
                     cookie += joinGameRequest.getId();
@@ -587,7 +583,7 @@ public class Server {
                             exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, message.length());
                             exchange.getResponseBody().write(message.getBytes());
                             exchange.getResponseBody().close();
-							// Error, someone joining the same game twice
+                            // Error, someone joining the same game twice
                             // simeltaneously. (Twice at the same time)
                         }
                     }
@@ -658,7 +654,9 @@ public class Server {
                 } else {
                     result = "\"true\"";
                 }
-
+                if (isMock) {
+                    result = MockServerFascade.getSingleton().getModel(version + "");
+                }
                 // re-package and return the data
                 exchange.getResponseHeaders().set("Content-Type", "application/json");
                 exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, result.length());
@@ -685,6 +683,13 @@ public class Server {
         public void handle(HttpExchange exchange) throws IOException {
             exchange.getResponseHeaders().set("Content-Type", "application/json");
             String message = "[\"DO NOT ADD A COMPUTER PLAYER\"]";
+            if (isMock) {
+                try {
+                    message = ServerFascade.getSingleton().listAITypesInGame().toString();
+                } catch (ServerException ex) {
+                    Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
             exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, message.length());
             exchange.getResponseBody().write(message.getBytes());
             exchange.getResponseBody().close();
@@ -733,8 +738,14 @@ public class Server {
                         break;
                     }
                 }
-
                 String message = "Success";
+                if (isMock) {
+                    if (!MockServerFascade.getSingleton().addAIToGame(null)) {
+                        message = "Failed";
+                    }
+
+                }
+
                 exchange.getResponseHeaders().set("Content-Type", "text/html");
                 exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, message.length());
                 exchange.getResponseBody().write(message.getBytes());
@@ -765,7 +776,7 @@ public class Server {
                 boolean invalidIndex = false;
                 boolean notLoggedIn = false;
 
-				// make sure the player index is valid (a number that gson can
+                // make sure the player index is valid (a number that gson can
                 // parse)
                 SendChat sendChatRequest = null;
                 try {
@@ -812,7 +823,11 @@ public class Server {
                     // call the appropriate facade
                     GameInfo result = null;
                     try {
-                        result = ServerFascade.getSingleton().sendChat(sendChatRequest);
+                        if (isMock) {
+                            result = MockServerFascade.getSingleton().sendChat(sendChatRequest);
+                        } else {
+                            result = ServerFascade.getSingleton().sendChat(sendChatRequest);
+                        }
                     } catch (NullPointerException npe) {
                         String message = "For the specified game there is no player with the index: "
                                 + sendChatRequest.getPlayerIndex();
@@ -934,7 +949,11 @@ public class Server {
 
                 GameInfo game;
                 try {
-                    game = ServerFascade.getSingleton().rollNumber(rollNumber);
+                    if (isMock) {
+                        game = MockServerFascade.getSingleton().rollNumber(rollNumber);
+                    } else {
+                        game = ServerFascade.getSingleton().rollNumber(rollNumber);
+                    }
                 } catch (Exception e) {
                     game = null;
                 }
@@ -1063,7 +1082,11 @@ public class Server {
 
                 GameInfo game;
                 try {
-                    game = ServerFascade.getSingleton().robPlayer(robPlayer);
+                    if (isMock) {
+                        game = MockServerFascade.getSingleton().robPlayer(robPlayer);
+                    } else {
+                        game = ServerFascade.getSingleton().robPlayer(robPlayer);
+                    }
                 } catch (Exception e) {
                     game = null;
                 }
@@ -1213,7 +1236,11 @@ public class Server {
                 finishMove.setGameId(gameAndPlayer.getGameId());
                 GameInfo game;
                 try {
-                    game = ServerFascade.getSingleton().finishMove(finishMove);
+                    if (isMock) {
+                        game = MockServerFascade.getSingleton().finishMove(finishMove);
+                    } else {
+                        game = ServerFascade.getSingleton().finishMove(finishMove);
+                    }
                 } catch (Exception e) {
                     game = null;
                 }
@@ -1330,7 +1357,11 @@ public class Server {
                 buyDevCard.setGameId(gameAndPlayer.getGameId());
                 GameInfo game;
                 try {
-                    game = ServerFascade.getSingleton().buyDevCard(buyDevCard);
+                    if (isMock) {
+                        game = MockServerFascade.getSingleton().buyDevCard(buyDevCard);
+                    } else {
+                        game = ServerFascade.getSingleton().buyDevCard(buyDevCard);
+                    }
                 } catch (Exception e) {
                     game = null;
                 }
@@ -1457,7 +1488,11 @@ public class Server {
 
                 GameInfo game;
                 try {
-                    game = ServerFascade.getSingleton().year_Of_Plenty(yearOfPlenty);
+                    if (isMock) {
+                        game = MockServerFascade.getSingleton().year_Of_Plenty(yearOfPlenty);
+                    } else {
+                        game = ServerFascade.getSingleton().year_Of_Plenty(yearOfPlenty);
+                    }
                 } catch (Exception e) {
                     game = null;
                 }
@@ -1584,7 +1619,11 @@ public class Server {
 
                 GameInfo game;
                 try {
-                    game = ServerFascade.getSingleton().monopoly(monopoly);
+                    if (isMock) {
+                        game = MockServerFascade.getSingleton().monopoly(monopoly);
+                    } else {
+                        game = ServerFascade.getSingleton().monopoly(monopoly);
+                    }
                 } catch (Exception e) {
                     game = null;
                 }
@@ -1711,7 +1750,11 @@ public class Server {
 
                 GameInfo game;
                 try {
-                    game = ServerFascade.getSingleton().roadBuilding(roadBuilding);
+                    if (isMock) {
+                        game = MockServerFascade.getSingleton().roadBuilding(roadBuilding);
+                    } else {
+                        game = ServerFascade.getSingleton().roadBuilding(roadBuilding);
+                    }
                 } catch (Exception e) {
                     game = null;
                 }
@@ -1857,7 +1900,11 @@ public class Server {
 
                 GameInfo game;
                 try {
-                    game = ServerFascade.getSingleton().soldier(soldier);
+                    if (isMock) {
+                        game = MockServerFascade.getSingleton().soldier(soldier);
+                    } else {
+                        game = ServerFascade.getSingleton().soldier(soldier);
+                    }
                 } catch (Exception e) {
                     game = null;
                 }
@@ -1964,7 +2011,11 @@ public class Server {
 
                 GameInfo game;
                 try {
-                    game = ServerFascade.getSingleton().monument(monument);
+                    if (isMock) {
+                        game = MockServerFascade.getSingleton().monument(monument);
+                    } else {
+                        game = ServerFascade.getSingleton().monument(monument);
+                    }
                 } catch (Exception e) {
                     game = null;
                 }
@@ -2092,7 +2143,11 @@ public class Server {
 
                 GameInfo game;
                 try {
-                    game = ServerFascade.getSingleton().offerTrade(offerTrade);
+                    if (isMock) {
+                        game = MockServerFascade.getSingleton().offerTrade(offerTrade);
+                    } else {
+                        game = ServerFascade.getSingleton().offerTrade(offerTrade);
+                    }
                 } catch (Exception e) {
                     game = null;
                 }
@@ -2199,7 +2254,11 @@ public class Server {
 
                 GameInfo game;
                 try {
-                    game = ServerFascade.getSingleton().acceptTrade(acceptTrade);
+                    if (isMock) {
+                        game = MockServerFascade.getSingleton().acceptTrade(acceptTrade);
+                    } else {
+                        game = ServerFascade.getSingleton().acceptTrade(acceptTrade);
+                    }
                 } catch (Exception e) {
                     game = null;
                 }
@@ -2394,7 +2453,11 @@ public class Server {
 
                 GameInfo game;
                 try {
-                    game = ServerFascade.getSingleton().buildSettlement(buildSettlement);
+                    if (isMock) {
+                        game = MockServerFascade.getSingleton().buildSettlement(buildSettlement);
+                    } else {
+                        game = ServerFascade.getSingleton().buildSettlement(buildSettlement);
+                    }
                 } catch (Exception e) {
                     game = null;
                 }
@@ -2539,7 +2602,11 @@ public class Server {
 
                 GameInfo game;
                 try {
-                    game = ServerFascade.getSingleton().buildCity(buildCity);
+                    if (isMock) {
+                        game = MockServerFascade.getSingleton().buildCity(buildCity);
+                    } else {
+                        game = ServerFascade.getSingleton().buildCity(buildCity);
+                    }
                 } catch (Exception e) {
                     e.printStackTrace();
                     game = null;
@@ -2747,7 +2814,11 @@ public class Server {
 
                 GameInfo game;
                 try {
-                    game = ServerFascade.getSingleton().buildRoad(buildRoad);
+                    if (isMock) {
+                        game = MockServerFascade.getSingleton().buildRoad(buildRoad);
+                    } else {
+                        game = ServerFascade.getSingleton().buildRoad(buildRoad);
+                    }
                 } catch (Exception e) {
                     e.printStackTrace();
                     game = null;
@@ -2854,7 +2925,11 @@ public class Server {
                 maritimeTrade.setGameId(gameAndPlayer.getGameId());
                 GameInfo game;
                 try {
-                    game = ServerFascade.getSingleton().maritimeTrade(maritimeTrade);
+                    if (isMock) {
+                        game = MockServerFascade.getSingleton().maritimeTrade(maritimeTrade);
+                    } else {
+                        game = ServerFascade.getSingleton().maritimeTrade(maritimeTrade);
+                    }
                 } catch (Exception e) {
                     game = null;
                 }
@@ -3058,7 +3133,11 @@ public class Server {
 
                 GameInfo game;
                 try {
-                    game = ServerFascade.getSingleton().discardCards(discardCards);
+                    if (isMock) {
+                        game = MockServerFascade.getSingleton().discardCards(discardCards);
+                    } else {
+                        game = ServerFascade.getSingleton().discardCards(discardCards);
+                    }
                 } catch (Exception e) {
                     game = null;
                 }
