@@ -86,14 +86,9 @@ public class MapPoller extends TimerTask {
                         .getGameModel("?version=" + (gameManager.getGame().getVersion() - 1));
                 status = gameInformation.getTurnTracker().getStatus();
 
-                //only do these updates when the version changes
-                //<editor-fold desc="Version Dependent">
-//                if (version != gameManager.getGame().getVersion()) {
                 gameManager.initializeGame(gameInformation);
                 version = gameInformation.getVersion();
                 mapView.getController().initFromModel();
-//                }
-                //</editor-fold>
                
                 //these must be done whether the version changes or not
                 // <editor-fold desc="Version Independent">

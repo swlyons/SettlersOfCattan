@@ -189,6 +189,7 @@ public class Server {
                     return;
                 }
                 
+                System.out.println(user.toString());
                 int id = ServerFascade.getSingleton().getLoginId(user);
 
                 // re-package and return the data

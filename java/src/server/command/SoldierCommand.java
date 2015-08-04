@@ -36,7 +36,7 @@ public class SoldierCommand implements Command {
                             AllOfOurInformation.getSingleton().getGames().get(soldier.getGameId()).getGame().getPlayers().get(soldier.getVictimIndex()).getResources().getRandomResourceAvailable());
                     AllOfOurInformation.getSingleton().getGames().get(soldier.getGameId()).logWithPlayerId("I was attacked!", soldier.getVictimIndex());
                 } else {
-                    AllOfOurInformation.getSingleton().getGames().get(soldier.getGameId()).logWithPlayerId("Player hid among is nothingness.", soldier.getVictimIndex());
+                    AllOfOurInformation.getSingleton().getGames().get(soldier.getGameId()).logWithPlayerId("Thief hid among the poor.", soldier.getVictimIndex());
                 }
             }
             AllOfOurInformation.getSingleton().getGames().get(soldier.getGameId()).getGame().getPlayers().get(soldier.getPlayerIndex()).setPlayedDevCard(true);

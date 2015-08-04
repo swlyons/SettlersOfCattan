@@ -125,9 +125,9 @@ public class MapController extends Controller implements IMapController {
             }
         }
         
-        if ((newRobberLocation2 != null && !newRobberLocation2.equals(gm.getMapManager().getRobberLocation())) || !doneOnce) {
-            getView().placeRobber(gm.getMapManager().getRobberLocation());
-            newRobberLocation2 = gm.getMapManager().getRobberLocation();
+        if ((newRobberLocation2 != null && !newRobberLocation2.equals(gm.getGame().getMap().getRobber())) || !doneOnce) {
+            getView().placeRobber(gm.getGame().getMap().getRobber());
+            newRobberLocation2 = gm.getGame().getMap().getRobber();
         }
         //update the robber location
         gm.getGame().getMap().setRobber(newRobberLocation2);
