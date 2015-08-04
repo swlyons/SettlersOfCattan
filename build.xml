@@ -10,6 +10,8 @@
     <property name="options.arg" value="ug"/>
     <property name="host.arg" value="localhost"/>
     <property name="mock.arg" value="false"/>
+    <property name="plugin.arg" value="sql"/>
+    <property name="deltas.arg" value="10"/>
     
     <!-- Input folders -->  
     <property name="java.dir" value="java"/>
@@ -147,7 +149,7 @@
             <manifest>
                 <attribute name="Main-Class" value="server.main.Server"/>
                 <attribute name="Class-Path" 
-                           value="lib/gson-2.2.4.jar lib/sqlite-jdbc-3.8.10.1.jar" />
+                           value="lib/gson-2.2.4.jar" />
             </manifest>
         </jar>
     </target>
@@ -172,6 +174,8 @@
             <sysproperty key="com.sun.management.jmxremote" value=""/>
             <arg value="${port.arg}"/>
             <arg value="${mock.arg}"/>
+            <arg value="${plugin.arg}"/>
+            <arg value="${deltas.arg}"/>
             <assertions>
                 <enable/>
             </assertions>

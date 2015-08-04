@@ -52,10 +52,14 @@ public class Server {
     /**
      * Initializes the Database
      */
-    private void run() {
+    private void run(String plugin, int deltas) {
         try {
-
-            Database.initialize();
+            //send the plugin to the entry class
+            Database.initialize(plugin);
+            
+            //send the # of deltas for the agent to use
+            ServerFascade.getSingleton().getAgent().setDeltas(deltas);
+            
         } catch (ServerException e) {
             System.out.println("Could not initialize database: " + e.getMessage());
             e.printStackTrace();
@@ -3292,18 +3296,26 @@ public class Server {
      * @param args the port number to run the server on
      */
     public static void main(String[] args) {
-        if (args.length == 1) {
+        //get plugin and # of deltas
+        String plugin = "sql";
+        int deltas = 10;
+        if (args.length == 4) {
             if (!args[0].equals("")) {
                 SERVER_PORT_NUMBER = Integer.parseInt(args[0]);
             }
-        }
-        //Only for Phase 3 Dependency Injection
-        if (args.length > 1) {
-            if (args[1].equals("true")) {
+            if (!args[1].equals("")) {
                 isMock = true;
             }
+            if (!args[2].equals("")) {
+                plugin = args[2];
+            }
+            if (!args[3].equals("")) {
+                deltas = Integer.parseInt(args[3]);
+            }
         }
-        new Server().run();
+        
+        
+        new Server().run(plugin, deltas);
     }
 
 }
