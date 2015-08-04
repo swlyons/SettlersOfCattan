@@ -29,8 +29,10 @@ public class Database {
     private static final String DATABASE_URL = "jdbc:sqlite:"
             + DATABASE_DIRECTORY + File.separator + DATABASE_FILE;
     private static URLClassLoader child;
-
+    private static String plugin;
+    
     public static void initialize(String plugin) throws ServerException {
+        Database.plugin = plugin;
         try {
             try {
                 child = new URLClassLoader(new URL[]{new File(PLUGINS_DIRECTORY + plugin + ".jar").toURI().toURL()}, Database.class.getClassLoader());
@@ -51,14 +53,16 @@ public class Database {
     }
 
     private Connection connection;
-
+    private Users users;
+    private Games games;
     /**
      * Creates new instances of all the tables in the database
      */
     public Database() {
         connection = null;
         /*Create new Instances of User and Games classes here */
-
+        games = new Games(this, plugin);
+        users = new Users(this, plugin);
     }
 
     public Connection getConnection() {
