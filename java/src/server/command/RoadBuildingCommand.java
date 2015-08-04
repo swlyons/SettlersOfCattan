@@ -24,7 +24,6 @@ public class RoadBuildingCommand implements Command {
     @Override
     public boolean execute() {
         try {
-        	System.out.println("Error in roadbuilding command");
             AllOfOurInformation.getSingleton().getGames().get(roadBuilding.getGameId()).useRoadBuilding(roadBuilding.getSpot1(),roadBuilding.getSpot2());
             AllOfOurInformation.getSingleton().getGames().get(roadBuilding.getGameId()).getGame().getPlayers().get(roadBuilding.getPlayerIndex()).setPlayedDevCard(true);
             AllOfOurInformation.getSingleton().getGames().get(roadBuilding.getGameId()).getGame().setVersion(AllOfOurInformation.getSingleton().getGames().get(roadBuilding.getGameId()).getGame().getVersion()+1);

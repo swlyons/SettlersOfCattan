@@ -278,33 +278,6 @@ public class ClientFascadeTest {
         System.out.print("...PASSED");
         System.out.println();
     }
-
-    /**
-     * Test of executeGameCommand method, of class ClientFascade.
-     */
-    @Test
-    public void testExecuteGameCommands() throws Exception {
-        System.out.print("executeGameCommand");
-        ClientFascade instance = new ClientFascade();
-        String expResult = "Sam";
-        //must login and join a game first
-        instance.login(new User("Sam", "sam"));
-        instance.joinGame(new JoinGameRequest(0, "red"));
-        BuildCity buildCity = new BuildCity(0);
-        buildCity.setVertexLocation(new SettlementLocation());
-        
-        ArrayList<Command> commands = new ArrayList<>();
-        commands.add(new BuyDevCard(0));
-        commands.add(buildCity);
-        
-        GameInfo result = instance.executeGameCommands(commands);
-        
-        assert((result.getLog().getLines().get(0).getMessage()).contains(expResult));
-        
-        System.out.print("...PASSED");
-        System.out.println();
-    }
-
     /**
      * Test of addAIToGame method, of class ClientFascade.
      */
@@ -396,7 +369,7 @@ public class ClientFascadeTest {
         GameInfo result = instance.finishMove(new FinishMove(0));
 
         //Sam should've ended his turn
-        assertEquals(expResult, result);
+        assertEquals(expResult, result.getLog().getLines().get(2).getMessage());
         
         System.out.print("...PASSED");
         System.out.println();
