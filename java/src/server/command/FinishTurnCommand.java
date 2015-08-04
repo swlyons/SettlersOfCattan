@@ -268,7 +268,6 @@ public class FinishTurnCommand implements Command {
             AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).getGame().setVersion(AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).getGame().getVersion() + 1);
             return true;
         } catch (Exception e) {
-            e.printStackTrace();
             return false;
         }
     }

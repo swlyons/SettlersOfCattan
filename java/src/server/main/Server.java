@@ -458,6 +458,18 @@ public class Server {
 
                 String userCookie = exchange.getRequestHeaders().getFirst("Cookie");
 
+                if (isMock) {
+                    MockServerFascade.getSingleton().joinGame(joinGameRequest);
+                    String cookie = "catan.game=";
+                    cookie += joinGameRequest.getId();
+                    cookie += ";Path=/;";
+                    String message = "Success";
+                    exchange.getResponseHeaders().set("Set-Cookie", cookie);
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, message.length());
+                    exchange.getResponseBody().write(message.getBytes());
+                    exchange.getResponseBody().close();
+                    return;
+                }
                 if (userCookie == null || userCookie.equals("")) {
                     String message = "Need to login first.";
                     System.out.println(message);
@@ -526,9 +538,7 @@ public class Server {
                         finished = true;
                     }
                 }
-                if (isMock) {
-                    found = MockServerFascade.getSingleton().joinGame(joinGameRequest);
-                }
+
                 if (found) {
                     String cookie = "catan.game=";
                     cookie += joinGameRequest.getId();
@@ -609,6 +619,14 @@ public class Server {
         public void handle(HttpExchange exchange) throws IOException {
             try {
 
+                if (!isMock) {
+
+                    String result = MockServerFascade.getSingleton().getModel(1 + "");
+                    exchange.getResponseHeaders().set("Content-Type", "application/json");
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, result.length());
+                    exchange.getResponseBody().write(result.getBytes());
+                    exchange.getResponseBody().close();
+                }
                 GameIdPlayerIdAndPlayerIndex gameAndPlayer = verifyPlayer(exchange);
 
                 if (gameAndPlayer == null) {
@@ -654,9 +672,7 @@ public class Server {
                 } else {
                     result = "\"true\"";
                 }
-                if (isMock) {
-                    result = MockServerFascade.getSingleton().getModel(version + "");
-                }
+
                 // re-package and return the data
                 exchange.getResponseHeaders().set("Content-Type", "application/json");
                 exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, result.length());
@@ -685,7 +701,7 @@ public class Server {
             String message = "[\"DO NOT ADD A COMPUTER PLAYER\"]";
             if (isMock) {
                 try {
-                    message = ServerFascade.getSingleton().listAITypesInGame().toString();
+                    message = MockServerFascade.getSingleton().listAITypesInGame().toString();
                 } catch (ServerException ex) {
                     Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
                 }
@@ -701,6 +717,16 @@ public class Server {
         @Override
         public void handle(HttpExchange exchange) throws IOException {
             try {
+                if (isMock) {
+                    if (MockServerFascade.getSingleton().addAIToGame(null)) {
+                        String message = "Success";
+                        exchange.getResponseHeaders().set("Content-Type", "text/html");
+                        exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, message.length());
+                        exchange.getResponseBody().write(message.getBytes());
+                        exchange.getResponseBody().close();
+                    }
+
+                }
 
                 GameIdPlayerIdAndPlayerIndex gameAndPlayer = verifyPlayer(exchange);
 
@@ -739,12 +765,6 @@ public class Server {
                     }
                 }
                 String message = "Success";
-                if (isMock) {
-                    if (!MockServerFascade.getSingleton().addAIToGame(null)) {
-                        message = "Failed";
-                    }
-
-                }
 
                 exchange.getResponseHeaders().set("Content-Type", "text/html");
                 exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, message.length());
@@ -812,7 +832,7 @@ public class Server {
                 }
 
                 // make sure there is a cookie
-                if (invalidIndex || notLoggedIn) {
+                if (invalidIndex || notLoggedIn && !isMock) {
                     String message = invalidIndex ? "Invalid command.  ['playerIndex' field has an invalid value.]"
                             : "Need to login and join a game first.";
                     System.out.println(message);
@@ -860,6 +880,14 @@ public class Server {
         @Override
         public void handle(HttpExchange exchange) throws IOException {
             try {
+                if (isMock) {
+                    GameInfo game = MockServerFascade.getSingleton().rollNumber(null);
+                    String result = game.toString();
+                    exchange.getResponseHeaders().set("Content-Type", "application/json");
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, result.length());
+                    exchange.getResponseBody().write(result.getBytes());
+                    exchange.getResponseBody().close();
+                }
                 GameIdPlayerIdAndPlayerIndex gameAndPlayer = verifyPlayer(exchange);
 
                 if (gameAndPlayer == null) {
@@ -949,11 +977,7 @@ public class Server {
 
                 GameInfo game;
                 try {
-                    if (isMock) {
-                        game = MockServerFascade.getSingleton().rollNumber(rollNumber);
-                    } else {
-                        game = ServerFascade.getSingleton().rollNumber(rollNumber);
-                    }
+                    game = ServerFascade.getSingleton().rollNumber(rollNumber);
                 } catch (Exception e) {
                     game = null;
                 }
@@ -992,6 +1016,14 @@ public class Server {
         @Override
         public void handle(HttpExchange exchange) throws IOException {
             try {
+                if (isMock) {
+                    GameInfo game = MockServerFascade.getSingleton().robPlayer(null);
+                    String result = game.toString();
+                    exchange.getResponseHeaders().set("Content-Type", "application/json");
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, result.length());
+                    exchange.getResponseBody().write(result.getBytes());
+                    exchange.getResponseBody().close();
+                }
                 GameIdPlayerIdAndPlayerIndex gameAndPlayer = verifyPlayer(exchange);
 
                 if (gameAndPlayer == null) {
@@ -1082,11 +1114,7 @@ public class Server {
 
                 GameInfo game;
                 try {
-                    if (isMock) {
-                        game = MockServerFascade.getSingleton().robPlayer(robPlayer);
-                    } else {
-                        game = ServerFascade.getSingleton().robPlayer(robPlayer);
-                    }
+                    game = ServerFascade.getSingleton().robPlayer(robPlayer);
                 } catch (Exception e) {
                     game = null;
                 }
@@ -1124,6 +1152,14 @@ public class Server {
         @Override
         public void handle(HttpExchange exchange) throws IOException {
             try {
+                if (isMock) {
+                    GameInfo game = MockServerFascade.getSingleton().finishMove(null);
+                    String result = game.toString();
+                    exchange.getResponseHeaders().set("Content-Type", "application/json");
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, result.length());
+                    exchange.getResponseBody().write(result.getBytes());
+                    exchange.getResponseBody().close();
+                }
                 GameIdPlayerIdAndPlayerIndex gameAndPlayer = verifyPlayer(exchange);
 
                 if (gameAndPlayer == null) {
@@ -1236,11 +1272,7 @@ public class Server {
                 finishMove.setGameId(gameAndPlayer.getGameId());
                 GameInfo game;
                 try {
-                    if (isMock) {
-                        game = MockServerFascade.getSingleton().finishMove(finishMove);
-                    } else {
-                        game = ServerFascade.getSingleton().finishMove(finishMove);
-                    }
+                    game = ServerFascade.getSingleton().finishMove(finishMove);
                 } catch (Exception e) {
                     game = null;
                 }
@@ -1278,6 +1310,14 @@ public class Server {
         @Override
         public void handle(HttpExchange exchange) throws IOException {
             try {
+                if (isMock) {
+                    GameInfo game = MockServerFascade.getSingleton().buyDevCard(null);
+                    String result = game.toString();
+                    exchange.getResponseHeaders().set("Content-Type", "application/json");
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, result.length());
+                    exchange.getResponseBody().write(result.getBytes());
+                    exchange.getResponseBody().close();
+                }
                 GameIdPlayerIdAndPlayerIndex gameAndPlayer = verifyPlayer(exchange);
 
                 if (gameAndPlayer == null) {
@@ -1357,11 +1397,7 @@ public class Server {
                 buyDevCard.setGameId(gameAndPlayer.getGameId());
                 GameInfo game;
                 try {
-                    if (isMock) {
-                        game = MockServerFascade.getSingleton().buyDevCard(buyDevCard);
-                    } else {
-                        game = ServerFascade.getSingleton().buyDevCard(buyDevCard);
-                    }
+                    game = ServerFascade.getSingleton().buyDevCard(buyDevCard);
                 } catch (Exception e) {
                     game = null;
                 }
@@ -1399,6 +1435,14 @@ public class Server {
         @Override
         public void handle(HttpExchange exchange) throws IOException {
             try {
+                if (isMock) {
+                    GameInfo game = MockServerFascade.getSingleton().year_Of_Plenty(null);
+                    String result = game.toString();
+                    exchange.getResponseHeaders().set("Content-Type", "application/json");
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, result.length());
+                    exchange.getResponseBody().write(result.getBytes());
+                    exchange.getResponseBody().close();
+                }
                 GameIdPlayerIdAndPlayerIndex gameAndPlayer = verifyPlayer(exchange);
 
                 if (gameAndPlayer == null) {
@@ -1488,11 +1532,7 @@ public class Server {
 
                 GameInfo game;
                 try {
-                    if (isMock) {
-                        game = MockServerFascade.getSingleton().year_Of_Plenty(yearOfPlenty);
-                    } else {
-                        game = ServerFascade.getSingleton().year_Of_Plenty(yearOfPlenty);
-                    }
+                    game = ServerFascade.getSingleton().year_Of_Plenty(yearOfPlenty);
                 } catch (Exception e) {
                     game = null;
                 }
@@ -1530,6 +1570,14 @@ public class Server {
         @Override
         public void handle(HttpExchange exchange) throws IOException {
             try {
+                if (isMock) {
+                    GameInfo game = MockServerFascade.getSingleton().monopoly(null);
+                    String result = game.toString();
+                    exchange.getResponseHeaders().set("Content-Type", "application/json");
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, result.length());
+                    exchange.getResponseBody().write(result.getBytes());
+                    exchange.getResponseBody().close();
+                }
                 GameIdPlayerIdAndPlayerIndex gameAndPlayer = verifyPlayer(exchange);
 
                 if (gameAndPlayer == null) {
@@ -1619,11 +1667,7 @@ public class Server {
 
                 GameInfo game;
                 try {
-                    if (isMock) {
-                        game = MockServerFascade.getSingleton().monopoly(monopoly);
-                    } else {
-                        game = ServerFascade.getSingleton().monopoly(monopoly);
-                    }
+                    game = ServerFascade.getSingleton().monopoly(monopoly);
                 } catch (Exception e) {
                     game = null;
                 }
@@ -1661,6 +1705,14 @@ public class Server {
         @Override
         public void handle(HttpExchange exchange) throws IOException {
             try {
+                if (isMock) {
+                    GameInfo game = MockServerFascade.getSingleton().roadBuilding(null);
+                    String result = game.toString();
+                    exchange.getResponseHeaders().set("Content-Type", "application/json");
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, result.length());
+                    exchange.getResponseBody().write(result.getBytes());
+                    exchange.getResponseBody().close();
+                }
                 GameIdPlayerIdAndPlayerIndex gameAndPlayer = verifyPlayer(exchange);
 
                 if (gameAndPlayer == null) {
@@ -1750,11 +1802,7 @@ public class Server {
 
                 GameInfo game;
                 try {
-                    if (isMock) {
-                        game = MockServerFascade.getSingleton().roadBuilding(roadBuilding);
-                    } else {
-                        game = ServerFascade.getSingleton().roadBuilding(roadBuilding);
-                    }
+                    game = ServerFascade.getSingleton().roadBuilding(roadBuilding);
                 } catch (Exception e) {
                     game = null;
                 }
@@ -1793,7 +1841,14 @@ public class Server {
         public void handle(HttpExchange exchange) throws IOException {
             try {
                 GameIdPlayerIdAndPlayerIndex gameAndPlayer = verifyPlayer(exchange);
-
+                if (isMock) {
+                    GameInfo game = MockServerFascade.getSingleton().soldier(null);
+                    String result = game.toString();
+                    exchange.getResponseHeaders().set("Content-Type", "application/json");
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, result.length());
+                    exchange.getResponseBody().write(result.getBytes());
+                    exchange.getResponseBody().close();
+                }
                 if (gameAndPlayer == null) {
                     exchange.getResponseHeaders().set("Content-Type", "text/html");
                     String message = "Need to login and join a valid game.";
@@ -1900,11 +1955,7 @@ public class Server {
 
                 GameInfo game;
                 try {
-                    if (isMock) {
-                        game = MockServerFascade.getSingleton().soldier(soldier);
-                    } else {
-                        game = ServerFascade.getSingleton().soldier(soldier);
-                    }
+                    game = ServerFascade.getSingleton().soldier(soldier);
                 } catch (Exception e) {
                     game = null;
                 }
@@ -1942,6 +1993,14 @@ public class Server {
         @Override
         public void handle(HttpExchange exchange) throws IOException {
             try {
+                if (isMock) {
+                    GameInfo game = MockServerFascade.getSingleton().monument(null);
+                    String result = game.toString();
+                    exchange.getResponseHeaders().set("Content-Type", "application/json");
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, result.length());
+                    exchange.getResponseBody().write(result.getBytes());
+                    exchange.getResponseBody().close();
+                }
                 GameIdPlayerIdAndPlayerIndex gameAndPlayer = verifyPlayer(exchange);
 
                 if (gameAndPlayer == null) {
@@ -2011,11 +2070,7 @@ public class Server {
 
                 GameInfo game;
                 try {
-                    if (isMock) {
-                        game = MockServerFascade.getSingleton().monument(monument);
-                    } else {
-                        game = ServerFascade.getSingleton().monument(monument);
-                    }
+                    game = ServerFascade.getSingleton().monument(monument);
                 } catch (Exception e) {
                     game = null;
                 }
@@ -2053,6 +2108,14 @@ public class Server {
         @Override
         public void handle(HttpExchange exchange) throws IOException {
             try {
+                if (isMock) {
+                    GameInfo game = MockServerFascade.getSingleton().offerTrade(null);
+                    String result = game.toString();
+                    exchange.getResponseHeaders().set("Content-Type", "application/json");
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, result.length());
+                    exchange.getResponseBody().write(result.getBytes());
+                    exchange.getResponseBody().close();
+                }
                 GameIdPlayerIdAndPlayerIndex gameAndPlayer = verifyPlayer(exchange);
 
                 if (gameAndPlayer == null) {
@@ -2143,11 +2206,7 @@ public class Server {
 
                 GameInfo game;
                 try {
-                    if (isMock) {
-                        game = MockServerFascade.getSingleton().offerTrade(offerTrade);
-                    } else {
-                        game = ServerFascade.getSingleton().offerTrade(offerTrade);
-                    }
+                    game = ServerFascade.getSingleton().offerTrade(offerTrade);
                 } catch (Exception e) {
                     game = null;
                 }
@@ -2185,6 +2244,14 @@ public class Server {
         @Override
         public void handle(HttpExchange exchange) throws IOException {
             try {
+                if (isMock) {
+                    GameInfo game = MockServerFascade.getSingleton().acceptTrade(null);
+                    String result = game.toString();
+                    exchange.getResponseHeaders().set("Content-Type", "application/json");
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, result.length());
+                    exchange.getResponseBody().write(result.getBytes());
+                    exchange.getResponseBody().close();
+                }
                 GameIdPlayerIdAndPlayerIndex gameAndPlayer = verifyPlayer(exchange);
 
                 if (gameAndPlayer == null) {
@@ -2254,11 +2321,7 @@ public class Server {
 
                 GameInfo game;
                 try {
-                    if (isMock) {
-                        game = MockServerFascade.getSingleton().acceptTrade(acceptTrade);
-                    } else {
-                        game = ServerFascade.getSingleton().acceptTrade(acceptTrade);
-                    }
+                    game = ServerFascade.getSingleton().acceptTrade(acceptTrade);
                 } catch (Exception e) {
                     game = null;
                 }
@@ -2301,6 +2364,14 @@ public class Server {
         @Override
         public void handle(HttpExchange exchange) throws IOException {
             try {
+                if (isMock) {
+                    GameInfo game = MockServerFascade.getSingleton().buildSettlement(null);
+                    String result = game.toString();
+                    exchange.getResponseHeaders().set("Content-Type", "application/json");
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, result.length());
+                    exchange.getResponseBody().write(result.getBytes());
+                    exchange.getResponseBody().close();
+                }
                 GameIdPlayerIdAndPlayerIndex gameAndPlayer = verifyPlayer(exchange);
 
                 if (gameAndPlayer == null) {
@@ -2453,11 +2524,7 @@ public class Server {
 
                 GameInfo game;
                 try {
-                    if (isMock) {
-                        game = MockServerFascade.getSingleton().buildSettlement(buildSettlement);
-                    } else {
-                        game = ServerFascade.getSingleton().buildSettlement(buildSettlement);
-                    }
+                    game = ServerFascade.getSingleton().buildSettlement(buildSettlement);
                 } catch (Exception e) {
                     game = null;
                 }
@@ -2495,6 +2562,14 @@ public class Server {
         @Override
         public void handle(HttpExchange exchange) throws IOException {
             try {
+                if (isMock) {
+                    GameInfo game = MockServerFascade.getSingleton().buildCity(null);
+                    String result = game.toString();
+                    exchange.getResponseHeaders().set("Content-Type", "application/json");
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, result.length());
+                    exchange.getResponseBody().write(result.getBytes());
+                    exchange.getResponseBody().close();
+                }
                 GameIdPlayerIdAndPlayerIndex gameAndPlayer = verifyPlayer(exchange);
 
                 if (gameAndPlayer == null) {
@@ -2602,11 +2677,7 @@ public class Server {
 
                 GameInfo game;
                 try {
-                    if (isMock) {
-                        game = MockServerFascade.getSingleton().buildCity(buildCity);
-                    } else {
-                        game = ServerFascade.getSingleton().buildCity(buildCity);
-                    }
+                    game = ServerFascade.getSingleton().buildCity(buildCity);
                 } catch (Exception e) {
                     e.printStackTrace();
                     game = null;
@@ -2645,6 +2716,14 @@ public class Server {
         @Override
         public void handle(HttpExchange exchange) throws IOException {
             try {
+                if (isMock) {
+                    GameInfo game = MockServerFascade.getSingleton().buildRoad(null);
+                    String result = game.toString();
+                    exchange.getResponseHeaders().set("Content-Type", "application/json");
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, result.length());
+                    exchange.getResponseBody().write(result.getBytes());
+                    exchange.getResponseBody().close();
+                }
                 GameIdPlayerIdAndPlayerIndex gameAndPlayer = verifyPlayer(exchange);
 
                 if (gameAndPlayer == null) {
@@ -2814,11 +2893,7 @@ public class Server {
 
                 GameInfo game;
                 try {
-                    if (isMock) {
-                        game = MockServerFascade.getSingleton().buildRoad(buildRoad);
-                    } else {
-                        game = ServerFascade.getSingleton().buildRoad(buildRoad);
-                    }
+                    game = ServerFascade.getSingleton().buildRoad(buildRoad);
                 } catch (Exception e) {
                     e.printStackTrace();
                     game = null;
@@ -2855,6 +2930,14 @@ public class Server {
         @Override
         public void handle(HttpExchange exchange) throws IOException {
             try {
+                if (isMock) {
+                    GameInfo game = MockServerFascade.getSingleton().maritimeTrade(null);
+                    String result = game.toString();
+                    exchange.getResponseHeaders().set("Content-Type", "application/json");
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, result.length());
+                    exchange.getResponseBody().write(result.getBytes());
+                    exchange.getResponseBody().close();
+                }
                 GameIdPlayerIdAndPlayerIndex gameAndPlayer = verifyPlayer(exchange);
 
                 if (gameAndPlayer == null) {
@@ -2925,11 +3008,7 @@ public class Server {
                 maritimeTrade.setGameId(gameAndPlayer.getGameId());
                 GameInfo game;
                 try {
-                    if (isMock) {
-                        game = MockServerFascade.getSingleton().maritimeTrade(maritimeTrade);
-                    } else {
-                        game = ServerFascade.getSingleton().maritimeTrade(maritimeTrade);
-                    }
+                    game = ServerFascade.getSingleton().maritimeTrade(maritimeTrade);
                 } catch (Exception e) {
                     game = null;
                 }
@@ -2967,6 +3046,14 @@ public class Server {
         @Override
         public void handle(HttpExchange exchange) throws IOException {
             try {
+                if (isMock) {
+                    GameInfo game = MockServerFascade.getSingleton().discardCards(null);
+                    String result = game.toString();
+                    exchange.getResponseHeaders().set("Content-Type", "application/json");
+                    exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, result.length());
+                    exchange.getResponseBody().write(result.getBytes());
+                    exchange.getResponseBody().close();
+                }
                 GameIdPlayerIdAndPlayerIndex gameAndPlayer = verifyPlayer(exchange);
 
                 if (gameAndPlayer == null) {
@@ -3133,11 +3220,7 @@ public class Server {
 
                 GameInfo game;
                 try {
-                    if (isMock) {
-                        game = MockServerFascade.getSingleton().discardCards(discardCards);
-                    } else {
-                        game = ServerFascade.getSingleton().discardCards(discardCards);
-                    }
+                    game = ServerFascade.getSingleton().discardCards(discardCards);
                 } catch (Exception e) {
                     game = null;
                 }
