@@ -208,7 +208,7 @@
             <formatter type="brief" usefile="false"/>
         </junit>
     </target> 
-    <target name="server-test" depends="compile, start-client">
+    <target name="server-test" depends="compile">
         <junit>
             <classpath>
                 <pathelement location="${java.build}" />    
