@@ -5,10 +5,8 @@
  */
 package server.command;
 
-import server.command.Command;
 import server.receiver.AllOfOurInformation;
 import shared.model.BuildRoad;
-import client.managers.GameManager;
 import shared.locations.EdgeDirection;
 import shared.locations.EdgeLocation;
 import shared.locations.HexLocation;

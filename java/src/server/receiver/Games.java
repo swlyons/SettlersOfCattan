@@ -5,6 +5,7 @@
  */
 package server.receiver;
 
+import java.sql.Blob;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -37,16 +38,16 @@ public class Games {
             PreparedStatement stmt = null;
             ResultSet keyRS = null;
             try {
-                String query = "INSERT into games (gameinfo)"
-                        + " values (?)";
+                String query = "INSERT into games (id, title, gameinfo)"
+                        + " values (?,?,?)";
                 stmt = db.getConnection().prepareStatement(query);
-                stmt.setString(1, game.toString());
+                stmt.setInt(1, game.getId());
+                stmt.setString(2, game.getTitle());
+                stmt.setString(3, game.toString());
                 if (stmt.executeUpdate() == 1) {
                     Statement keyStmt = db.getConnection().createStatement();
                     keyRS = keyStmt.executeQuery("SELECT last_INSERT_rowid()");
                     keyRS.next();
-                    int id = keyRS.getInt(1);
-                    game.setId(id);
                 } else {
                     throw new ServerException("Could not INSERT game");
                 }
@@ -56,6 +57,7 @@ public class Games {
                 Database.safeClose(stmt);
                 Database.safeClose(keyRS);
             }
+            
         }
     }
 
@@ -69,11 +71,11 @@ public class Games {
         if (plugin.equals("sql")) {
             PreparedStatement stmt = null;
             try {
-                String query = "UPDATE games set gameinfo = ?, "
+                String query = "UPDATE games set gameinfo = ? "
                         + "WHERE id = ?";
                 stmt = db.getConnection().prepareStatement(query);
                 stmt.setString(1, game.toString());
-                stmt.setInt(4, game.getId());
+                stmt.setInt(2, game.getId());
                 if (stmt.executeUpdate() != 1) {
                     throw new ServerException("Could not UPDATE game");
                 }
@@ -104,7 +106,7 @@ public class Games {
                 Database.safeClose(stmt);
             }
             try {
-                String query = "CREATE TABLE users(id INTEGER PRIMARY KEY, gameinfo BLOB NOT NULL)";
+                String query = "CREATE TABLE games(id INTEGER PRIMARY KEY, title TEXT NOT NULL, gameinfo BLOB NOT NULL)";
                 stmt = db.getConnection().prepareStatement(query);
                 stmt.execute();
             } catch (SQLException e) {

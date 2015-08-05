@@ -9,7 +9,8 @@ package shared.model;
 public class SendChat extends Command {
 
     private String content;
-
+    private int gameId;
+    
     public SendChat(int playerIndex) {
         super("sendChat", playerIndex);
     }
@@ -21,4 +22,13 @@ public class SendChat extends Command {
     public void setContent(String content) {
         this.content = content;
     }
+
+    public int getGameId() {
+        return gameId;
+    }
+
+    public void setGameId(int gameId) {
+        this.gameId = gameId;
+    }
+    
 }

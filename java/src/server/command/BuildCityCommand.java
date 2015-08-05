@@ -5,10 +5,8 @@
  */
 package server.command;
 
-import server.command.Command;
 import server.receiver.AllOfOurInformation;
 import shared.model.BuildCity;
-import client.managers.GameManager;
 import shared.definitions.PieceType;
 import shared.locations.HexLocation;
 import shared.locations.VertexDirection;
@@ -18,7 +16,7 @@ import shared.locations.VertexLocation;
  *
  * @author Samuel
  */
-public class BuildCityCommand implements Command {
+public class BuildCityCommand implements Command{
 
     private BuildCity buildCity;
 

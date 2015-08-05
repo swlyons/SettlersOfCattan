@@ -130,14 +130,13 @@ public class ServerFascade implements Fascade {
     @Override
     public GameInfo sendChat(SendChat sendChat) throws ServerException {
         int playerIndex = sendChat.getPlayerIndex();
-        String content = sendChat.getContent().split(";")[0];
-        int gameId = Integer.parseInt(sendChat.getContent().split(";")[1]);
+        String content = sendChat.getContent();
         
-        SendChatCommand sendChatCommand = new SendChatCommand(playerIndex, content, gameId);
+        SendChatCommand sendChatCommand = new SendChatCommand(playerIndex, content, sendChat.getGameId());
         
         GameInfo gameInformation = null;
         if(agent.sendCommand(sendChatCommand)){
-            gameInformation = AllOfOurInformation.getSingleton().getGames().get(sendChatCommand.getGameId()).getGame();
+            gameInformation = AllOfOurInformation.getSingleton().getGames().get(sendChat.getGameId()).getGame();
         }
         return gameInformation;
     }

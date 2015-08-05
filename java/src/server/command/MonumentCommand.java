@@ -5,7 +5,6 @@
  */
 package server.command;
 
-import server.command.Command;
 import server.receiver.AllOfOurInformation;
 import shared.model.Monument;
 

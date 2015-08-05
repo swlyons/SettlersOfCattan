@@ -17,7 +17,10 @@ public class RegisterCommand implements Command{
    public RegisterCommand(User user) {
         this.user = user;
     }
-    
+
+    public User getUser() {
+        return user;
+    }
    
     @Override
     public boolean execute() {

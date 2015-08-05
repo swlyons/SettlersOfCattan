@@ -23,7 +23,7 @@ public class ClearDatabases {
         // clear out the database
         db.getGames().clear();
         db.getUsers().clear();
-        
+        db.getCommands().clear();
         db.endTransaction(true);
        
 

@@ -54,7 +54,7 @@ public class Database {
     private Connection connection;
     private Users users;
     private Games games;
-
+    private Commands commands;
     /**
      * Creates new instances of all the tables in the database
      */
@@ -64,6 +64,7 @@ public class Database {
         this.plugin = plugin;
         games = new Games(this, plugin);
         users = new Users(this, plugin);
+        commands = new Commands(this, plugin);
     }
 
     public Connection getConnection() {
@@ -87,6 +88,15 @@ public class Database {
     public Users getUsers() {
         return users;
     }
+    
+    /**
+     * Gets the commands table form the database
+     *
+     * @return instance of Commands Table for running operations on the Commands Table
+     */
+    public Commands getCommands() {
+        return commands;
+    }
 
     /**
      * Starts a transaction (enforces foreign keys with each transaction)
@@ -105,7 +115,6 @@ public class Database {
             Properties properties = ((Properties) toPropertiesMethod.invoke(instance));
             DriverManager.registerDriver(new DriverShim(driver));
             connection = DriverManager.getConnection(DATABASE_URL, properties);
-
             connection.setAutoCommit(false);
         } catch (Exception e) {
             throw new ServerException(

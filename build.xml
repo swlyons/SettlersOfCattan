@@ -222,7 +222,7 @@
             <formatter type="brief" usefile="false"/>
         </junit>
     </target>
-    <target name="clear-db" depends="compile" description="clears the db files used for persistance">
+    <target name="clear-db" depends="clean, package" description="clears the db files used for persistance">
         <copy file="${empty-db-file}" tofile="${db-file}" overwrite="true"/>
         <copy file="${empty-ser-file}" tofile="${ser-file}" overwrite="true"/>
         <java classname="server.receiver.ClearDatabases" dir="${java.dist}" fork="yes">

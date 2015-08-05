@@ -5,7 +5,6 @@
  */
 package server.command;
 
-import server.command.Command;
 import server.receiver.AllOfOurInformation;
 import shared.model.DiscardCards;
 
@@ -13,7 +12,7 @@ import shared.model.DiscardCards;
  *
  * @author Samuel
  */
-public class DiscardCardsCommand implements Command {
+public class DiscardCardsCommand implements Command{
 
     private DiscardCards discardCards;
 
@@ -30,9 +29,9 @@ public class DiscardCardsCommand implements Command {
             AllOfOurInformation.getSingleton().getGames().get(discardCards.getGameId()).logWithPlayerId("Player has surrendered resources.", discardCards.getPlayerIndex());
             boolean everyoneDiscarded = true;
             for (int i = 0; i < 4; i++) {
-                if (!(AllOfOurInformation.getSingleton().getGames().get(discardCards.getGameId()).getGame().getPlayers().get(i).isDiscarded() ||
-                        AllOfOurInformation.getSingleton().getGames().get(discardCards.getGameId()).getGame().getPlayers().get(i).getResources().getTotalResources() < 8)) {
-                    if(AllOfOurInformation.getSingleton().getGames().get(discardCards.getGameId()).getGame().getPlayers().get(i).getId()<-1){
+                if (!(AllOfOurInformation.getSingleton().getGames().get(discardCards.getGameId()).getGame().getPlayers().get(i).isDiscarded()
+                        || AllOfOurInformation.getSingleton().getGames().get(discardCards.getGameId()).getGame().getPlayers().get(i).getResources().getTotalResources() < 8)) {
+                    if (AllOfOurInformation.getSingleton().getGames().get(discardCards.getGameId()).getGame().getPlayers().get(i).getId() < -1) {
                         continue;
                     }
                     everyoneDiscarded = false;

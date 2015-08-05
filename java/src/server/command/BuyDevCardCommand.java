@@ -5,7 +5,6 @@
  */
 package server.command;
 
-import server.command.Command;
 import server.receiver.AllOfOurInformation;
 import shared.model.BuyDevCard;
 
@@ -13,7 +12,7 @@ import shared.model.BuyDevCard;
  *
  * @author Samuel
  */
-public class BuyDevCardCommand implements Command {
+public class BuyDevCardCommand implements Command{
 
     private BuyDevCard buyDevCard;
 

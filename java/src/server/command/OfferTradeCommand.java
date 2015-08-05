@@ -1,8 +1,6 @@
 package server.command;
 
 import server.receiver.AllOfOurInformation;
-import shared.data.ResourceList;
-import shared.data.TradeOffer;
 import shared.model.OfferTrade;
 
 public class OfferTradeCommand implements Command{

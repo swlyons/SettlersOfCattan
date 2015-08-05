@@ -54,6 +54,9 @@ public class CreateGameCommand implements Command{
         GameInfo gi = AllOfOurInformation.getSingleton().getGames().get(gameId).getGame();
         gi.setId(gameId);
         AllOfOurInformation.getSingleton().getGames().get(gameId).setGame(gi);
+        
+        //add the game to the database
+        AllOfOurInformation.getSingleton().addGameToDatabase(gi);
         return true;
     }
     
