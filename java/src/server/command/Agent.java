@@ -20,11 +20,12 @@ import shared.data.User;
  */
 public class Agent {
 
-    private final ArrayList commandQueue;
     private int deltas = 5;
+    private Map<Integer, ArrayList<Command>> commandQueue;
 
     public Agent() {
-        commandQueue = new ArrayList();
+        commandQueue = new HashMap<>();
+        AllOfOurInformation.getSingleton().setAgent(this);
     }
 
     public int getDeltas() {
@@ -36,46 +37,46 @@ public class Agent {
     }
 
     public boolean sendCommand(Command command) {
-        Map<Integer, ArrayList> commandMap = new HashMap<>();
-        
+
         boolean success = command.execute();
         if (success) {
             int currentGameId = AllOfOurInformation.getSingleton().getCurrentGameId();
             //update the game info every delta commands
-            if (commandMap.get(currentGameId).size() == (deltas - 1)) {
-                /* add logic to update the game state blob the present game*/
-                System.out.println("Setting new CheckPoint");
-                
-                GameInfo presentGame = AllOfOurInformation.getSingleton().getGames().get(currentGameId).getGame();
-                AllOfOurInformation.getSingleton().updateGameInDatabase(presentGame);
-                
-                //clear the command database
-                AllOfOurInformation.getSingleton().clearCommandsFromDatabase(currentGameId);
-                commandQueue.clear();
-                commandMap.put(currentGameId, commandQueue);
+            if (!commandQueue.isEmpty()) {
+                if (commandQueue.get(currentGameId).size() == deltas) {
+                    /* add logic to update the game state blob the present game*/
+                    GameInfo presentGame = AllOfOurInformation.getSingleton().getGames().get(currentGameId).getGame();
+                    AllOfOurInformation.getSingleton().updateGameInDatabase(presentGame);
+                    
+                    //clear the command database
+                    AllOfOurInformation.getSingleton().clearCommandsFromDatabase(currentGameId);
+                    commandQueue.get(currentGameId).clear();
+                }
             }
 
             if (command instanceof RegisterCommand) {
                 //skip the register commands (for queue)   
                 //add the user to the database
-                 User user = ((RegisterCommand)command).getUser();
-                 AllOfOurInformation.getSingleton().addUserToDatabase(user);
-            } 
-            else if(command instanceof CreateGameCommand){
-                //skip Create Game Commands
-                
-            }else {
+                User user = ((RegisterCommand) command).getUser();
+                AllOfOurInformation.getSingleton().addUserToDatabase(user);
+            } else if (command instanceof CreateGameCommand) {
+                //skip Create Game Commands(for queue)
+                //clear the command quueue for each new game
+            } else {
                 //save command to the Database
-                AllOfOurInformation.getSingleton().addCommandToDatabase(command);
-                commandQueue.add(command);
-                commandMap.put(currentGameId, commandQueue);
+                AllOfOurInformation.getSingleton().addCommandToDatabase(command, currentGameId);
+                
+                if(commandQueue.isEmpty()){
+                    commandQueue.put(currentGameId, new ArrayList<>());
+                }
+                commandQueue.get(currentGameId).add(command);
             }
-            System.out.println("Command Queue Size: " + commandMap.get(currentGameId).size());
         }
         return success;
     }
 
-    public ArrayList getCommandQueue() {
+    public Map<Integer, ArrayList<Command>> getCommandQueue() {
         return commandQueue;
     }
+    
 }

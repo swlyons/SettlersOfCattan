@@ -5,11 +5,13 @@
  */
 package server.receiver;
 
-import java.sql.Blob;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import server.main.ServerException;
 import shared.data.GameInfo;
 
@@ -57,8 +59,44 @@ public class Games {
                 Database.safeClose(stmt);
                 Database.safeClose(keyRS);
             }
-            
+
         }
+    }
+
+    /**
+     * Gets all the rows from the Games table
+     *
+     * @return returns an ArrayList of all the games
+     */
+    public ArrayList<GameInfo> getAllGames() throws ServerException {
+        ArrayList<GameInfo> result = new ArrayList<>();
+        Gson model = new GsonBuilder().create();
+        
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        try {
+            String query = "SELECT id, title, gameinfo "
+                    + "FROM games";
+            stmt = db.getConnection().prepareStatement(query);
+
+            rs = stmt.executeQuery();
+            while (rs.next()) {
+                int id = rs.getInt(1);
+                String title = rs.getString(2);
+                String gameInfo = rs.getString(3);
+                GameInfo game = model.fromJson(gameInfo, GameInfo.class);
+                game.setId(id);
+                game.setTitle(title);
+                result.add(game);
+            }
+        } catch (SQLException e) {
+            throw new ServerException(e.getMessage(), e);
+        } finally {
+            Database.safeClose(rs);
+            Database.safeClose(stmt);
+        }
+
+        return result;
     }
 
     /**

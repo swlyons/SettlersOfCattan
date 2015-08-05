@@ -11,6 +11,7 @@ import shared.data.User;
 import client.managers.GameManager;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import server.command.Agent;
 import server.command.Command;
 import server.main.ServerException;
 import shared.data.GameInfo;
@@ -26,12 +27,13 @@ public class AllOfOurInformation {
     private static List<GameManager> games;
     private Database db;
     private int currentGameId;
-    
+    private Agent agent;
+   
     public static AllOfOurInformation getSingleton() {
         if (allInfo == null) {
             allInfo = new AllOfOurInformation();
-            users = new ArrayList<User>();
-            games = new ArrayList<GameManager>();
+            users = new ArrayList<>();
+            games = new ArrayList<>();
         }
         return allInfo;
     }
@@ -64,10 +66,10 @@ public class AllOfOurInformation {
         }
     }
 
-    public void addCommandToDatabase(Command command) {
+    public void addCommandToDatabase(Command command, int gameId) {
         try {
             db.startTransaction();
-            db.getCommands().add(command);
+            db.getCommands().add(command, gameId);
             db.endTransaction(true);
         } catch (ServerException ex) {
             Logger.getLogger(AllOfOurInformation.class.getName()).log(Level.SEVERE, null, ex);
@@ -100,6 +102,31 @@ public class AllOfOurInformation {
             Logger.getLogger(AllOfOurInformation.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+    public ArrayList<GameInfo> getGamesFromDatabase(){
+        try {
+            db.startTransaction();
+            ArrayList<GameInfo> games = db.getGames().getAllGames();
+            db.endTransaction(true);
+            return games;
+        } catch (ServerException ex) {
+            Logger.getLogger(AllOfOurInformation.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
+    }
+    public ArrayList<User> getUsersFromDatabase(){
+        try {
+            db.startTransaction();
+            ArrayList<User> users = db.getUsers().getAllUsers();
+            db.endTransaction(true);
+            return users;
+        } catch (ServerException ex) {
+            Logger.getLogger(AllOfOurInformation.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
+    }
+    public ArrayList<GameInfo> getGamesFromBlob(){
+        return new ArrayList<>();
+    }
     public List<User> getUsers() {
         return users;
     }
@@ -107,4 +134,13 @@ public class AllOfOurInformation {
     private void setUsers(List<User> users) {
         this.users = users;
     }
+
+    public Agent getAgent() {
+        return agent;
+    }
+
+    public void setAgent(Agent agent) {
+        this.agent = agent;
+    }
+    
 }

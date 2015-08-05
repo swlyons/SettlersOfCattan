@@ -6,6 +6,7 @@
 package server.command;
 import server.receiver.AllOfOurInformation;
 import client.managers.GameManager;
+import java.util.ArrayList;
 import shared.data.*;
 /**
  *
@@ -54,7 +55,8 @@ public class CreateGameCommand implements Command{
         GameInfo gi = AllOfOurInformation.getSingleton().getGames().get(gameId).getGame();
         gi.setId(gameId);
         AllOfOurInformation.getSingleton().getGames().get(gameId).setGame(gi);
-        
+        AllOfOurInformation.getSingleton().setCurrentGameId(gameId);
+        AllOfOurInformation.getSingleton().getAgent().getCommandQueue().put(gameId, new ArrayList<>());
         //add the game to the database
         AllOfOurInformation.getSingleton().addGameToDatabase(gi);
         return true;

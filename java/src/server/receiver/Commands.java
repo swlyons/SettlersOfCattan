@@ -5,15 +5,10 @@
  */
 package server.receiver;
 
-import java.io.IOException;
-import java.io.ObjectOutputStream;
-import java.sql.Blob;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import server.main.ServerException;
 import server.command.Command;
 
@@ -37,15 +32,16 @@ public class Commands {
      * @param command Command to be added
      * @throws server.main.ServerException
      */
-    public void add(Command command) throws ServerException {
+    public void add(Command command, int gameId) throws ServerException {
         if (plugin.equals("sql")) {
             PreparedStatement stmt = null;
             ResultSet keyRS = null;
             try {
-                String query = "INSERT into commands (command)"
-                        + " values (?)";
+                String query = "INSERT into commands (gameid, command)"
+                        + " values (?, ?)";
                 stmt = db.getConnection().prepareStatement(query);
-                stmt.setObject(1, command);
+                stmt.setInt(1, gameId);
+                stmt.setObject(2, command);
                 if (stmt.executeUpdate() == 1) {
                     Statement keyStmt = db.getConnection().createStatement();
                     keyRS = keyStmt.executeQuery("SELECT last_INSERT_rowid()");
@@ -73,20 +69,16 @@ public class Commands {
     public void delete(int gameId) throws ServerException {
         if (plugin.equals("sql")) {
             PreparedStatement stmt = null;
-            ResultSet keyRS = null;
             try {
-                String query = "DELETE from commands "
+                String query = "DELETE FROM commands "
                         + "WHERE gameid = ?";
                 stmt = db.getConnection().prepareStatement(query);
                 stmt.setInt(1, gameId);
-                if (stmt.executeUpdate() != 1) {
-                    throw new ServerException("Could not DELETE commands");
-                } 
+                stmt.executeUpdate();
             } catch (SQLException e) {
                     throw new ServerException("Could not DELETE commands", e);
             } finally {
                 Database.safeClose(stmt);
-                Database.safeClose(keyRS);
             }
         }
 

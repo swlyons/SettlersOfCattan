@@ -9,7 +9,6 @@ import shared.data.Port;
 import shared.data.ResourceList;
 import shared.data.Map;
 import shared.data.VertexObject;
-import javafx.geometry.VerticalDirection;
 import shared.data.EdgeValue;
 import shared.data.GameInfo;
 import shared.data.PlayerInfo;

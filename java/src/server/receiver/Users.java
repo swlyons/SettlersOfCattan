@@ -9,6 +9,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import server.main.ServerException;
 import shared.data.User;
 
@@ -37,12 +38,12 @@ public class Users {
             PreparedStatement stmt = null;
             ResultSet keyRS = null;
             try {
-                String query = "INSERT into users (id, username, password)"
-                        + " values (?, ?, ?)";
+                String query = "INSERT into users (username, password, gameid)"
+                        + " values (?, ?, ? )";
                 stmt = db.getConnection().prepareStatement(query);
-                stmt.setInt(1, user.getId());
-                stmt.setString(2, user.getUsername().toLowerCase());
-                stmt.setString(3, user.getPassword());
+                stmt.setString(1, user.getUsername().toLowerCase());
+                stmt.setString(2, user.getPassword());
+                stmt.setInt(3, user.getGameId());
                 if (stmt.executeUpdate() == 1) {
                     Statement keyStmt = db.getConnection().createStatement();
                     keyRS = keyStmt.executeQuery("SELECT last_INSERT_rowid()");
@@ -60,7 +61,40 @@ public class Users {
             }
         }
     }
+    
+    /**
+     * Gets all the rows from the Games table
+     *
+     * @return returns an ArrayList of all the games
+     */
+    public ArrayList<User> getAllUsers() throws ServerException {
+        ArrayList<User> result = new ArrayList<>();
+        
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        try {
+            String query = "SELECT gameid, username, password "
+                    + "FROM users";
+            stmt = db.getConnection().prepareStatement(query);
 
+            rs = stmt.executeQuery();
+            while (rs.next()) {
+                int gameId = rs.getInt(1);
+                String username = rs.getString(2);
+                String password = rs.getString(3);
+                User user = new User(username, password);
+                user.setGameId(gameId);
+                result.add(user);
+            }
+        } catch (SQLException e) {
+            throw new ServerException(e.getMessage(), e);
+        } finally {
+            Database.safeClose(rs);
+            Database.safeClose(stmt);
+        }
+
+        return result;
+    }
     /**
      * Clears all users FROM the Users table used by ant clear-db
      *
@@ -80,7 +114,7 @@ public class Users {
                 Database.safeClose(stmt);
             }
             try {
-                String query = "CREATE TABLE users(id INTEGER PRIMARY KEY, username TEXT NOT NULL, "
+                String query = "CREATE TABLE users(gameid INTEGER NOT NULL, username TEXT NOT NULL, "
                         + "password TEXT NOT NULL)";
                 stmt = db.getConnection().prepareStatement(query);
                 stmt.execute();

@@ -42,7 +42,7 @@ public class Database {
                 //load the JDBC driver
                 driver = (Driver) Class.forName("org.sqlite.JDBC", true, child).newInstance();
             } else if (plugin.equals("blob")) {
-                /* TODO: Change this to a text file jar */
+                /* TODO: load the second persistence jar */
 
             }
 

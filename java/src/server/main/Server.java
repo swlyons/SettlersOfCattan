@@ -54,6 +54,7 @@ public class Server {
      */
     private void run(String plugin, int deltas) throws Exception {
         try {
+            
             //send the plugin to the entry class
             Database db = new Database(plugin);
             AllOfOurInformation.getSingleton().setDatabase(db);
@@ -61,6 +62,20 @@ public class Server {
 
             //send the # of deltas for the agent to use
             ServerFascade.getSingleton().getAgent().setDeltas(deltas);
+            
+            //put information from database into AllOfOurInformation
+            if(plugin.equals("sql")){
+                AllOfOurInformation.getSingleton().getUsers().addAll(AllOfOurInformation.getSingleton().getUsersFromDatabase());
+                int i = 0;
+                for(GameInfo gameInfo : AllOfOurInformation.getSingleton().getGamesFromDatabase()){
+                    AllOfOurInformation.getSingleton().getGames().add(new GameManager());
+                    AllOfOurInformation.getSingleton().getGames().get(i).setGame(gameInfo);
+                    i++;
+                }
+            }
+            else{
+                
+            }
 
         } catch (ServerException e) {
             System.out.println("Could not initialize database: " + e.getMessage());
@@ -258,7 +273,6 @@ public class Server {
 
             // call the appropriate fascade (real or mock)
             boolean result = false;
-            System.out.println("MOCK: " + isMock);
             if (isMock) {
                 try {
                     result = MockServerFascade.getSingleton().register(user);
@@ -2691,7 +2705,6 @@ public class Server {
                 try {
                     game = ServerFascade.getSingleton().buildCity(buildCity);
                 } catch (Exception e) {
-                    e.printStackTrace();
                     game = null;
                 }
                 String result;
@@ -2907,7 +2920,6 @@ public class Server {
                 try {
                     game = ServerFascade.getSingleton().buildRoad(buildRoad);
                 } catch (Exception e) {
-                    e.printStackTrace();
                     game = null;
                 }
                 String result;

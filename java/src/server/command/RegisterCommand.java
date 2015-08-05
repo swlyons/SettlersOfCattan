@@ -38,6 +38,7 @@ public class RegisterCommand implements Command{
                     return false;
                 }
             }
+            
             AllOfOurInformation.getSingleton().getUsers().add(user);
             return true;
         } else {
