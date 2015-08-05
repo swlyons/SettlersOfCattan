@@ -29,7 +29,7 @@ public class Games {
     /**
      * Adds the specified game to the Games table
      *
-     * @param user Game to be added
+     * @param game Game to be added
      * @throws server.main.ServerException
      */
     public void add(GameInfo game) throws ServerException {
@@ -86,7 +86,7 @@ public class Games {
     }
 
     /**
-     * Clears all users FROM the Users table used by
+     * Clears all games FROM the Games table used by ant clear-db
      *
      *
      * @throws ServerException
