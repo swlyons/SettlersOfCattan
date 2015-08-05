@@ -1,6 +1,8 @@
 package shared.model;
 
-public class Command {
+import java.io.Serializable;
+
+public class Command implements Serializable {
 
     private String type;
     private Integer playerIndex;

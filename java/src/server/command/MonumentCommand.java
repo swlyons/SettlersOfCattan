@@ -5,7 +5,7 @@
  */
 package server.command;
 
-import server.command.Command;
+import java.io.Serializable;
 import server.receiver.AllOfOurInformation;
 import shared.model.Monument;
 
@@ -13,7 +13,7 @@ import shared.model.Monument;
  *
  * @author Samuel
  */
-public class MonumentCommand implements Command {
+public class MonumentCommand implements Command, Serializable {
 
     Monument monument;
 
@@ -26,7 +26,7 @@ public class MonumentCommand implements Command {
         try {
             AllOfOurInformation.getSingleton().getGames().get(monument.getGameId()).useMonument();
             AllOfOurInformation.getSingleton().getGames().get(monument.getGameId()).getGame().getPlayers().get(monument.getPlayerIndex()).setPlayedDevCard(true);
-            AllOfOurInformation.getSingleton().getGames().get(monument.getGameId()).getGame().setVersion(AllOfOurInformation.getSingleton().getGames().get(monument.getGameId()).getGame().getVersion()+1);
+            AllOfOurInformation.getSingleton().getGames().get(monument.getGameId()).getGame().setVersion(AllOfOurInformation.getSingleton().getGames().get(monument.getGameId()).getGame().getVersion() + 1);
             AllOfOurInformation.getSingleton().getGames().get(monument.getGameId()).log("Player can taste victory");
             return true;
         } catch (Exception e) {

@@ -5,6 +5,7 @@
  */
 package shared.data;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.ArrayList;
 import shared.locations.HexLocation;
@@ -13,7 +14,7 @@ import shared.locations.HexLocation;
  *
  * @author ddennis
  */
-public class Map {
+public class Map implements Serializable {
 
     private List<Hex> hexes;
     private List<Port> ports;
@@ -89,13 +90,13 @@ public class Map {
 
     @Override
     public String toString() {
-        return "{" + "\"hexes\" : " + hexes.toString() + 
-                ", \"ports\" : " + ports.toString() + 
-                ", \"roads\" : " + roads.toString() + 
-                ", \"settlements\" : " + settlements.toString() + 
-                ", \"cities\" : " + cities.toString() + 
-                ", \"radius\" : 3, \"robber\" : " + robber.toString() + 
-                "}";
+        return "{" + "\"hexes\" : " + hexes.toString()
+                + ", \"ports\" : " + ports.toString()
+                + ", \"roads\" : " + roads.toString()
+                + ", \"settlements\" : " + settlements.toString()
+                + ", \"cities\" : " + cities.toString()
+                + ", \"radius\" : 3, \"robber\" : " + robber.toString()
+                + "}";
     }
 
 }

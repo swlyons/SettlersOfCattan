@@ -1,5 +1,6 @@
 package shared.model;
 
+import java.io.Serializable;
 import shared.data.SettlementLocation;
 
 /**
@@ -8,11 +9,11 @@ import shared.data.SettlementLocation;
  * @author Aaron
  *
  */
-public class BuildCity extends Command {
+public class BuildCity extends Command implements Serializable {
 
     private SettlementLocation vertexLocation;
     Integer gameId;
-    
+
     public BuildCity(int playerIndex) {
         super("buildCity", playerIndex);
     }
@@ -24,13 +25,13 @@ public class BuildCity extends Command {
     public void setVertexLocation(SettlementLocation vertexLocation) {
         this.vertexLocation = vertexLocation;
     }
-    
-    public Integer getGameId(){
+
+    public Integer getGameId() {
         return gameId;
     }
-    
-    public void setGameId(Integer gameId){
+
+    public void setGameId(Integer gameId) {
         this.gameId = gameId;
     }
-    
+
 }

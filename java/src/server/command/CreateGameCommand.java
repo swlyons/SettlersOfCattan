@@ -4,57 +4,65 @@
  * and open the template in the editor.
  */
 package server.command;
+
 import server.receiver.AllOfOurInformation;
 import client.managers.GameManager;
+import java.util.ArrayList;
 import shared.data.*;
+
 /**
  *
  * @author Samuel
  */
-public class CreateGameCommand implements Command{
+public class CreateGameCommand implements Command {
+
     private boolean randomTiles;
     private boolean randomNumbers;
     private boolean randomPorts;
     private String name;
     private int gameId;
-    
-    public CreateGameCommand(boolean randomTiles, boolean randomNumbers, boolean randomPorts, String name){
-        this.randomTiles=randomTiles;
-        this.randomNumbers=randomNumbers;
-        this.randomPorts=randomPorts;
-        this.name=name;
+
+    public CreateGameCommand(boolean randomTiles, boolean randomNumbers, boolean randomPorts, String name) {
+        this.randomTiles = randomTiles;
+        this.randomNumbers = randomNumbers;
+        this.randomPorts = randomPorts;
+        this.name = name;
     }
-    
-    public int getGameId(){
+
+    public int getGameId() {
         return gameId;
     }
-    
+
     @Override
     public boolean execute() {
         return createGame();
     }
-    
-    public boolean createGame(){
-        if(name==null||name.equals("")){
+
+    public boolean createGame() {
+        if (name == null || name.equals("")) {
             return false;
         }
-        
+
         GameManager gm = new GameManager();
         gm.createGame(randomTiles, randomNumbers, randomPorts, name);
-                
+
         AllOfOurInformation.getSingleton().getGames().add(gm);
-        
-        for(int i=0;i<AllOfOurInformation.getSingleton().getGames().size();i++){
-            if(gm.equals(AllOfOurInformation.getSingleton().getGames().get(i))){
+
+        for (int i = 0; i < AllOfOurInformation.getSingleton().getGames().size(); i++) {
+            if (gm.equals(AllOfOurInformation.getSingleton().getGames().get(i))) {
                 gameId = i;
                 break;
             }
         }
-        
+
         GameInfo gi = AllOfOurInformation.getSingleton().getGames().get(gameId).getGame();
         gi.setId(gameId);
         AllOfOurInformation.getSingleton().getGames().get(gameId).setGame(gi);
+        AllOfOurInformation.getSingleton().setCurrentGameId(gameId);
+        AllOfOurInformation.getSingleton().getAgent().getCommandQueue().put(gameId, new ArrayList<>());
+        //add the game to the database
+        AllOfOurInformation.getSingleton().addGameToDatabase(AllOfOurInformation.getSingleton().getGames().get(gameId), gameId);
         return true;
     }
-    
+
 }

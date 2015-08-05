@@ -30,7 +30,6 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-
 import java.util.UUID;
 
 import static org.junit.Assert.*;
@@ -47,7 +46,7 @@ public class ClientFascadeTest {
 
     public ClientFascadeTest() {
     }
-    
+
     @BeforeClass
     public static void setUpClass() {
     }
@@ -90,8 +89,7 @@ public class ClientFascadeTest {
     }
 
     /**
-     * Test of register method, of class
- ClientFascade.
+     * Test of register method, of class ClientFascade.
      */
     @Test
     public void testRegister() throws Exception {
@@ -117,8 +115,7 @@ public class ClientFascadeTest {
     }
 
     /**
-     * Test of listGames method, of class
- ClientFascade.
+     * Test of listGames method, of class ClientFascade.
      */
     @Test
     public void testListGames() throws Exception {
@@ -140,8 +137,8 @@ public class ClientFascadeTest {
     }
 
     /**
-     * Test of createGame method, of class
- ClientFascade.
+     * Test of createGame method, of class ClientFascade.
+     *
      * @throws java.lang.Exception
      */
     @Test
@@ -158,8 +155,7 @@ public class ClientFascadeTest {
     }
 
     /**
-     * Test of joinGame method, of class
- ClientFascade.
+     * Test of joinGame method, of class ClientFascade.
      */
     @Test
     public void testJoinGame() throws Exception {
@@ -178,8 +174,7 @@ public class ClientFascadeTest {
     }
 
     /**
-     * Test of saveGame method, of class
- ClientFascade.
+     * Test of saveGame method, of class ClientFascade.
      */
     @Test
     public void testSaveGame() throws Exception {
@@ -195,8 +190,7 @@ public class ClientFascadeTest {
     }
 
     /**
-     * Test of loadGame method, of class
- ClientFascade.
+     * Test of loadGame method, of class ClientFascade.
      */
     @Test
     public void testLoadGame() throws Exception {
@@ -219,29 +213,30 @@ public class ClientFascadeTest {
         System.out.print("getGameModel");
         ClientFascade instance = new ClientFascade();
         String expResult = "Sam";
-        
+
         //login
         instance.login(new User("Sam", "sam"));
         instance.joinGame(new JoinGameRequest(0, "red"));
-        
+
         GameInfo result = instance.getGameModel("");
         assertEquals(expResult, result.getPlayers().get(0).getName());
-        
+
         //test with query param
         //expResult = "\"true\"";
         result = instance.getGameModel("?version=0");
         assertEquals(null, result.getTitle());
-        
+
         expResult = null;
         result = instance.getGameModel("?version=1");
         assertEquals(expResult, result.getTitle());
-        
+
         System.out.print("...PASSED");
         System.out.println();
     }
 
     /**
      * Test of resetGame method, of class ClientFascade.
+     *
      * @throws java.lang.Exception
      */
     @Test
@@ -254,9 +249,8 @@ public class ClientFascadeTest {
         instance.joinGame(new JoinGameRequest(0, "red"));
         GameInfo result = instance.resetGame();
         int actualResult = result.getBank().getTotalResources();
-        assertEquals(expResult,actualResult);
-      
-        
+        assertEquals(expResult, actualResult);
+
         System.out.print("...PASSED");
         System.out.println();
     }
@@ -273,11 +267,12 @@ public class ClientFascadeTest {
         instance.login(new User("Sam", "sam"));
         instance.joinGame(new JoinGameRequest(0, "red"));
         ArrayList<Command> result = instance.getGameCommands();
-        assert(expResult <= result.size());
-        
+        assert (expResult <= result.size());
+
         System.out.print("...PASSED");
         System.out.println();
     }
+
     /**
      * Test of addAIToGame method, of class ClientFascade.
      */
@@ -290,10 +285,10 @@ public class ClientFascadeTest {
         instance.login(new User("Sam", "sam"));
         instance.joinGame(new JoinGameRequest(0, "red"));
         //Game result = instance.addAIToGame(new AddAIRequest("LARGEST_ARMY"));
-        
+
         //not implemented
-        assert(true);
-        
+        assert (true);
+
         System.out.print("...PASSED");
         System.out.println();
     }
@@ -310,7 +305,7 @@ public class ClientFascadeTest {
         instance.joinGame(new JoinGameRequest(0, "red"));
         ArrayList<String> result = instance.listAITypesInGame();
         assertEquals(expResult, result.get(0));
-        
+
         System.out.print("...PASSED");
         System.out.println();
     }
@@ -329,7 +324,7 @@ public class ClientFascadeTest {
         instance.joinGame(new JoinGameRequest(0, "red"));
         GameInfo result = instance.sendChat(chat);
         assertEquals(expResult, result.getChat().getLines().get(0).getMessage());
-        
+
         System.out.print("...PASSED");
         System.out.println();
     }
@@ -347,10 +342,10 @@ public class ClientFascadeTest {
         instance.login(new User("Sam", "sam"));
         instance.joinGame(new JoinGameRequest(0, "red"));
         GameInfo result = instance.finishMove(new FinishMove(0));
-        
+
         //since 3 before it should be 4 now (since I rolled the dice)
-        assert(expResult >= result.getVersion());
-        
+        assert (expResult >= result.getVersion());
+
         System.out.print("...PASSED");
         System.out.println();
     }
@@ -370,7 +365,7 @@ public class ClientFascadeTest {
 
         //Sam should've ended his turn
         assertEquals(expResult, result.getLog().getLines().get(2).getMessage());
-        
+
         System.out.print("...PASSED");
         System.out.println();
     }
@@ -386,11 +381,11 @@ public class ClientFascadeTest {
         instance.login(new User("Sam", "sam"));
         instance.joinGame(new JoinGameRequest(0, "red"));
         GameInfo result = instance.buyDevCard(new BuyDevCard(0));
-        
+
         //should have decrease by one
         int actualResult = result.getBank().getTotalResources();
         assertEquals(expResult, actualResult);
-        
+
         System.out.print("...PASSED");
         System.out.println();
     }
@@ -404,16 +399,16 @@ public class ClientFascadeTest {
         Year_Of_Plenty year_of_plenty = new Year_Of_Plenty(0);
         year_of_plenty.setResource1(ResourceType.wood);
         year_of_plenty.setResource2(ResourceType.wood);
-        
+
         ClientFascade instance = new ClientFascade();
         boolean expResult = true;
         instance.login(new User("Sam", "sam"));
         instance.joinGame(new JoinGameRequest(0, "red"));
         //Game result = instance.year_Of_Plenty(year_of_plenty);
-        
+
         //not Implemented on the server correctly
         assertTrue(expResult);
-        
+
         System.out.print("...PASSED");
         System.out.println();
     }
@@ -425,20 +420,19 @@ public class ClientFascadeTest {
     public void testRoadBuilding() throws Exception {
         System.out.println("roadBuilding");
         Road_Building roadBuilding = new Road_Building(0);
-        roadBuilding.setSpot1(new EdgeLocation(new HexLocation(0,0), EdgeDirection.N));
-        roadBuilding.setSpot2(new EdgeLocation(new HexLocation(0,1), EdgeDirection.NE));
-        
+        roadBuilding.setSpot1(new EdgeLocation(new HexLocation(0, 0), EdgeDirection.N));
+        roadBuilding.setSpot2(new EdgeLocation(new HexLocation(0, 1), EdgeDirection.NE));
+
         ClientFascade instance = new ClientFascade();
         GameInfo expResult = null;
         instance.login(new User("Sam", "sam"));
         instance.joinGame(new JoinGameRequest(0, "red"));
         GameInfo result = instance.roadBuilding(roadBuilding);
         assertEquals(expResult, result.getTitle());
-        
+
         System.out.print("...PASSED");
         System.out.println();
     }
-
 
     /**
      * Test of monopoly method, of class ClientFascade.
@@ -448,16 +442,16 @@ public class ClientFascadeTest {
         System.out.println("monopoly");
         Monopoly monopoly = new Monopoly(0);
         monopoly.setResource(ResourceType.wood);
-        
+
         ClientFascade instance = new ClientFascade();
         GameInfo expResult = null;
         instance.login(new User("Sam", "sam"));
         instance.joinGame(new JoinGameRequest(0, "red"));
         GameInfo result = instance.monopoly(monopoly);
         assertEquals(expResult, result.getTitle());
-       
+
         System.out.print("...PASSED");
         System.out.println();
     }
-  
+
 }

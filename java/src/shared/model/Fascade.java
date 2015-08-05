@@ -7,12 +7,13 @@ package shared.model;
 
 import java.util.ArrayList;
 import shared.data.*;
+
 /**
  *
  * @author ddennis
  */
 public interface Fascade {
-    
+
     /**
      * Logs the player in
      *
@@ -59,7 +60,7 @@ public interface Fascade {
      * Allows a player to join a specified game.
      *
      * @param request the request data needed
-     * 
+     *
      * @pre the request contains valid data
      * @post the player is joined to the game specified with the color
      * indicated.
@@ -109,7 +110,7 @@ public interface Fascade {
      * Tells the server to do the specified commands.
      *
      * @param commands
-     * @return 
+     * @return
      * @throws java.lang.Exception
      * @pre the passed commands are all valid.
      * @post the server has done all the commands passed in and no others.
@@ -125,22 +126,24 @@ public interface Fascade {
      * @post returns a list of any and all commands
      */
     public ArrayList getGameCommands() throws Exception;
-    
-     /**
+
+    /**
      * Adds AI player to game
+     *
      * @param request
-     * @return 
-     * @throws java.lang.Exception 
+     * @return
+     * @throws java.lang.Exception
      */
     public boolean addAIToGame(AddAIRequest request) throws Exception;
-    
+
     /**
      * Lists the types of AI in the game
-     * @return 
-     * @throws java.lang.Exception 
+     *
+     * @return
+     * @throws java.lang.Exception
      */
     public ArrayList<String> listAITypesInGame() throws Exception;
-    
+
     /**
      * Sends a message to the chat
      *
@@ -152,8 +155,7 @@ public interface Fascade {
      * model is the new game state.
      */
     public GameInfo sendChat(SendChat request) throws Exception;
-    
-    
+
     /**
      * Forces a player to roll a specified number
      *
@@ -382,7 +384,7 @@ public interface Fascade {
      * changes the server's log level for debugging purposes
      *
      * @param request says what to change the log level to
-     * @return 
+     * @return
      * @pre the request is valid
      * @post the server's log level is changes to what was specified.
      */

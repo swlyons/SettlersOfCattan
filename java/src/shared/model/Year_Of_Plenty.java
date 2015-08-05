@@ -13,17 +13,16 @@ public class Year_Of_Plenty extends Command {
     private ResourceType resource1;
     private ResourceType resource2;
     private Integer gameId;
-    
+
     public Year_Of_Plenty(int playerIndex) {
         super("Year_Of_Plenty", playerIndex);
     }
-    
-        
-    public Integer getGameId(){
+
+    public Integer getGameId() {
         return gameId;
     }
-    
-    public void setGameId(Integer gameId){
+
+    public void setGameId(Integer gameId) {
         this.gameId = gameId;
     }
 

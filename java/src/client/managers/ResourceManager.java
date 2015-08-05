@@ -1,5 +1,6 @@
 package client.managers;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.ArrayList;
 import shared.data.Bank;
@@ -7,7 +8,7 @@ import shared.data.DevCardList;
 import shared.data.ResourceList;
 import shared.definitions.DevCardType;
 
-public class ResourceManager {
+public class ResourceManager implements Serializable {
 
     private List<Bank> gameBanks;
     private final int mainBankIndex = 4;

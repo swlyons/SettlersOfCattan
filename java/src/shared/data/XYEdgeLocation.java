@@ -5,13 +5,14 @@
  */
 package shared.data;
 
+import java.io.Serializable;
 import shared.locations.EdgeDirection;
 
 /**
  *
  * @author Samuel
  */
-public class XYEdgeLocation {
+public class XYEdgeLocation implements Serializable {
 
     public XYEdgeLocation() {
     }
@@ -43,9 +44,9 @@ public class XYEdgeLocation {
     public void setDirection(EdgeDirection direction) {
         this.direction = direction;
     }
-    
+
     @Override
     public String toString() {
-        return "{" + "\"x\":" + x + ", \"y\":" + y +",\"direction\":\""+direction.toString().toUpperCase()+"\"}";
+        return "{" + "\"x\":" + x + ", \"y\":" + y + ",\"direction\":\"" + direction.toString().toUpperCase() + "\"}";
     }
 }

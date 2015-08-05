@@ -7,14 +7,14 @@ package shared.model;
  *
  */
 public class Monument extends Command {
-    
+
     private Integer gameId;
-        
-    public Integer getGameId(){
+
+    public Integer getGameId() {
         return gameId;
     }
-    
-    public void setGameId(Integer gameId){
+
+    public void setGameId(Integer gameId) {
         this.gameId = gameId;
     }
 

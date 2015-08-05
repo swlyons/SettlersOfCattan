@@ -5,11 +5,13 @@
  */
 package shared.model;
 
+import java.io.Serializable;
+
 /**
  *
  * @author ddennis
  */
-public class JoinGameRequest {
+public class JoinGameRequest implements Serializable {
 
     private Integer id;
     private String color;

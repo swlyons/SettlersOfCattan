@@ -1,6 +1,8 @@
 package shared.data;
 
-public class TurnTracker {
+import java.io.Serializable;
+
+public class TurnTracker implements Serializable {
 
     private int currentTurn;
     private String status;
@@ -48,8 +50,8 @@ public class TurnTracker {
     @Override
     public String toString() {
         return "{\"status\" : \"" + status + "\" , \"longestRoad\" : "
-                + longestRoad + ", \"largestArmy\" : " + largestArmy + 
-                ",\"currentTurn\":"+currentTurn+"}";
+                + longestRoad + ", \"largestArmy\" : " + largestArmy
+                + ",\"currentTurn\":" + currentTurn + "}";
     }
 
 }

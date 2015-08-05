@@ -5,13 +5,14 @@
  */
 package shared.data;
 
+import java.io.Serializable;
 import shared.locations.VertexDirection;
 
 /**
  *
  * @author Samuel
  */
-public class SettlementLocation {
+public class SettlementLocation implements Serializable {
 
     public void SettlementLocation() {
 
@@ -44,11 +45,10 @@ public class SettlementLocation {
     public void setDirection(VertexDirection direction) {
         this.direction = direction;
     }
-    
+
     @Override
     public String toString() {
-        return "{" + "\"x\":" + x + ", \"y\":" + y +",\"direction\":\""+direction.toString().toUpperCase()+"\"}";
+        return "{" + "\"x\":" + x + ", \"y\":" + y + ",\"direction\":\"" + direction.toString().toUpperCase() + "\"}";
     }
-
 
 }

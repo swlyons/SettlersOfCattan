@@ -1,11 +1,12 @@
 package server.command;
 
+import java.io.Serializable;
 import server.receiver.AllOfOurInformation;
 import shared.model.Monopoly;
 
-public class MonopolyCommand implements Command {
-    
-	Monopoly monopoly;
+public class MonopolyCommand implements Command, Serializable {
+
+    Monopoly monopoly;
 
     public MonopolyCommand(Monopoly monopoly) {
         this.monopoly = monopoly;
@@ -16,7 +17,7 @@ public class MonopolyCommand implements Command {
         try {
             AllOfOurInformation.getSingleton().getGames().get(monopoly.getGameId()).useMonopoly(monopoly.getResource());
             AllOfOurInformation.getSingleton().getGames().get(monopoly.getGameId()).getGame().getPlayers().get(monopoly.getPlayerIndex()).setPlayedDevCard(true);
-            AllOfOurInformation.getSingleton().getGames().get(monopoly.getGameId()).getGame().setVersion(AllOfOurInformation.getSingleton().getGames().get(monopoly.getGameId()).getGame().getVersion()+1);
+            AllOfOurInformation.getSingleton().getGames().get(monopoly.getGameId()).getGame().setVersion(AllOfOurInformation.getSingleton().getGames().get(monopoly.getGameId()).getGame().getVersion() + 1);
             AllOfOurInformation.getSingleton().getGames().get(monopoly.getGameId()).log("They are all Player's now!");
             return true;
         } catch (Exception e) {

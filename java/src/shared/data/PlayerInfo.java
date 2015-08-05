@@ -1,5 +1,6 @@
 package shared.data;
 
+import java.io.Serializable;
 import shared.definitions.*;
 
 /**
@@ -14,7 +15,7 @@ import shared.definitions.*;
  * </ul>
  *
  */
-public class PlayerInfo {
+public class PlayerInfo implements Serializable {
 
     private String name;
     private String color;
@@ -32,7 +33,7 @@ public class PlayerInfo {
     private DevCardList oldDevCards;
     private DevCardList newDevCards;
     private int soldiers;
-    
+
     public PlayerInfo() {
         setId(-1);
         setPlayerIndex(-1);

@@ -1,5 +1,6 @@
 package shared.model;
 
+import java.io.Serializable;
 import java.util.List;
 
 import shared.data.PlayerInfo;
@@ -10,7 +11,7 @@ import shared.data.PlayerInfo;
  * @author Aaron
  *
  */
-public class GameData {
+public class GameData implements Serializable {
 
     public String getGameTitle() {
         return gameTitle;

@@ -1,10 +1,11 @@
 package shared.data;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 import shared.locations.VertexLocation;
 
-public class Location {
+public class Location implements Serializable {
 
     private int ownerID;
     private boolean canBeSettled;

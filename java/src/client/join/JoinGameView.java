@@ -70,7 +70,7 @@ public class JoinGameView extends OverlayView implements IJoinGameView {
         labelPanel.add(label);
         labelPanel.add(subLabel);
         this.add(labelPanel, BorderLayout.NORTH);
-        
+
         gamePanel = new JPanel();
         gamePanel.setBorder(BorderFactory.createLineBorder(Color.white, BORDER_WIDTH));
         gamePanel.setLayout(new BoxLayout(gamePanel, BoxLayout.Y_AXIS));
@@ -85,7 +85,7 @@ public class JoinGameView extends OverlayView implements IJoinGameView {
         join.setFont(labelFont);
 
         // add the header information
-        JPanel gameInfo = new JPanel(new GridLayout(games == null ? 4 : (games.length + 1),4));
+        JPanel gameInfo = new JPanel(new GridLayout(games == null ? 4 : (games.length + 1), 4));
         JPanel hashPanel = new JPanel();
         hashPanel.add(hash);
         gameInfo.add(hashPanel);
@@ -100,7 +100,7 @@ public class JoinGameView extends OverlayView implements IJoinGameView {
         JPanel joinLabelPanel = new JPanel();
         joinLabelPanel.add(join);
         gameInfo.add(joinLabelPanel);
-        
+
         // This is the looped layout
         if (games != null && games.length > 0) {
             labelFont = labelFont.deriveFont(labelFont.getStyle(), PANEL_TEXT_SIZE);
@@ -155,7 +155,7 @@ public class JoinGameView extends OverlayView implements IJoinGameView {
         JScrollPane pane = new JScrollPane(gamePanel);
         if (getParent() != null) {
             if (games != null) {
-                pane.setPreferredSize(new Dimension (getParent().getSize().width/5,getParent().getSize().height /5));
+                pane.setPreferredSize(new Dimension(getParent().getSize().width / 5, getParent().getSize().height / 5));
             }
 
         }

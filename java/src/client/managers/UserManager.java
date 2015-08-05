@@ -2,9 +2,10 @@ package client.managers;
 
 import client.main.ClientException;
 import client.communication.ClientFascade;
+import java.io.Serializable;
 import shared.data.User;
 
-public class UserManager {
+public class UserManager implements Serializable {
 
     private ClientFascade server = ClientFascade.getSingleton();
 

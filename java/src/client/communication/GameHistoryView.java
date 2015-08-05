@@ -45,7 +45,7 @@ public class GameHistoryView extends PanelView implements IGameHistoryView {
         // have a width or height yet, which messes up the word wrap
         // calculations in LogComponent. Therefore, we call
         // invokeLater.
-       javax.swing.SwingUtilities.invokeLater(new Runnable() {
+        javax.swing.SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 logPanel.setEntries(entries);
                 JScrollBar vertical = logScroll.getVerticalScrollBar();

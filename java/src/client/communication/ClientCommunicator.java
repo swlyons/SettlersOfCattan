@@ -235,19 +235,20 @@ public class ClientCommunicator {
                         result.setResponseBody(content);
                         if (commandName.equals("user/login") && content.equals("Success")) {
                             String userCookie = connection.getHeaderField("Set-Cookie").split(";")[0];
+                            System.out.println(userCookie);
                             String decodedCookie = URLDecoder.decode(userCookie.split("=")[1], "UTF-8");
                             playerIdThisOne = model.fromJson(decodedCookie, CookieModel.class).getPlayerID();
                             name = model.fromJson(decodedCookie, CookieModel.class).getName();
-                            if((cookies.get(playerIdThisOne) == null)){
-                                 cookies.put(playerIdThisOne, userCookie + "");
+                            if ((cookies.get(playerIdThisOne) == null)) {
+                                cookies.put(playerIdThisOne, userCookie + "");
                             }
                         }
                     } else if (commandName.equals("games/join")) {
                         result.setResponseBody(content);
                         if (content.equals("Success")) {
                             String gameCookie = connection.getHeaderField("Set-Cookie").split(";")[0];
-                            if(!cookies.get(playerID).contains("catan.game=")){
-                                cookies.put(playerID, cookies.get(playerID) +"; "+ gameCookie);
+                            if (!cookies.get(playerID).contains("catan.game=")) {
+                                cookies.put(playerID, cookies.get(playerID) + "; " + gameCookie);
                             }
                         }
                     } else if (commandName.equals("games/create")) {

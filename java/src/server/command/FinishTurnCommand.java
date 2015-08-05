@@ -5,6 +5,7 @@
  */
 package server.command;
 
+import java.io.Serializable;
 import shared.model.FinishMove;
 import server.receiver.AllOfOurInformation;
 import shared.locations.EdgeLocation;
@@ -17,7 +18,7 @@ import shared.locations.VertexLocation;
  *
  * @author Samuel
  */
-public class FinishTurnCommand implements Command {
+public class FinishTurnCommand implements Command, Serializable {
 
     FinishMove finishMove;
 
@@ -61,7 +62,7 @@ public class FinishTurnCommand implements Command {
             AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).log("Player is resting now.");
 
             while (AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).getGame().getPlayers().get((currentTurn)).getId() < -1) {
-            AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).getGame().getTurnTracker().setCurrentTurn(currentTurn);
+                AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).getGame().getTurnTracker().setCurrentTurn(currentTurn);
                 if (!(status.equals("SecondRound") || status.equals("FirstRound"))) {
                     currentTurn++;
                     if (currentTurn == 4) {
@@ -268,6 +269,7 @@ public class FinishTurnCommand implements Command {
             AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).getGame().setVersion(AllOfOurInformation.getSingleton().getGames().get(finishMove.getGameId()).getGame().getVersion() + 1);
             return true;
         } catch (Exception e) {
+            e.printStackTrace();
             return false;
         }
     }

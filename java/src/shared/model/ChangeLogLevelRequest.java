@@ -1,12 +1,14 @@
 package shared.model;
 
+import java.io.Serializable;
+
 /**
  * the request for changing a logging level
  *
  * @author Aaron
  *
  */
-public class ChangeLogLevelRequest {
+public class ChangeLogLevelRequest implements Serializable {
 
     private String logLevel;
 

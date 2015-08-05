@@ -330,6 +330,7 @@ public class LoginView extends OverlayView implements ILoginView {
 
                 @Override
                 public void actionPerformed(ActionEvent e) {
+
                     getController().register();
                 }
 

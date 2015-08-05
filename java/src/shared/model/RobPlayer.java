@@ -13,7 +13,7 @@ public class RobPlayer extends Command {
     private Integer victimIndex;
     private HexLocation location;
     private Integer gameId;
-    
+
     public RobPlayer() {
     }
 
@@ -32,12 +32,12 @@ public class RobPlayer extends Command {
     public void setLocation(HexLocation location) {
         this.location = location;
     }
-    
-    public Integer getGameId(){
+
+    public Integer getGameId() {
         return gameId;
     }
-    
-    public void setGameId(Integer gameId){
+
+    public void setGameId(Integer gameId) {
         this.gameId = gameId;
     }
 }

@@ -5,7 +5,7 @@
  */
 package server.command;
 
-import server.command.Command;
+import java.io.Serializable;
 import server.receiver.AllOfOurInformation;
 import shared.model.BuyDevCard;
 
@@ -13,7 +13,7 @@ import shared.model.BuyDevCard;
  *
  * @author Samuel
  */
-public class BuyDevCardCommand implements Command {
+public class BuyDevCardCommand implements Command, Serializable {
 
     private BuyDevCard buyDevCard;
 
@@ -25,7 +25,7 @@ public class BuyDevCardCommand implements Command {
     public boolean execute() {
         try {
             AllOfOurInformation.getSingleton().getGames().get(buyDevCard.getGameId()).buyDevCard();
-            AllOfOurInformation.getSingleton().getGames().get(buyDevCard.getGameId()).getGame().setVersion(AllOfOurInformation.getSingleton().getGames().get(buyDevCard.getGameId()).getGame().getVersion()+1);
+            AllOfOurInformation.getSingleton().getGames().get(buyDevCard.getGameId()).getGame().setVersion(AllOfOurInformation.getSingleton().getGames().get(buyDevCard.getGameId()).getGame().getVersion() + 1);
             AllOfOurInformation.getSingleton().getGames().get(buyDevCard.getGameId()).log("Player bought something from some merchants.");
             return true;
         } catch (Exception e) {

@@ -52,14 +52,32 @@ public class Server {
     /**
      * Initializes the Database
      */
-    private void run(String plugin, int deltas) {
+    private void run(String plugin, int deltas) throws Exception {
         try {
+
             //send the plugin to the entry class
-            Database.initialize(plugin);
-            
+            Database db = new Database(plugin);
+            AllOfOurInformation.getSingleton().setDatabase(db);
+            Database.initialize();
+
             //send the # of deltas for the agent to use
             ServerFascade.getSingleton().getAgent().setDeltas(deltas);
-            
+
+            //put information from database into AllOfOurInformation
+            if (plugin.equals("sql")) {
+                AllOfOurInformation.getSingleton().getUsers().addAll(AllOfOurInformation.getSingleton().getUsersFromDatabase());
+                int i = 0;
+                for (GameManager gameManager : AllOfOurInformation.getSingleton().getGamesFromDatabase()) {
+                    AllOfOurInformation.getSingleton().getGames().add(gameManager);
+                    for (server.command.Command command : AllOfOurInformation.getSingleton().getCommandsFromDatabase(i)) {
+                        AllOfOurInformation.getSingleton().getAgent().sendCommand(command);
+                    }
+                    i++;
+                }
+            } else {//use blob
+
+            }
+
         } catch (ServerException e) {
             System.out.println("Could not initialize database: " + e.getMessage());
             e.printStackTrace();
@@ -207,6 +225,7 @@ public class Server {
                     // String message = model.toJson("Success", String.class);
                     String message = "Success";
                     System.out.println("Login successful:" + user.getUsername());
+
                     exchange.getResponseHeaders().set("Content-Type", "text/html");
                     exchange.getResponseHeaders().set("Set-Cookie", cookie);
                     exchange.sendResponseHeaders(HttpURLConnection.HTTP_OK, message.length());
@@ -261,11 +280,12 @@ public class Server {
                 } catch (ServerException ex) {
                     Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
                 }
-            }
-            try {
-                result = ServerFascade.getSingleton().register(user);
-            } catch (ServerException ex) {
-                Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
+            } else {
+                try {
+                    result = ServerFascade.getSingleton().register(user);
+                } catch (ServerException ex) {
+                    Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
 
             // re-package and return the data
@@ -829,8 +849,8 @@ public class Server {
                 // pass in the game id
                 GameIdPlayerIdAndPlayerIndex gameAndPlayerId = verifyPlayer(exchange);
                 if ((gameAndPlayerId != null) && (sendChatRequest != null)) {
-
-                    sendChatRequest.setContent(sendChatRequest.getContent() + ";" + gameAndPlayerId.getGameId());
+                    sendChatRequest.setGameId(gameAndPlayerId.getGameId());
+                    sendChatRequest.setContent(sendChatRequest.getContent());
                 } else {
                     notLoggedIn = true;
                 }
@@ -846,6 +866,7 @@ public class Server {
                 } else {
                     // call the appropriate facade
                     GameInfo result = null;
+
                     try {
                         if (isMock) {
                             result = MockServerFascade.getSingleton().sendChat(sendChatRequest);
@@ -855,6 +876,7 @@ public class Server {
                     } catch (NullPointerException npe) {
                         String message = "For the specified game there is no player with the index: "
                                 + sendChatRequest.getPlayerIndex();
+                        npe.printStackTrace();
                         System.out.println(message);
                         exchange.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, message.length());
                         exchange.getResponseBody().write(message.getBytes());
@@ -2683,7 +2705,6 @@ public class Server {
                 try {
                     game = ServerFascade.getSingleton().buildCity(buildCity);
                 } catch (Exception e) {
-                    e.printStackTrace();
                     game = null;
                 }
                 String result;
@@ -2899,7 +2920,6 @@ public class Server {
                 try {
                     game = ServerFascade.getSingleton().buildRoad(buildRoad);
                 } catch (Exception e) {
-                    e.printStackTrace();
                     game = null;
                 }
                 String result;
@@ -3266,6 +3286,8 @@ public class Server {
             Integer playerIdThisOne = model.fromJson(decodedCookie, CookieModel.class).getPlayerID();
             Integer gameId = Integer
                     .parseInt(URLDecoder.decode(userCookie.split(";")[1].split("catan.game=")[1], "UTF-8"));
+            AllOfOurInformation.getSingleton().setCurrentGameId(gameId);
+
             int playerIndex = -1;
             boolean found = false;
             for (GameManager gm : AllOfOurInformation.getSingleton().getGames()) {
@@ -3297,25 +3319,29 @@ public class Server {
      */
     public static void main(String[] args) {
         //get plugin and # of deltas
+
+        //set the defaults for plugin and deltas
         String plugin = "sql";
         int deltas = 10;
-        if (args.length == 4) {
+
+        if (args.length == 2) {
+            if (!args[0].equals("")) {
+                plugin = args[0];
+            }
+            if (!args[1].equals("")) {
+                deltas = Integer.parseInt(args[1]);
+            }
+        }
+        if (args.length == 1) {
             if (!args[0].equals("")) {
                 SERVER_PORT_NUMBER = Integer.parseInt(args[0]);
             }
-            if (!args[1].equals("")) {
-                isMock = true;
-            }
-            if (!args[2].equals("")) {
-                plugin = args[2];
-            }
-            if (!args[3].equals("")) {
-                deltas = Integer.parseInt(args[3]);
-            }
         }
-        
-        
-        new Server().run(plugin, deltas);
+        try {
+            new Server().run(plugin, deltas);
+        } catch (Exception ex) {
+            Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
 }

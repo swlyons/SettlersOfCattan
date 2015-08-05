@@ -1,13 +1,15 @@
 package shared.locations;
 
+import java.io.Serializable;
+
 /**
  * Represents the location of a vertex on a hex map
  */
-public class VertexLocation {
+public class VertexLocation implements Serializable {
 
     private HexLocation location;
     private VertexDirection direction;
-    
+
     public VertexLocation(HexLocation hexLoc, VertexDirection dir) {
         setHexLoc(hexLoc);
         setDir(dir);

@@ -5,14 +5,14 @@
  */
 package shared.data;
 
+import java.io.Serializable;
 import shared.locations.VertexLocation;
-import shared.data.SettlementLocation;
 
 /**
  *
  * @author ddennis
  */
-public class VertexObject {
+public class VertexObject implements Serializable {
 
     private int owner;
     private VertexLocation direction;

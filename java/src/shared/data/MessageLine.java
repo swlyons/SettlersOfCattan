@@ -1,6 +1,8 @@
 package shared.data;
 
-public class MessageLine {
+import java.io.Serializable;
+
+public class MessageLine implements Serializable {
 
     private String message;
     private String source;

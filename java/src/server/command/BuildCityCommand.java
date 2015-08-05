@@ -5,10 +5,9 @@
  */
 package server.command;
 
-import server.command.Command;
+import java.io.Serializable;
 import server.receiver.AllOfOurInformation;
 import shared.model.BuildCity;
-import client.managers.GameManager;
 import shared.definitions.PieceType;
 import shared.locations.HexLocation;
 import shared.locations.VertexDirection;
@@ -18,7 +17,7 @@ import shared.locations.VertexLocation;
  *
  * @author Samuel
  */
-public class BuildCityCommand implements Command {
+public class BuildCityCommand implements Command, Serializable {
 
     private BuildCity buildCity;
 
@@ -34,7 +33,7 @@ public class BuildCityCommand implements Command {
             VertexLocation vertexLocation = new VertexLocation(hexSpot, vertexDirection);
             if (AllOfOurInformation.getSingleton().getGames().get(buildCity.getGameId()).buildStructure(PieceType.CITY, vertexLocation)) {
                 AllOfOurInformation.getSingleton().getGames().get(buildCity.getGameId()).getGame().setVersion(AllOfOurInformation.getSingleton().getGames().get(buildCity.getGameId()).getGame().getVersion() + 1);
-                AllOfOurInformation.getSingleton().getGames().get(buildCity.getGameId()).getGame().setVersion(AllOfOurInformation.getSingleton().getGames().get(buildCity.getGameId()).getGame().getVersion()+1);
+                AllOfOurInformation.getSingleton().getGames().get(buildCity.getGameId()).getGame().setVersion(AllOfOurInformation.getSingleton().getGames().get(buildCity.getGameId()).getGame().getVersion() + 1);
                 AllOfOurInformation.getSingleton().getGames().get(buildCity.getGameId()).log("Player upgraded to a fortress!");
                 return true;
             } else {

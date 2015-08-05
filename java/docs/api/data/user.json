@@ -57,7 +57,8 @@
             "properties": {
                 "username": {
                     "type": "string"
-                },"password": {
+                },
+                "password": {
                     "type": "string"
                 }
             }

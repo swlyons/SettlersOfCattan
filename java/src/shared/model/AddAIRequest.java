@@ -5,11 +5,13 @@
  */
 package shared.model;
 
+import java.io.Serializable;
+
 /**
  *
  * @author ddennis
  */
-public class AddAIRequest {
+public class AddAIRequest implements Serializable {
 
     private String AIType;
 

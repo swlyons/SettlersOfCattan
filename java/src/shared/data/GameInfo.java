@@ -1,5 +1,6 @@
 package shared.data;
 
+import java.io.Serializable;
 import java.util.*;
 
 /**
@@ -13,7 +14,7 @@ import java.util.*;
  * </ul>
  *
  */
-public class GameInfo {
+public class GameInfo implements Serializable {
 
     private String title;
     private int id;
@@ -132,17 +133,17 @@ public class GameInfo {
 
     @Override
     public String toString() {
-        String output = "{\"deck\":"+deck.toString()+
-                ",\"map\":"+map.toString()+
-                ",\"players\":"+players.toString()+ 
-                ", \"bank\" : " + bank.toString() + 
-                ", \"chat\" : " + chat.toString() + 
-                ", \"log\" : " + log.toString()+
-                ", \"turnTracker\" : " + turnTracker.toString() + 
-                (tradeOffer != null ? ", \"tradeOffer\" : " + tradeOffer.toString() : "") + 
-                ", \"version\" : " + version + 
-                ", \"winner\" : " + winner + 
-                "}";
+        String output = "{\"deck\":" + deck.toString()
+                + ",\"map\":" + map.toString()
+                + ",\"players\":" + players.toString()
+                + ", \"bank\" : " + bank.toString()
+                + ", \"chat\" : " + chat.toString()
+                + ", \"log\" : " + log.toString()
+                + ", \"turnTracker\" : " + turnTracker.toString()
+                + (tradeOffer != null ? ", \"tradeOffer\" : " + tradeOffer.toString() : "")
+                + ", \"version\" : " + version
+                + ", \"winner\" : " + winner
+                + "}";
         return output;
 //        return "{" + "\"title\" : \"" + title + "\" , \"id\" : " + id + ", \"bank\" : " + bank + ", \"chat\" : " + chat + ", \"log\" : " + log + ", \"map\" : " + map + ", \"players\" : " + players + ", \"tradeOffer\" : " + tradeOffer + ", \"turnTracker\" : " + turnTracker + ", \"version\" : " + version + ", \"winner\" : " + winner + "}";
     }

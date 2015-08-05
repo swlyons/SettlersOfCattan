@@ -1,5 +1,6 @@
 package shared.data;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import shared.definitions.HexType;
@@ -7,7 +8,7 @@ import shared.definitions.ResourceType;
 import shared.locations.EdgeLocation;
 import shared.locations.HexLocation;
 
-public class Hex {
+public class Hex implements Serializable {
 
     private HexLocation location;
     private ArrayList<EdgeLocation> edgeLocations;
@@ -56,7 +57,6 @@ public class Hex {
         this.edgeLocations = edgeLocations;
     }
 
-
     public boolean getHasRobber() {
         return hasRobber;
     }
@@ -99,39 +99,43 @@ public class Hex {
 
     @Override
     public String toString() {
-        if(resource==null){
+        if (resource == null) {
             return "{" + "\"location\" : " + location.toString() + ", \"resource\" : null, \"number\" : " + number + "}";
-        }else{
+        } else {
             return "{" + "\"location\" : " + location.toString() + ", \"resource\" : \"" + resource.toString().toLowerCase() + "\", \"number\" : " + number + "}";
-        
+
         }
     }
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((edgeLocations == null) ? 0 : edgeLocations.hashCode());
-		result = prime * result + (hasRobber ? 1231 : 1237);
-		result = prime * result + ((location == null) ? 0 : location.hashCode());
-		result = prime * result + number;
-		result = prime * result + ((resource == null) ? 0 : resource.hashCode());
-		result = prime * result + ((type == null) ? 0 : type.hashCode());
-		return result;
-	}
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((edgeLocations == null) ? 0 : edgeLocations.hashCode());
+        result = prime * result + (hasRobber ? 1231 : 1237);
+        result = prime * result + ((location == null) ? 0 : location.hashCode());
+        result = prime * result + number;
+        result = prime * result + ((resource == null) ? 0 : resource.hashCode());
+        result = prime * result + ((type == null) ? 0 : type.hashCode());
+        return result;
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Hex other = (Hex) obj;
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        Hex other = (Hex) obj;
 
-		if (!location.equals(other.location))
-			return false;
-		return true;
-	}
+        if (!location.equals(other.location)) {
+            return false;
+        }
+        return true;
+    }
 }

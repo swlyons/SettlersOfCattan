@@ -5,11 +5,13 @@
  */
 package shared.model;
 
+import java.io.Serializable;
+
 /**
  *
  * @author ddennis
  */
-public class LoadGameRequest {
+public class LoadGameRequest implements Serializable {
 
     private String name;
 

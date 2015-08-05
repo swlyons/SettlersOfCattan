@@ -9,7 +9,7 @@ package shared.definitions;
  *
  * @author ddennis
  */
-public enum AwardType
-{
-	LONGEST_ROAD, LARGEST_ARMY
+public enum AwardType {
+
+    LONGEST_ROAD, LARGEST_ARMY
 }

@@ -347,7 +347,7 @@ public class MapComponent extends JComponent {
         }
 
         settlements.put(normVertLoc, color);
-        
+
         this.repaint();
     }
 
@@ -360,7 +360,7 @@ public class MapComponent extends JComponent {
         }
 
         cities.put(normVertLoc, color);
-        
+
         this.repaint();
     }
 

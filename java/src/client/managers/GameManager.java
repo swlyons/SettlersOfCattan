@@ -1,5 +1,6 @@
 package client.managers;
 
+import java.io.Serializable;
 import shared.data.Bank;
 import shared.data.DevCardList;
 import shared.data.Edge;
@@ -9,7 +10,6 @@ import shared.data.Port;
 import shared.data.ResourceList;
 import shared.data.Map;
 import shared.data.VertexObject;
-import javafx.geometry.VerticalDirection;
 import shared.data.EdgeValue;
 import shared.data.GameInfo;
 import shared.data.PlayerInfo;
@@ -37,7 +37,7 @@ import shared.locations.HexLocation;
 import shared.locations.EdgeDirection;
 import shared.locations.VertexDirection;
 
-public class GameManager {
+public class GameManager implements Serializable {
 
     private LocationManager locationManager;
     private MapManager mapManager;
@@ -363,7 +363,7 @@ public class GameManager {
 
         unsettledEdges.add(new Edge(new EdgeLocation(new HexLocation(-3, 3), EdgeDirection.NE)));
         unsettledEdges.add(new Edge(new EdgeLocation(new HexLocation(-3, 2), EdgeDirection.NE)));
-        unsettledEdges.add(new Edge(new EdgeLocation(new HexLocation(-3, 1), EdgeDirection.NE)));       
+        unsettledEdges.add(new Edge(new EdgeLocation(new HexLocation(-3, 1), EdgeDirection.NE)));
         unsettledEdges.add(new Edge(new EdgeLocation(new HexLocation(3, -2), EdgeDirection.NW)));
         unsettledEdges.add(new Edge(new EdgeLocation(new HexLocation(3, -1), EdgeDirection.NW)));
         unsettledEdges.add(new Edge(new EdgeLocation(new HexLocation(3, 0), EdgeDirection.NW)));
@@ -1127,14 +1127,14 @@ public class GameManager {
      */
     public void endTurn() {
         resourceManager.makeCardsUsable();
-        
+
         /*This was causing all sorts of problems... NASTY LITTLE BUGGER */
         /*if (game.getTurnTracker().getStatus().equals("SecondRound")) {
-            System.out.println("Game Manager: Clear out whoCanBuild for Unsetteled Locations");
-            for (Location l : locationManager.getUnsettledLocations()) {
-                l.setWhoCanBuild(new HashSet<Integer>());
-            }
-        }*/
+         System.out.println("Game Manager: Clear out whoCanBuild for Unsetteled Locations");
+         for (Location l : locationManager.getUnsettledLocations()) {
+         l.setWhoCanBuild(new HashSet<Integer>());
+         }
+         }*/
         getGame().getPlayers().get(currentPlayer()).setPlayedDevCard(true);
         saveResourcesIntoGame();
     }

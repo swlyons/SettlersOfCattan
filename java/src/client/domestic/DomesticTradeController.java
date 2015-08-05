@@ -238,7 +238,7 @@ public class DomesticTradeController extends Controller implements IDomesticTrad
         GameManager gm = ClientCommunicator.getSingleton().getGameManager();
         Integer playerId = ClientCommunicator.getSingleton().getPlayerId();
         Integer playerIndex = gm.getPlayerIndex(playerId);
-        
+
         if (!sendingBrick) {
             offer.setBrick(0 - offer.getBrick());;
         }

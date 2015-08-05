@@ -10,26 +10,27 @@ package server.main;
  * @author Samuel
  */
 public class GameIdPlayerIdAndPlayerIndex {
+
     private int gameId;
     private int playerId;
     private int playerIndex;
-    
-    public GameIdPlayerIdAndPlayerIndex(int gameId, int playerId, int playerIndex){
-        this.gameId=gameId;
-        this.playerId=playerId;
+
+    public GameIdPlayerIdAndPlayerIndex(int gameId, int playerId, int playerIndex) {
+        this.gameId = gameId;
+        this.playerId = playerId;
         this.playerIndex = playerIndex;
     }
-    
-    public int getGameId(){
+
+    public int getGameId() {
         return gameId;
     }
-    
-    public int getPlayerId(){
+
+    public int getPlayerId() {
         return playerId;
     }
-    
-    public int getPlayerIndex(){
+
+    public int getPlayerIndex() {
         return playerIndex;
     }
-    
+
 }

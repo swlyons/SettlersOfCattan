@@ -5,7 +5,12 @@
  */
 package server.command;
 
+import client.managers.GameManager;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import server.receiver.AllOfOurInformation;
+import shared.data.User;
 
 /**
  * This will house the list of commands that have been executed
@@ -14,11 +19,12 @@ import java.util.ArrayList;
  */
 public class Agent {
 
-    private final ArrayList commandQueue;
     private int deltas = 5;
-    
+    private Map<Integer, ArrayList<Command>> commandQueue;
+
     public Agent() {
-        commandQueue = new ArrayList();
+        commandQueue = new HashMap<>();
+        AllOfOurInformation.getSingleton().setAgent(this);
     }
 
     public int getDeltas() {
@@ -28,13 +34,53 @@ public class Agent {
     public void setDeltas(int deltas) {
         this.deltas = deltas;
     }
-    
+
     public boolean sendCommand(Command command) {
-        commandQueue.add(command);
-        return(command.execute());
+
+        boolean success = command.execute();
+        if (success) {
+            int currentGameId = AllOfOurInformation.getSingleton().getCurrentGameId();
+            //update the game info every delta commands
+            String status = "";
+            if (!AllOfOurInformation.getSingleton().getGames().isEmpty()) {
+                status = AllOfOurInformation.getSingleton().getGames().get(currentGameId).getGame().getTurnTracker().getStatus();
+            }
+            if (!commandQueue.isEmpty()) {
+                //update for the first and second rounds as well
+                if ((commandQueue.get(currentGameId).size() == deltas) || status.contains("Round")) {
+                    /* add logic to update the game state blob the present game*/
+                    GameManager presentGameManager = AllOfOurInformation.getSingleton().getGames().get(currentGameId);
+                    AllOfOurInformation.getSingleton().updateGameInDatabase(presentGameManager, currentGameId);
+
+                    //clear the command database
+                    AllOfOurInformation.getSingleton().clearCommandsFromDatabase(currentGameId);
+                    commandQueue.get(currentGameId).clear();
+                }
+            }
+
+            if (command instanceof RegisterCommand) {
+                //skip the register commands (for queue)   
+                //add the user to the database
+                User user = ((RegisterCommand) command).getUser();
+                AllOfOurInformation.getSingleton().addUserToDatabase(user);
+            } else if (command instanceof CreateGameCommand) {
+                //skip Create Game Commands(for queue)
+                //clear the command quueue for each new game
+            } else {
+                //save command to the Database
+                AllOfOurInformation.getSingleton().addCommandToDatabase(command, currentGameId);
+                System.out.println("Commands left 'til Checkpoint: " + (deltas - (commandQueue.isEmpty() ? 0 : commandQueue.get(currentGameId).size())));
+                if (commandQueue.isEmpty()) {
+                    commandQueue.put(currentGameId, new ArrayList<>());
+                }
+                commandQueue.get(currentGameId).add(command);
+            }
+        }
+        return success;
     }
 
-    public ArrayList getCommandQueue() {
+    public Map<Integer, ArrayList<Command>> getCommandQueue() {
         return commandQueue;
     }
+
 }

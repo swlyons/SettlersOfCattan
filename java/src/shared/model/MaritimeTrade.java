@@ -14,12 +14,12 @@ public class MaritimeTrade extends Command {
     private ResourceType inputResource;
     private ResourceType outputResource;
     private Integer gameId;
-        
-    public Integer getGameId(){
+
+    public Integer getGameId() {
         return gameId;
     }
-    
-    public void setGameId(Integer gameId){
+
+    public void setGameId(Integer gameId) {
         this.gameId = gameId;
     }
 

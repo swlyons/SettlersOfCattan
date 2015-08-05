@@ -1,6 +1,8 @@
 package shared.data;
 
-public class User {
+import java.io.Serializable;
+
+public class User implements Serializable {
 
     private String username;
     private String password;
@@ -65,7 +67,7 @@ public class User {
     }
 
     public int getId() {
-       return id;
+        return id;
     }
 
     public int getGameId() {
@@ -73,6 +75,6 @@ public class User {
     }
 
     public void setGameId(int gameid) {
-        this.gameid= gameid;
+        this.gameid = gameid;
     }
 }

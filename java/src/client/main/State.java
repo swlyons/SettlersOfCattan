@@ -22,5 +22,5 @@ abstract class State {
      */
     public void doAction(Controller controller) {
     }
-    
+
 }

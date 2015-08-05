@@ -1,17 +1,18 @@
 package shared.model;
 
+import java.io.Serializable;
+
 /**
  * represents a reqeust to force a particular roll.
  *
  * @author Aaron
  *
  */
-public class RollNumber extends Command {
+public class RollNumber extends Command implements Serializable {
 
     private Integer number;
     private Integer gameId;
-    
-    
+
     public RollNumber() {
         gameId = -1;
     }
@@ -27,13 +28,13 @@ public class RollNumber extends Command {
     public void setNumber(Integer number) {
         this.number = number;
     }
-    
-    public void setGameId(Integer gameId){
+
+    public void setGameId(Integer gameId) {
         this.gameId = gameId;
     }
-    
-    public Integer getGameId(){
+
+    public Integer getGameId() {
         return gameId;
     }
-    
+
 }

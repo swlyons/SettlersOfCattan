@@ -1,9 +1,10 @@
 package server.command;
 
+import java.io.Serializable;
 import server.receiver.AllOfOurInformation;
 import shared.model.Year_Of_Plenty;
 
-public class YearOfPlentyCommand implements Command {
+public class YearOfPlentyCommand implements Command, Serializable {
 
     Year_Of_Plenty yearOfPlenty;
 

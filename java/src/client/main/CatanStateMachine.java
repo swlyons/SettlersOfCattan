@@ -22,7 +22,7 @@ public class CatanStateMachine {
 
     private int[][] transition = {{1, 1}, {1, 2}, {2, 3}, {3, 4}, {4, 5}, {5, 6}, {6, 6}};
     private int current = 0;
-    
+
     public CatanPanel getCatanPanel() {
         return catanPanel;
     }
@@ -31,8 +31,7 @@ public class CatanStateMachine {
         firstRoundState.setCatanPanel(catanPanel);
         secondRoundState.setCatanPanel(catanPanel);
     }
-    
-    
+
     private void next(int message) {
         current = transition[current][message];
     }
