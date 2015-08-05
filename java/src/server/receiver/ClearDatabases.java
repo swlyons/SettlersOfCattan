@@ -15,9 +15,9 @@ public class ClearDatabases {
     }
     public static void main(String[] args) throws Exception {
 
-        Database db = new Database();
+        Database db = new Database("sql");
 
-        Database.initialize("sql");
+        Database.initialize();
         db.startTransaction();
 
         // clear out the database
@@ -28,8 +28,8 @@ public class ClearDatabases {
        
 
         //no need to start or end transactions for a blob
-        db = new Database();
-        Database.initialize("blob");
+        db = new Database("blob");
+
         // clear out the database
         db.getGames().clear();
         db.getUsers().clear();

@@ -6,12 +6,12 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.sql.Connection;
+import java.sql.Driver;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Locale;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -25,24 +25,22 @@ public class Database {
 
     private static final String JAVA_DIRECTORY = System.getProperty("user.dir").replace("dist", "");
     private static final String PLUGINS_DIRECTORY = JAVA_DIRECTORY + "plugins" + File.separator;
-    private static final String DATABASE_DIRECTORY = JAVA_DIRECTORY  + "database";
+    private static final String DATABASE_DIRECTORY = JAVA_DIRECTORY + "database";
     private static final String DATABASE_FILE = "catan.db";
     private static final String DATABASE_URL = "jdbc:sqlite:"
             + DATABASE_DIRECTORY + File.separator + DATABASE_FILE;
     private static URLClassLoader child;
     private static String plugin;
+    private static Driver driver;
 
-    public static void initialize(String plugin) throws ServerException {
-        Database.plugin = plugin;
+    public static void initialize() throws Exception {
         try {
-            try {
-                child = new URLClassLoader(new URL[]{new File(PLUGINS_DIRECTORY + plugin + ".jar").toURI().toURL()});
-            } catch (MalformedURLException ex) {
-                Logger.getLogger(Database.class.getName()).log(Level.SEVERE, null, ex);
-            }
+
+            child = new URLClassLoader(new URL[]{new File(PLUGINS_DIRECTORY + plugin + ".jar").toURI().toURL()}, ClassLoader.getSystemClassLoader());
+
             if (plugin.equals("sql")) {
                 //load the JDBC driver
-                Class.forName("org.sqlite.JDBC", true, child);
+                driver = (Driver) Class.forName("org.sqlite.JDBC", true, child).newInstance();
             } else if (plugin.equals("blob")) {
                 /* TODO: Change this to a text file jar */
 
@@ -60,9 +58,10 @@ public class Database {
     /**
      * Creates new instances of all the tables in the database
      */
-    public Database() {
+    public Database(String plugin) {
         connection = null;
         /*Create new Instances of User and Games classes here */
+        this.plugin = plugin;
         games = new Games(this, plugin);
         users = new Users(this, plugin);
     }
@@ -74,8 +73,7 @@ public class Database {
     /**
      * Gets the games table form the database
      *
-     * @return instance of Games Table for running operations on the Games
-     * Table
+     * @return instance of Games Table for running operations on the Games Table
      */
     public Games getGames() {
         return games;
@@ -102,10 +100,12 @@ public class Database {
             Method enforceForeignKeysMethod = sqlLiteConfigClass.getDeclaredMethod("enforceForeignKeys", Boolean.TYPE);
             Method toPropertiesMethod = sqlLiteConfigClass.getDeclaredMethod("toProperties");
             Object instance = sqlLiteConfigClass.newInstance();
-            
+
             enforceForeignKeysMethod.invoke(instance, true);
-            connection = DriverManager.getConnection(/*DATABASE_URL*/"jdbc:sqlite:C:/Users/ddennis/Documents/SettlersOfCattan/java/database/catan.db",
-                    ((Properties) toPropertiesMethod.invoke(instance)));
+            Properties properties = ((Properties) toPropertiesMethod.invoke(instance));
+            DriverManager.registerDriver(new DriverShim(driver));
+            connection = DriverManager.getConnection(DATABASE_URL, properties);
+
             connection.setAutoCommit(false);
         } catch (Exception e) {
             throw new ServerException(

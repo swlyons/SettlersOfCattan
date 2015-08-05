@@ -55,8 +55,9 @@ public class Server {
     private void run(String plugin, int deltas) {
         try {
             //send the plugin to the entry class
-            Database.initialize(plugin);
-            
+            Database db = new Database(plugin);
+            db.initialize();
+           
             //send the # of deltas for the agent to use
             ServerFascade.getSingleton().getAgent().setDeltas(deltas);
             
