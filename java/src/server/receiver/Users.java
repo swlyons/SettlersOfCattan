@@ -91,7 +91,7 @@ public class Users {
     }
 
     /**
-     * Clears all users FROM the Users table used by
+     * Clears all users FROM the Users table used by ant clear-db
      *
      *
      * @throws ServerException
