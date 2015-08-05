@@ -32,12 +32,12 @@ import static org.junit.Assert.*;
  *
  * @author ddennis
  */
-
 public class GameManagerTest {
-	private GameInfo jsonDataIn = null;
 
-	public GameManagerTest() {
-		String jsonString = "{\"deck\":\n" + "{\"yearOfPlenty\":\n"
+    private GameInfo jsonDataIn = null;
+
+    public GameManagerTest() {
+        String jsonString = "{\"deck\":\n" + "{\"yearOfPlenty\":\n"
 				+ "2,\"monopoly\":\n" + "2,\"soldier\":\n"
 				+ "10,\"roadBuilding\":\n" + "1,\"monument\":\n"
 				+ "4},\"map\":\n" + "{\"hexGrid\":\n" + "{\"hexes\":\n"
@@ -790,228 +790,228 @@ public class GameManagerTest {
 				+ "7,\"ore\":\n" + "2},\"turnTracker\":\n" + "{\"status\":\n"
 				+ "\"Playing\",\"currentTurn\":\n" + "0},\"largestArmy\":\n"
 				+ "2,\"longestRoad\":\n" + "0,\"winner\":\n" + "-1}";
-                jsonDataIn = new GsonBuilder().create().fromJson(jsonString, GameInfo.class);
-	}
+        jsonDataIn = new GsonBuilder().create().fromJson(jsonString, GameInfo.class);
+    }
 
-	@BeforeClass
-	public static void setUpClass() {
-	}
+    @BeforeClass
+    public static void setUpClass() {
+    }
 
-	@AfterClass
-	public static void tearDownClass() {
-	}
+    @AfterClass
+    public static void tearDownClass() {
+    }
 
-	@Before
-	public void setUp() {
-	}
+    @Before
+    public void setUp() {
+    }
 
-	@After
-	public void tearDown() {
-	}
-        
-	@Test
-	public void testCanBuyDevCard() {
-		GameManager instance = new GameManager();
-		instance.initializeGame(jsonDataIn);
+    @After
+    public void tearDown() {
+    }
 
-		GameInfo game = instance.getGame();
+    @Test
+    public void testCanBuyDevCard() {
+        GameManager instance = new GameManager();
+        instance.initializeGame(jsonDataIn);
 
-		// CurrentPlayer is Sam. Sam has enough resources for a DevCard
-		game.getTurnTracker().setCurrentTurn(0);
+        GameInfo game = instance.getGame();
 
-		DevCardList prevDevCards = instance.getResourceManager().getGameBanks()
-				.get(0).getUnusableDevCards();
-		assert (prevDevCards.totalCardsRemaining() == 0);
+        // CurrentPlayer is Sam. Sam has enough resources for a DevCard
+        game.getTurnTracker().setCurrentTurn(0);
 
-		ResourceList prevResources = instance.getResourceManager()
-				.getGameBanks().get(0).getResourcesCards();
+        DevCardList prevDevCards = instance.getResourceManager().getGameBanks()
+                .get(0).getUnusableDevCards();
+        assert (prevDevCards.totalCardsRemaining() == 0);
 
-		String previousResourceString = (prevResources.toString());
+        ResourceList prevResources = instance.getResourceManager()
+                .getGameBanks().get(0).getResourcesCards();
 
-		// Verified devCardList was empty, now if we buy a card it should have
-		// one.
-		instance.buyDevCard();
-		DevCardList newDevCards = instance.getResourceManager().getGameBanks()
-				.get(0).getUnusableDevCards();
-		ResourceList newResources = instance.getResourceManager()
-				.getGameBanks().get(0).getResourcesCards();
-		;
-		assert (newDevCards.totalCardsRemaining() == 1);
+        String previousResourceString = (prevResources.toString());
 
-		// If we add the resources back and the result is equal to the previous
-		// quantities, then they had been removed properly
-		newResources.addOre(1);
-		newResources.addWheat(1);
-		newResources.addSheep(1);
-		assert (newResources.toString().equals(previousResourceString));
+        // Verified devCardList was empty, now if we buy a card it should have
+        // one.
+        instance.buyDevCard();
+        DevCardList newDevCards = instance.getResourceManager().getGameBanks()
+                .get(0).getUnusableDevCards();
+        ResourceList newResources = instance.getResourceManager()
+                .getGameBanks().get(0).getResourcesCards();
+        ;
+        assert (newDevCards.totalCardsRemaining() == 1);
 
-	}
+        // If we add the resources back and the result is equal to the previous
+        // quantities, then they had been removed properly
+        newResources.addOre(1);
+        newResources.addWheat(1);
+        newResources.addSheep(1);
+        assert (newResources.toString().equals(previousResourceString));
 
-	@Test
-	public void testPlayMonument() {
-		GameManager target = new GameManager();
-		target.initializeGame(jsonDataIn);
-		DevCardList cards = new DevCardList(1, 1, 1, 1, 1);
-		List<Bank> banks = target.getResourceManager().getGameBanks();
-		banks.get(0).setDevelopmentCards(cards);
-		target.getResourceManager().setGameBanks(banks);
+    }
 
-		int playedBefore = target.getResourceManager().getGameBanks().get(0)
-				.getMonuments();
-		int heldBefore = target.getResourceManager().getGameBanks().get(0)
-				.getDevelopmentCards().getMonument();
-		target.useMonument();
-		int playedAfter = target.getResourceManager().getGameBanks().get(0)
-				.getMonuments();
-		int heldAfter = target.getResourceManager().getGameBanks().get(0)
-				.getDevelopmentCards().getMonument();
-		assertTrue(playedBefore + 1 == playedAfter);
-		assertTrue(heldAfter + 1 == heldBefore);
-	}
+    @Test
+    public void testPlayMonument() {
+        GameManager target = new GameManager();
+        target.initializeGame(jsonDataIn);
+        DevCardList cards = new DevCardList(1, 1, 1, 1, 1);
+        List<Bank> banks = target.getResourceManager().getGameBanks();
+        banks.get(0).setDevelopmentCards(cards);
+        target.getResourceManager().setGameBanks(banks);
 
-	@Test
-	public void testPlaySoldier() {
-		GameManager target = new GameManager();
-		target.initializeGame(jsonDataIn);
-		DevCardList cards = new DevCardList(1, 1, 1, 1, 1);
-		List<Bank> banks = target.getResourceManager().getGameBanks();
-		banks.get(0).setDevelopmentCards(cards);
-		target.getResourceManager().setGameBanks(banks);
+        int playedBefore = target.getResourceManager().getGameBanks().get(0)
+                .getMonuments();
+        int heldBefore = target.getResourceManager().getGameBanks().get(0)
+                .getDevelopmentCards().getMonument();
+        target.useMonument();
+        int playedAfter = target.getResourceManager().getGameBanks().get(0)
+                .getMonuments();
+        int heldAfter = target.getResourceManager().getGameBanks().get(0)
+                .getDevelopmentCards().getMonument();
+        assertTrue(playedBefore + 1 == playedAfter);
+        assertTrue(heldAfter + 1 == heldBefore);
+    }
 
-		int playedBefore = target.getResourceManager().getGameBanks().get(0)
-				.getSoldiers();
-		int heldBefore = target.getResourceManager().getGameBanks().get(0)
-				.getDevelopmentCards().getSoldier();
-		target.useSoldier();
-		int playedAfter = target.getResourceManager().getGameBanks().get(0)
-				.getSoldiers();
-		int heldAfter = target.getResourceManager().getGameBanks().get(0)
-				.getDevelopmentCards().getSoldier();
-		assertTrue(playedBefore + 1 == playedAfter);
-		assertTrue(heldAfter + 1 == heldBefore);
-	}
+    @Test
+    public void testPlaySoldier() {
+        GameManager target = new GameManager();
+        target.initializeGame(jsonDataIn);
+        DevCardList cards = new DevCardList(1, 1, 1, 1, 1);
+        List<Bank> banks = target.getResourceManager().getGameBanks();
+        banks.get(0).setDevelopmentCards(cards);
+        target.getResourceManager().setGameBanks(banks);
 
-	@Test
-	public void testPlayRoadBuilding() {
-		GameManager target = new GameManager();
-		target.initializeGame(jsonDataIn);
-		DevCardList cards = new DevCardList(1, 1, 1, 1, 1);
-		List<Bank> banks = target.getResourceManager().getGameBanks();
-		banks.get(0).setDevelopmentCards(cards);
-		target.getResourceManager().setGameBanks(banks);
+        int playedBefore = target.getResourceManager().getGameBanks().get(0)
+                .getSoldiers();
+        int heldBefore = target.getResourceManager().getGameBanks().get(0)
+                .getDevelopmentCards().getSoldier();
+        target.useSoldier();
+        int playedAfter = target.getResourceManager().getGameBanks().get(0)
+                .getSoldiers();
+        int heldAfter = target.getResourceManager().getGameBanks().get(0)
+                .getDevelopmentCards().getSoldier();
+        assertTrue(playedBefore + 1 == playedAfter);
+        assertTrue(heldAfter + 1 == heldBefore);
+    }
 
-		int brickBefore = target.getResourceManager().getGameBanks().get(0)
-				.getResourcesCards().getBrick();
-		int heldBefore = target.getResourceManager().getGameBanks().get(0)
-				.getDevelopmentCards().getRoadBuilding();
+    @Test
+    public void testPlayRoadBuilding() {
+        GameManager target = new GameManager();
+        target.initializeGame(jsonDataIn);
+        DevCardList cards = new DevCardList(1, 1, 1, 1, 1);
+        List<Bank> banks = target.getResourceManager().getGameBanks();
+        banks.get(0).setDevelopmentCards(cards);
+        target.getResourceManager().setGameBanks(banks);
 
-		target.useRoadBuilding(new EdgeLocation(new HexLocation(0, 0),
-				EdgeDirection.NE), new EdgeLocation(new HexLocation(0, 0),
-				EdgeDirection.NE));
-		int brickAfter = target.getResourceManager().getGameBanks().get(0)
-				.getResourcesCards().getBrick();
-		int heldAfter = target.getResourceManager().getGameBanks().get(0)
-				.getDevelopmentCards().getRoadBuilding();
+        int brickBefore = target.getResourceManager().getGameBanks().get(0)
+                .getResourcesCards().getBrick();
+        int heldBefore = target.getResourceManager().getGameBanks().get(0)
+                .getDevelopmentCards().getRoadBuilding();
 
-		//if there is exactly one less roadbuilding card now than before, it worked.
-		assert(heldAfter + 1 == heldBefore);
-		//if no bricks were removed from the resources, then it called the right method to play roads for free.
-		assert(brickAfter == brickBefore);
-	}
+        target.useRoadBuilding(new EdgeLocation(new HexLocation(0, 0),
+                EdgeDirection.NE), new EdgeLocation(new HexLocation(0, 0),
+                        EdgeDirection.NE));
+        int brickAfter = target.getResourceManager().getGameBanks().get(0)
+                .getResourcesCards().getBrick();
+        int heldAfter = target.getResourceManager().getGameBanks().get(0)
+                .getDevelopmentCards().getRoadBuilding();
 
-	@Test
-	public void testPlayYearOfPlenty() {
-		GameManager target = new GameManager();
-		target.initializeGame(jsonDataIn);
-		DevCardList cards = new DevCardList(1, 1, 1, 1, 1);
-		List<Bank> banks = target.getResourceManager().getGameBanks();
-		banks.get(0).setDevelopmentCards(cards);
-		target.getResourceManager().setGameBanks(banks);
+        //if there is exactly one less roadbuilding card now than before, it worked.
+        assert (heldAfter + 1 == heldBefore);
+        //if no bricks were removed from the resources, then it called the right method to play roads for free.
+        assert (brickAfter == brickBefore);
+    }
 
-		int brickBefore = target.getResourceManager().getGameBanks().get(0)
-				.getResourcesCards().getBrick();
-		int heldBefore = target.getResourceManager().getGameBanks().get(0)
-				.getDevelopmentCards().getYearOfPlenty();
+    @Test
+    public void testPlayYearOfPlenty() {
+        GameManager target = new GameManager();
+        target.initializeGame(jsonDataIn);
+        DevCardList cards = new DevCardList(1, 1, 1, 1, 1);
+        List<Bank> banks = target.getResourceManager().getGameBanks();
+        banks.get(0).setDevelopmentCards(cards);
+        target.getResourceManager().setGameBanks(banks);
 
-		target.useYearOfPlenty(ResourceType.brick, ResourceType.brick);
-		int brickAfter = target.getResourceManager().getGameBanks().get(0)
-				.getResourcesCards().getBrick();
-		int heldAfter = target.getResourceManager().getGameBanks().get(0)
-				.getDevelopmentCards().getYearOfPlenty();
+        int brickBefore = target.getResourceManager().getGameBanks().get(0)
+                .getResourcesCards().getBrick();
+        int heldBefore = target.getResourceManager().getGameBanks().get(0)
+                .getDevelopmentCards().getYearOfPlenty();
 
-		//if there is exactly one less roadbuilding card now than before, it worked.
-		assert(heldAfter + 1 == heldBefore);
-		assert(brickAfter - 2 == brickBefore);
-	}
+        target.useYearOfPlenty(ResourceType.brick, ResourceType.brick);
+        int brickAfter = target.getResourceManager().getGameBanks().get(0)
+                .getResourcesCards().getBrick();
+        int heldAfter = target.getResourceManager().getGameBanks().get(0)
+                .getDevelopmentCards().getYearOfPlenty();
 
-	@Test
-	public void testPlayMonopoly() {
-		GameManager target = new GameManager();
-		target.initializeGame(jsonDataIn);
-		DevCardList cards = new DevCardList(1, 1, 1, 1, 1);
-		List<Bank> banks = target.getResourceManager().getGameBanks();
-		banks.get(0).setDevelopmentCards(cards);
-		target.getResourceManager().setGameBanks(banks);
+        //if there is exactly one less roadbuilding card now than before, it worked.
+        assert (heldAfter + 1 == heldBefore);
+        assert (brickAfter - 2 == brickBefore);
+    }
 
-		int userBrickBefore = target.getResourceManager().getGameBanks().get(0)
-				.getResourcesCards().getBrick();
+    @Test
+    public void testPlayMonopoly() {
+        GameManager target = new GameManager();
+        target.initializeGame(jsonDataIn);
+        DevCardList cards = new DevCardList(1, 1, 1, 1, 1);
+        List<Bank> banks = target.getResourceManager().getGameBanks();
+        banks.get(0).setDevelopmentCards(cards);
+        target.getResourceManager().setGameBanks(banks);
 
-		target.useMonopoly(ResourceType.brick);
-		int userBrickAfter = target.getResourceManager().getGameBanks().get(0)
-				.getResourcesCards().getBrick();
+        int userBrickBefore = target.getResourceManager().getGameBanks().get(0)
+                .getResourcesCards().getBrick();
 
-		for(int i = 1; i < 4; i++) {
-			ResourceList r = target.getResourceManager().getGameBanks().get(i).getResourcesCards();
-			assert(r.getBrick() == 0);
-		}
-		//if there is exactly one less roadbuilding card now than before, it worked.
-		assert(userBrickAfter > userBrickBefore);
-	}
+        target.useMonopoly(ResourceType.brick);
+        int userBrickAfter = target.getResourceManager().getGameBanks().get(0)
+                .getResourcesCards().getBrick();
 
-	@Test
-	public void testCreateGame() {
-		GameManager game = new GameManager();
-		game.createGame(false, false, false, "Muahahahahhahahhahha");
-		assertTrue(game.getGame().getTitle().equals("Muahahahahhahahhahha"));
-		assertFalse(game.getGame().getTitle().equals("Milk"));
-		List<Hex> hexesBasic = game.getMapManager().getHexList();
-		List<Location> locationsBasic = game.getLocationManager()
-				.getUnsettledLocations();
-		List<Edge> edgesBasic = game.getLocationManager().getUnsettledEdges();
-		List<Port> portsBasic = game.getLocationManager().getPorts();
-		game = new GameManager();
-		game.createGame(false, false, false, "Muahahahahhahahhahha");
-		for (int i = 0; i < game.getMapManager().getHexList().size(); i++) {
-			assertTrue(hexesBasic
-					.get(i)
-					.getLocation()
-					.equals(game.getMapManager().getHexList().get(i)
-							.getLocation()));
-			assertTrue(hexesBasic.get(i).getNumber() == game.getMapManager()
-					.getHexList().get(i).getNumber());
-		}
-		for (int i = 0; i < game.getLocationManager().getPorts().size(); i++) {
-			assertTrue(portsBasic
-					.get(i)
-					.getLocation()
-					.equals(game.getLocationManager().getPorts().get(i)
-							.getLocation()));
-		}
-		for (int i = 0; i < game.getLocationManager().getUnsettledLocations()
-				.size(); i++) {
-			assertTrue(locationsBasic
-					.get(i)
-					.getNormalizedLocation()
-					.equals(game.getLocationManager().getUnsettledLocations()
-							.get(i).getNormalizedLocation()));
-		}
-		for (int i = 0; i < game.getLocationManager().getUnsettledEdges()
-				.size(); i++) {
-			assertTrue(edgesBasic
-					.get(i)
-					.getEdgeLocation()
-					.equals(game.getLocationManager().getUnsettledEdges()
-							.get(i).getEdgeLocation()));
-		}
-	}
+        for (int i = 1; i < 4; i++) {
+            ResourceList r = target.getResourceManager().getGameBanks().get(i).getResourcesCards();
+            assert (r.getBrick() == 0);
+        }
+        //if there is exactly one less roadbuilding card now than before, it worked.
+        assert (userBrickAfter > userBrickBefore);
+    }
+
+    @Test
+    public void testCreateGame() {
+        GameManager game = new GameManager();
+        game.createGame(false, false, false, "Muahahahahhahahhahha");
+        assertTrue(game.getGame().getTitle().equals("Muahahahahhahahhahha"));
+        assertFalse(game.getGame().getTitle().equals("Milk"));
+        List<Hex> hexesBasic = game.getMapManager().getHexList();
+        List<Location> locationsBasic = game.getLocationManager()
+                .getUnsettledLocations();
+        List<Edge> edgesBasic = game.getLocationManager().getUnsettledEdges();
+        List<Port> portsBasic = game.getLocationManager().getPorts();
+        game = new GameManager();
+        game.createGame(false, false, false, "Muahahahahhahahhahha");
+        for (int i = 0; i < game.getMapManager().getHexList().size(); i++) {
+            assertTrue(hexesBasic
+                    .get(i)
+                    .getLocation()
+                    .equals(game.getMapManager().getHexList().get(i)
+                            .getLocation()));
+            assertTrue(hexesBasic.get(i).getNumber() == game.getMapManager()
+                    .getHexList().get(i).getNumber());
+        }
+        for (int i = 0; i < game.getLocationManager().getPorts().size(); i++) {
+            assertTrue(portsBasic
+                    .get(i)
+                    .getLocation()
+                    .equals(game.getLocationManager().getPorts().get(i)
+                            .getLocation()));
+        }
+        for (int i = 0; i < game.getLocationManager().getUnsettledLocations()
+                .size(); i++) {
+            assertTrue(locationsBasic
+                    .get(i)
+                    .getNormalizedLocation()
+                    .equals(game.getLocationManager().getUnsettledLocations()
+                            .get(i).getNormalizedLocation()));
+        }
+        for (int i = 0; i < game.getLocationManager().getUnsettledEdges()
+                .size(); i++) {
+            assertTrue(edgesBasic
+                    .get(i)
+                    .getEdgeLocation()
+                    .equals(game.getLocationManager().getUnsettledEdges()
+                            .get(i).getEdgeLocation()));
+        }
+    }
 }

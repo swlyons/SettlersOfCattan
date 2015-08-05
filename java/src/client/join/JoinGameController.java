@@ -61,7 +61,7 @@ public class JoinGameController extends Controller implements IJoinGameControlle
     public Timer getJoinGameTimer() {
         return joinGameTimer;
     }
-    
+
     /**
      * Returns the action to be executed when the user joins a game
      *
@@ -186,9 +186,9 @@ public class JoinGameController extends Controller implements IJoinGameControlle
             //playerInfo.setPlayerIndex(0);
             GameInfo[] allGames = new GameInfo[gamesOnServer.size()];
             gamesOnServer.toArray(allGames);
-            
+
             getJoinGameView().setGames(allGames, playerInfo);
-            
+
             //if successful clear out old options
             getNewGameView().setRandomlyPlaceHexes(false);
             getNewGameView().setRandomlyPlaceNumbers(false);

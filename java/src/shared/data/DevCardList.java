@@ -1,5 +1,6 @@
 package shared.data;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Random;
 
@@ -14,7 +15,7 @@ import shared.definitions.DevCardType;
  *
  * @author ddennis
  */
-public class DevCardList {
+public class DevCardList implements Serializable {
 
     private Integer monopoly;
     private Integer monument;

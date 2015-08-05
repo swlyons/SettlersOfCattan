@@ -5,6 +5,7 @@
  */
 package server.command;
 
+import java.io.Serializable;
 import server.receiver.AllOfOurInformation;
 import shared.model.DiscardCards;
 
@@ -12,7 +13,7 @@ import shared.model.DiscardCards;
  *
  * @author Samuel
  */
-public class DiscardCardsCommand implements Command{
+public class DiscardCardsCommand implements Command, Serializable {
 
     private DiscardCards discardCards;
 

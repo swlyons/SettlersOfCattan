@@ -55,6 +55,7 @@ public class Database {
     private Users users;
     private Games games;
     private Commands commands;
+
     /**
      * Creates new instances of all the tables in the database
      */
@@ -88,11 +89,12 @@ public class Database {
     public Users getUsers() {
         return users;
     }
-    
+
     /**
      * Gets the commands table form the database
      *
-     * @return instance of Commands Table for running operations on the Commands Table
+     * @return instance of Commands Table for running operations on the Commands
+     * Table
      */
     public Commands getCommands() {
         return commands;

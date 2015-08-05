@@ -140,8 +140,9 @@ public class DevCardController extends Controller implements IDevCardController 
         try {
             ClientFascade.getSingleton().monopoly(m);
             gm.useMonopoly(resource);
-            if (getPlayCardView().isModalShowing())
-            	getPlayCardView().closeModal();
+            if (getPlayCardView().isModalShowing()) {
+                getPlayCardView().closeModal();
+            }
         } catch (Exception e) {
 //            e.printStackTrace();
             //Shouldn't happen
@@ -177,8 +178,9 @@ public class DevCardController extends Controller implements IDevCardController 
         try {
             ClientFascade.getSingleton().monument(m);
             gm.useMonument();
-            if (getPlayCardView().isModalShowing())
-            	getPlayCardView().closeModal();
+            if (getPlayCardView().isModalShowing()) {
+                getPlayCardView().closeModal();
+            }
         } catch (Exception e) {
 //            e.printStackTrace();
             //Shouldn't happen
@@ -189,7 +191,7 @@ public class DevCardController extends Controller implements IDevCardController 
         GameManager gm = ClientCommunicator.getSingleton().getGameManager();
         boolean playedDevCard = ClientCommunicator.getSingleton().getGameManager().getGame().getPlayers().get(playerIndex).isPlayedDevCard();
         boolean canBuild = gm.canUseRoadBuilding() && gm.getGame().getTurnTracker().getCurrentTurn() == gm.getPlayerIndex(playerId) && !playedDevCard;
-        if(gm.getGame().getPlayers().get(playerIndex).getRoads()<2){
+        if (gm.getGame().getPlayers().get(playerIndex).getRoads() < 2) {
             canBuild = false;
         }
         int cardsInHand = gm.getGame().getPlayers().get(playerIndex).getNewDevCards().getRoadBuilding()
@@ -202,7 +204,7 @@ public class DevCardController extends Controller implements IDevCardController 
     @Override
     public void playRoadBuildCard() {
         GameManager gm = ClientCommunicator.getSingleton().getGameManager();
-    	Integer playerId = ClientCommunicator.getSingleton().getPlayerId();
+        Integer playerId = ClientCommunicator.getSingleton().getPlayerId();
         Integer playerIndex = -1;
         for (int i = 0; i < gm.getGame().getPlayers().size(); i++) {
             if (gm.getGame().getPlayers().get(i).getPlayerID() == playerId) {
@@ -210,11 +212,12 @@ public class DevCardController extends Controller implements IDevCardController 
                 break;
             }
         }
-        
+
         roadAction.execute();
-        
-        if (getPlayCardView().isModalShowing())
-        	getPlayCardView().closeModal();
+
+        if (getPlayCardView().isModalShowing()) {
+            getPlayCardView().closeModal();
+        }
     }
 
     private boolean canPlaySoldierCard(Integer playerId, Integer playerIndex) {
@@ -231,7 +234,7 @@ public class DevCardController extends Controller implements IDevCardController 
     @Override
     public void playSoldierCard() {
         GameManager gm = ClientCommunicator.getSingleton().getGameManager();
-    	Integer playerId = ClientCommunicator.getSingleton().getPlayerId();
+        Integer playerId = ClientCommunicator.getSingleton().getPlayerId();
         Integer playerIndex = -1;
         for (int i = 0; i < gm.getGame().getPlayers().size(); i++) {
             if (gm.getGame().getPlayers().get(i).getPlayerID() == playerId) {
@@ -239,11 +242,12 @@ public class DevCardController extends Controller implements IDevCardController 
                 break;
             }
         }
-        
+
         soldierAction.execute();
-        
-        if (getPlayCardView().isModalShowing())
-        	getPlayCardView().closeModal();
+
+        if (getPlayCardView().isModalShowing()) {
+            getPlayCardView().closeModal();
+        }
     }
 
     private boolean canPlayYearOfPlentyCard(Integer playerId, Integer playerIndex) {
@@ -277,8 +281,9 @@ public class DevCardController extends Controller implements IDevCardController 
         try {
             ClientFascade.getSingleton().year_Of_Plenty(y);
             gm.useYearOfPlenty(resource1, resource2);
-            if (getPlayCardView().isModalShowing())
-            	getPlayCardView().closeModal();
+            if (getPlayCardView().isModalShowing()) {
+                getPlayCardView().closeModal();
+            }
         } catch (Exception e) {
             e.printStackTrace();
             //Shouldn't happen

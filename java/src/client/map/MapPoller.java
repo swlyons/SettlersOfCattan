@@ -89,7 +89,7 @@ public class MapPoller extends TimerTask {
                 gameManager.initializeGame(gameInformation);
                 version = gameInformation.getVersion();
                 mapView.getController().initFromModel();
-               
+
                 //these must be done whether the version changes or not
                 // <editor-fold desc="Version Independent">
                 /*  ---------- BEGIN ----------THESE UPDATES WILL BE DONE WHETHER THE VERSION CHANGES OR NOT */
@@ -154,9 +154,9 @@ public class MapPoller extends TimerTask {
                     boolean largestArmy = false;
                     boolean highlight = false;
                     int index = player.getPlayerIndex();
-                    
+
                     // only update local player color for local player
-                    if (player.getPlayerID() == ClientCommunicator.getSingleton().getPlayerId()) { 
+                    if (player.getPlayerID() == ClientCommunicator.getSingleton().getPlayerId()) {
                         turnTrackerView.setLocalPlayerColor(CatanColor.valueOf(player.getColor().toUpperCase()));
                         pointsController.getPointsView().setPoints(player.getVictoryPoints());
                     }

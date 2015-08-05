@@ -1,5 +1,6 @@
 package shared.model;
 
+import java.io.Serializable;
 import shared.data.SettlementLocation;
 
 /**
@@ -8,7 +9,7 @@ import shared.data.SettlementLocation;
  * @author Aaron
  *
  */
-public class BuildSettlement extends Command {
+public class BuildSettlement extends Command implements Serializable {
 
     private SettlementLocation vertexLocation;
     private Boolean free;
@@ -29,12 +30,12 @@ public class BuildSettlement extends Command {
     public void setFree(Boolean free) {
         this.free = free;
     }
-    
-    public Integer getGameId(){
+
+    public Integer getGameId() {
         return gameId;
     }
-    
-    public void setGameId(Integer gameId){
+
+    public void setGameId(Integer gameId) {
         this.gameId = gameId;
     }
 }

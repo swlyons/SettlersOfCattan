@@ -56,7 +56,7 @@ public class Catan extends JFrame {
                         Integer.parseInt(args[1]));
                 //start catan
                 new Catan();
-                
+
                 CatanStateMachine catanStateMachine = new CatanStateMachine();
 
                 PlayerWaitingView playerWaitingView = new PlayerWaitingView();
@@ -66,16 +66,16 @@ public class Catan extends JFrame {
                 playerWaitingController.setPlayerAction(new IAction() {
                     @Override
                     public void execute() {
-                        
+
                         ((MapController) catanPanel.getMidPanel().getMapController()).getMapPoller().setCatanPanel(catanPanel);
                         catanStateMachine.setCatanPanel(catanPanel);
-                        
+
                         //end PlayerWaiting
                         catanStateMachine.move((MapController) catanPanel.getMidPanel().getMapController());
                         //setup
                         catanStateMachine.move((MapController) catanPanel.getMidPanel().getMapController());
                         //first round
-                        
+
                         catanStateMachine.move((MapController) catanPanel.getMidPanel().getMapController());
 
                         //second round
@@ -83,7 +83,7 @@ public class Catan extends JFrame {
 
                         //gameplay
                         catanStateMachine.stay((MapController) catanPanel.getMidPanel().getMapController());
-                        
+
                     }
                 });
                 JoinGameView joinView = new JoinGameView();

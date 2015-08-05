@@ -5,6 +5,7 @@
  */
 package server.command;
 
+import java.io.Serializable;
 import server.receiver.AllOfOurInformation;
 import shared.model.BuildSettlement;
 import shared.definitions.PieceType;
@@ -16,7 +17,7 @@ import shared.locations.VertexLocation;
  *
  * @author Samuel
  */
-public class BuildSettlementCommand implements Command {
+public class BuildSettlementCommand implements Command, Serializable {
 
     private BuildSettlement buildSettlement;
 

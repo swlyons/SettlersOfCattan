@@ -9,6 +9,7 @@ package server.command;
  *
  * @author ddennis
  */
-public interface Command{
+public interface Command {
+
     public abstract boolean execute();
 }

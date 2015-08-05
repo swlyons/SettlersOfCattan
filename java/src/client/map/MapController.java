@@ -48,7 +48,7 @@ public class MapController extends Controller implements IMapController {
         super(view);
 
         setRobView(robView);
-        
+
         settledCities = new ArrayList<Location>();
         settledLocations = new ArrayList<Location>();
         settledEdges = new ArrayList<Edge>();
@@ -101,7 +101,7 @@ public class MapController extends Controller implements IMapController {
                 }
             }
         }
-       
+
         for (Edge e : gm.getLocationManager().getSettledEdges()) {
             if (!settledEdges.contains(e)) {
                 settledEdges.add(e);
@@ -124,14 +124,14 @@ public class MapController extends Controller implements IMapController {
                 }
             }
         }
-        
+
         if ((newRobberLocation2 != null && !newRobberLocation2.equals(gm.getGame().getMap().getRobber())) || !doneOnce) {
             getView().placeRobber(gm.getGame().getMap().getRobber());
             newRobberLocation2 = gm.getGame().getMap().getRobber();
         }
         //update the robber location
         gm.getGame().getMap().setRobber(newRobberLocation2);
-        
+
         if (!doneOnce) {
             // Water tiles are hard coded, sine they never change, ever.
             getView().addHex(new HexLocation(0, 3), HexType.water);
@@ -397,7 +397,7 @@ public class MapController extends Controller implements IMapController {
      * allowDisconnected);
      */
     public void startMove(PieceType pieceType, boolean isFree, boolean allowDisconnected) {
-    	playedSoldier = false;
+        playedSoldier = false;
         GameManager gm = ClientCommunicator.getSingleton().getGameManager();
         this.isFree = isFree;
         Integer currentPlayer = gm.getGame().getTurnTracker().getCurrentTurn();
@@ -444,10 +444,10 @@ public class MapController extends Controller implements IMapController {
             }
         }
 
-        if(playerIndex == victimIndex){
-            victimIndex=-1;
+        if (playerIndex == victimIndex) {
+            victimIndex = -1;
         }
-        
+
         try {
             if (playedSoldier) {
                 gm.useSoldier();

@@ -16,7 +16,7 @@ import shared.model.*;
  *
  * @author ddennis
  */
-public class ClientFascade implements Fascade{
+public class ClientFascade implements Fascade {
 
     public static ClientFascade fascade = null;
 
@@ -71,7 +71,7 @@ public class ClientFascade implements Fascade{
 
     public GameInfo getGameModel(String version) throws ClientException {
         GameInfo result = (GameInfo) ClientCommunicator.getSingleton().doGet(MODEL_GAME, version, 0).getResponseBody();
-    	return result;
+        return result;
     }
 
     public GameInfo resetGame() throws ClientException {
@@ -158,8 +158,8 @@ public class ClientFascade implements Fascade{
 
     @Override
     public GameInfo offerTrade(OfferTrade offerTrade) throws ClientException {
-    	GameInfo result = (GameInfo) ClientCommunicator.getSingleton().doPost(OFFER_TRADE_MOVES, offerTrade, 0).getResponseBody();
-    	return result;
+        GameInfo result = (GameInfo) ClientCommunicator.getSingleton().doPost(OFFER_TRADE_MOVES, offerTrade, 0).getResponseBody();
+        return result;
     }
 
     @Override

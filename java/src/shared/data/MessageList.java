@@ -1,8 +1,9 @@
 package shared.data;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class MessageList {
+public class MessageList implements Serializable {
 
     private ArrayList<MessageLine> lines;
 
@@ -32,7 +33,7 @@ public class MessageList {
         if (hasOne) {
             messageLines = messageLines.substring(0, messageLines.length() - 1);
         }
-        
+
         messageLines += "]}";
 
         return messageLines;

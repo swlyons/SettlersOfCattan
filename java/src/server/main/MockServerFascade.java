@@ -20,7 +20,6 @@ import shared.model.*;
 public class MockServerFascade implements Fascade {
 
     //<editor-fold desc="JSON canned game string to pass back">
-
     String jsonGameString = "{\n"
             + "  \"deck\": {\n"
             + "    \"yearOfPlenty\": 2,\n"
@@ -415,9 +414,11 @@ public class MockServerFascade implements Fascade {
     public GameInfo getGameModel(String version) throws ServerException {
         return ((GameInfo) model.fromJson(jsonGameString, GameInfo.class));
     }
+
     public String getModel(String version) throws ServerException {
         return jsonGameString;
     }
+
     @Override
     public GameInfo resetGame() throws ServerException {
         return ((GameInfo) model.fromJson(jsonGameString, GameInfo.class));

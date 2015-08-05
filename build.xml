@@ -182,8 +182,8 @@
     <target name="our-server" depends="package" description="compiles, packages, and runs the student client">
         <java jar="${java.dist}/catan-server.jar" dir="${java.dist}" fork="yes">
             <sysproperty key="com.sun.management.jmxremote" value=""/>
-            <arg value="${port.arg}"/>
-            <arg value="${mock.arg}"/>
+            <!--arg value="${port.arg}"/>
+            <arg value="${mock.arg}"/-->
             <arg value="${plugin.arg}"/>
             <arg value="${deltas.arg}"/>
             <assertions>

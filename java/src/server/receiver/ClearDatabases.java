@@ -10,9 +10,11 @@ package server.receiver;
  * @author ddennis
  */
 public class ClearDatabases {
-    public ClearDatabases(){
-        
+
+    public ClearDatabases() {
+
     }
+
     public static void main(String[] args) throws Exception {
 
         Database db = new Database("sql");
@@ -25,7 +27,6 @@ public class ClearDatabases {
         db.getUsers().clear();
         db.getCommands().clear();
         db.endTransaction(true);
-       
 
         //no need to start or end transactions for a blob
         db = new Database("blob");
@@ -33,8 +34,7 @@ public class ClearDatabases {
         // clear out the database
         db.getGames().clear();
         db.getUsers().clear();
-        
-        
+
     }
 
 }

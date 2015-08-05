@@ -12,21 +12,23 @@ import server.receiver.AllOfOurInformation;
  *
  * @author ddennis
  */
-public class RegisterCommand implements Command{
-   private User user;
-   public RegisterCommand(User user) {
+public class RegisterCommand implements Command {
+
+    private User user;
+
+    public RegisterCommand(User user) {
         this.user = user;
     }
 
     public User getUser() {
         return user;
     }
-   
+
     @Override
     public boolean execute() {
-        return(register());
-    }   
-    
+        return (register());
+    }
+
     public boolean register() {
         int userNameLength = user.getUsername().length();
         int passwordLength = user.getPassword().length();
@@ -38,7 +40,7 @@ public class RegisterCommand implements Command{
                     return false;
                 }
             }
-            
+
             AllOfOurInformation.getSingleton().getUsers().add(user);
             return true;
         } else {
@@ -54,5 +56,5 @@ public class RegisterCommand implements Command{
         }
         return false;
     }
-    
+
 }

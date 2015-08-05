@@ -1,11 +1,12 @@
 package shared.data;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
 import shared.locations.EdgeLocation;
 
-public class Edge {
+public class Edge implements Serializable {
 
     private int ownerId;
     private Set<Integer> whoCanBuild;
@@ -45,5 +46,5 @@ public class Edge {
     public String toString() {
         return "Edge{" + "ownerId=" + ownerId + ", whoCanBuild=" + whoCanBuild + ", edgeLocation=" + edgeLocation + '}';
     }
-    
+
 }

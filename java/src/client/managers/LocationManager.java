@@ -1,5 +1,6 @@
 package client.managers;
 
+import java.io.Serializable;
 import shared.data.Edge;
 import shared.data.Location;
 import shared.data.Port;
@@ -13,7 +14,7 @@ import shared.locations.HexLocation;
 import shared.locations.VertexLocation;
 import shared.locations.VertexDirection;
 
-public class LocationManager {
+public class LocationManager implements Serializable {
 
     private List<Location> settledLocations;
     private List<Location> unsettledLocations;
@@ -74,7 +75,7 @@ public class LocationManager {
                                 locationUnavailable.setCanBeSettled(false);
                             }
                         }
-                        
+
                         EdgeLocation usableEdge1 = new EdgeLocation(location.getNormalizedLocation().getHexLoc(),
                                 EdgeDirection.N);
                         EdgeLocation usableEdge2 = new EdgeLocation(location.getNormalizedLocation().getHexLoc(),
@@ -139,7 +140,7 @@ public class LocationManager {
             unsettledLocations.remove(locationToMove);
             settledLocations.add(locationToMove);
             return true;
-        }else{
+        } else {
             System.out.println("Location Manager: location to move null: " + locationToSettle);
         }
         return false;
@@ -157,13 +158,13 @@ public class LocationManager {
     public boolean settleEdge(EdgeLocation edgeLocationToSettle, int playerId) {
         Edge edgeToMove = null;
         for (Edge edge : unsettledEdges) {
-            
+
             if (edgeLocationToSettle.equals(edge.getEdgeLocation())) {
                 if (edge.getWhoCanBuild().contains(playerId)) {
                     edge.setOwnerId(playerId);
                     edgeToMove = edge;
                     edge.getWhoCanBuild().clear();
-                    
+
                     if (edge.getEdgeLocation().getDir() == EdgeDirection.N) {
                         VertexLocation settleable1 = new VertexLocation(edge.getEdgeLocation().getHexLoc(),
                                 VertexDirection.NE);
@@ -354,15 +355,14 @@ public class LocationManager {
 
         hexes.add(vertex.getHexLoc());
         hexes.add(new HexLocation(vertex.getHexLoc().getX(), vertex.getHexLoc().getY() - 1));
-        
-        
+
         if (VertexDirection.NE == vertex.getDir()) {
             hexes.add(new HexLocation(vertex.getHexLoc().getX() + 1, vertex.getHexLoc().getY() - 1));
         } else {
             // case of it's NorthWest
             hexes.add(new HexLocation(vertex.getHexLoc().getX() - 1, vertex.getHexLoc().getY()));
         }
-        
+
         return hexes;
     }
 

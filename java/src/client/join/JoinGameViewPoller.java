@@ -52,7 +52,7 @@ public class JoinGameViewPoller extends TimerTask {
         }
         GameInfo[] games = new GameInfo[activeGames.size()];
         activeGames.toArray(games);
-        
+
         for (GameInfo game : activeGames) {
 
             for (int i = 0; i < game.getPlayers().size(); i++) {
@@ -88,18 +88,17 @@ public class JoinGameViewPoller extends TimerTask {
             }
 
             update = (newGameSize != oldGameSize) || (oldGamePlayers != newGamePlayers);
-            
+
         }
         if (getJoinGameController().getJoinGameView().isModalShowing()) {
-            
+
             //only update when necessary
-            
             if (update) {
                 getJoinGameController().getJoinGameView().setGames(games, playerInfo);
                 getJoinGameController().getJoinGameView().closeModal();
                 getJoinGameController().getJoinGameView().showModal();
             }
-            
+
         }
 
     }

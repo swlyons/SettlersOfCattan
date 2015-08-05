@@ -6,6 +6,7 @@
 package server.command;
 
 import client.managers.GameManager;
+import java.io.Serializable;
 import server.receiver.AllOfOurInformation;
 import shared.data.GameInfo;
 import shared.data.MessageLine;
@@ -14,7 +15,7 @@ import shared.data.MessageLine;
  *
  * @author ddennis
  */
-public class SendChatCommand implements Command {
+public class SendChatCommand implements Command, Serializable {
 
     private int playerIndex;
     private String content;
@@ -58,6 +59,7 @@ public class SendChatCommand implements Command {
             GameManager gameManager = AllOfOurInformation.getSingleton().getGames().get(gameId);
             GameInfo game = gameManager.getGame();
             //get the player name
+            //System.out.println("Send Chat Command Player INdex:" + game);
             String playerName = game.getPlayers().get(playerIndex).getName();
 
             //create the message line for the chat
@@ -66,11 +68,11 @@ public class SendChatCommand implements Command {
             messageLine.setMessage(content);
 
             game.getChat().getLines().add(messageLine);
-            
+
             //update the game version
             int oldVersion = game.getVersion();
             game.setVersion(oldVersion + 1);
-            
+
             gameManager.setGame(game);
             //return success if we made it this far
             successful = true;

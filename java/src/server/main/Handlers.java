@@ -47,8 +47,8 @@ public class Handlers {
             } catch (IOException ioe) {
                 LOGGER.log(Level.SEVERE, "Failed to retrieve " + filepath);
                 exchange.sendResponseHeaders(404,
-                -1);
-OutputStream os = exchange.getResponseBody();
+                        -1);
+                OutputStream os = exchange.getResponseBody();
                 os.close();
                 System.out.println("Couldn't find the file " + new File(filepath).getAbsolutePath());
             }

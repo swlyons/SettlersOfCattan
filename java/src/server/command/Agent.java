@@ -5,12 +5,11 @@
  */
 package server.command;
 
+import client.managers.GameManager;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import server.receiver.AllOfOurInformation;
-import server.receiver.Database;
-import shared.data.GameInfo;
 import shared.data.User;
 
 /**
@@ -42,12 +41,17 @@ public class Agent {
         if (success) {
             int currentGameId = AllOfOurInformation.getSingleton().getCurrentGameId();
             //update the game info every delta commands
+            String status = "";
+            if (!AllOfOurInformation.getSingleton().getGames().isEmpty()) {
+                status = AllOfOurInformation.getSingleton().getGames().get(currentGameId).getGame().getTurnTracker().getStatus();
+            }
             if (!commandQueue.isEmpty()) {
-                if (commandQueue.get(currentGameId).size() == deltas) {
+                //update for the first and second rounds as well
+                if ((commandQueue.get(currentGameId).size() == deltas) || status.contains("Round")) {
                     /* add logic to update the game state blob the present game*/
-                    GameInfo presentGame = AllOfOurInformation.getSingleton().getGames().get(currentGameId).getGame();
-                    AllOfOurInformation.getSingleton().updateGameInDatabase(presentGame);
-                    
+                    GameManager presentGameManager = AllOfOurInformation.getSingleton().getGames().get(currentGameId);
+                    AllOfOurInformation.getSingleton().updateGameInDatabase(presentGameManager, currentGameId);
+
                     //clear the command database
                     AllOfOurInformation.getSingleton().clearCommandsFromDatabase(currentGameId);
                     commandQueue.get(currentGameId).clear();
@@ -65,8 +69,8 @@ public class Agent {
             } else {
                 //save command to the Database
                 AllOfOurInformation.getSingleton().addCommandToDatabase(command, currentGameId);
-                
-                if(commandQueue.isEmpty()){
+                System.out.println("Commands left 'til Checkpoint: " + (deltas - (commandQueue.isEmpty() ? 0 : commandQueue.get(currentGameId).size())));
+                if (commandQueue.isEmpty()) {
                     commandQueue.put(currentGameId, new ArrayList<>());
                 }
                 commandQueue.get(currentGameId).add(command);
@@ -78,5 +82,5 @@ public class Agent {
     public Map<Integer, ArrayList<Command>> getCommandQueue() {
         return commandQueue;
     }
-    
+
 }

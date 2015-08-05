@@ -1,11 +1,12 @@
 package client.managers;
 
+import java.io.Serializable;
 import shared.data.Hex;
 import java.util.List;
 import java.util.ArrayList;
 import shared.locations.HexLocation;
 
-public class MapManager {
+public class MapManager implements Serializable {
 
     private List<Hex> hexList;
 

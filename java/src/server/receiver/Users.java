@@ -61,15 +61,15 @@ public class Users {
             }
         }
     }
-    
+
     /**
-     * Gets all the rows from the Games table
+     * Gets all the rows from the Users table
      *
-     * @return returns an ArrayList of all the games
+     * @return returns an ArrayList of all the users
      */
     public ArrayList<User> getAllUsers() throws ServerException {
         ArrayList<User> result = new ArrayList<>();
-        
+
         PreparedStatement stmt = null;
         ResultSet rs = null;
         try {
@@ -95,6 +95,7 @@ public class Users {
 
         return result;
     }
+
     /**
      * Clears all users FROM the Users table used by ant clear-db
      *

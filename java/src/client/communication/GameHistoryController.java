@@ -39,15 +39,15 @@ public class GameHistoryController extends Controller implements IGameHistoryCon
                 }
             }
 
-        //add the new message to the GUI (replace default if exists)
+            //add the new message to the GUI (replace default if exists)
             //if (getView().getEntries().size() != game.getLog().getLines().size()) {
             getView().getEntries().clear();
             for (MessageLine messageLine : game.getLog().getLines()) {
                 getView().getEntries().add(new LogEntry(color, messageLine.getMessage()));
             }
-        
-        //}
-         getView().setEntries(getView().getEntries());
+
+            //}
+            getView().setEntries(getView().getEntries());
         }
     }
 

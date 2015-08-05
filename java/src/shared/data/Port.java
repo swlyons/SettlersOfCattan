@@ -1,9 +1,10 @@
 package shared.data;
 
+import java.io.Serializable;
 import shared.definitions.ResourceType;
 import shared.locations.HexLocation;
 
-public class Port {
+public class Port implements Serializable {
 
     private int ratio;
     private ResourceType resource;
@@ -41,12 +42,12 @@ public class Port {
 
     @Override
     public String toString() {
-        if(ratio==2){
+        if (ratio == 2) {
             return "{" + "\"resource\" : \"" + resource.toString().toLowerCase() + "\", \"location\" : " + location.toString() + ", \"ratio\" : " + ratio + ",\"direction\":\"N\"}";
-        }else{
+        } else {
             return "{" + "\"location\" : " + location.toString() + ", \"ratio\" : " + ratio + ",\"direction\":\"N\"}";
         }
-        
+
     }
 
 }

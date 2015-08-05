@@ -1,6 +1,6 @@
 package shared.model;
 
-import shared.locations.EdgeLocation;
+import java.io.Serializable;
 import shared.data.XYEdgeLocation;
 
 /**
@@ -9,7 +9,7 @@ import shared.data.XYEdgeLocation;
  * @author Aaron
  *
  */
-public class BuildRoad extends Command {
+public class BuildRoad extends Command implements Serializable {
 
     private XYEdgeLocation roadLocation;
     private Boolean free;
@@ -30,12 +30,12 @@ public class BuildRoad extends Command {
     public void setFree(Boolean free) {
         this.free = free;
     }
-    
-    public Integer getGameId(){
+
+    public Integer getGameId() {
         return gameId;
     }
-    
-    public void setGameId(Integer gameId){
-        this.gameId=gameId;
+
+    public void setGameId(Integer gameId) {
+        this.gameId = gameId;
     }
 }

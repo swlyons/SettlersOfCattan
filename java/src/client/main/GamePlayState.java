@@ -31,8 +31,7 @@ public class GamePlayState extends State {
         System.out.println(this.toString());
         gamePlayTimer.schedule(mapController.getMapPoller(), 0, 700);
         mapController.getMapPoller().setGamePlayTimer(gamePlayTimer);
-        
-        
+
     }
 
     @Override

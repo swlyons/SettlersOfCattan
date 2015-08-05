@@ -5,6 +5,7 @@
  */
 package server.command;
 
+import java.io.Serializable;
 import server.receiver.AllOfOurInformation;
 import shared.model.BuildRoad;
 import shared.locations.EdgeDirection;
@@ -15,7 +16,7 @@ import shared.locations.HexLocation;
  *
  * @author Samuel
  */
-public class BuildRoadCommand implements Command {
+public class BuildRoadCommand implements Command, Serializable {
 
     private BuildRoad buildRoad;
 

@@ -5,13 +5,14 @@
  */
 package shared.data;
 
+import java.io.Serializable;
 import shared.locations.EdgeLocation;
 
 /**
  *
  * @author ddennis
  */
-public class EdgeValue {
+public class EdgeValue implements Serializable {
 
     private int owner;
     private EdgeLocation location2;

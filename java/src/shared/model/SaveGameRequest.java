@@ -5,11 +5,13 @@
  */
 package shared.model;
 
+import java.io.Serializable;
+
 /**
  *
  * @author ddennis
  */
-public class SaveGameRequest {
+public class SaveGameRequest implements Serializable {
 
     private int id;
     private String name;

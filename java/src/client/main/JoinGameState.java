@@ -27,7 +27,7 @@ public class JoinGameState extends State {
             joinGameTimer.schedule(new JoinGameViewPoller(joinGameController), 0, 1000);
             joinGameController.setJoinGameTimer(joinGameTimer);
         }
-        
+
     }
 
     @Override

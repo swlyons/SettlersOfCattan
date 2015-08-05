@@ -1,5 +1,6 @@
 package shared.data;
 
+import java.io.Serializable;
 import shared.definitions.ResourceType;
 import java.util.Date;
 import java.util.Random;
@@ -13,7 +14,7 @@ import java.util.Random;
  *
  * @author ddennis
  */
-public class ResourceList {
+public class ResourceList implements Serializable {
 
     private Integer brick;
     private Integer ore;
@@ -80,38 +81,38 @@ public class ResourceList {
         this.wheat = wheat;
         this.wood = wood;
     }
-    
-    public ResourceList getRandomResourceAvailable(){
+
+    public ResourceList getRandomResourceAvailable() {
         Integer total = getTotalResources();
-        if(total<=0){
+        if (total <= 0) {
             return null;
         }
         Random r = new Random();
         r.setSeed((new Date()).getTime());
-        
+
         Integer resourceNumber = r.nextInt(total);
-        
-        resourceNumber-=brick;
-        if(resourceNumber<0){
-            return new ResourceList(1,0,0,0,0);
+
+        resourceNumber -= brick;
+        if (resourceNumber < 0) {
+            return new ResourceList(1, 0, 0, 0, 0);
         }
-        
-        resourceNumber-=ore;
-        if(resourceNumber<0){
-            return new ResourceList(0,1,0,0,0);
+
+        resourceNumber -= ore;
+        if (resourceNumber < 0) {
+            return new ResourceList(0, 1, 0, 0, 0);
         }
-        
-        resourceNumber-=sheep;
-        if(resourceNumber<0){
-            return new ResourceList(0,0,1,0,0);
+
+        resourceNumber -= sheep;
+        if (resourceNumber < 0) {
+            return new ResourceList(0, 0, 1, 0, 0);
         }
-        
-        resourceNumber-=wheat;
-        if(resourceNumber<0){
-            return new ResourceList(0,0,0,1,0);
+
+        resourceNumber -= wheat;
+        if (resourceNumber < 0) {
+            return new ResourceList(0, 0, 0, 1, 0);
         }
-            return new ResourceList(0,0,0,0,1);
-        
+        return new ResourceList(0, 0, 0, 0, 1);
+
     }
 
     public Integer getBrick() {
@@ -277,11 +278,11 @@ public class ResourceList {
 
     @Override
     public String toString() {
-        return "{" + "\"brick\" : " + brick + 
-                ", \"ore\" : " + ore + 
-                ", \"sheep\" : " + sheep + 
-                ", \"wheat\" : " + wheat + 
-                ", \"wood\" : " + wood + "}";
+        return "{" + "\"brick\" : " + brick
+                + ", \"ore\" : " + ore
+                + ", \"sheep\" : " + sheep
+                + ", \"wheat\" : " + wheat
+                + ", \"wood\" : " + wood + "}";
     }
 
 }

@@ -24,13 +24,13 @@ public class Monopoly extends Command {
     public void setResource(ResourceType resource) {
         this.resource = resource;
     }
-    
+
     public int getGameId() {
-    	return gameId;
+        return gameId;
     }
 
-	public void setGameId(int gameId) {
-		this.gameId = gameId;
-	}
+    public void setGameId(int gameId) {
+        this.gameId = gameId;
+    }
 
 }

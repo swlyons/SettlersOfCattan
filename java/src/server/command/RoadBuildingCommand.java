@@ -5,6 +5,7 @@
  */
 package server.command;
 
+import java.io.Serializable;
 import server.command.Command;
 import server.receiver.AllOfOurInformation;
 import shared.model.Road_Building;
@@ -13,7 +14,7 @@ import shared.model.Road_Building;
  *
  * @author Samuel
  */
-public class RoadBuildingCommand implements Command {
+public class RoadBuildingCommand implements Command, Serializable {
 
     Road_Building roadBuilding;
 
@@ -24,9 +25,9 @@ public class RoadBuildingCommand implements Command {
     @Override
     public boolean execute() {
         try {
-            AllOfOurInformation.getSingleton().getGames().get(roadBuilding.getGameId()).useRoadBuilding(roadBuilding.getSpot1(),roadBuilding.getSpot2());
+            AllOfOurInformation.getSingleton().getGames().get(roadBuilding.getGameId()).useRoadBuilding(roadBuilding.getSpot1(), roadBuilding.getSpot2());
             AllOfOurInformation.getSingleton().getGames().get(roadBuilding.getGameId()).getGame().getPlayers().get(roadBuilding.getPlayerIndex()).setPlayedDevCard(true);
-            AllOfOurInformation.getSingleton().getGames().get(roadBuilding.getGameId()).getGame().setVersion(AllOfOurInformation.getSingleton().getGames().get(roadBuilding.getGameId()).getGame().getVersion()+1);
+            AllOfOurInformation.getSingleton().getGames().get(roadBuilding.getGameId()).getGame().setVersion(AllOfOurInformation.getSingleton().getGames().get(roadBuilding.getGameId()).getGame().getVersion() + 1);
             AllOfOurInformation.getSingleton().getGames().get(roadBuilding.getGameId()).log("Player found an underground channel");
             return true;
         } catch (Exception e) {

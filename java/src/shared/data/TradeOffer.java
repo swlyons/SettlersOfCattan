@@ -1,6 +1,8 @@
 package shared.data;
 
-public class TradeOffer {
+import java.io.Serializable;
+
+public class TradeOffer implements Serializable {
 
     private int sender;
     private int receiver;

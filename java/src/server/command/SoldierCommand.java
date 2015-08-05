@@ -6,6 +6,7 @@
 package server.command;
 
 import client.managers.GameManager;
+import java.io.Serializable;
 import server.command.Command;
 import server.receiver.AllOfOurInformation;
 import shared.data.Bank;
@@ -15,7 +16,7 @@ import shared.model.Soldier;
  *
  * @author Samuel
  */
-public class SoldierCommand implements Command {
+public class SoldierCommand implements Command, Serializable {
 
     Soldier soldier;
 
