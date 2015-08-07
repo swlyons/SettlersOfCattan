@@ -45,13 +45,12 @@ public class Agent {
             if (!AllOfOurInformation.getSingleton().getGames().isEmpty()) {
                 status = AllOfOurInformation.getSingleton().getGames().get(currentGameId).getGame().getTurnTracker().getStatus();
             }
-            if (!commandQueue.isEmpty()) {
+            if (!commandQueue.isEmpty()  && commandQueue.get(currentGameId) != null) {
                 //update for the first and second rounds as well
                 if ((commandQueue.get(currentGameId).size() == deltas) || status.contains("Round")) {
                     /* add logic to update the game state blob the present game*/
                     GameManager presentGameManager = AllOfOurInformation.getSingleton().getGames().get(currentGameId);
                     AllOfOurInformation.getSingleton().updateGameInDatabase(presentGameManager, currentGameId);
-
                     //clear the command database
                     AllOfOurInformation.getSingleton().clearCommandsFromDatabase(currentGameId);
                     commandQueue.get(currentGameId).clear();
@@ -69,7 +68,6 @@ public class Agent {
             } else {
                 //save command to the Database
                 AllOfOurInformation.getSingleton().addCommandToDatabase(command, currentGameId);
-                System.out.println("Commands left 'til Checkpoint: " + (deltas - (commandQueue.isEmpty() ? 0 : commandQueue.get(currentGameId).size())));
                 if (commandQueue.isEmpty()) {
                     commandQueue.put(currentGameId, new ArrayList<>());
                 }

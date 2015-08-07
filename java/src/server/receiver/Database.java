@@ -2,7 +2,6 @@ package server.receiver;
 
 import java.io.File;
 import java.lang.reflect.Method;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.sql.Connection;
@@ -13,8 +12,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import server.main.ServerException;
 
@@ -22,7 +19,7 @@ import server.main.ServerException;
  * Represents the structure of the SQL database
  */
 public class Database {
-
+    
     private static final String JAVA_DIRECTORY = System.getProperty("user.dir").replace("dist", "");
     private static final String PLUGINS_DIRECTORY = JAVA_DIRECTORY + "plugins" + File.separator;
     private static final String DATABASE_DIRECTORY = JAVA_DIRECTORY + "database";
@@ -42,12 +39,11 @@ public class Database {
                 //load the JDBC driver
                 driver = (Driver) Class.forName("org.sqlite.JDBC", true, child).newInstance();
             } else if (plugin.equals("blob")) {
-                /* TODO: load the second persistence jar */
-
+                Class.forName("org.apache.commons.io.IOUtils", true, child);
             }
 
         } catch (ClassNotFoundException e) {
-            throw new ServerException("Could not load database driver", e);
+            throw new ServerException("Could not load the jar file dynamically", e);
         }
     }
 
@@ -63,14 +59,19 @@ public class Database {
         connection = null;
         /*Create new Instances of User and Games classes here */
         this.plugin = plugin;
-        games = new Games(this, plugin);
-        users = new Users(this, plugin);
-        commands = new Commands(this, plugin);
+        games = new Games(this);
+        users = new Users(this);
+        commands = new Commands(this);
     }
 
     public Connection getConnection() {
         return connection;
     }
+
+    public static String getPlugin() {
+        return plugin;
+    }
+    
 
     /**
      * Gets the games table form the database

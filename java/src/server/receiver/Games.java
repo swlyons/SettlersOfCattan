@@ -27,11 +27,9 @@ import server.main.ServerException;
 public class Games {
 
     private Database db;
-    private String plugin;
 
-    public Games(Database db, String plugin) {
+    public Games(Database db) {
         this.db = db;
-        this.plugin = plugin;
     }
 
     /**
@@ -41,37 +39,34 @@ public class Games {
      * @throws server.main.ServerException
      */
     public void add(GameManager gameManager, int gameId) throws ServerException {
-        if (plugin.equals("sql")) {
-            PreparedStatement stmt = null;
-            ResultSet keyRS = null;
-            try {
-                String query = "INSERT into games (id, gameinfo)"
-                        + " values (?,?)";
-                stmt = db.getConnection().prepareStatement(query);
-                stmt.setInt(1, gameId);
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                ObjectOutputStream oos = new ObjectOutputStream(baos);
-                oos.writeObject(gameManager);
-                byte[] gameManagerAsBytes = baos.toByteArray();
-                ByteArrayInputStream bais = new ByteArrayInputStream(gameManagerAsBytes);
+        PreparedStatement stmt = null;
+        ResultSet keyRS = null;
+        try {
+            String query = "INSERT into games (id, gameinfo)"
+                    + " values (?,?)";
+            stmt = db.getConnection().prepareStatement(query);
+            stmt.setInt(1, gameId);
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            ObjectOutputStream oos = new ObjectOutputStream(baos);
+            oos.writeObject(gameManager);
+            byte[] gameManagerAsBytes = baos.toByteArray();
+            ByteArrayInputStream bais = new ByteArrayInputStream(gameManagerAsBytes);
 
-                stmt.setBinaryStream(2, bais, gameManagerAsBytes.length);
-                if (stmt.executeUpdate() == 1) {
-                    Statement keyStmt = db.getConnection().createStatement();
-                    keyRS = keyStmt.executeQuery("SELECT last_INSERT_rowid()");
-                    keyRS.next();
-                } else {
-                    throw new ServerException("Could not INSERT game");
-                }
-            } catch (SQLException e) {
-                throw new ServerException("Could not INSERT game", e);
-            } catch (IOException ex) {
-                Logger.getLogger(Games.class.getName()).log(Level.SEVERE, null, ex);
-            } finally {
-                Database.safeClose(stmt);
-                Database.safeClose(keyRS);
+            stmt.setBinaryStream(2, bais, gameManagerAsBytes.length);
+            if (stmt.executeUpdate() == 1) {
+                Statement keyStmt = db.getConnection().createStatement();
+                keyRS = keyStmt.executeQuery("SELECT last_INSERT_rowid()");
+                keyRS.next();
+            } else {
+                throw new ServerException("Could not INSERT game");
             }
-
+        } catch (SQLException e) {
+            throw new ServerException("Could not INSERT game", e);
+        } catch (IOException ex) {
+            Logger.getLogger(Games.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            Database.safeClose(stmt);
+            Database.safeClose(keyRS);
         }
     }
 
@@ -118,30 +113,28 @@ public class Games {
      * @throws server.main.ServerException
      */
     public void update(GameManager gameManager, int gameId) throws ServerException {
-        if (plugin.equals("sql")) {
-            PreparedStatement stmt = null;
-            try {
-                String query = "UPDATE games set gameinfo = ? "
-                        + "WHERE id = ?";
-                stmt = db.getConnection().prepareStatement(query);
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                ObjectOutputStream oos = new ObjectOutputStream(baos);
-                oos.writeObject(gameManager);
-                byte[] gameManagerAsBytes = baos.toByteArray();
-                ByteArrayInputStream bais = new ByteArrayInputStream(gameManagerAsBytes);
+        PreparedStatement stmt = null;
+        try {
+            String query = "UPDATE games set gameinfo = ? "
+                    + "WHERE id = ?";
+            stmt = db.getConnection().prepareStatement(query);
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            ObjectOutputStream oos = new ObjectOutputStream(baos);
+            oos.writeObject(gameManager);
+            byte[] gameManagerAsBytes = baos.toByteArray();
+            ByteArrayInputStream bais = new ByteArrayInputStream(gameManagerAsBytes);
 
-                stmt.setBinaryStream(1, bais, gameManagerAsBytes.length);
-                stmt.setInt(2, gameId);
-                if (stmt.executeUpdate() != 1) {
-                    throw new ServerException("Could not UPDATE game");
-                }
-            } catch (SQLException e) {
-                throw new ServerException("Could not UPDATE game", e);
-            } catch (IOException ex) {
-                Logger.getLogger(Games.class.getName()).log(Level.SEVERE, null, ex);
-            } finally {
-                Database.safeClose(stmt);
+            stmt.setBinaryStream(1, bais, gameManagerAsBytes.length);
+            stmt.setInt(2, gameId);
+            if (stmt.executeUpdate() != 1) {
+                throw new ServerException("Could not UPDATE game");
             }
+        } catch (SQLException e) {
+            throw new ServerException("Could not UPDATE game", e);
+        } catch (IOException ex) {
+            Logger.getLogger(Games.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            Database.safeClose(stmt);
         }
     }
 
@@ -152,26 +145,24 @@ public class Games {
      * @throws ServerException
      */
     public void clear() throws ServerException {
-        if (plugin.equals("sql")) {
-            PreparedStatement stmt = null;
-            try {
-                String query = "DROP TABLE IF EXISTS games";
-                stmt = db.getConnection().prepareStatement(query);
-                stmt.execute();
-            } catch (SQLException e) {
-                throw new ServerException("Could not drop games table", e);
-            } finally {
-                Database.safeClose(stmt);
-            }
-            try {
-                String query = "CREATE TABLE games(id INTEGER PRIMARY KEY, gameinfo BLOB NOT NULL)";
-                stmt = db.getConnection().prepareStatement(query);
-                stmt.execute();
-            } catch (SQLException e) {
-                throw new ServerException("Could not create games table", e);
-            } finally {
-                Database.safeClose(stmt);
-            }
+        PreparedStatement stmt = null;
+        try {
+            String query = "DROP TABLE IF EXISTS games";
+            stmt = db.getConnection().prepareStatement(query);
+            stmt.execute();
+        } catch (SQLException e) {
+            throw new ServerException("Could not drop games table", e);
+        } finally {
+            Database.safeClose(stmt);
+        }
+        try {
+            String query = "CREATE TABLE games(id INTEGER PRIMARY KEY, gameinfo BLOB NOT NULL)";
+            stmt = db.getConnection().prepareStatement(query);
+            stmt.execute();
+        } catch (SQLException e) {
+            throw new ServerException("Could not create games table", e);
+        } finally {
+            Database.safeClose(stmt);
         }
 
     }

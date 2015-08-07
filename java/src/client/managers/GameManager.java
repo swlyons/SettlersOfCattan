@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Random;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Objects;
 import shared.data.MessageLine;
 
 import shared.definitions.DevCardType;
@@ -93,7 +94,7 @@ public class GameManager implements Serializable {
             List<Hex> hexList = map.getHexes();
 
             for (Hex hex : hexList) {
-                if (hex.getLocation().equals(robberLocation)) {
+                if (hex.getLocation().toString().equals(robberLocation.toString())) {
                     hex.setHasRobber(true);
                 } else {
                     hex.setHasRobber(false);
@@ -113,7 +114,7 @@ public class GameManager implements Serializable {
                     if (locationManager.getSettledEdges().size() == 8) {
                         location.setWhoCanBuild(new HashSet<Integer>());
                     }
-                    if (location.getNormalizedLocation().equals(settlement.getDirection())) {
+                    if (location.getNormalizedLocation().toString().equals(settlement.getDirection().toString())) {
                         location.setIsCity(false);
                         location.getWhoCanBuild().add(settlement.getOwner());
                         settlementLocation = location;
@@ -133,7 +134,7 @@ public class GameManager implements Serializable {
 
             for (VertexObject city : map.getCities()) {
                 for (Location location : locationManager.getSettledLocations()) {
-                    if (location.getNormalizedLocation().equals(city.getDirection())) {
+                    if (location.getNormalizedLocation().toString().equals(city.getDirection().toString())) {
                         locationManager.upgradeToCity(city.getDirection());
                     }
                 }
@@ -143,7 +144,7 @@ public class GameManager implements Serializable {
                 Edge roadLocation = null;
 
                 for (Edge edge : locationManager.getUnsettledEdges()) {
-                    if (edge.getEdgeLocation().equals(road.getLocation2())) {
+                    if (edge.getEdgeLocation().toString().equals(road.getLocation2().toString())) {
                         edge.getWhoCanBuild().add(road.getOwner());
                         roadLocation = edge;
                         break;
@@ -446,14 +447,14 @@ public class GameManager implements Serializable {
 
             for (Location loc : locationsTriggered) {
                 for (Location settled : locationManager.getSettledLocations()) {
-                    if (loc.getNormalizedLocation().equals(settled.getNormalizedLocation())) {
+                    if (loc.getNormalizedLocation().toString().equals(settled.getNormalizedLocation().toString())) {
                         int ownerId = settled.getOwnerID();
                         if (!(game.getPlayers().get(ownerId).getId() <= -1)) {
                             boolean isCity = false;
                             for (VertexObject city : game.getMap().getCities()) {
-                                if (city.getLocation().getX() == settled.getNormalizedLocation().getHexLoc().getX()
-                                        && city.getLocation().getY() == settled.getNormalizedLocation().getHexLoc()
-                                        .getY()) {
+                                if (Objects.equals(city.getLocation().getX(), settled.getNormalizedLocation().getHexLoc().getX())
+                                        && Objects.equals(city.getLocation().getY(), settled.getNormalizedLocation().getHexLoc()
+                                                .getY())) {
                                     isCity = true;
                                 }
                             }
@@ -586,8 +587,8 @@ public class GameManager implements Serializable {
         List<HexLocation> neighbors = locationManager.getHexLocationsAroundVertexLocation(v);
         ResourceList resourceList = new ResourceList(0, 0, 0, 0, 0);
         for (Hex hex : mapManager.getHexList()) {
-            if (hex.getLocation().equals(neighbors.get(0)) || hex.getLocation().equals(neighbors.get(1))
-                    || hex.getLocation().equals(neighbors.get(2))) {
+            if (hex.getLocation().toString().equals(neighbors.get(0).toString()) || hex.getLocation().toString().equals(neighbors.get(1).toString())
+                    || hex.getLocation().toString().equals(neighbors.get(2).toString())) {
                 if (hex.getResource() != null) {
                     switch (hex.getResource()) {
                         case ore:
@@ -664,13 +665,13 @@ public class GameManager implements Serializable {
                                     mySettledLocations.get(i).getNormalizedLocation().getHexLoc().getY() - 1),
                             EdgeDirection.NW);
                 }
-                if (myEdge.getEdgeLocation().getNormalizedLocation().equals(e1)
-                        || myEdge.getEdgeLocation().getNormalizedLocation().equals(e2)
-                        || myEdge.getEdgeLocation().getNormalizedLocation().equals(e3)) {
+                if (myEdge.getEdgeLocation().getNormalizedLocation().toString().equals(e1.toString())
+                        || myEdge.getEdgeLocation().getNormalizedLocation().toString().equals(e2.toString())
+                        || myEdge.getEdgeLocation().getNormalizedLocation().toString().equals(e3.toString())) {
                     continue;
                 }
 
-                if (edgeLoc.equals(e1) || edgeLoc.equals(e2) || edgeLoc.equals(e3)) {
+                if (edgeLoc.toString().equals(e1.toString()) || edgeLoc.toString().equals(e2.toString()) || edgeLoc.toString().equals(e3.toString())) {
                     return true;
                 }
                 return false;
@@ -678,7 +679,7 @@ public class GameManager implements Serializable {
             return false;
         } else {
             for (Edge edge : locationManager.getUnsettledEdges()) {
-                if (edge.getEdgeLocation().equals(edgeLoc)) {
+                if (edge.getEdgeLocation().toString().equals(edgeLoc.toString())) {
                     if (edge.getWhoCanBuild().contains(currentPlayer())) {
                         canPlaceRoad = true;
                         break;
@@ -781,7 +782,7 @@ public class GameManager implements Serializable {
         boolean canPlaceSettlement = false;
         int i = 0;
         for (Location lc : locationManager.getUnsettledLocations()) {
-            if (lc.getNormalizedLocation().equals(vertLoc)) {
+            if (lc.getNormalizedLocation().toString().equals(vertLoc.toString())) {
 
                 if (lc.getWhoCanBuild().contains(currentPlayer()) && lc.getCanBeSettled()) {
                     canPlaceSettlement = true;
@@ -802,7 +803,7 @@ public class GameManager implements Serializable {
     public boolean canPlaceCity(VertexLocation vertLoc) {
         boolean canPlaceCity = false;
         for (Location lc : locationManager.getSettledLocations()) {
-            if (lc.getNormalizedLocation().equals(vertLoc)) {
+            if (lc.getNormalizedLocation().toString().equals(vertLoc.toString())) {
                 if (!lc.getIsCity() && lc.getOwnerID() == currentPlayer()) {
                     canPlaceCity = true;
                 }
@@ -870,7 +871,7 @@ public class GameManager implements Serializable {
 
     public boolean canPlaceRobber(HexLocation hexLoc) {
         for (Hex hex : mapManager.getHexList()) {
-            if (hex.getLocation().equals(hexLoc)) {
+            if (hex.getLocation().toString().equals(hexLoc.toString())) {
                 if (!hex.getHasRobber()) {
                     return true;
                 }
@@ -888,7 +889,7 @@ public class GameManager implements Serializable {
                 List<HexLocation> hexes = locationManager
                         .getHexLocationsAroundVertexLocation(location.getNormalizedLocation());
                 for (HexLocation hex : hexes) {
-                    if (hexLoc.equals(hex)) {
+                    if (hexLoc.toString().equals(hex.toString())) {
                         return true;
                     }
                 }

@@ -53,6 +53,7 @@ public class FinishTurnCommand implements Command, Serializable {
                             status = "Rolling";
                         }
                     } else {
+                        System.out.println("Finshed Turn?");
                         return false;
                     }
                 }

@@ -10,7 +10,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.sql.Blob;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -20,7 +19,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import server.main.ServerException;
 import server.command.Command;
-import shared.data.User;
 
 /**
  *
@@ -29,11 +27,9 @@ import shared.data.User;
 public class Commands {
 
     private Database db;
-    private String plugin;
 
-    public Commands(Database db, String plugin) {
+    public Commands(Database db) {
         this.db = db;
-        this.plugin = plugin;
     }
 
     /**
@@ -43,36 +39,34 @@ public class Commands {
      * @throws server.main.ServerException
      */
     public void add(Command command, int gameId) throws ServerException {
-        if (plugin.equals("sql")) {
-            PreparedStatement stmt = null;
-            ResultSet keyRS = null;
-            try {
-                String query = "INSERT into commands (gameid, command)"
-                        + " values (?, ?)";
-                stmt = db.getConnection().prepareStatement(query);
-                stmt.setInt(1, gameId);
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                ObjectOutputStream oos = new ObjectOutputStream(baos);
-                oos.writeObject(command);
-                byte[] commandAsBytes = baos.toByteArray();
-                ByteArrayInputStream bais = new ByteArrayInputStream(commandAsBytes);
+        PreparedStatement stmt = null;
+        ResultSet keyRS = null;
+        try {
+            String query = "INSERT into commands (gameid, command)"
+                    + " values (?, ?)";
+            stmt = db.getConnection().prepareStatement(query);
+            stmt.setInt(1, gameId);
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            ObjectOutputStream oos = new ObjectOutputStream(baos);
+            oos.writeObject(command);
+            byte[] commandAsBytes = baos.toByteArray();
+            ByteArrayInputStream bais = new ByteArrayInputStream(commandAsBytes);
 
-                stmt.setBinaryStream(2, bais, commandAsBytes.length);
-                if (stmt.executeUpdate() == 1) {
-                    Statement keyStmt = db.getConnection().createStatement();
-                    keyRS = keyStmt.executeQuery("SELECT last_INSERT_rowid()");
-                    keyRS.next();
-                } else {
-                    throw new ServerException("Could not INSERT command");
-                }
-            } catch (SQLException e) {
-                throw new ServerException("Could not INSERT command", e);
-            } catch (IOException ex) {
-                Logger.getLogger(Commands.class.getName()).log(Level.SEVERE, null, ex);
-            } finally {
-                Database.safeClose(stmt);
-                Database.safeClose(keyRS);
+            stmt.setBinaryStream(2, bais, commandAsBytes.length);
+            if (stmt.executeUpdate() == 1) {
+                Statement keyStmt = db.getConnection().createStatement();
+                keyRS = keyStmt.executeQuery("SELECT last_INSERT_rowid()");
+                keyRS.next();
+            } else {
+                throw new ServerException("Could not INSERT command");
             }
+        } catch (SQLException e) {
+            throw new ServerException("Could not INSERT command", e);
+        } catch (IOException ex) {
+            Logger.getLogger(Commands.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            Database.safeClose(stmt);
+            Database.safeClose(keyRS);
         }
     }
 
@@ -122,21 +116,18 @@ public class Commands {
      * @throws ServerException
      */
     public void delete(int gameId) throws ServerException {
-        if (plugin.equals("sql")) {
-            PreparedStatement stmt = null;
-            try {
-                String query = "DELETE FROM commands "
-                        + "WHERE gameid = ?";
-                stmt = db.getConnection().prepareStatement(query);
-                stmt.setInt(1, gameId);
-                stmt.executeUpdate();
-            } catch (SQLException e) {
-                throw new ServerException("Could not DELETE commands", e);
-            } finally {
-                Database.safeClose(stmt);
-            }
+        PreparedStatement stmt = null;
+        try {
+            String query = "DELETE FROM commands "
+                    + "WHERE gameid = ?";
+            stmt = db.getConnection().prepareStatement(query);
+            stmt.setInt(1, gameId);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            throw new ServerException("Could not DELETE commands", e);
+        } finally {
+            Database.safeClose(stmt);
         }
-
     }
 
     /**
@@ -147,26 +138,24 @@ public class Commands {
      * @throws ServerException
      */
     public void clear() throws ServerException {
-        if (plugin.equals("sql")) {
-            PreparedStatement stmt = null;
-            try {
-                String query = "DROP TABLE IF EXISTS commands";
-                stmt = db.getConnection().prepareStatement(query);
-                stmt.execute();
-            } catch (SQLException e) {
-                throw new ServerException("Could not drop commands table", e);
-            } finally {
-                Database.safeClose(stmt);
-            }
-            try {
-                String query = "CREATE TABLE commands(gameid INTEGER NOT NULL, command BLOB NOT NULL)";
-                stmt = db.getConnection().prepareStatement(query);
-                stmt.execute();
-            } catch (SQLException e) {
-                throw new ServerException("Could not create commands table", e);
-            } finally {
-                Database.safeClose(stmt);
-            }
+        PreparedStatement stmt = null;
+        try {
+            String query = "DROP TABLE IF EXISTS commands";
+            stmt = db.getConnection().prepareStatement(query);
+            stmt.execute();
+        } catch (SQLException e) {
+            throw new ServerException("Could not drop commands table", e);
+        } finally {
+            Database.safeClose(stmt);
+        }
+        try {
+            String query = "CREATE TABLE commands(gameid INTEGER NOT NULL, command BLOB NOT NULL)";
+            stmt = db.getConnection().prepareStatement(query);
+            stmt.execute();
+        } catch (SQLException e) {
+            throw new ServerException("Could not create commands table", e);
+        } finally {
+            Database.safeClose(stmt);
         }
 
     }
