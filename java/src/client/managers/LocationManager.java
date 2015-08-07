@@ -44,11 +44,11 @@ public class LocationManager implements Serializable {
     public boolean settleLocation(VertexLocation locationToSettle, int playerId, boolean firstRound) {
         Location locationToMove = null;
         for (Location location : unsettledLocations) {
-            if (location.getNormalizedLocation().equals(locationToSettle)) {
+            if (location.getNormalizedLocation().toString().equals(locationToSettle.toString())) {
                 // if (firstRound) {
                 // location.getWhoCanBuild().add(playerId);
                 // }
-
+                
                 if (location.getCanBeSettled() && location.getWhoCanBuild().contains(playerId)) {
                     location.setCanBeSettled(false);
                     locationToMove = location;
@@ -157,10 +157,11 @@ public class LocationManager implements Serializable {
      */
     public boolean settleEdge(EdgeLocation edgeLocationToSettle, int playerId) {
         Edge edgeToMove = null;
+        
         for (Edge edge : unsettledEdges) {
-
-            if (edgeLocationToSettle.equals(edge.getEdgeLocation())) {
-                if (edge.getWhoCanBuild().contains(playerId)) {
+            
+            if (edgeLocationToSettle.toString().equals(edge.getEdgeLocation().toString())) {
+               if (edge.getWhoCanBuild().contains(playerId)) {
                     edge.setOwnerId(playerId);
                     edgeToMove = edge;
                     edge.getWhoCanBuild().clear();
@@ -308,7 +309,7 @@ public class LocationManager implements Serializable {
      */
     public boolean upgradeToCity(VertexLocation locationToUpgrade) {
         for (Location settledLocation : settledLocations) {
-            if (settledLocation.getNormalizedLocation().equals(locationToUpgrade)) {
+            if (settledLocation.getNormalizedLocation().toString().equals(locationToUpgrade.toString())) {
                 if (settledLocation.getIsCity()) {
                     return false;
                 } else {

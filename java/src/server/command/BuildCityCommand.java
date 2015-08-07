@@ -33,7 +33,6 @@ public class BuildCityCommand implements Command, Serializable {
             VertexLocation vertexLocation = new VertexLocation(hexSpot, vertexDirection);
             if (AllOfOurInformation.getSingleton().getGames().get(buildCity.getGameId()).buildStructure(PieceType.CITY, vertexLocation)) {
                 AllOfOurInformation.getSingleton().getGames().get(buildCity.getGameId()).getGame().setVersion(AllOfOurInformation.getSingleton().getGames().get(buildCity.getGameId()).getGame().getVersion() + 1);
-                AllOfOurInformation.getSingleton().getGames().get(buildCity.getGameId()).getGame().setVersion(AllOfOurInformation.getSingleton().getGames().get(buildCity.getGameId()).getGame().getVersion() + 1);
                 AllOfOurInformation.getSingleton().getGames().get(buildCity.getGameId()).log("Player upgraded to a fortress!");
                 return true;
             } else {

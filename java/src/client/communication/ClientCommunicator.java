@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.io.IOUtils;
 
 /**
  * An example of a client communicator we might use for CS 340. It is not the
@@ -87,7 +86,7 @@ public class ClientCommunicator {
      * object is user defined and not part the java api.
      * @throws client.main.ClientException
      */
-    public HttpURLResponse download(String location) throws ClientException {
+    /*public HttpURLResponse download(String location) throws ClientException {
         assert location != null && location.length() > 0;
 
         HttpURLResponse result = new HttpURLResponse();
@@ -111,7 +110,7 @@ public class ClientCommunicator {
                     e.getMessage()), e);
         }
         return result;
-    }
+    }*/
 
     /**
      * The Http Get Method. It sends a request to a server WITH PARAMETERS and

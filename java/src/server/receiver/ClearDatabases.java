@@ -29,11 +29,11 @@ public class ClearDatabases {
         db.endTransaction(true);
 
         //no need to start or end transactions for a blob
-        db = new Database("blob");
+        //db = new Database("blob");
 
         // clear out the database
-        db.getGames().clear();
-        db.getUsers().clear();
+        //db.getGames().clear();
+        //db.getUsers().clear();
 
     }
 

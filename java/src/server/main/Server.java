@@ -58,12 +58,13 @@ public class Server {
             //send the plugin to the entry class
             Database db = new Database(plugin);
             AllOfOurInformation.getSingleton().setDatabase(db);
+            AllOfOurInformation.getSingleton().setPlugin(plugin);
             Database.initialize();
 
             //send the # of deltas for the agent to use
             ServerFascade.getSingleton().getAgent().setDeltas(deltas);
 
-            //put information from database into AllOfOurInformation
+            //pull information from database into AllOfOurInformation
             if (plugin.equals("sql")) {
                 AllOfOurInformation.getSingleton().getUsers().addAll(AllOfOurInformation.getSingleton().getUsersFromDatabase());
                 int i = 0;
@@ -74,8 +75,8 @@ public class Server {
                     }
                     i++;
                 }
-            } else {//use blob
-
+            } else {//information from serialized blobs into AllOfOurInformation
+                
             }
 
         } catch (ServerException e) {
@@ -1300,6 +1301,7 @@ public class Server {
                 try {
                     game = ServerFascade.getSingleton().finishMove(finishMove);
                 } catch (Exception e) {
+                    e.printStackTrace();
                     game = null;
                 }
                 String result;
@@ -2920,6 +2922,7 @@ public class Server {
                 try {
                     game = ServerFascade.getSingleton().buildRoad(buildRoad);
                 } catch (Exception e) {
+                    e.printStackTrace();
                     game = null;
                 }
                 String result;

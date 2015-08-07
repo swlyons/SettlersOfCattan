@@ -20,11 +20,9 @@ import shared.data.User;
 public class Users {
 
     private Database db;
-    private String plugin;
 
-    public Users(Database db, String plugin) {
+    public Users(Database db) {
         this.db = db;
-        this.plugin = plugin;
     }
 
     /**
@@ -34,32 +32,31 @@ public class Users {
      * @throws server.main.ServerException
      */
     public void add(User user) throws ServerException {
-        if (plugin.equals("sql")) {
-            PreparedStatement stmt = null;
-            ResultSet keyRS = null;
-            try {
-                String query = "INSERT into users (username, password, gameid)"
-                        + " values (?, ?, ? )";
-                stmt = db.getConnection().prepareStatement(query);
-                stmt.setString(1, user.getUsername().toLowerCase());
-                stmt.setString(2, user.getPassword());
-                stmt.setInt(3, user.getGameId());
-                if (stmt.executeUpdate() == 1) {
-                    Statement keyStmt = db.getConnection().createStatement();
-                    keyRS = keyStmt.executeQuery("SELECT last_INSERT_rowid()");
-                    keyRS.next();
-                    int id = keyRS.getInt(1);
-                    user.setId(id);
-                } else {
-                    throw new ServerException("Could not INSERT user");
-                }
-            } catch (SQLException e) {
-                throw new ServerException("Could not INSERT user", e);
-            } finally {
-                Database.safeClose(stmt);
-                Database.safeClose(keyRS);
+        PreparedStatement stmt = null;
+        ResultSet keyRS = null;
+        try {
+            String query = "INSERT into users (username, password, gameid)"
+                    + " values (?, ?, ? )";
+            stmt = db.getConnection().prepareStatement(query);
+            stmt.setString(1, user.getUsername().toLowerCase());
+            stmt.setString(2, user.getPassword());
+            stmt.setInt(3, user.getGameId());
+            if (stmt.executeUpdate() == 1) {
+                Statement keyStmt = db.getConnection().createStatement();
+                keyRS = keyStmt.executeQuery("SELECT last_INSERT_rowid()");
+                keyRS.next();
+                int id = keyRS.getInt(1);
+                user.setId(id);
+            } else {
+                throw new ServerException("Could not INSERT user");
             }
+        } catch (SQLException e) {
+            throw new ServerException("Could not INSERT user", e);
+        } finally {
+            Database.safeClose(stmt);
+            Database.safeClose(keyRS);
         }
+
     }
 
     /**
@@ -103,28 +100,25 @@ public class Users {
      * @throws ServerException
      */
     public void clear() throws ServerException {
-        if (plugin.equals("sql")) {
-            PreparedStatement stmt = null;
-            try {
-                String query = "DROP TABLE IF EXISTS users";
-                stmt = db.getConnection().prepareStatement(query);
-                stmt.execute();
-            } catch (SQLException e) {
-                throw new ServerException("Could not drop users table", e);
-            } finally {
-                Database.safeClose(stmt);
-            }
-            try {
-                String query = "CREATE TABLE users(gameid INTEGER NOT NULL, username TEXT NOT NULL, "
-                        + "password TEXT NOT NULL)";
-                stmt = db.getConnection().prepareStatement(query);
-                stmt.execute();
-            } catch (SQLException e) {
-                throw new ServerException("Could not create users table", e);
-            } finally {
-                Database.safeClose(stmt);
-            }
+        PreparedStatement stmt = null;
+        try {
+            String query = "DROP TABLE IF EXISTS users";
+            stmt = db.getConnection().prepareStatement(query);
+            stmt.execute();
+        } catch (SQLException e) {
+            throw new ServerException("Could not drop users table", e);
+        } finally {
+            Database.safeClose(stmt);
         }
-
+        try {
+            String query = "CREATE TABLE users(gameid INTEGER NOT NULL, username TEXT NOT NULL, "
+                    + "password TEXT NOT NULL)";
+            stmt = db.getConnection().prepareStatement(query);
+            stmt.execute();
+        } catch (SQLException e) {
+            throw new ServerException("Could not create users table", e);
+        } finally {
+            Database.safeClose(stmt);
+        }
     }
 }
