@@ -765,7 +765,6 @@ public class GameManager implements Serializable {
 
 				checkLongestRoad(currentPlayer);
 				saveResourcesIntoGame();
-
 			}
 
 			return builtRoad;
