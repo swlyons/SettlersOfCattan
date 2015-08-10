@@ -25,7 +25,7 @@
     <property name="database" location="${java.dir}/database"/>
     <!-- Database file used by the server -->
     <property name="db-file" location="${database}/catan.db"/>
-    <property name="ser-file" location="${database}/catan.ser"/>	
+    <property name="ser-file" location="${database}/*.ser"/>
     	
     <!-- Database file containing empty tables. -->
     <property name="empty-db-file" location="${database}/catan_empty.db"/>
@@ -224,7 +224,9 @@
     </target>
     <target name="clear-db" depends="compile" description="clears the db files used for persistance">
         <copy file="${empty-db-file}" tofile="${db-file}" overwrite="true"/>
-        <copy file="${empty-ser-file}" tofile="${ser-file}" overwrite="true"/>
+        <delete>
+            <fileset dir="." includes="**/*.ser"/>
+        </delete>
         <java classname="server.receiver.ClearDatabases" dir="${java.dist}" fork="yes">
             <classpath>
                 <pathelement location="${java.build}" />

@@ -32,7 +32,6 @@ public class CreateGameCommand implements Command {
     public int getGameId() {
         return gameId;
     }
-
     @Override
     public boolean execute() {
         return createGame();

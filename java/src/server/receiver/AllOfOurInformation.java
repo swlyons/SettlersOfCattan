@@ -13,6 +13,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectInputStream;
@@ -23,8 +24,10 @@ import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.nio.file.Files;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import server.command.Agent;
@@ -93,7 +96,7 @@ public class AllOfOurInformation {
         return games;
     }
 
-    public void addUserToDatabase(User user) {
+    public void addUserToDatabase(int gameId, User user) {
         if (plugin.equals("sql")) {
             try {
                 db.startTransaction();
@@ -103,7 +106,7 @@ public class AllOfOurInformation {
                 Logger.getLogger(AllOfOurInformation.class.getName()).log(Level.SEVERE, null, ex);
             }
         } else {
-            //users are absolutely useless in our model
+            addtoSer(gameId, user, false);
         }
     }
 
@@ -117,7 +120,9 @@ public class AllOfOurInformation {
                 Logger.getLogger(AllOfOurInformation.class.getName()).log(Level.SEVERE, null, ex);
             }
         } else {
-            addtoSer(gameId, command, true);
+            if (!AllOfOurInformation.getSingleton().getGames().get(gameId).getGame().getTurnTracker().getStatus().contains("Round")) {
+                addtoSer(gameId, command, false);
+            }
         }
     }
 
@@ -131,12 +136,11 @@ public class AllOfOurInformation {
                 Logger.getLogger(AllOfOurInformation.class.getName()).log(Level.SEVERE, null, ex);
             }
         } else {
-            try {
-                PrintWriter writer = new PrintWriter(new File(DATABASE_DIRECTORY + File.separator + gameId + ".ser"));
-                writer.print("");
-                writer.close();
-            } catch (FileNotFoundException ex) {
-                Logger.getLogger(AllOfOurInformation.class.getName()).log(Level.SEVERE, null, ex);
+            File directory = new File(DATABASE_DIRECTORY);
+            for (File f : directory.listFiles()) {
+                if (f.getName().startsWith(gameId + "_")) {
+                    f.delete();
+                }
             }
         }
     }
@@ -151,7 +155,7 @@ public class AllOfOurInformation {
                 Logger.getLogger(AllOfOurInformation.class.getName()).log(Level.SEVERE, null, ex);
             }
         } else {
-            addtoSer(gameId, gameManager, true);
+            addtoSer(gameId, gameManager, false);
         }
     }
 
@@ -181,71 +185,110 @@ public class AllOfOurInformation {
                 return null;
             }
         } else {
+            ArrayList<Object> objects = new ArrayList<>();
             ArrayList<GameManager> gameManagers = new ArrayList<>();
-            getFilesForFolder(new File(DATABASE_DIRECTORY), "GameManager", (ArrayList<GameManager>) gameManagers);
+            getFromSer(new File(DATABASE_DIRECTORY), "GameManager", objects);
+
+            for (Object gameManager : objects) {
+                gameManagers.add((GameManager) gameManager);
+            }
             return gameManagers;
         }
 
     }
 
     public ArrayList<User> getUsersFromDatabase() {
-        try {
-            db.startTransaction();
-            ArrayList<User> usersDb = db.getUsers().getAllUsers();
-            db.endTransaction(true);
+        if (plugin.equals("sql")) {
+            try {
+                db.startTransaction();
+                ArrayList<User> usersDb = db.getUsers().getAllUsers();
+                db.endTransaction(true);
+                return usersDb;
+            } catch (ServerException ex) {
+                Logger.getLogger(AllOfOurInformation.class.getName()).log(Level.SEVERE, null, ex);
+                return new ArrayList<>();
+            }
+        } else {
+            ArrayList<Object> objects = new ArrayList<>();
+            ArrayList<User> usersDb = new ArrayList<>();
+            getFromSer(new File(DATABASE_DIRECTORY), "User", objects);
+
+            for (Object user : objects) {
+                usersDb.add((User) user);
+            }
             return usersDb;
-        } catch (ServerException ex) {
-            Logger.getLogger(AllOfOurInformation.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return null;
     }
 
     public ArrayList<Command> getCommandsFromDatabase(int gameId) {
-        try {
-            db.startTransaction();
-            ArrayList<Command> commands = db.getCommands().getAllCommands(gameId);
-            db.getCommands().delete(gameId);
-            db.endTransaction(true);
-            return commands;
-        } catch (ServerException ex) {
-            Logger.getLogger(AllOfOurInformation.class.getName()).log(Level.SEVERE, null, ex);
+        if (plugin.equals("sql")) {
+            try {
+                db.startTransaction();
+                ArrayList<Command> commands = db.getCommands().getAllCommands(gameId);
+                db.getCommands().delete(gameId);
+                db.endTransaction(true);
+                return commands;
+            } catch (ServerException ex) {
+                Logger.getLogger(AllOfOurInformation.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } else {
+            ArrayList<Object> objects = new ArrayList<>();
+            ArrayList<Command> commandsDb = new ArrayList<>();
+            getFromSer(new File(DATABASE_DIRECTORY), gameId + "_Command", objects);
+
+            for (Object command : objects) {
+                commandsDb.add((Command) command);
+            }
+            return commandsDb;
         }
-        return null;
+        return new ArrayList<>();
     }
 
     private void addtoSer(int gameId, Object obj, boolean append) {
         try {
-            byte [] byteClass = new byte[0];
+            byte[] byteClass = new byte[0];
             child = new URLClassLoader(new URL[]{new File(PLUGINS_DIRECTORY + plugin + ".jar").toURI().toURL()}, ClassLoader.getSystemClassLoader());
             Class ioFileUtilsClass = Class.forName("org.apache.commons.io.FileUtils", true, child);
-            Class<?>[] parameters = new Class[]{File.class, byteClass.getClass(), Boolean.TYPE};
+            Class<?>[] parameters = new Class[]{File.class, Object.class, Boolean.TYPE};
+            for (Method method : ioFileUtilsClass.getMethods()) {
+                if (method.getName().equals("writeByteArrayToFile") && (method.getParameterCount() == 3)) {
+                    parameters = method.getParameterTypes();
+                    break;
+                }
+            }
             Method writeByteArrayToFile = ioFileUtilsClass.getDeclaredMethod("writeByteArrayToFile", parameters);
             Object instance = ioFileUtilsClass.newInstance();
-            System.out.println("All of Our Information Class Name: " + obj.getClass().getName());
-            writeByteArrayToFile.invoke(instance, new File(DATABASE_DIRECTORY + File.separator + gameId + obj.getClass().getName() + ".ser"), convertToBytes(obj), append);
+            String fileName = "";
+            if (obj.getClass().getSimpleName().contains("Command")) {
+                //since many commands con be attached to one game the file name needs to be unique
+                fileName = gameId + "_" + obj.getClass().getSimpleName() + java.util.UUID.randomUUID();
+            } else {
+                fileName = obj.getClass().getSimpleName() + "0000000000" + gameId;
+            }
+            writeByteArrayToFile.invoke(instance, new File(DATABASE_DIRECTORY + File.separator + fileName + ".ser"), convertToBytes(obj), append);
         } catch (ClassNotFoundException | NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | IOException | InvocationTargetException ex) {
             Logger.getLogger(AllOfOurInformation.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
-    public void getFilesForFolder(final File folder, String name, ArrayList<GameManager> sers) {
-        for (final File fileEntry : folder.listFiles()) {
+    public void getFromSer(final File folder, String name, ArrayList<Object> sers) {
+        for (File fileEntry : folder.listFiles()) {
+
             if (fileEntry.isDirectory()) {
-                getFilesForFolder(fileEntry, name, sers);
+                getFromSer(fileEntry, name, sers);
             } else {
+
                 if (fileEntry.getName().contains(name)) {
                     Class ioFilesClass = null;
                     try {
                         child = new URLClassLoader(new URL[]{new File(PLUGINS_DIRECTORY + plugin + ".jar").toURI().toURL()}, ClassLoader.getSystemClassLoader());
-                        ioFilesClass = Class.forName("org.apache.commons.io.Files");
-                    } catch (ClassNotFoundException ex) {
-                        Logger.getLogger(AllOfOurInformation.class.getName()).log(Level.SEVERE, null, ex);
-                    } catch (MalformedURLException ex) {
+                        ioFilesClass = Class.forName("org.apache.commons.io.IOUtils", true, child);
+                    } catch (ClassNotFoundException | MalformedURLException ex) {
                         Logger.getLogger(AllOfOurInformation.class.getName()).log(Level.SEVERE, null, ex);
                     }
                     Method toByteArray = null;
                     try {
-                        toByteArray = ioFilesClass.getDeclaredMethod("toByteArray", File.class);
+                        toByteArray = ioFilesClass.getDeclaredMethod("toByteArray", URI.class);
                     } catch (NoSuchMethodException | SecurityException ex) {
                         Logger.getLogger(AllOfOurInformation.class.getName()).log(Level.SEVERE, null, ex);
                     }
@@ -257,12 +300,12 @@ public class AllOfOurInformation {
                     }
                     byte[] serData = null;
                     try {
-                        serData = (byte[]) toByteArray.invoke(instance, new File(DATABASE_DIRECTORY + File.separator + fileEntry.getName() + ".ser"));
+                        serData = (byte[]) toByteArray.invoke(instance, fileEntry.getAbsoluteFile().toURI());
                     } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
                         Logger.getLogger(AllOfOurInformation.class.getName()).log(Level.SEVERE, null, ex);
                     }
                     try {
-                        sers.add((GameManager) convertFromBytes(serData));
+                        sers.add(convertFromBytes(serData));
                     } catch (IOException | ClassNotFoundException ex) {
                         Logger.getLogger(AllOfOurInformation.class.getName()).log(Level.SEVERE, null, ex);
                     }

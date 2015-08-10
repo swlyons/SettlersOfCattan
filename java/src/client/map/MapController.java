@@ -14,7 +14,7 @@ import shared.definitions.*;
 import shared.locations.*;
 import client.base.*;
 import client.managers.GameManager;
-import shared.model.BuildCity;
+import shared.model.BuildCity;  
 import shared.model.BuildRoad;
 import shared.model.Road_Building;
 import shared.model.BuildSettlement;
@@ -252,7 +252,8 @@ public class MapController extends Controller implements IMapController {
                 }
             }
         } else {
-            if (gm.buildRoad(edgeLoc)) {
+            if (gm.canBuildRoad()) {
+                
                 CatanColor color = CatanColor
                         .valueOf(gm.getGame().getPlayers().get(currentPlayer).getColor().toUpperCase());
                 getView().placeRoad(edgeLoc, color);
@@ -268,7 +269,7 @@ public class MapController extends Controller implements IMapController {
                 try {
                     ClientFascade.getSingleton().buildRoad(br);
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    //e.printStackTrace();
                 }
             }
         }
