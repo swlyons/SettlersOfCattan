@@ -18,7 +18,6 @@ import shared.data.TurnTracker;
 import shared.data.XYEdgeLocation;
 import shared.data.SettlementLocation;
 import shared.data.TradeOffer;
-
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Random;
@@ -26,7 +25,6 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Objects;
 import shared.data.MessageLine;
-
 import shared.definitions.DevCardType;
 import shared.definitions.PieceType;
 import shared.definitions.ResourceType;
@@ -392,6 +390,7 @@ public class GameManager implements Serializable {
     }
 
     public void saveResourcesIntoGame() {
+        
         for (int i = 0; i < game.getPlayers().size(); i++) {
             game.getPlayers().get(i).setResources(resourceManager.getGameBanks().get(i).getResourcesCards());
             game.getPlayers().get(i).setOldDevCards(resourceManager.getGameBanks().get(i).getDevelopmentCards());
@@ -726,7 +725,7 @@ public class GameManager implements Serializable {
                         game.getTurnTracker().setLongestRoad(currentPlayer);
                     }
                 }
-
+                
                 EdgeValue edgeValue = new EdgeValue();
                 edgeValue.setOwner(currentPlayer);
 
@@ -738,13 +737,15 @@ public class GameManager implements Serializable {
 
                 edgeValue.setLocation(xy);
                 edgeValue.setLocation2(edge);
-
+               
+                
                 game.getMap().getRoads().add(edgeValue);
-
+                
                 checkLongestRoad(currentPlayer);
                 saveResourcesIntoGame();
-
+               
             }
+            
             return builtRoad;
         } else {
             return false;

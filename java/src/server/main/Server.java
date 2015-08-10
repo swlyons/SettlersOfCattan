@@ -1,5 +1,6 @@
 package server.main;
 
+import client.communication.ClientFascade;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -63,20 +64,15 @@ public class Server {
 
             //send the # of deltas for the agent to use
             ServerFascade.getSingleton().getAgent().setDeltas(deltas);
-
-            //pull information from database into AllOfOurInformation
-            if (plugin.equals("sql")) {
-                AllOfOurInformation.getSingleton().getUsers().addAll(AllOfOurInformation.getSingleton().getUsersFromDatabase());
-                int i = 0;
-                for (GameManager gameManager : AllOfOurInformation.getSingleton().getGamesFromDatabase()) {
-                    AllOfOurInformation.getSingleton().getGames().add(gameManager);
-                    for (server.command.Command command : AllOfOurInformation.getSingleton().getCommandsFromDatabase(i)) {
-                        AllOfOurInformation.getSingleton().getAgent().sendCommand(command);
-                    }
-                    i++;
+            //pull information from database or blob into AllOfOurInformation
+            AllOfOurInformation.getSingleton().getUsers().addAll(AllOfOurInformation.getSingleton().getUsersFromDatabase());
+            int i = 0;
+            for (GameManager gameManager : AllOfOurInformation.getSingleton().getGamesFromDatabase()) {
+                AllOfOurInformation.getSingleton().getGames().add(gameManager);
+                for (server.command.Command command : AllOfOurInformation.getSingleton().getCommandsFromDatabase(i)) {
+                    AllOfOurInformation.getSingleton().getAgent().sendCommand(command);
                 }
-            } else {//information from serialized blobs into AllOfOurInformation
-                
+                i++;
             }
 
         } catch (ServerException e) {
@@ -593,6 +589,8 @@ public class Server {
                                 player.setPlayerIndex(i);
                                 AllOfOurInformation.getSingleton().getGames().get(joinGameRequest.getId()).getGame()
                                         .getPlayers().set(i, player);
+                                //added for persistence
+                                AllOfOurInformation.getSingleton().updateGameInDatabase(AllOfOurInformation.getSingleton().getGames().get(joinGameRequest.getId()), joinGameRequest.getId());
                                 break;
                             }
 

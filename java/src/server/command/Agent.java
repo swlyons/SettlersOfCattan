@@ -38,6 +38,7 @@ public class Agent {
     public boolean sendCommand(Command command) {
 
         boolean success = command.execute();
+        System.out.println("Agent.java Successful: " + success);
         if (success) {
             int currentGameId = AllOfOurInformation.getSingleton().getCurrentGameId();
             //update the game info every delta commands
@@ -51,7 +52,7 @@ public class Agent {
                     /* add logic to update the game state blob the present game*/
                     GameManager presentGameManager = AllOfOurInformation.getSingleton().getGames().get(currentGameId);
                     AllOfOurInformation.getSingleton().updateGameInDatabase(presentGameManager, currentGameId);
-                    //clear the command database
+                    //clear the command database/blob
                     AllOfOurInformation.getSingleton().clearCommandsFromDatabase(currentGameId);
                     commandQueue.get(currentGameId).clear();
                 }
@@ -59,14 +60,14 @@ public class Agent {
 
             if (command instanceof RegisterCommand) {
                 //skip the register commands (for queue)   
-                //add the user to the database
+                //add the user to the database/blob
                 User user = ((RegisterCommand) command).getUser();
-                AllOfOurInformation.getSingleton().addUserToDatabase(user);
+                AllOfOurInformation.getSingleton().addUserToDatabase(currentGameId, user);
             } else if (command instanceof CreateGameCommand) {
                 //skip Create Game Commands(for queue)
                 //clear the command quueue for each new game
             } else {
-                //save command to the Database
+                //save command to the Database/blob
                 AllOfOurInformation.getSingleton().addCommandToDatabase(command, currentGameId);
                 if (commandQueue.isEmpty()) {
                     commandQueue.put(currentGameId, new ArrayList<>());
