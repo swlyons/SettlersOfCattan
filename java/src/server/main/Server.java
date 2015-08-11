@@ -2920,7 +2920,6 @@ public class Server {
                 try {
                     game = ServerFascade.getSingleton().buildRoad(buildRoad);
                 } catch (Exception e) {
-                    e.printStackTrace();
                     game = null;
                 }
                 String result;
